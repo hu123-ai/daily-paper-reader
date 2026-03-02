@@ -600,6 +600,7 @@ def process_file(
                         "score": score,
                         "evidence_en": evidence_en,
                         "evidence_cn": evidence_cn,
+                        "canonical_evidence": evidence_cn or evidence_en or legacy,
                         "tldr_en": tldr_en,
                         "tldr_cn": tldr_cn,
                         "matched_requirement_id": matched_id,

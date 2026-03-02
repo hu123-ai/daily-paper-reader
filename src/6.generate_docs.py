@@ -734,9 +734,7 @@ def build_glance_fallback(paper: Dict[str, Any]) -> str:
     tldr = (
         str(paper.get("llm_tldr_cn") or paper.get("llm_tldr") or paper.get("llm_tldr_en") or "").strip()
     )
-    evidence = (
-        str(paper.get("llm_evidence_cn") or paper.get("llm_evidence") or paper.get("llm_evidence_en") or "").strip()
-    )
+    evidence = str(paper.get("canonical_evidence") or "").strip()
 
     def first_sentence(text: str) -> str:
         s = (text or "").strip()
@@ -1260,12 +1258,7 @@ def build_markdown_content(
         published = published[:10]
     pdf_url = str(paper.get("link") or paper.get("pdf_url") or "").strip()
     score = paper.get("llm_score")
-    evidence = (
-        paper.get("llm_evidence_cn")
-        or paper.get("llm_evidence")
-        or paper.get("llm_evidence_en")
-        or ""
-    ).strip()
+    evidence = str(paper.get("canonical_evidence") or "").strip()
     tldr = (
         paper.get("llm_tldr_cn")
         or paper.get("llm_tldr")
@@ -1897,12 +1890,7 @@ def sync_home_readme_from_day_report(
 
 
 def get_paper_sidebar_evidence(paper: Dict[str, Any]) -> str:
-    return str(
-        paper.get("llm_evidence_cn")
-        or paper.get("llm_evidence")
-        or paper.get("llm_evidence_en")
-        or ""
-    ).strip()
+    return str(paper.get("canonical_evidence") or "").strip()
 
 
 def write_run_daily_log(
