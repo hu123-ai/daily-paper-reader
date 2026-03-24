@@ -25,3 +25,38 @@ subscriptions:
     stage: A
     diff_threshold_pct: 15
   keyword_recall_mode: or
+  intent_profiles:
+    - tag: 法律预测
+      description: 帮我查找利用大语言模型进行法律判决预测的论文
+      enabled: true
+      keywords:
+        - keyword: legal judgment prediction
+          keyword_cn: 法律判决预测
+          query: legal judgment prediction using large language models
+        - keyword: LLM legal
+          keyword_cn: 大语言模型法律
+          query: large language models in legal applications
+        - keyword: case outcome
+          keyword_cn: 案件结果
+          query: predicting case outcomes with AI
+        - keyword: judicial decision
+          keyword_cn: 司法决策
+          query: judicial decision-making and artificial intelligence
+        - keyword: legal AI
+          keyword_cn: 法律人工智能
+          query: artificial intelligence for legal analysis
+        - keyword: legal reasoning
+          keyword_cn: 法律推理
+          query: computational models of legal reasoning
+      intent_queries:
+        - query: large language models for predicting legal judgments
+          query_cn: 用于预测法律判决的大语言模型
+          enabled: true
+          source: manual
+          note: ''
+        - query: AI systems that forecast court decisions
+          query_cn: 预测法院判决的人工智能系统
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-03-24T11:16:15.072Z'
