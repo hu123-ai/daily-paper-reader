@@ -6,74 +6,52 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-02-23 ~ 2026-03-24
-- 运行时间：2026-03-24 11:37:11 UTC
+- 最新运行日期：2026-03-24
+- 运行时间：2026-03-24 20:35:01 UTC
 - 运行状态：成功
-- 本次总论文数：17
-- 精读区：0
-- 速读区：17
+- 本次总论文数：10
+- 精读区：2
+- 速读区：8
 
 ### 今日简报（AI）
-今日深度追踪 17 篇法律 AI 论文，聚焦从司法时间线自动化提取到判决预测的因果建模。
-重点推荐 LexChronos 智能体框架及对生成式 AI 幻觉风险的系统性反思，揭示了法律科技从“内容生成”向“逻辑推导”的转型。
-建议读者在尝试 AI 辅助办案时，优先关注具备因果纠偏能力的工具，并审慎评估自动化系统在解释性上的局限。
-- 详情：[/20260223-20260324/README](/20260223-20260324/README)
+今日聚焦法律 AI 与评估公正性，深度解析了 PYTHEN 法律推理框架及 LLM 裁判的因果校准协议。
+重点推荐通过 Python 灵活构建法律逻辑，以及利用噪声响应校准消除 AI 评审偏见的两项核心突破。
+建议法律科技从业者与关注 AI 决策透明度的读者，从这两篇 8.0 分的精读论文入手提升实战认知。
+- 详情：[/202603/24/README](/202603/24/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [PYTHEN: A Flexible Framework for Legal Reasoning in Python](/202603/24/2603.15317v1-pythen-a-flexible-framework-for-legal-reasoning-in-python)  
+   标签：评分：8.0/10、query:q6
+   evidence：基于Python的可驳回法律推理框架
+2. [Noise-Response Calibration: A Causal Intervention Protocol for LLM-Judges](/202603/24/2603.17172v1-noise-response-calibration-a-causal-intervention-protocol-for-llm-judges)  
+   标签：评分：8.0/10、query:q4
+   evidence：针对LLM裁判和自动标注的校准协议
 
 ### 速读区论文标签
-1. [LexChronos: An Agentic Framework for Structured Event Timeline Extraction in Indian Jurisprudence](/20260223-20260324/2603.01651v1-lexchronos-an-agentic-framework-for-structured-event-timeline-extraction-in-indian-jurisprudence)  
-   标签：评分：10.0/10、query:q1
-   evidence：用于判决预测的智能体框架
-2. [LLM-Assisted Causal Structure Disambiguation and Factor Extraction for Legal Judgment Prediction](/20260223-20260324/2603.11446v1-llm-assisted-causal-structure-disambiguation-and-factor-extraction-for-legal-judgment-prediction)  
-   标签：评分：10.0/10、query:q1
-   evidence：大语言模型辅助的法律判决预测因果要素提取
-3. [Why Avoid Generative Legal AI Systems? Hallucination, Overreliance, and their Impact on Explainability](/20260223-20260324/2603.15937v1-why-avoid-generative-legal-ai-systems-hallucination-overreliance-and-their-impact-on-explainability)  
-   标签：评分：10.0/10、query:profile-1
-   evidence：用于刑事司法决策支持的生成式法律AI
-4. [Legal RAG Bench: an end-to-end benchmark for legal RAG](/20260223-20260324/2603.01710v1-legal-rag-bench-an-end-to-end-benchmark-for-legal-rag)  
-   标签：评分：9.0/10、query:profile-1
-   evidence：法律检索与推理基准
-5. [Can LLMs Synthesize Court-Ready Statistical Evidence? Evaluating AI-Assisted Sentencing Bias Analysis for California Racial Justice Act Claims](/20260223-20260324/2603.04804v1-can-llms-synthesize-court-ready-statistical-evidence-evaluating-ai-assisted-sentencing-bias-analysis-for-california-racial-justice-act-claims)  
-   标签：评分：9.0/10、query:profile-1
-   evidence：大模型辅助量刑偏差分析与法庭证据生成
-6. [A Progressive Visual-Logic-Aligned Framework for Ride-Hailing Adjudication](/20260223-20260324/2603.17328v1-a-progressive-visual-logic-aligned-framework-for-ride-hailing-adjudication)  
-   标签：评分：9.0/10、query:profile-1
-   evidence：自动化裁决与责任纠纷预测
-7. [Interpretable Traffic Responsibility from Dashcam Video via Legal Multi Agent Reasoning](/20260223-20260324/2603.17930v1-interpretable-traffic-responsibility-from-dashcam-video-via-legal-multi-agent-reasoning)  
-   标签：评分：9.0/10、query:q1
-   evidence：将视频转化为法律条款下的责任认定
-8. [LLM-based Argument Mining meets Argumentation and Description Logics: a Unified Framework for Reasoning about Debates](/20260223-20260324/2603.02858v1-llm-based-argument-mining-meets-argumentation-and-description-logics-a-unified-framework-for-reasoning-about-debates)  
-   标签：评分：8.0/10、query:q6
-   evidence：论点挖掘与辩论推理
-9. [SinhaLegal: A Benchmark Corpus for Information Extraction and Analysis in Sinhala Legislative Texts](/20260223-20260324/2603.04854v1-sinhalegal-a-benchmark-corpus-for-information-extraction-and-analysis-in-sinhala-legislative-texts)  
-   标签：评分：8.0/10、query:q5
-   evidence：用于立法文本信息提取和分析的 AI
-10. [Training for Technology: Adoption and Productive Use of Generative AI in Legal Analysis](/20260223-20260324/2603.04982v1-training-for-technology-adoption-and-productive-use-of-generative-ai-in-legal-analysis)  
-   标签：评分：8.0/10、query:q5
-   evidence：大语言模型在法律争点识别与分析中的应用
-11. [Guidelines for the Annotation and Visualization of Legal Argumentation Structures in Chinese Judicial Decisions](/20260223-20260324/2603.05171v1-guidelines-for-the-annotation-and-visualization-of-legal-argumentation-structures-in-chinese-judicial-decisions)  
-   标签：评分：8.0/10、query:q6
-   evidence：司法判决中的法律论证结构
-12. [Legal interpretation and AI: from expert systems to argumentation and LLMs](/20260223-20260324/2603.05392v1-legal-interpretation-and-ai-from-expert-systems-to-argumentation-and-llms)  
-   标签：评分：8.0/10、query:profile-1
-   evidence：法律解释中AI与大模型的演进
-13. [MAWARITH: A Dataset and Benchmark for Legal Inheritance Reasoning with LLMs](/20260223-20260324/2603.07539v1-mawarith-a-dataset-and-benchmark-for-legal-inheritance-reasoning-with-llms)  
-   标签：评分：8.0/10、query:q6
-   evidence：大语言模型在法律继承案件中的推理
-14. [LAMUS: A Large-Scale Corpus for Legal Argument Mining from U.S. Caselaw using LLMs](/20260223-20260324/2603.08286v1-lamus-a-large-scale-corpus-for-legal-argument-mining-from-us-caselaw-using-llms)  
-   标签：评分：8.0/10、query:q6
-   evidence：挖掘司法推理的功能性组成部分
-15. [Legal-DC: Benchmarking Retrieval-Augmented Generation for Legal Documents](/20260223-20260324/2603.11772v1-legal-dc-benchmarking-retrieval-augmented-generation-for-legal-documents)  
-   标签：评分：8.0/10、query:q2
-   evidence：法律文档检索增强生成的基准测试
-16. [Responsible AI in criminal justice: LLMs in policing and risks to case progression](/20260223-20260324/2603.18116v1-responsible-ai-in-criminal-justice-llms-in-policing-and-risks-to-case-progression)  
-   标签：评分：8.0/10、query:profile-1
-   evidence：大语言模型在警务中的应用及其对刑事司法案件进展的影响
-17. [Man and machine: artificial intelligence and judicial decision making](/20260223-20260324/2603.19042v1-man-and-machine-artificial-intelligence-and-judicial-decision-making)  
-   标签：评分：8.0/10、query:q4
-   evidence：司法决策中的AI与刑事司法风险评估
+1. [Bridging National and International Legal Data: Two Projects Based on the Japanese Legal Standard XML Schema for Comparative Law Studies](/202603/24/2603.15094v1-bridging-national-and-international-legal-data-two-projects-based-on-the-japanese-legal-standard-xml-schema-for-comparative-law-studies)  
+   标签：评分：7.0/10、query:q5
+   evidence：计算比较法与法律数据互操作性
+2. [Argumentative Human-AI Decision-Making: Toward AI Agents That Reason With Us, Not For Us](/202603/24/2603.15946v1-argumentative-human-ai-decision-making-toward-ai-agents-that-reason-with-us-not-for-us)  
+   标签：评分：7.0/10、query:q6
+   evidence：用于透明和可验证推理的计算论证
+3. [Halo: Domain-Aware Query Optimization for Long-Context Question Answering](/202603/24/2603.17668v1-halo-domain-aware-query-optimization-for-long-context-question-answering)  
+   标签：评分：7.0/10、query:q2
+   evidence：针对法律审查的领域感知查询优化
+4. [EvidenceRL: Reinforcing Evidence Consistency for Trustworthy Language Models](/202603/24/2603.19532v1-evidencerl-reinforcing-evidence-consistency-for-trustworthy-language-models)  
+   标签：评分：7.0/10、query:profile-1
+   evidence：法律推理中证据一致性的强化学习方法
+5. [LJ-Bench: Ontology-Based Benchmark for U.S. Crime](/202603/24/2603.20572v1-lj-bench-ontology-based-benchmark-for-us-crime)  
+   标签：评分：7.0/10、query:q5
+   evidence：基于法律框架的犯罪类型本体基准测试
+6. [Argumentation for Explainable and Globally Contestable Decision Support with LLMs](/202603/24/2603.14643v1-argumentation-for-explainable-and-globally-contestable-decision-support-with-llms)  
+   标签：评分：6.0/10、query:q6
+   evidence：利用计算论证实现大语言模型的可解释决策支持
+7. [When Names Change Verdicts: Intervention Consistency Reveals Systematic Bias in LLM Decision-Making](/202603/24/2603.18530v1-when-names-change-verdicts-intervention-consistency-reveals-systematic-bias-in-llm-decision-making)  
+   标签：评分：6.0/10、query:q4
+   evidence：大语言模型在高风险领域决策中的偏见检测
+8. [Evaluating the Reliability and Fidelity of Automated Judgment Systems of Large Language Models](/202603/24/2603.22214v1-evaluating-the-reliability-and-fidelity-of-automated-judgment-systems-of-large-language-models)  
+   标签：评分：6.0/10、query:profile-1
+   evidence：使用大语言模型作为裁判的自动判决系统
 
 
 <div class="dpr-home-promo-card">

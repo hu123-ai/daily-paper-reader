@@ -1,0 +1,385 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-24T20:33:34.754214+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 8,
+    "quick_skim_target": 11,
+    "quick_selected": 8
+  },
+  "deep_dive": [
+    {
+      "id": "2603.17172v1",
+      "title": "Noise-Response Calibration: A Causal Intervention Protocol for LLM-Judges",
+      "abstract": "Large language models (LLMs) are increasingly used as automated judges and synthetic labelers, especially in low-label settings. Yet these systems are stochastic and often overconfident, which makes deployment decisions difficult when external ground truth is limited. We propose a practical calibration protocol based on controlled input interventions: if noise severity increases, task performance should exhibit a statistically significant deterioration trend. We operationalize this with a slope-based hypothesis test over repeated trials, using signal-to-noise-ratio (SNR) perturbations for tabular data and lexical perturbations for text data. Across UCI tabular benchmarks and four text classification datasets, we find clear modality-dependent behavior. Our results reveal a modality gap: while text-based judges degrade predictably, the majority of tabular datasets show a lack of statistically significant performance deterioration even under significant signal-to-noise reduction. Interestingly we find that model performance is lower on datasets that are insensitive to noise interventions. We present a reproducible methodology and reporting protocol for robust LLM-judge calibration under distribution shift.",
+      "authors": [
+        "Maxim Khomiakov",
+        "Jes Frellsen"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-17T22:08:06+00:00",
+      "link": "https://arxiv.org/pdf/2603.17172v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "calibration protocol for LLM-judges and automated labeling",
+      "llm_evidence_cn": "针对LLM裁判和自动标注的校准协议",
+      "llm_evidence": "针对LLM裁判和自动标注的校准协议",
+      "canonical_evidence": "针对LLM裁判和自动标注的校准协议",
+      "llm_tldr_en": "Proposes a causal intervention protocol to calibrate LLMs used as automated judges.",
+      "llm_tldr_cn": "提出了一种因果干预协议，用于校准作为自动裁判的大语言模型。",
+      "llm_tldr": "提出了一种因果干预协议，用于校准作为自动裁判的大语言模型。",
+      "llm_tags": [
+        "query:q4"
+      ],
+      "matched_query_tag": "query:q4",
+      "matched_query_text": "judicial decision-making and artificial intelligence",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.15317v1",
+      "title": "PYTHEN: A Flexible Framework for Legal Reasoning in Python",
+      "abstract": "This paper introduces PYTHEN, a novel Python-based framework for defeasible legal reasoning. PYTHEN is designed to model the inherently defeasible nature of legal argumentation, providing a flexible and intuitive syntax for representing legal rules, conditions, and exceptions. Inspired by PROLEG (PROlog-based LEGal reasoning support system) and guided by the philosophy of The Zen of Python, PYTHEN leverages Python's built-in any() and all() functions to offer enhanced flexibility by natively supporting both conjunctive (ALL) and disjunctive (ANY) conditions within a single rule, as well as a more expressive exception-handling mechanism. This paper details the architecture of PYTHEN, provides a comparative analysis with PROLEG, and discusses its potential applications in autoformalization and the development of next-generation legal AI systems. By bridging the gap between symbolic reasoning and the accessibility of Python, PYTHEN aims to democratize formal legal reasoning for young researchers, legal tech developers, and professionals without extensive logic programming expertise. We position PYTHEN as a practical bridge between the powerful symbolic reasoning capabilities of logic programming and the rich, ubiquitous ecosystem of Python, making formal legal reasoning accessible to a broader range of developers and legal professionals.",
+      "authors": [
+        "Ha-Thanh Nguyen",
+        "Ken Satoh"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-03-16T14:10:37+00:00",
+      "link": "https://arxiv.org/pdf/2603.15317v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Python-based framework for defeasible legal reasoning",
+      "llm_evidence_cn": "基于Python的可驳回法律推理框架",
+      "llm_evidence": "基于Python的可驳回法律推理框架",
+      "canonical_evidence": "基于Python的可驳回法律推理框架",
+      "llm_tldr_en": "Introduces PYTHEN, a framework for modeling legal rules and exceptions using Python syntax.",
+      "llm_tldr_cn": "介绍了PYTHEN，一个使用Python语法建模法律规则和例外的框架。",
+      "llm_tldr": "介绍了PYTHEN，一个使用Python语法建模法律规则和例外的框架。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "computational models of legal reasoning",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2603.15094v1",
+      "title": "Bridging National and International Legal Data: Two Projects Based on the Japanese Legal Standard XML Schema for Comparative Law Studies",
+      "abstract": "This paper presents an integrated framework for computational comparative law by connecting two consecutive research projects based on the Japanese Legal Standard (JLS) XML schema. The first project establishes structural interoperability by developing a conversion pipeline from JLS to the Akoma Ntoso (AKN) standard, enabling Japanese statutes to be integrated into international LegalDocML-based legislative databases. Building on this foundation, the second project applies multilingual embedding models and semantic textual similarity techniques to identify corresponding provisions across national legal systems. A prototype system combining multilingual embeddings, FAISS retrieval, and Cross-Encoder reranking generates candidate correspondences and visualizes them as cross-jurisdictional networks for exploratory comparative analysis.",
+      "authors": [
+        "Makoto Nakamura"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-03-16T10:48:01+00:00",
+      "link": "https://arxiv.org/pdf/2603.15094v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "computational comparative law and legal data interoperability",
+      "llm_evidence_cn": "计算比较法与法律数据互操作性",
+      "llm_evidence": "计算比较法与法律数据互操作性",
+      "canonical_evidence": "计算比较法与法律数据互操作性",
+      "llm_tldr_en": "A framework for connecting national and international legal data using XML schemas and multilingual embeddings.",
+      "llm_tldr_cn": "一个利用XML架构和多语言嵌入连接国家和国际法律数据的框架。",
+      "llm_tldr": "一个利用XML架构和多语言嵌入连接国家和国际法律数据的框架。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "artificial intelligence for legal analysis",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.14643v1",
+      "title": "Argumentation for Explainable and Globally Contestable Decision Support with LLMs",
+      "abstract": "Large language models (LLMs) exhibit strong general capabilities, but their deployment in high-stakes domains is hindered by their opacity and unpredictability. Recent work has taken meaningful steps towards addressing these issues by augmenting LLMs with post-hoc reasoning based on computational argumentation, providing faithful explanations and enabling users to contest incorrect decisions. However, this paradigm is limited to pre-defined binary choices and only supports local contestation for specific instances, leaving the underlying decision logic unchanged and prone to repeated mistakes. In this paper, we introduce ArgEval, a framework that shifts from instance-specific reasoning to structured evaluation of general decision options. Rather than mining arguments solely for individual cases, ArgEval systematically maps task-specific decision spaces, builds corresponding option ontologies, and constructs general argumentation frameworks (AFs) for each option. These frameworks can then be instantiated to provide explainable recommendations for specific cases while still supporting global contestability through modification of the shared AFs. We investigate the effectiveness of ArgEval on treatment recommendation for glioblastoma, an aggressive brain tumour, and show that it can produce explainable guidance aligned with clinical practice.",
+      "authors": [
+        "Adam Dejl",
+        "Matthew Williams",
+        "Francesca Toni"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-03-15T22:37:14+00:00",
+      "link": "https://arxiv.org/pdf/2603.14643v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "computational argumentation for explainable decision support with LLMs",
+      "llm_evidence_cn": "利用计算论证实现大语言模型的可解释决策支持",
+      "llm_evidence": "利用计算论证实现大语言模型的可解释决策支持",
+      "canonical_evidence": "利用计算论证实现大语言模型的可解释决策支持",
+      "llm_tldr_en": "Introduces ArgEval for structured evaluation of decision options using computational argumentation.",
+      "llm_tldr_cn": "引入了ArgEval框架，利用计算论证对决策选项进行结构化评估。",
+      "llm_tldr": "引入了ArgEval框架，利用计算论证对决策选项进行结构化评估。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "computational models of legal reasoning",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.15946v1",
+      "title": "Argumentative Human-AI Decision-Making: Toward AI Agents That Reason With Us, Not For Us",
+      "abstract": "Computational argumentation offers formal frameworks for transparent, verifiable reasoning but has traditionally been limited by its reliance on domain-specific information and extensive feature engineering. In contrast, LLMs excel at processing unstructured text, yet their opaque nature makes their reasoning difficult to evaluate and trust. We argue that the convergence of these fields will lay the foundation for a new paradigm: Argumentative Human-AI Decision-Making. We analyze how the synergy of argumentation framework mining, argumentation framework synthesis, and argumentative reasoning enables agents that do not just justify decisions, but engage in dialectical processes where decisions are contestable and revisable -- reasoning with humans rather than for them. This convergence of computational argumentation and LLMs is essential for human-aware, trustworthy AI in high-stakes domains.",
+      "authors": [
+        "Stylianos Loukas Vasileiou",
+        "Antonio Rago",
+        "Francesca Toni",
+        "William Yeoh"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-03-16T21:51:36+00:00",
+      "link": "https://arxiv.org/pdf/2603.15946v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "computational argumentation for transparent and verifiable reasoning",
+      "llm_evidence_cn": "用于透明和可验证推理的计算论证",
+      "llm_evidence": "用于透明和可验证推理的计算论证",
+      "canonical_evidence": "用于透明和可验证推理的计算论证",
+      "llm_tldr_en": "Explores the synergy between LLMs and computational argumentation for contestable AI decision-making.",
+      "llm_tldr_cn": "探索LLM与计算论证的协同作用，以实现可质疑的AI决策。",
+      "llm_tldr": "探索LLM与计算论证的协同作用，以实现可质疑的AI决策。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "computational models of legal reasoning",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.18530v1",
+      "title": "When Names Change Verdicts: Intervention Consistency Reveals Systematic Bias in LLM Decision-Making",
+      "abstract": "Large language models (LLMs) are increasingly used for high-stakes decisions, yet their susceptibility to spurious features remains poorly characterized. We introduce ICE-Guard, a framework applying intervention consistency testing to detect three types of spurious feature reliance: demographic (name/race swaps), authority (credential/prestige swaps), and framing (positive/negative restatements). Across 3,000 vignettes spanning 10 high-stakes domains, we evaluate 11 LLMs from 8 families and find that (1) authority bias (mean 5.8%) and framing bias (5.0%) substantially exceed demographic bias (2.2%), challenging the field's narrow focus on demographics; (2) bias concentrates in specific domains -- finance shows 22.6% authority bias while criminal justice shows only 2.8%; (3) structured decomposition, where the LLM extracts features and a deterministic rubric decides, reduces flip rates by up to 100% (median 49% across 9 models). We demonstrate an ICE-guided detect-diagnose-mitigate-verify loop achieving cumulative 78% bias reduction via iterative prompt patching. Validation against real COMPAS recidivism data shows COMPAS-derived flip rates exceed pooled synthetic rates, suggesting our benchmark provides a conservative estimate of real-world bias. Code and data are publicly available.",
+      "authors": [
+        "Abhinaba Basu",
+        "Pavan Chakraborty"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.CY",
+        "cs.LG"
+      ],
+      "published": "2026-03-19T06:21:08+00:00",
+      "link": "https://arxiv.org/pdf/2603.18530v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "bias detection in LLM decision-making across high-stakes domains",
+      "llm_evidence_cn": "大语言模型在高风险领域决策中的偏见检测",
+      "llm_evidence": "大语言模型在高风险领域决策中的偏见检测",
+      "canonical_evidence": "大语言模型在高风险领域决策中的偏见检测",
+      "llm_tldr_en": "Evaluates systematic bias in LLM decision-making across high-stakes domains using intervention consistency.",
+      "llm_tldr_cn": "利用干预一致性评估大语言模型在高风险领域决策中的系统性偏见。",
+      "llm_tldr": "利用干预一致性评估大语言模型在高风险领域决策中的系统性偏见。",
+      "llm_tags": [
+        "query:q4"
+      ],
+      "matched_query_tag": "query:q4",
+      "matched_query_text": "judicial decision-making and artificial intelligence",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.17668v1",
+      "title": "Halo: Domain-Aware Query Optimization for Long-Context Question Answering",
+      "abstract": "Long-context question answering (QA) over lengthy documents is critical for applications such as financial analysis, legal review, and scientific research. Current approaches, such as processing entire documents via a single LLM call or retrieving relevant chunks via RAG have two drawbacks: First, as context size increases, response quality can degrade, impacting accuracy. Second, iteratively processing hundreds of input documents can incur prohibitively high costs in API calls. To improve response quality and reduce the number of iterations needed to get the desired response, users tend to add domain knowledge to their prompts. However, existing systems fail to systematically capture and use this knowledge to guide query processing. Domain knowledge is treated as prompt tokens alongside the document: the LLM may or may not follow it, there is no reduction in computational cost, and when outputs are incorrect, users must manually iterate.   We present Halo, a long-context QA framework that automatically extracts domain knowledge from user prompts and applies it as executable operators across a multi-stage query execution pipeline. Halo identifies three common forms of domain knowledge - where in the document to look, what content to ignore, and how to verify the answer - and applies each at the pipeline stage where it is most effective: pruning the document before chunk selection, filtering irrelevant chunks before inference, and ranking candidate responses after generation. To handle imprecise or invalid domain knowledge, Halo includes a fallback mechanism that detects low-quality operators at runtime and selectively disables them. Our evaluation across finance, literature, and scientific datasets shows that Halo achieves up to 13% higher accuracy and 4.8x lower cost compared to baselines, and enables a lightweight open-source model to approach frontier LLM accuracy at 78x lower cost.",
+      "authors": [
+        "Pramod Chunduri",
+        "Francisco Romero",
+        "Ali Payani",
+        "Kexin Rong",
+        "Joy Arulraj"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB"
+      ],
+      "published": "2026-03-18T12:34:02+00:00",
+      "link": "https://arxiv.org/pdf/2603.17668v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "domain-aware query optimization for legal review",
+      "llm_evidence_cn": "针对法律审查的领域感知查询优化",
+      "llm_evidence": "针对法律审查的领域感知查询优化",
+      "canonical_evidence": "针对法律审查的领域感知查询优化",
+      "llm_tldr_en": "A system to optimize long-context QA for legal and financial domains by capturing domain knowledge.",
+      "llm_tldr_cn": "一种通过捕获领域知识来优化法律和金融领域长文本问答的系统。",
+      "llm_tldr": "一种通过捕获领域知识来优化法律和金融领域长文本问答的系统。",
+      "llm_tags": [
+        "query:q2"
+      ],
+      "matched_query_tag": "query:q2",
+      "matched_query_text": "large language models in legal applications",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.22214v1",
+      "title": "Evaluating the Reliability and Fidelity of Automated Judgment Systems of Large Language Models",
+      "abstract": "A Large Language Model (LLM) as judge evaluates the quality of victim Machine Learning (ML) models, specifically LLMs, by analyzing their outputs. An LLM as judge is the combination of one model and one specifically engineered judge prompt that contains the criteria for the analysis. The resulting automation of the analysis scales up the complex evaluation of the victim models' free-form text outputs by faster and more consistent judgments compared to human reviewers. Thus, quality and security assessments of LLMs can cover a wide range of the victim models' use cases. Being a comparably new technique, LLMs as judges lack a thorough investigation for their reliability and agreement to human judgment.   Our work evaluates the applicability of LLMs as automated quality assessors of victim LLMs. We test the efficacy of 37 differently sized conversational LLMs in combination with 5 different judge prompts, the concept of a second-level judge, and 5 models fine-tuned for the task as assessors. As assessment objective, we curate datasets for eight different categories of judgment tasks and the corresponding ground-truth labels based on human assessments. Our empirical results show a high correlation of LLMs as judges with human assessments, when combined with a suitable prompt, in particular for GPT-4o, several open-source models with $\\geqslant$ 32B parameters, and a few smaller models like Qwen2.5 14B.",
+      "authors": [
+        "Tom Biskupski",
+        "Stephan Kleber"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-03-23T17:12:29+00:00",
+      "link": "https://arxiv.org/pdf/2603.22214v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "automated judgment systems using LLMs as judges",
+      "llm_evidence_cn": "使用大语言模型作为裁判的自动判决系统",
+      "llm_evidence": "使用大语言模型作为裁判的自动判决系统",
+      "canonical_evidence": "使用大语言模型作为裁判的自动判决系统",
+      "llm_tldr_en": "Investigates the reliability of using LLMs as automated judges for evaluating model outputs.",
+      "llm_tldr_cn": "研究了使用大语言模型作为自动裁判来评估模型输出的可靠性。",
+      "llm_tldr": "研究了使用大语言模型作为自动裁判来评估模型输出的可靠性。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.19532v1",
+      "title": "EvidenceRL: Reinforcing Evidence Consistency for Trustworthy Language Models",
+      "abstract": "Large Language Models (LLMs) are fluent but prone to hallucinations, producing answers that appear plausible yet are unsupported by available evidence. This failure is especially problematic in high-stakes domains where decisions must be justified by verifiable information. We introduce \\textbf{EvidenceRL}, a reinforcement learning framework that enforces evidence adherence during training. EvidenceRL scores candidate responses for grounding (entailment with retrieved evidence and context) and correctness (agreement with reference answers) and optimizes the generator using Group Relative Policy Optimization (GRPO). We evaluate across two high-stakes domains, cardiac diagnosis and legal reasoning, where EvidenceRL consistently improves evidence grounding and faithfulness without sacrificing task accuracy. On cardiac diagnosis, F1@3 increases from 37.0 to 54.5 on Llama-3.2-3B while grounding ($G_{\\max}@3$) rises from 47.6 to 78.2; hallucinations drop nearly 5$\\times$ and evidence-supported diagnoses increase from 31.8\\% to 61.6\\%. On legal reasoning, EvidenceRL raises Faithfulness from 32.8\\% to 67.6\\% on Llama-3.1-8B, demonstrating consistent behavioral change across domains. Our code is open-sourced at https://github.com/Wizaaard/EvidenceRL.git.",
+      "authors": [
+        "J. Ben Tamo",
+        "Yuxing Lu",
+        "Benoit L. Marteau",
+        "Micky C. Nnamdi",
+        "May D. Wang"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.IR",
+        "cs.LG"
+      ],
+      "published": "2026-03-20T00:12:56+00:00",
+      "link": "https://arxiv.org/pdf/2603.19532v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Reinforcement learning for evidence consistency in legal reasoning",
+      "llm_evidence_cn": "法律推理中证据一致性的强化学习方法",
+      "llm_evidence": "法律推理中证据一致性的强化学习方法",
+      "canonical_evidence": "法律推理中证据一致性的强化学习方法",
+      "llm_tldr_en": "Proposes EvidenceRL to improve grounding and correctness in high-stakes domains like legal reasoning.",
+      "llm_tldr_cn": "提出EvidenceRL，旨在提高法律推理等高风险领域中的证据基础和正确性。",
+      "llm_tldr": "提出EvidenceRL，旨在提高法律推理等高风险领域中的证据基础和正确性。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.20572v1",
+      "title": "LJ-Bench: Ontology-Based Benchmark for U.S. Crime",
+      "abstract": "The potential of Large Language Models (LLMs) to provide harmful information remains a significant concern due to the vast breadth of illegal queries they may encounter. Unfortunately, existing benchmarks only focus on a handful types of illegal activities, and are not grounded in legal works. In this work, we introduce an ontology of crime-related concepts grounded in the legal frameworks of Model Panel Code, which serves as an influential reference for criminal law and has been adopted by many U.S. states, and instantiated using Californian Law. This structured knowledge forms the foundation for LJ-Bench, the first comprehensive benchmark designed to evaluate LLM robustness against a wide range of illegal activities. Spanning 76 distinct crime types organized taxonomically, LJ-Bench enables systematic assessment of diverse attacks, revealing valuable insights into LLM vulnerabilities across various crime categories: LLMs exhibit heightened susceptibility to attacks targeting societal harm rather than those directly impacting individuals. Our benchmark aims to facilitate the development of more robust and trustworthy LLMs. The LJ-Bench benchmark and LJ-Ontology, along with experiments implementation for reproducibility are publicly available at https://github.com/AndreaTseng/LJ-Bench.",
+      "authors": [
+        "Hung Yun Tseng",
+        "Wuzhen Li",
+        "Blerina Gkotse",
+        "Grigorios Chrysos"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-21T00:02:51+00:00",
+      "link": "https://arxiv.org/pdf/2603.20572v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "ontology-based benchmark grounded in legal frameworks for crime types",
+      "llm_evidence_cn": "基于法律框架的犯罪类型本体基准测试",
+      "llm_evidence": "基于法律框架的犯罪类型本体基准测试",
+      "canonical_evidence": "基于法律框架的犯罪类型本体基准测试",
+      "llm_tldr_en": "Introduces LJ-Bench, a benchmark grounded in legal frameworks to evaluate LLM robustness against illegal queries.",
+      "llm_tldr_cn": "推出了LJ-Bench，一个基于法律框架的基准，用于评估LLM对非法查询的鲁棒性。",
+      "llm_tldr": "推出了LJ-Bench，一个基于法律框架的基准，用于评估LLM对非法查询的鲁棒性。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "artificial intelligence for legal analysis",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
