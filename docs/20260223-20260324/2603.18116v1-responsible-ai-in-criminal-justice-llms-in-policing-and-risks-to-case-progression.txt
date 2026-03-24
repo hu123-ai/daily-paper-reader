@@ -1,0 +1,462 @@
+Title: Responsible AI in criminal justice: LLMs in policing and risks to case progression
+
+URL Source: https://arxiv.org/pdf/2603.18116v1
+
+Published Time: Fri, 20 Mar 2026 00:06:40 GMT
+
+Number of Pages: 29
+
+Markdown Content:
+# Responsible AI in criminal justice: LLMs in policing and risks to case progression 
+
+> Journal Title XX(X):1–29
+> ©The Author(s) 0000 Reprints and permission: sagepub.co.uk/journalsPermissions.nav DOI: 10.1177/ToBeAssigned www.sagepub.com/
+
+SAGE 
+
+# Muffy Calder 1, Marion Oswald 2, Elizabeth McClory-Tiarks 3,Michele Sevegnani 1 and Evdoxia Taka 1
+
+Abstract 
+
+There is growing interest in the use of Large Language Models (LLMs) in policing, but there are potential risks. We have developed a practical approach to identifying risks, grounded in the policing and legal system of England and Wales. We identify 15 policing tasks that could be implemented using LLMs and 17 risks from their use, then illustrate with over 40 examples of impact on case progression. As good practice is agreed, many risks could be reduced. But this requires effort: we need to address these risks in a timely manner and define system wide impacts and benefits. 
+
+# 1 Introduction 
+
+The rapid growth of Artificial Intelligence (AI) over the last decade [56] has included significant advances in the field of foundation models – models trained on massive and diverse data sets to perform a wide range of tasks. Specifically, Large Language Models (LLMs) are foundation models trained on vast text corpora, becoming “one of the fastest – if not the fastest – adopted technologies in history” [20]. Policing is no exception as a domain for this technology adoption. There is growing interest in the use of LLM-based tools and increasing availability of in-house and commercial tools, and in some countries, e.g. some states in USA, there is emerging interest in regulation [28, 15, 47].  
+
+> 1
+
+School of Computing Science, University of Glasgow  
+
+> 2
+
+School of Law, University of Northumbria  
+
+> 3
+
+School of Law, University of Newcastle 
+
+Corresponding author: 
+
+Muffy Calder, School of Computing Science, University of Glasgow, Glasgow G12 8RZ, UK Email: muffy.calder@glasgow.ac.uk   
+
+> Prepared using sagej.cls [Version: 2017/01/17 v1.20]
+> arXiv:2603.18116v1 [cs.CY] 18 Mar 2026
+
+2 Journal Title XX(X) 
+
+This motivates us to identify and understand the risks of introducing LLM-based tools. Specifically, the use of AI in this context brings risks in terms of case progression – the management of a legal case as it moves through the criminal justice system. Obvious and well-known examples include hallucinations, omissions, and biases, but we propose there are more risks and their impacts on case progression can be very specific to this context. While assessing software generated outputs in the UK criminal justice system is not a new problem ( cf. post-office horizon system [1]), there is a need for clear guidance in the context of AI. This is indicated by the recent (UK) Ministry of Justice call for evidence [11] and the Criminal Justice Joint Inspectorate report on Joint Case Building by the Police and Crown Prosecution Service (CPS) [12], which calls for improved handling and management of cases between the police and the CPS and mitigations for the risks of using AI. While there is high level guidance for policing (e.g. [8] in the UK), and on broader concepts such as human rights, data protection, privacy, and right to a fair trial [52]; we perceive a current gap concerning specific, practical risks to case progression, which all tool users need to take seriously. We aim to address that gap and the overarching research question we address is: what are the possible risks and adverse impacts of deploying LLM-based tools on case progression in England and Wales? 
+
+We focus on risks that might have an adverse impact on case progression, i.e. adversely impacting decisions so that a case progresses when it should not; or does not progress when it should. For example, an LLM might add content to a witness statement, making an otherwise weak case appear stronger. This could lead to a decision to charge, when otherwise the result would be no further action - so the case might progress, when it should not. Similarly, an LLM might add content to an otherwise strong case and if this addition is identified by the defence and challenged, it may cast doubt on the reliability of the witness and could undermine the case - so a case may then end up not progressing, when it should. While grounded in policing in England and Wales, our findings may be relevant in other jurisdictions. We address the research question in two steps. First, we identify a variety of policing tasks where the tools could be used, or experimentation is already taking place in some police forces, across several stages of the criminal justice system. The time frame for potential use of these tools is the near future, i.e. next five years. Example tasks include policy retrieval, intelligence summarisation, statement transcription and translation, form filling, and statement generation. Productivity and general administrative tasks are not considered. We consider features and capabilities that might be involved, rather than specific tools. Second, we identify potential, practical risks of using these tools in policing and impacts on case progression. The examples are grounded in the legal system in England and Wales.  
+
+> Prepared using sagej.cls
+
+Calder et al 3
+
+# 1.1 Research contribution 
+
+This is a first of its kind systematic study of the risks and impacts of LLM-based tools on case progression. Addressing these risks will not only improve case management in the context of AI, but reviewing them could also serve as a valuable guide for defence lawyers. The risks can also guide future regulation and technical developments, e.g. towards tools that are less likely to impact negatively on case progression. Specific research contributions are: 
+
+• Identification of 15 example policing tasks that could be implemented using LLM-based tools, across four stages of the criminal justice system. These are plausible scenarios that could be adopted within the next five years, many are already in the proof of concept or trial stage [55]. 
+
+• Categorisation of risks of using LLM-based tools for these tasks, relating to the tool outputs, inputs, evaluation, and systems engineering. 
+
+• Identification of 17 risks, distributed across the four categories. 
+
+• 42 example impacts, arising from the identified risks and tasks, illustrating that the risks are not abstract concepts but can have real-world impacts on case progression. 
+
+# 1.2 Organisation of paper 
+
+Background on AI and related work is given in Section 2, and a framework that identifies 8 stages of the criminal justice system is outlined in Section 3. This is relied on to consider the potential for impact on case progression beyond the policing stages. The example policing tasks are defined in Section 4 and the risks, with example impacts, are outlined in Section 5. Discussion of the significance of the risks follows in Section 6, with conclusions in Section 7. The Appendix contains a list of the risks. 
+
+# 2 Background and related work 
+
+# 2.1 From language models (LMs) to large language models (LLMs) 
+
+Language models are models trained on text data (in an unsupervised way, i.e. without providing any labels for the text training data) for natural language processing tasks, especially language generation. They have evolved significantly over the last two decades leading to four generations of models [25]. The first generation is pure task-specific statistical models (i.e. n-gram models [38]) for (next or missing) word prediction. The second generation is models that exploit neural networks (i.e. a special type of machine learning model, which trains layers of artificial neurons to perform a task similarly to how the brain does - thus, called a deep learning model) to create word representations for task-agnostic feature learning (e.g. Word2Vec [35] is a commonly used such model). The third generation is models that exploit transformers [58] to create context-aware word representations, and are pre-trained on vast datasets (e.g. generative pre-trained transformers (GPTs) like GPT 1 and 2). These models  
+
+> Prepared using sagej.cls
+
+4 Journal Title XX(X) 
+
+allow task-transferable problem solving through fine-tuning (i.e. adapting the pre-trained model for a specific task through further training on a smaller dataset that directly reflects this task [18]). The fourth generation is “general-purpose task solvers” large language models (LLMs) with prompt-based user-model interaction to solve a wide range of real-world tasks (e.g. GPT 3/4, Claude). This transition from simple language models (LMs) to scaling large language models (LLMs), and the increasing task solving capacity of language models [25], are attributed to the emergence of new techniques (e.g. transformers) and the increase in the size (i.e. number of parameters) of models. The prompt interfaces enable the general user to interact with the LLMs usually to achieve a desired task. A prompt is user-provided text-based input for the language model [40]. It is usually phrased as a query or command to achieve the desired tasks. It can contain longer statements to describe the context (e.g. a character for the LLM to mimic), provide instructions, or refer to the conversation history. The prompt might also contain multimedia (images, videos, or audio) or any other type of input data and query something based on them. Examples of expected outputs can be also included in the prompt, and depending on the number of examples provided, we differentiate between zero-, one-, and few-shot prompting [49]. Prompt engineering refers to the process of writing the prompt, e.g. how to phrase the query, specify the style, choose the words, grammar, contextual details, examples etc. to include, and strategies for effective prompting that lead to high-quality and relevant outputs [29]. We expect most of the tools used in policing to be based upon commercially available, general and pre-trained LLMs. These could be fine-tuned for the policing domain, though such fine-tuning is rare (one exception is academic research on predictive policing using data in the United States [51]). Currently, LLMs, with their increasing size, can rival the fine-tuned, pre-trained language models in performance for various complex tasks simply through (zero- or few-shot) prompting [31]. LLMs provide a broad linguistic foundation for tasks such as text generation and question answering, but it is important to acknowledge that their reasoning is fundamentally distinct from human and symbolic logical inference. Thus, they can generate misleading or factually incorrect content, commonly referred to as “hallucinations” [23], and they may struggle to maintain logical consistency throughout an extended discourse [37]. A recent technique that blends LLMs with information retrieval is sometimes used to mitigate the hallucination issue. Namely, Retrieval Augmented Generation (RAG) connects LLMs to external knowledge sources (repositories) through retrieval mechanisms, allowing an LLM to access and utilise additional information in the repository. Responses to prompts may include enumeration of the sources (i.e. citations to documents) and there is a prioritisation of content in the repository over trained content, thus allowing LLMs to be augmented by new content without re-training. While RAG improves accuracy and reduces  
+
+> Prepared using sagej.cls
+
+Calder et al 5
+
+risk of hallucination, the latter is still possible in RAG, for example, due to (document) retrieval failure or generation bottleneck [23]. 
+
+# 2.2 LLMs beyond text generation 
+
+Language models traditionally are text-to-text models, namely models that take text as an input, process it and generate some new text as an output. LLMs could be used for any text-related task like text summarization, language translation, conversational agents (e.g. chatbots), literature review etc. LLMs can also be used as an extra modality within multi-modal systems (i.e. a system that involves different types of data or methods) with the purpose to enhance the performance of the overall system. There are increasing scenarios where LLMs can be used for pre- or post-processing. For example, LLMs could be used in automatic speech recognition (ASR) tools: the transcripts generated by the speech-to-text ML model are inserted to a fine-tuned LLM to fix errors, e.g. in spelling, grammar etc. or speaker diarisation (i.e. allocations of text to speakers) [46, 60, 22]. The newest generation of AI models consist mainly of multimodal LLMs ,i.e. models that are capable of processing and generating multiple types of data, e.g. text, audio, image, video by exploiting the power of pre-trained core LLMs. The multimodal LLMs convert the inputs of different data type including the user-provided text instructions into numerical representations called embeddings and then align these into a common space. This allows a core LLM model to analyse and understand the relationships between diverse inputs and answer questions about multimodal inputs or generate multimodal responses. Multimodal LLMs can perform tasks beyond a language focus, e.g. image or audio captioning, charts explanation, information searches in videos, optical character recognition, spoken responses generation, image generation from text description etc. [61, 24, 21]. 
+
+# 2.3 Related work 
+
+While there is increasing awareness of generic risks of using LLMs (e.g. as mentioned in Section 1) there appears to be little work focussed on LLM-based policing tools, especially in the context of case progression. A notable exception is the evaluation [59] of the Hertfordshire Constabulary proof of concept ADA 
+
+tool that employed LLMs to generate a MG11 police witness statement form, which documents witness accounts of events in a structured and formal manner. The evaluation is based on user and stakeholder interviews, focussing on analysis of the quality and linguistic style of the AI output and productivity and process performance. The analysis is based on a comparison between the quality of reports produced by humans and the tool (though not on reports generated from the same set of data). The evalution contains useful definitions of quality and insights into hallucinations, which we will discuss further in Section 5.  
+
+> Prepared using sagej.cls
+
+6 Journal Title XX(X) 
+
+# 3 Criminal justice context 
+
+The wider context of the criminal justice process is useful to consider, particularly as LLM-based tools used for policing tasks could have an impact at later stages of the process, e.g. affecting the admissibility or weight of evidence adduced at trial. There are a number of different bodies and stages which make up the Criminal Justice System (CJS) in England and Wales, and no single model of the system and components; here we adopt the following framework, breaking the process down into 8 stages: (1) Community policing and offender management; (2) Intelligence; (3) Investigation; (4) Charging decision or alternative disposal; (5) Trial or guilty plea; (6) Sentencing; (7) Prison and parole; (8) Probation. The first three stages involve policing and are where the LLM-based tools could be used directly; they may be used indirectly in stages 4 and 5, through influencing decision-making at these stages, and/or constituting evidential material. Community policing and offender management 
+
+involves the police co-operating with community groups and multi-agency approaches targeted at tackling persistent offenders and/or offenders assessed as being at high risk of reoffending. Intelligence is the use of information given to or collected by police to initiate or support ongoing investigations. The Investigation stage is where police collect and consider evidence to investigate the alleged offence, e.g. collecting witness statements or risk and threat assessments, interviewing the suspect, considering any digital (e.g. data from computers or phones) or forensic (e.g. DNA) information as potential evidence. The Charging decision can be made by police for less serious offences, or police can offer an alternative disposal , such as a caution or penalty notice. The Crown Prosecution Service (CPS) makes the charging decision for more serious offences. This involves two stages: the evidential stage ,i.e. consideration of whether there is enough admissible and reliable evidence for a realistic prospect of conviction; and the public interest stage , i.e. consideration of whether a prosecution is required in the public interest, taking into account factors such as the seriousness of the crime and the suspect’s age and maturity. Where a decision to charge a person is made, the case will go to court for an initial hearing. All cases involving an adult defendant start in the magistrates’ court ∗. More serious cases will be sent to the Crown Court, but over 90% of all criminal cases will be concluded in the magistrates’ court. If the defendant enters a guilty plea , the case will then move on to the 
+
+sentencing stage. If the defendant pleads not guilty, there will be a trial held in the magistrates’ court or Crown Court, depending on the seriousness of the offence. In the magistrates’ court , there is no jury and decisions on questions of both law and fact are made by the district judge or lay magistrates hearing the case. In the Crown Court, decisions about law are made by the Crown Court  
+
+> ∗We will focus on the process for adult defendants. There are differences in how youth court trials are run and different alternative disposals and sentencing options available for defendants aged under 18.
+> Prepared using sagej.cls
+
+Calder et al 7
+
+judge and decisions about fact, including whether the defendant is guilty or not, are made by the jury. This means that where issues of law arise during a trial process, the jury can be sent out and a decision is made by the judge in their absence, e.g. about the admissibility of evidence. In contrast, a district judge or lay magistrates will make these decisions. Where they make a decision that evidence is inadmissible during the course of a trial, they have to disregard it when making a decision as to guilt in the magistrates’ court, but could still be influenced by having seen or heard that inadmissible evidence. If the defendant is found guilty, the case will move to the sentencing 
+
+stage. This may not be on the same day, depending on whether there is more information needing to be gathered about the defendant, e.g. a pre-sentence report (which will include a risk assessment) prepared by probation. In the magistrates’ court, the district judge or lay magistrates will decide on sentence; in the Crown Court, the judge will decide on sentence – the jury plays no part in sentencing. There are a number of different sentences available, including prison , in which case a decision will need to be made about the category of prison that the defendant should initially be sent to. This involves assessing risk and may make use of a previous risk assessment carried out by probation for any pre-sentence report. When a prisoner becomes eligible for parole , a decision will be made about whether they are able to be released on licence (this also involves an assessment of risk) – in which case they will be managed in the community by probation. Crimes committed in prison can be dealt with by the Prison Adjudication System, where an adjudication process – which is similar to a trial, but with fewer procedural safeguards – may be held to determine guilt and decide punishment. Punishments include additional days imprisonment, cell confinement or loss of privileges. Alternatively, a more serious crime may be referred to the police. A protocol is in place for determining how a crime committed in prison should be dealt with [45]. Where a defendant is sentenced to a non-custodial sentence, they may require management and supervision by probation in the community, for example where they are subject to a community order with particular requirements, e.g. unpaid work or electronic monitoring. We note there could be a number of different contexts and reasons why the progression of a case could be adversely impacted at different stages of the CJS, i.e. might not progress when it should; or might progress when it should not. For example, a case might not progress at the intelligence stage due to a piece of information being missed or misinterpreted, and at the trial stage, a key witness’s credibility might be undermined by inaccuracies in their witness statement, undermining the case and leading to an acquittal. Misinterpreted information at the intelligence stage or inaccuracies contained in a witness statement could also lead to a case progressing when it should not, where these errors make a case appear stronger than it is. This could lead to decisions to progress an investigation or charge a suspect, when no further action should have been taken.  
+
+> Prepared using sagej.cls
+
+8 Journal Title XX(X) 
+
+# 4 Policing tasks that could involve LLM-based tools 
+
+We identify 15 policing tasks that could be implemented using LLM-based tools, across the first four CJS stages. The list is not exhaustive, but is indicative of features and capabilities that could be adopted within the next five years. It is informed by literature reviews and research on mapping the current use of AI tools in UK policing [55]. Examples of some tools are already in the proof of concept or trial stage. We have tried to avoid repetition therefore while some tools/tasks could appear in more than one stage, we have only mentioned them once. 
+
+# 4.1 Community policing and offender management 
+
+• A policy aid for officers – answering policy queries from policing policy and regulation repositories/ knowledge bases (e.g. PACE † codes of practice, etc.) with retrieval-augmented generation (RAG) . Such a RAG could be mobile, i.e. accessed in real-time on a hand-held device. 
+
+# 4.2 Intelligence 
+
+There are several tasks that involve summarisation, search, or redaction. 
+
+• Document summarisation of one or more (text) reports. 
+
+• Visual representation summarisation, for example using an LLM to summarise trends in a graphic. 
+
+• Video summarisation, for example using LLMs to translate video frames from body worn cameras into sequences of captions and then assess relative importance of each frame. 
+
+• Video search interface for frames matching a description of a person or object, for example, search for “person on a bicycle”. 
+
+• Redaction of text from documents, objects or text from images, or frames from video. 
+
+# 4.3 Investigation 
+
+There are several tasks concerning witness/victim interviews and statements. These are more fine grained than those listed for the previous two stages, and consequently they are more numerous. This reflects both the wide variety of uses of text in investigations and the breadth of a number of current proof-of-concepts trials, though note that some tasks, e.g. transcription and translation, may also occur in the previous two stages. 
+
+• Transcription of an audio witness/victim interview to text. 
+
+• Text translation of a (text) witness/victim interview transcript in one natural language to English.  
+
+> †PACE (Police and Criminal Evidence Act 1984) regulates police powers and protects public rights in the UK.
+> Prepared using sagej.cls
+
+Calder et al 9
+
+• Question generation for a witness or victim, in the context of a specific offence. 
+
+• Generation of a witness/victim statement in chronological order (e.g. for a MG11), from an (text) interview transcript. 
+
+• Key word generation from a witness interview statement or summary. 
+
+• Corroborations generation from a set of (text) witness statements, i.e. corroborating text from different statements. 
+
+• Generation of the points to prove that have not been addressed in a witness statement, for a specific offence. Points to prove are key to charging decisions and are specific to the offence. 
+
+• Generation of answers to risk assessment questions in a specific template (e.g. DARA ‡), or from a (text) witness interview transcript or statement. 
+
+# 4.4 Charging decision 
+
+The main task concerns the generation of reports. 
+
+• Generation of a police report e.g. a MG5, which summarises the details of a case and is prepared in advance of the charging decision. This would form the basis of the prosecution in the event of a guilty plea. 
+
+# 5 Risks 
+
+There are several known categorisations of risks. Three relevant examples include the technical risk factors, individual harm risks factors, systemic risk factors of the AI in our Justice System, 2025 report [19] created by JUSTICE, a UK charity organization; the SSAFE-D Principles (Sustainability, Safety, accountability, Fairness, Data Stewardship) and Context-Based Risk Assessment (COBRA) from the Alan Turing Institute Guide to ethical and responsible design, development, and deployment of Artificial Intelligence, 2023 [33]; and the five cross-sectoral principles set out in the UK Government’s 2023 AI White Paper [30]: safety, security and robustness; appropriate transparency and explainability; fairness; accountability and governance; contestability and redress. But none of these are helpful in addressing our question: what are the possible risks and impacts of deploying LLM-based tools 
+
+on case progression ? In other words, this is a systems issue: what is the impact of introducing a new tool , at a given stage, on this and subsequent stages in a 
+
+process ?We have therefore proposed four categories of risks relating to tool outputs ,
+
+inputs , evaluation , and systems engineering (see Fig. 1). These categories could apply to the introduction of any tool (whether or not AI) because we have focussed on what we can observe : the outputs and inputs to the tool, how to evaluate whether the tool is fit-for-purpose, and how the tool has been engineered.  
+
+> ‡Domestic Abuse Risk Assessment tool https://www.dashriskchecklist.com/
+> Prepared using sagej.cls
+
+10 Journal Title XX(X)  
+
+> Figure 1. Four categories of risk of deploying a LLM-based tool: inputs, outputs, evaluation, and systems engineering.
+
+We have identified seventeen risks. Many of the risks are well-known consequences of properties of LLMs – properties that are intrinsic (i.e. inherent to the model itself) or extrinsic (i.e. dependent on external context or inputs, e.g. training data), but others have been identified because of a specific relevance in the criminal justice system. In each case, we focus on aspects that could be relevant to case progression, rather than more high level, generic concepts such as human rights, data protection or privacy implications. Not surprisingly, we find there are substantially more risks associated with the outputs category, compared with the other categories. For each risk, we give an outline and then one or more examples relating to the tasks mentioned above and a description of potential impacts. For some examples, we give a suggested mitigation. The risks are repeated, as a simple list, in the Appendix. 
+
+# 5.1 Outputs 
+
+5.1.1 Completeness This is one of the most substantial risks and refers to the potential for (erroneous) omissions or additions in the outputs that have been generated. We note that in the context of statements, identifying when information has been omitted or overlooked, or added by a “hallucination”, relies, in part, on the memory of the interviewer and participant(s). On the other hand, we also note that omissions, in particular, are possible even when there is no use of AI, so the use of an automated tool may motivate greater attention to the possibility. Omissions or additions produced by an LLM-based tool could weaken an otherwise strong case, or strengthen an otherwise weak case. Where such information feeds into charging decisions, it could lead to otherwise weak cases progressing where a suspect should have had no further action taken against them; and where a case is weakened by invented or misleading information, it could lead to a suspect being undercharged (charged with a lesser offence), or not being charged at all. Once a charging decision has been made and the defence have been served evidence relating to a case, omissions or additions contained in  
+
+> Prepared using sagej.cls
+
+Calder et al 11 
+
+that evidence might influence the advice defence barristers or solicitors provide to their clients about the strength of the case against them – potentially affecting decisions about going to trial or pleading guilty. Case progression could be impacted at the trial stage where omissions or additions from an LLM-based tool are contained in a witness’s statement. This is clearly the case where erroneous additions find their way into the final witness statement, but even if errors are identified and rectified prior to the statement being finalised, the version with the LLM’s “invented” evidence should be included as a draft on the schedule of unused material. It could therefore be relied on by the defence to suggest that different information was initially provided by the witness and therefore cast doubt on the reliability of the witness’s evidence. 
+
+Example 1. “Hallucinations” may be additions, and one such addition was uncovered in a generated witness statement from the ADA proof of concept tool (reported in [59], page 38). The generated statement included the (hallucination) text “she is a woman of average height and brown hair”, which was a clear addition because no description of the woman was given during the interview. 
+
+Example 2. If a witness or victim uses a profanity, this could be omitted from a transcription, a translation, or summary, as a result of LLM safeguards or guardrails [26]. 
+
+Example 3. Poor context and design of a prompt (or prompt conversation), could impact text or video summarisations or corroborations generation, leading to the omission of information at the intelligence stage. These examples could impact significantly on the integrity of evidence and/or influence directions taken in the intelligence and investigation stages. However, an omission might have little impact if it occurred during use of a tool that provides a new capability. This is illustrated by the following example. 
+
+Example 4. There is a risk that as a result of a video search, e.g. for “person on a bicycle”, some relevant frames are not returned. But, there may be such a huge volume of video data that without automation, they could not be searched within a reasonable timeframe, e.g. it might take several weeks to carry out the search manually. So, the return of any frames could be considered to be favourable to the alternative, which is no frames at all. 
+
+5.1.2 Accuracy This is another substantial risk and it refers to generated content being correct . There may be several causes of this risk and it may be  
+
+> Prepared using sagej.cls
+
+12 Journal Title XX(X) 
+
+difficult to identify the cause, depending on the task involved. The following examples illustrate the range of potential causes. 
+
+Example 5. There may be a “factuality” hallucination [23], these are instances where the LLM generates information that is factually incorrect or not supported by (real-world) evidence. Examples include references to events that did not occur in a generated witness statement, or to a legal precedence that did not occur. This may impact the integrity of evidence and/or legal process. A recent, real-life and high profile example of the impact of inaccuracies on police decision-making is the decision to ban Maccabi Tel Aviv fans from a football match in 2025. Some of the intelligence that informed this decision was subsequently revealed as inaccurate [5], and the case attracted national media attention [2]. A letter from the West Midland Chief Constable [3], states “the erroneous result concerning the West Ham v Maccabi Tel Aviv match arose as result of a use of Microsoft Co Pilot. . . [we had] understood that the West Ham match had only been identified through the use of Google.” 
+
+Example 6. Errors may result from ambiguity or poor context and design of a prompt (or prompt conversation), which could impact text or video summarisations or corroborations generation, leading again to issues with the integrity of evidence. 
+
+Example 7. A translation tool may erroneously replace or rephrase offensive language in a witness or victim statement, which may impact on the integrity of evidence. 
+
+Example 8. Using an LLM in a post-processing step to fix errors in wording or speaker diarization in transcripts generated by automatic speech recognition tools can lead to a higher number of (new) errors [46] if the LLM is not fine-tuned [22, 60]. As with omissions or additions, inaccurate content generated by an LLM-based tool could affect the integrity of charging decisions and also adversely impact the advice given to defendants about the case against them. Where inaccuracies find their way into witness statements, then - as with omissions and additions - this may result in the witness’s credibility being undermined during cross-examination. Note that a barrister has a duty to promote their client’s interests, so far as that is consistent with the law and their overriding duty to the court. In the adversarial system in England and Wales, it is part of the role of a defence barrister to promote the defendant’s case and undermine the prosecution case. This will involve identifying inaccuracies and inconsistencies in  
+
+> Prepared using sagej.cls
+
+Calder et al 13 
+
+the prosecution evidence and cross-examining the relevant prosecution witness accordingly. 
+
+5.1.3 Timeliness of training and repository data LLMs learn from data sets that represent knowledge available at the time of their creation. A risk is that the content or emphasis in generated outputs may be outdated. 
+
+Example 9. A (RAG) policy aid may include out of date information, which could result in breach of PACE Codes of Practice. While this does not 
+
+automatically mean exclusion of evidence, it could potentially lead to a stay of proceedings for abuse of process (i.e. criminal proceedings are stopped); civil/criminal proceedings brought against police; or disciplinary proceedings against officers. 
+
+Example 10. There is a risk that video summarisation may order the relative importance of frames according to outdated information (e.g. that does not include recent, related terrorist events). This could influence intelligence directions. 
+
+Example 11. A visual representation summarisation may be outdated or not reflect current best practice, e.g. the use of an inappropriate infographic could influence intelligence directions. 
+
+Example 12. Question generation, in the context of specific offence, may not take into account recent legal outcomes or guidance, impacting the integrity of evidence. 
+
+5.1.4 Linguistic style These risks range from basics such as poor grammar and spelling, to more sophisticated concepts such as poor fluidity, fluency, coherence, and readability, and the imposition of possibly inappropriate or unauthentic styles. 
+
+Example 13. LLM safeguards may remove offensive language (see also 5.1.1) and thus reduce fluency and readability, and thereby impact integrity of evidence. The precise wording used may be essential to establishing an element of the offence, e.g. an assault, or to establishing other important information bearing on the offence, e.g. things said by the suspect on arrest, or what was said by a police officer when arresting a suspect - which may have particular relevance in certain cases, such as where a defendant is charged with resisting a police constable in the execution of their duty.  
+
+> Prepared using sagej.cls
+
+14 Journal Title XX(X) 
+
+Example 14. Where there are multiple police officers at the scene of an incident, their raw witness statements can often be formulaic and similar. After processing by an LLM, there is a risk they could become (near) identical, providing defence advocates with cross-examination material, namely, comparing two officers’ statements about the same incident and suggesting collusion rather than independent versions of events. 
+
+Example 15. Any generated content may impose styles that obscure, minimise, or remove human emotion and sentiments [63], impacting the integrity of evidence and direction of intelligence. For example, using a LLM as an interview post-processing step may fail to retain and reflect a victim’s emotional tone of speech during their interview. 
+
+Example 16. As raised above in relation to completeness and accuracy, there is a risk that a witness’s evidence in chief (the witness’s own evidence about the case) is markedly different to the (generated) witness statement. If so, defence barristers could cross examine the witness on this point. This is done to undermine the credibility of the witness and may have adverse implications on the trial if sufficient doubt over the witness’s evidence can be raised. 
+
+5.1.5 Cultural Language Misinterpretations LLMs have been found to struggle in translation with idiom- or dialect-related misinterpretations attributed to cultural differences [54, 62], this presents a risk to any task that involves witness input, e.g. speech or text. 
+
+Example 17. Summarisation and transcription tools may not have been trained on local dialect and colloquialisms, and so there is a risk that some phrases may be incorrectly, or at best inappropriately, represented in the generated output. For example, references to individuals, their roles, illegal goods or activities could be omitted, obscured, or incorrectly transcribed, which may affect the quality of intelligence and also the investigation. 
+
+Example 18. The same tools may not be able to represent completely or accurately individuals with particular communication difficulties, with mental health or learning difficulties, neurodiverse witnesses/defendants, child witnesses/defendants, or speakers of English as a second language [32, 39]. These risks may affect the credibility of the witness, which could be undermined if they give evidence at odds with what is in their witness statement at court. Cases involving witnesses with communication difficulties  
+
+> Prepared using sagej.cls
+
+Calder et al 15 
+
+are particularly concerning, given the potential for the intersection of language needs with other vulnerabilities, e.g. individuals being victims of human trafficking. 
+
+5.1.6 Social and cultural biases Biases embedded in the training data may give rise to social and/or cultural biases in the generated output. For example, the way texts are selected to formulate the training corpora of LLMs can be a source of selection/sampling bias [43], leading to social bias in the generated text (e.g. gender, sexual and racial biases, or bias related to minorities and disadvantaged groups). 
+
+Example 19. There is a risk of gender bias in the pronouns appearing in generated witness statements: certain professions or individuals with particular roles may be referred to more frequently with a masculine (or feminine) pronoun [36]. This might not be noticed by the humans at the statement review stage. 
+
+Example 20. There is a risk of difference of emphasis in summaries, depending on the gender of the subject. This has been shown (with respect to gender) in health care record summaries [50]. Victim blaming language is an ongoing concern within policing [13]. 
+
+Example 21. If the corpora used for training the language models contains victim blaming language, or officer statements contain such language, there is a risk that outputs could replicate this language. There are already known problems with the quality of risk assessments and pre-sentence reports prepared by Probation, both generally [10] and particularly for ethnic minority offenders [7]. The use of LLMs therefore has the potential to exacerbate these existing problems, possibly leading to inaccurate risk assessments and inaccurate decision-making based on those assessments of risk. 
+
+Example 22. There is the risk to bias in offenders’ risk assessments when LLMs are used to fill in risk assessment forms, e.g. DARA, by either biasing the scores or changing the emphasis depending on the protected characteristics of offender. There are well-publicised cases where inaccurate risk assessments have been identified as causes in an offender going on to commit serious further offences whilst under supervision by probation in the community ([9] is an example).  
+
+> Prepared using sagej.cls
+
+16 Journal Title XX(X) 
+
+Example 23. A risk assessment that is too high could feed into a sentencing decision to imprison someone who should not be imprisoned (with adverse resource implications and an impact on the individual, their family and any dependents); a risk assessment that is too low may result in the release into the community of someone who should be imprisoned. 
+
+5.1.7 Intermediate, unused material Tools may produce outputs that are considered as drafts, either produced at different stages of the tool or before and after human edits. They may also generate new types of data such as meta data. But there is currently no consensus on how these outputs should be treated, e.g. required to be recorded, stored, and listed on the schedule, and consequently there is a risk to the integrity of legal processes and more work. 
+
+Example 24. There is a risk of additional time and resource implications for disclosure to the CPS. This was encountered by the Hertfordshire Constabulary during the ADA proof of concept trial: “Another consequence is the need to disclose all versions of the transcript and statement produced by officers when using ADA. This impacts on workload for the Disclosure officer and the CPS.” [59]. This can have an impact on ‘case velocity’, i.e. the time it takes for a case to progress. As has been widely-reported, there are currently significant delays in the criminal justice system, with a record number of outstanding Crown Court cases [41]. The risk of tools adversely impacting case velocity adds to the problem of “delay and inefficiencies in the progression of cases [which] can have a significant impact on victims, witnesses and defendants.” [6]. 
+
+Example 25. There may be many iterations in the process to generate an output, there is a risk that the length of time or the number of steps taken, to agree a final draft suggests police influence on witness’s account. 
+
+Example 26. There is a risk that in the event of evidence deemed inadmissible in magistrates’ courts, district judges or lay magistrates will still have read the material and thus be influenced by it. 
+
+# 5.2 Inputs 
+
+5.2.1 Prompt and prompt conversation design and effectiveness A significant aspect of all LLM-based tools is the role of prompt(s), whether they are constrained (i.e. pre-coded in a template for the user) or not. Specifically, prompt design affects outcomes, for example, accuracy and compliance [16], and biases, nuances, and stylistic aspects in prompts can skew the results [29, 27]. Furthermore, this extends to the whole iterative process of prompting, and the resulting “conversation” – the list of user prompts and LLM responses. When  
+
+> Prepared using sagej.cls
+
+Calder et al 17 
+
+prompts are not pre-coded, there will be questions concerning who is formulating the prompts, is that pre-determined, and are such decisions recorded, as well as how have prompts and conversations been recorded and how are they accessed. 
+
+Example 27. If all the information concerning prompt formulation and prompt conversations is not available and consistent with expected practice, there is a risk that a court may question whose version of events a generated statement tells , for example, that of a police officer or a young/vulnerable witness. 
+
+Example 28. Prompt conversations can be considered a form of intermediate material and as such there is risk to the workload and to integrity of the legal process, similar to that described in Section 5.1.7. 
+
+5.2.2 Prompt attacks The prompt engineering interface for an LLM is a“largely underestimated attack surface” [34]. There are at least four emerging adversarial prompt engineering techniques that can be considered as prompt attacks . First, a prompt injection attack can override system prompts (i.e. pre-coded developer instructions) in agentic setups, with the aim of changing the model output or issuing a tool command. This is especially dangerous when the model is connected to external tools/APIs to e.g. send emails, query databases, or execute code. Second, jailbreaking attacks are prompts that bypass safeguards with the aim of generating harmful or biased content, for example, instructing the model with the “Do Anything Now (DAN)” prompt, to bypass ChatGPT’s safeguards [53, 27]. Third, prompt extraction attacks can reveal system prompts with the aim of extracting details about the business logic, safeguards, or architecture, and fourth, information leakage attacks can make the model diverge from its dialogue-style generation to memorisation, with the aim of revealing sensitive data or proprietary information injected in the training data or stored user conversations/prompts and memorized [34, 27, 42]. Attacks such as these pose risks to the integrity of legal processes, similar to cyber-security concerns. They can also pose specific risks such as revealing sensitive information about witnesses and evidence, as well as risks to tool integrity and reliability (see also Section 5.4.1). 
+
+Example 29. There is a risk a prompt injection attack could enable a user to bypass the constraints of pre-coded prompts and thus influence an output in ways not intended by tool, nor expected by users of the outputs.  
+
+> Prepared using sagej.cls
+
+18 Journal Title XX(X) 
+
+Example 30. There is a risk a prompt extraction attack could enable access to the information categories that an LLM-based automatic redaction system aims to redact. Then, through a prompt injection or a jailbreaking attack, a user could intervene and change or remove the information categories, thus altering or avoiding redaction. 
+
+5.2.3 Leakage to third parties Information can be leaked, either intentionally or unintentionally. Key risks include exposure of sensitive information, personally identifiable information, proprietary information, system prompts, details of business logic, safety measures, or architecture to unauthorised third parties (e.g. users, attackers) [27, 34]. For example, sensitive information could be exposed when sensitive data in training datasets is memorized and reproduced in outputs, or injected in stored user prompts [17, 42], or during real-time interactions due to misconfigured APIs, or weak access controls [17]. 
+
+Example 31. There is a risk that exposure of sensitive information could lead to issues being identified with evidence associated with LLM tool use, which could affect the fairness of proceedings. This could result in evidence being excluded under section 78 Police and Criminal Evidence Act (PACE) 1984 [48] – this provision allows a judge to exclude prosecution evidence where “it appears to the court that, having regard to all the circumstances, including the circumstances in which the evidence was obtained, the admission of the evidence would have such an adverse effect on the fairness of the proceedings that the court ought not to admit it.” 
+
+Example 32. More generally, leakage may be a data protection issue and so there is a risk that additional time and effort has to be spent managing breaches, thus delaying case progression. 
+
+# 5.3 Evaluation 
+
+LLMs pose new challenges, especially when compared with machine learning classification tools where there is ground truth and established statistical measurements for evaluation (such as precision and recall). 
+
+5.3.1 Lack of ground truth The evaluation of results that involve language, such as summarisation, may be highly subjective and there is no ground truth with which to compare, e.g. what is a “good” summary. As mentioned earlier, this is quite different from machine learning for classification, where there is ground truth. The lack of ground truth may pose a risk to any subsequent interpretation or decision making that depends on these outputs.  
+
+> Prepared using sagej.cls
+
+Calder et al 19 
+
+Example 33. After a meeting or interview and a summary is generated, there is a risk that participants might disagree on whether or not something was discussed and/or the conclusion as stated in the summary is reached. In the absence of a form of recording of the actual meeting, there is no agreed ground truth to refer to – only individual memories. 
+
+5.3.2 Testing process and benchmarks A significant risk, and major research challenge, is a lack of consensus on evaluation criteria, testing processes, and benchmarks for LLM-based tools in policing. There remain open questions on how they should be defined, and by whom, and subsequently, testing and evaluation results may be inconsistent, incomplete, incomparable, and/or subjective. A recent systematic review of 445 LLM benchmarks showed that many were not valid measurements [14]. While many evaluation techniques used for traditional Natural Language Processing (NLP) are applicable to LLMs, these cannot deal with many of the LLM-specific issues raised in Section 5.1 such as hallucinations or evaluating high-level semantic qualities [57]. Furthermore, the evaluation mode, human or 
+
+automated , can affect the evaluation criteria. For example, when evaluating the linguistic style of generated text, human evaluations are generally more focussed on readability, fluidity, and similarity to a human generated “gold standard”, whereas automated metrics are more likely focussed on coherence, consistency, fluency, and relevance [57]. 
+
+Example 34. There is a risk that LLM-based translators are not accredited, and so statements or evidence translated by an LLM-based tool does not have the same standing in court as those translated by an individual accredited by the UK Police Approved Interpreters and Translators Scheme (PAIT) (introduced by the National Police Chief’s Council (NPCC)). 
+
+Example 35. There is a risk that evaluation benchmarks are not updated [46], so the data they contain may become outdated. Furthermore the benchmark data may leak and thus contribute to training data (resulting in overfitting). This would compromise the integrity of an accreditation process, and subsequently the evaluated tools. 
+
+Example 36. LLMs as evaluators is a new direction for automated evaluation, i.e. using one LLM to evaluate (the outputs of) another. Many of the risks and impacts mentioned above will apply, especially since LLMs suffer from biases [46].  
+
+> Prepared using sagej.cls
+
+20 Journal Title XX(X) 
+
+# 5.4 Sytems Engineering 
+
+5.4.1 Tool reliability This risk concerns whether the tool is trustworthy, which usually involves showing it performs consistently . Demonstration of reliability depends on testing regimes, access to prompts and conversations, and it may also be related to version and configuration control. Note that reliability cannot be interpreted simply as repeatability, since LLMs are stochastic: the same input to an LLM may result in a different output at different times (e.g. today’s output compared with tomorrow’s). Therefore, a statistical framework is required. Further, it may be relevant to distinguish between consistency of tool performance , given same inputs, and consistency of tool use , i.e. consistency of inputs. 
+
+Example 37. Unconstrained prompt and prompt conversations may be a risk to demonstrating both consistent tool performance, because as mentioned in Section 5.2.1, prompt design affects outcomes, and tool use, because each user may interpret the need for a prompt differently. Both may affect credibility of the tool, which in turn affects the credibility of its outputs. To minimise this type of risk, constraints are often added to the prompts e.g. they are pre-coded. 
+
+5.4.2 Tool version/configuration Tools may be updated e.g. with new functionality or improved performance, and before using any version, it may be necessary to configure it by setting various parameters. 
+
+Example 38. There is a risk that tool version and configuration settings may not have been recorded, or the version used for a particular task may no longer be available, thus it may not be possible to repeat, compare, or confirm the exact date of any generated results. 
+
+5.4.3 Tool supplier/vendor Tools may be in-house or developed and supplied by a third party. 
+
+Example 39. There is a risk that a tool, or information concerning it, may no longer be available, because the supplier/vendor is no longer trading, or simply does not respond to requests. The two examples above could affect case progression, where a lack of available information limits the extent to which the reliability of a tool can be demonstrated. This could, for example, undermine evidence associated with the tool at trial, where the operation of the tool is challenged. 
+
+5.4.4 Tool chaining If LLM-based tools are chained , i.e. the outputs of one are the inputs of another, then the cumulative effect of all the risks may be difficult to qualify or quantify. Moreover, it may not be transparent when and how  
+
+> Prepared using sagej.cls
+
+Calder et al 21 
+
+chaining has occurred, especially if the chain involves more than one workflow or organisation. 
+
+Example 40. A simple example of chaining that might not be transparent is where police officers have used a translation tool, such as Google translate, in the process of employing an LLM to generate the witness statement [32]. A more nauanced example is the following. 
+
+Example 41. The case summary could be relied on at sentencing hearings where a guilty plea has been entered and no trial has taken place (note that the latest MOJ [44] figures 73 per cent of magistrates’ court and 61 per cent of Crown Court cases resolve in a guilty plea). There is a risk that inaccuracies and “invented” evidence from the witness statements, which make their way into a case summary, could therefore form the basis of the prosecution’s submissions to the sentencing judge or magistrates, with resulting sentencing decisions based on incorrect information and sentences being either too lenient or too harsh for the actual offending behaviour. In some cases, this information will also feed into risk assessments and potentially affect decisions about the offender’s suitability for certain types of sentence, prison category, or later decisions about parole. 
+
+5.4.5 Expert witnesses It may be unclear who can be an expert witness to explain a tool and what they would say, including the ways that risks are identified and mitigated. There is no consensus about what details about inner workings of a tool would be required. 
+
+Example 42. There is a risk that tool experts with the requisite skills are not available or they are not able to understand what is needed or communicate effectively with non-experts. 
+
+# 6 Discussion 
+
+We have considered the risks, and their impacts, of general (AI) technology (LLMs) in a very specific domain– policing and criminal justice. Some risks and their impacts may be considered fundamental , such as completeness, accuracy, and sensitivities to prompt design. They are fundamental in two senses: they are intrinsic to this type of AI and they could adversely impact case progression. We will never be able to eliminate these risks, but over time, we expect technological improvements so that the likelihood of their occurrence is reduced, and we may be able to anticipate and mitigate them. But the use of language will always remain subjective. Particularly in the context of LLM as pre- or post- processors, developers and users should question why the pertinent information cannot be presented in a raw format, instead of  
+
+> Prepared using sagej.cls
+
+22 Journal Title XX(X) 
+
+within a text, which will, to an extent, be interpretive. Further, as Example 5 shows, the use of an LLM instead of a search engine introduces a significant risk with potentially far reaching, and public, impacts. Other risks, such as those associated with the systems engineering, may be regarded as transient . In time, we expect codes of practice will be developed that will address most, if not all of these risks. This also applies to processes that currently incur higher workloads because of lack of consensus, such as recording, storing, and putting information on the schedule (Section 5.1.7), and leakage to third parties. We also expect the risks to guide future technical developments, e.g. towards tools that are less likely to impact negatively on case progression. In all of the risks, the role of humans is crucial, for example, to review and mediate. But there are also fundamental risks related to the nature of human interactions that will remain, such as relying on individual memories (Section 5.3.1) and the example involving interpretation of the number of steps taken (Section 5.1.7). We hypothesise that risks associated with translation may be “easier” to mitigate, through the use of benchmarks. This is because the task is well-known (within and beyond policing) and has been performed for a long time, well before NLP and LLMs. Thus, measures of performance evaluation may be more established, though this is still a topic of research. We also propose that RAGs, for areas such as policy that depend crucially on current and up-to-date knowledge, present lower levels of risk, when document repositories are kept up to date. We note there will be heightened risks for some parts of the CJS, where there are reduced due process protections, including limited opportunity for legal representation and closed conditions. For example, Prison Adjudications and the Single Justice Procedure in the magistrates, where a single magistrate decides a case on the papers in a closed court (see Northern Trains Ltd v Ballington and Others [2024] 8 WLUK 114 [4] for some of the problems which have arisen with this procedure). Finally, we remark that in this paper we have focussed on risks §. We have paid little attention to potential benefits, especially uses that could address the current, huge, court backlogs. However, even when beneficial, there may be additional work introduced into the system, not least because the use of LLMs will require more scrutiny, in the short term. More broadly, to articulate benefits, requires i) articulating what problem the use of LLM technology is supposed to address, and ii) demonstrating the problem has been addressed effectively and efficiently. And to answer that, requires systems thinking, namely, what is the impact of introducing a new tool , in this case an LLM-based tool, into a process ,in this case, the criminal justice process. This paper specifically centres on and articulates this systems thinking.  
+
+> §We have in effect produced a crib sheet for defence lawyers!
+> Prepared using sagej.cls
+
+Calder et al 23 
+
+# 7 Conclusions 
+
+There is growing interest in the use of LLM-based tools in policing, with increasing availability of in-house commercial tools. In the near future (i.e. within five years), there are many policing tasks that could employ LLM-based tools. But, there are risks, with potential impacts on case progression. The aim of this paper has been to identify and illustrate those risks and impacts. We have adopted a practical approach, considering how case progression might be affected not just at policing stages, but at later stages of the criminal justice system too, including at trial and sentencing. We defined a set of example policing tasks that could be implemented using LLM-based tools, and then identified 17 risks arising from the use of these tools and over 40 examples of how they could have real-world impacts on case progression. The risks are grouped as relating to outputs, inputs, evaluation, or systems engineering, and we have considered how those risks might prevent a case from progressing to the next stage when it should progress, as well as when a case could be impacted so as to progress when it should not. This latter consideration is of particular pertinence considering the huge backlog of criminal cases and overcrowded prisons, to ensure resources are directed appropriately and to avoid miscarriages of justice. While grounded in policing in England and Wales, many of the risks will be relevant in other jurisdictions. LLM technology is changing quickly, and also the role of LLMs, especially as interfaces to other tools. With time, we expect that many of the risks, and examples, described here will be reduced – as the technology evolves and good practice , i.e. standards, rules, and enforcement and oversight of these, is agreed. Though of course new risks may be introduced by new capabilities. But this will not happen without effort. If we are going to use these tools in the near future, we need to address the present risks, seriously, and in a timely manner. Finally, we reiterate there must be clarity about why an LLM-based tool is being introduced, and what are the system wide impacts and benefits.  
+
+> Prepared using sagej.cls
+
+24 Journal Title XX(X) 
+
+# Appendix 
+
+Risks, as identified in Section 5. 
+
+Category Risk 
+
+Outputs 1 Completeness 2 Accuracy 3 Timeliness of training and repository data 4 Linguistic style 5 Cultural Language Misinterpretations 6 Social and cultural biases 7 Intermediate, unused material Inputs 8 Prompt design and conversations 9 Prompt attacks 10 Leakage to third parties Evaluation 11 Lack of ground truth 12 Testing process and benchmarks Engineering 13 Tool reliability 14 Tool version/configuration 15 Tool supplier/vendor 16 Tool chaining 17 Expert witnesses 
+
+# References 
+
+[1] Bates & Ors v Post Office Ltd (no.3 “Common Issues”) [2019] EWHC 606 (QB). (15 March 2019), High Court (England and Wales) .[2] BBC news report. Accessed: 14 January 2026. Available: https://www.bbc.co.uk/news/live/c394zlr8e12t. [3] Letter to Chair of the Home Affairs Select Committee, 12 January 2026. Available: https://committees.parliament.uk/publications/51041/documents/282958/default/. [4] Northern Trains Ltd v Ballington and Others [2024] 8 WLUK 114. [5] Home Office Inspection of police forces’ contributions to safety advisory groups: West Midlands. 14 January 2026. Available: https://www.gov.uk/government/publications/inspection-of-police-forces-contributions-to-safety-advisory-groups-west-midlands-police/inspection-of-police-forces-contributions-to-safety-advisory-groups-west-midlands-police-accessible. [6] National Case Progression Commitment. CPS, College of Policing, and NPCC , 2021. [7] Race equality in probation. HM Inspectorate of Probation (HMIP) , 2021.  
+
+> Prepared using sagej.cls
+
+Calder et al 25 
+
+[8] Covenant for Using Artificial Intelligence (AI) in Policing. National Police Chiefs Council , 2023. [9] Independent serious further offence review of Damien Bendal. HM Inspectorate of Probation , 17 January, 2023. [10] HM inspectorate of probation annual report 2024: Serious further offences. 
+
+HM Inspectorate of Probation , 2024. [11] Call for evidence: Use of evidence generated by software in criminal proceed-ings. UK Ministry of Justice. https://www.gov.uk/government/calls-for-evidence/use-of-evidence-generated-by-software-in-criminal-proceedings ,2025. [12] Joint case building by the police and Crown Prosecution Service. HM Crown Prosecution Service Inspectorate, HM Inspectorate of Constabulary and Fire & Rescue Services , July 2025. [13] Why language matters – raising awareness of the use of victim blaming language. College of Policing, https://www.college.police.uk/support-forces/practices/why-language-matters-raising-awareness-use-victim-blaming-language , 10 Sept. 2025, 2025. [14] Adam Mahdi et al Andrew Bean. Measuring what matters: Construct validity in large language model benchmarks. In The Thirty-ninth Annual Conference on Neural Information Processing Systems Datasets and Benchmarks Track , 2025. [15] S. Arregu´ ın and A. Schultz. SB-524: Law enforcement agencies: artificial intelligence. California Legislative Information , 2025. [16] Shubham Atreja, Lingyao Li Joshua Ashkinaze, Julia Mendelsohn, and Libby Hemphil. What’s in a Prompt?: A Large-Scale Experiment to Assess the Impact of Prompt Design on the Compliance and Accuracy of LLM-Generated Text Annotations. Proceedings of 19th Intl AAAI Conference on Web and Social Media (ICSWM 2025) , pages 122–145, 2025. [17] Anuj Bahuguna. Data Leakage Prevention (DLP) for LLMs: Safeguarding Sensitive Data, 2025. Accessed: July 2025. Available: https://community.ibm.com/community/user/blogs/anuj-bahuguna/2025/04/27/data-leakage-prevention-for-LLMs-safeguarding-sens. [18] Dave Bergmann. What is fine-tuning?, 2024. Accessed: November 2025. Available: https://www.ibm.com/think/topics/fine-tuning. [19] Sophia Adams Bhatti. AI in our Justice System. JUSTICE report , January 2025.  
+
+> Prepared using sagej.cls
+
+26 Journal Title XX(X) 
+
+[20] Elon University News Bureau. Survey: 52% of U.S. adults now use AI large language models like ChatGPT, 2025. Accessed: June 2025. Available: https://www.elon.edu/u/news/2025/03/12/survey-52-of-u-s-adults-now-use-ai-large-language-models-like-chatgpt/. [21] Wenliang Dai, Nayeon Lee, Boxin Wang, Zhuolin Yang, Zihan Liu, Jon Barker, Tuomas Rintamaki, Mohammad Shoeybi, Bryan Catanzaro, and Wei Ping. NVLM: Open Frontier-Class Multimodal LLMs. 
+
+arXiv:2409.11402 , 2024. [22] Georgios Efstathiadis, Vijay Yadav, and Anzar Abbas. LLM-based speaker diarization correction: A generalizable approach. Speech Communication ,170:103224, 2025. [23] Lei Huang et al. A Survey on Hallucination in Large Language Models: Principles, Taxonomy, Challenges, and Open Questions. ACM Trans. Inf. Syst. , 43(2), January 2025. [24] Matt Deitke et al. Molmo and PixMo: Open Weights and Open Data for State-of-the-Art Vision-Language Models. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 91–104, June 2025. [25] Wayne Xin Zhao et al. A Survey of Large Language Models. 
+
+arXiv:2303.18223 , 2025. [26] Yi Dong et al. Safeguarding large language models: A survey. IEEE Transactions on Pattern Analysis and Machine Intelligence , May 2024. [27] Europol Innovation Lab. ChatGPT: The impact of Large Language Models on Law Enforcement. Technical report, Europol, 2023. [28] Andrew Guthrie Ferguson. Concerns about AI-written police reports spur states to regulate the emerging practice, 2025. Accessed: October 2025. Available https://theconversation.com/concerns-about-ai-written-police-reports-spur-states-to-regulate-the-emerging-practice-267410. [29] Vladimir Geroimenko. Key Principles of Good Prompt Design. In 
+
+The Essential Guide to Prompt Engineering: Key Principles, Techniques, Challenges, and Security Risks , pages 17–36. Springer Nature Switzerland, Cham, 2025. [30] UK Government. AI regulation: a pro-innovation approach, 2023. Accessed: October 2025. Available: https://www.gov.uk/government/publications/ai-regulation-a-pro-innovation-approach. [31] Zishan Guo, Renren Jin, Chuang Liu, Yufei Huang, Dan Shi, Supryadi, Linhao Yu, Yan Liu, Jiaxuan Li, Bojian Xiong, and Deyi Xiong. Evaluating Large Language Models: A Comprehensive Survey. arXiv:2310.19736v ,2023.  
+
+> Prepared using sagej.cls
+
+Calder et al 27 
+
+[32] Bhardwa et al Hunter. Language barriers in the criminal justice system. 
+
+Institute for Crime & Justice Policy Research, Birkbeck , March 2022. [33] Alan Turing Institute. Process based governance in action. A guide to ethical and responsible design, development, and deployment of Artificial Intelligence. Prepared for Department of Business & Trade , October 2023. [34] Szymon Janowski. Dangers of LLMs: Introduction to Prompt-based attacks, 2025. Accessed: July 2025. Available: https://deepsense.ai/ blog/dangers-of-llms-introduction-to-prompt-based-attacks/ #tl-dr-prompt-attacks-are-the-new-security-frontier-for-llms .[35] S. Johnson, M. Murty, and I. Navakanth. A detailed review on word embedding techniques with emphasis on word2vec. Multimedia Tools and Applications , 83:1–29, 10 2023. [36] Hadas Kotek, Rikker Dockum, and David Sun. Gender bias and stereotypes in large language models. CI ’23: Proceedings of The ACM Collective Intelligence Conference , pages 12–24, 2023. [37] Komal Kumar, Tajamul Ashraf, Omkar Thawakar, Rao Muhammad Anwer, Hisham Cholakkal, Mubarak Shah, Ming-Hsuan Yang, Phillip H. S. Torr, Fahad Shahbaz Khan, and Salman Khan. LLM Post-Training: A Deep Dive into Reasoning Large Language Models. arXiv:2502.21321 , 2025. [38] Raymond Lee. N-Gram Language Model , pages 19–43. Springer Nature Singapore, Singapore, 2025. [39] Michel LeVigne and Gregory Van Rybroek. He got in my face so i shot him. City University of New York Law Review , 2013. [40] Ggaliwango Marvin, Nakayiza Hellen, Daudi Jjingo, and Joyce Nakatumba-Nabende. Prompt engineering in large language models. In Data Intelligence and Cognitive Informatics , pages 387–402, Singapore, 2024. Springer Nature Singapore. [41] Sasha Murray, Sarah Welland, and Madeleine Storry. Justice delayed: The impact of the crown court backlog on victims, victim services and the criminal justice system. Victims Commissioner , 7 March 2025. [42] Milad Nasr, Nicholas Carlini, Jonathan Hayase, Matthew Jagielski, A. Feder Cooper, Daphne Ippolito, Christopher A. Choquette-Choo, Eric Wallace, Florian Tram` er, and Katherine Lee. Scalable Extraction of Training Data from (Production) Language Models, 2023. [43] Roberto Navigli, Simone Conia, and Bj¨ orn Ross. Biases in Large Language Models: Origins, Inventory, and Discussion. J. Data and Information Quality , 15(2), June 2023.  
+
+> Prepared using sagej.cls
+
+28 Journal Title XX(X) 
+
+[44] Ministry of Justice. Criminal court statistics quarterly: April to June 2025, 2025. Available: https://www.gov.uk/government/statistics/criminal-court-statistics-quarterly-april-to-june-2025. [45] Ministry of Justice, HM Prison and Probation Service, and Crown Pros-ecution Service. Handling crimes in prison: agreement, 2015. Available: https://www.gov.uk/government/publications/handling-crimes-in-prison-protocol. [46] Ji-Lun Peng, Sijia Cheng, Egil Diau, Yung-Yu Shih, Po-Heng Chen, Yen-Ting Lin, and Yun-Nung Chen. A survey of useful LLM evaluation, 2024. [47] S. Pitcher. SB-180: Law Enforcement Usage of Artificial Intelligence. Utah State Legislature , 2025. [48] UK Public General Acts. Police and Criminal Evidence Act 1984. Available: https://www.legislation.gov.uk/ukpga/1984/60/contents. [49] G. Ramesh, Mahammad Sahil, Shashank A. Palan, Darshan Bhandary, Teli Abhishek Ashok, J. Shreyas, and N. Sowjanya. A review on NLP zero-shot and few-shot learning: methods and applications. Discover Applied Sciences , 7, August 2025. [50] Sam Rickman. Evaluating gender bias in large language models in long-term care. Technical report, NIHR Policy Research Unit, London School of Economics and University of Kent, 2025. [51] Paria Sarzei and Qusay H. Mahmoud. A framework for LLM-assisted smart policing system. IEEE Access , 12, 2024. [52] Seyhan Sel¸ cuk, Nesibe Kurt Konca, and Serkan Kaya. AI-driven civil litigation: Navigating the rights to a fair trial. Computer Law & Security Review , 57, 2025. [53] Xinyue Shen, Zeyuan Chen, Michael Backes, Yun Shen, and Yang Zhang. “Do Anything Now”: Characterizing and Evaluating In-The-Wild Jailbreak Prompts on Large Language Models. In Proceedings of the 2024 on ACM SIGSAC Conference on Computer and Communications Security , CCS ’24, page 1671–1685, 2024. [54] Pushpdeep Singh, Mayur Patidar, and Lovekesh Vig. Translating across cultures: LLMs for intralingual cultural adaptation. In Libby Barak and Malihe Alikhani, editors, Proceedings of the 28th Conference on Computational Natural Language Learning , pages 400–418, Miami, FL, USA, November 2024. Association for Computational Linguistics. [55] Evodoxia Taka, Temitope Lawal, Michele Sevegnani, Kyriako Kotsolgou, Elizabeth Tiarks, Marion Oswald, and Muffy Calder. Mapping the Probabilistic AI Ecosystem in Criminal Justice in England and Wales. 
+
+arXiv:2512.04116 , 2025.  
+
+> Prepared using sagej.cls
+
+Calder et al 29 
+
+[56] Bergur Thormundsson. Artificial intelligence (AI) worldwide - statistics & facts. Technical report, Statista, 2025. Accessed: June 2025. Available: https://www.statista.com/topics/3104/artificial-intelligence-ai-worldwide/. [57] Tempest A. van Schaik and Brittany Pugh. A Field Guide to Automatic Evaluation of LLM-Generated Summaries. In Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval , SIGIR ’24, page 2832–2836, 2024. [58] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is All you Need. In Advances in Neural Information Processing Systems , volume 30. Curran Associates, Inc., 2017. [59] Paul Walley and Helen Glasspoole-Bird. An Evaluation of the pilot application of Artificial Intelligence to Witness Statement and Report Generation at Hertfordshire Constabulary. Centre for Policing Research and Learning, Open University , March 2025. [60] Quan Wang, Yiling Huang, Guanlong Zhao, Evan Clark, Wei Xia, and Hank Liao. DiarizationLM: Speaker Diarization Post-Processing with Large Language Models. In Interspeech 2024 , pages 3754–3758, 2024. [61] Chengyue Wu, Xiaokang Chen, Zhiyu Wu, Yiyang Ma, Xingchao Liu, Zizheng Pan, Wen Liu, Zhenda Xie, Xingkai Yu, Chong Ruan, and Ping Luo. Janus: Decoupling Visual Encoding for Unified Multimodal Understanding and Generation. In Proceedings of the Computer Vision and Pattern Recognition Conference (CVPR) , pages 12966–12977, June 2025. [62] Binwei Yao, Ming Jiang, Tara Bobinac, Diyi Yang, and Junjie Hu. Benchmarking machine translation with cultural awareness. In Yaser Al-Onaizan, Mohit Bansal, and Yun-Nung Chen, editors, Findings of the Association for Computational Linguistics: EMNLP 2024 , pages 13078–13096, Miami, Florida, USA, November 2024. Association for Computational Linguistics. [63] Enshi Zhang and Christian Poellabauer. Contextual speech emotion recognition with large language models and ASR-based transcriptions. In 
+
+Audio Imagination: NeurIPS 2024 Workshop AI-Driven Speech, Music, and Sound Generation , 2024.

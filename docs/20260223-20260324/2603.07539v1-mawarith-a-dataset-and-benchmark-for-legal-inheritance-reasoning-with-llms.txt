@@ -1,0 +1,907 @@
+Title: MAWARITH: A Dataset and Benchmark for Legal Inheritance Reasoning with LLMs
+
+URL Source: https://arxiv.org/pdf/2603.07539v1
+
+Published Time: Tue, 10 Mar 2026 01:11:22 GMT
+
+Number of Pages: 21
+
+Markdown Content:
+# MAWARITH: A Dataset and Benchmark for Legal Inheritance Reasoning with LLMs 
+
+Abdessalam BOUCHEKIF 1 Shahd GABEN 1 Samer RASHWANI 1 Somaya ELTANBOULY 1
+
+Mutaz AL-KHATIB 1 Heba SBAHI 1 Mohammed GHALY 1 Emad MOHAMED 21Hamad Bin Khalifa University, Qatar 
+
+> 2
+
+Nazarbayev University, Kazakhstan 
+
+{abouchekif, srashwani, mghaly, malkhatib, sgaben, hsbahi, seltanbouly}@hbku.edu.qa emad.mohamed@nu.edu.kz 
+
+Abstract 
+
+Islamic inheritance law ( ʿilm al-mawārīth )is challenging for large language mod-els because solving inheritance cases re-quires complex, structured multi-step rea-soning and the correct application of juris-tic rules to compute heirs’ shares. We in-troduce MAWARITH , a large-scale anno-tated dataset of 12 ,500 Arabic inheritance cases to train and evaluate the full rea-soning chain: (i) identifying eligible heirs, 
+
+(ii) applying blocking ( ḥajb ) and alloca-tion rules, and (iii) computing exact inheri-tance shares. Unlike prior datasets that re-strict inheritance case solving to multiple-choice questions, MAWARITH supports the full reasoning chain and provides step-by-step solutions, including intermediate legal decisions and justifications based on classical juristic sources and established inheritance rules, as well as exact share calculations. To evaluate models beyond final-answer accuracy, we propose MIR-E 
+
+(Mawarith Inheritance Reasoning Evalua-tion), a weighted multi-stage metric that scores key reasoning stages and captures error propagation across the pipeline. We evaluate five LLMs in a zero-shot setting. Gemini-2.5-flash achieves about 90 % MIR-E on both validation and test, while Fanar-C, Fanar-Sadiq, LLaMA 3, and Qwen 3 re-main below 50 %. Our error analysis iden-tifies recurring failure patterns, including scenario misinterpretation, errors in heir identification, errors in share allocation, and missing or incorrect application of key inheritance rules such as ʿawl and radd .The MAWARITH dataset is publicly avail-able at https://github.com/bouchekif/ inheritance_evaluation .
+
+1 Introduction 
+
+Large language models (LLMs) have recently achieved strong performance across a wide range of natural language processing tasks, including question answering, summarization, and legal text understanding. Despite these advances, their ability to perform structured, rule-based reasoning remains limited and is still insufficiently evaluated. For some tasks, fluent generation and general knowledge are not sufficient; models must follow precise rea-soning steps, where early errors can propagate and invalidate subsequent decisions. This lim-itation has motivated the development of mod-els designed to solve complex tasks by break-ing them into smaller steps and producing in-termediate reasoning traces before generating a final output. Recent efforts in this direc-tion include reasoning-oriented large language models such as the latest versions of Gem-ini, GPT, DeepSeek, Fanar, and Qwen, which aim to improve multi-step reasoning by decom-posing the problem into smaller steps, gener-ating intermediate steps, verifying intermedi-ate results, and correcting errors when needed. The evaluation of these models has largely fo-cused on mathematical and synthetic reason-ing benchmarks (e.g., GSM8K, MATH, and BBH; (Cobbe et al., 2021b; Hendrycks et al., 2021a; Suzgun et al., 2022)), while structured domain reasoning remains less covered, despite dedicated efforts in law (Chalkidis et al., 2022; Niklaus et al., 2023; Guha et al., 2023) and medicine (Pal et al., 2022; Kim et al., 2024). Islamic inheritance law ( ʿilm al-mawārīth ) of-fers a particularly challenging and well-defined testbed for evaluating such reasoning capabil-ities. Solving inheritance problems in this do-main requires multi-step legal reasoning, a cor-rect solution must first identify eligible heirs, then apply the juristic rules governing exclu-sion and blocking, and finally compute the ex-act fractional shares. The process is further complicated by adjustment cases such as ʿawl 
+
+and radd .
+
+> arXiv:2603.07539v1 [cs.CL] 8 Mar 2026
+
+In this work, we introduce a large-scale benchmark corpus of 12,500 Islamic inheri-tance problems, designed to support training and evaluation models for multi-step legal– numerical reasoning under strict jurispruden-tial rules. Each case is annotated with de-tailed, human-like reasoning that mirrors the step-by-step process followed by jurists: in-cluding heir identification, blocking analysis, and systematic share computation. The cor-pus covers a wide range of inheritance scenar-ios with varying levels of complexity. To en-able fine-grained evaluation, we adopt a multi-stage evaluation framework that assesses not only the correctness of the final numerical shares, but also the validity of the intermedi-ate reasoning steps involved in reaching the solution. This evaluation strategy allows for a precise analysis of reasoning errors and fail-ure modes across the core stages of inheritance problem solving. The remainder of this paper is organized as follows. Section 2 reviews the related work. Section 3 provides an overview of Islamic in-heritance law. Section 4 describes the dataset used in this study. Section 5 details the evalu-ation metrics, and Section 6 outlines the exper-imental setup. Section 7 presents an in-depth error analysis. Finally, Section 8 concludes the paper and discusses potential directions for fu-ture research. 
+
+2 Related Work 
+
+Large language models have recently been applied to a wide range of Islamic knowl-edge tasks, including Quranic question an-swering (Bhatia et al., 2026), knowledge re-trieval (Mubarak et al., 2025; Xuan Phuc and Đặng Văn, 2025), and the analysis of hallucina-tions in Islamic content (Mubarak et al., 2025). These studies show that LLMs perform well on knowledge retrieval and basic understand-ing when answers rely on direct textual match-ing. However, they often hallucinate and show clear limitations on tasks that require struc-tured reasoning or deep domain knowledge. In (Bouchekif et al., 2025b), the authors re-port that several models, such as LLaMA and ALLaM, frequently cite non-existent Quranic verses or fabricate Hadith references. As a re-sult, the generated conclusions are not only incorrect, but are also supported by false re-ligious evidence. This behavior raises serious concerns for religious and legal applications, where correctness depends not only on the fi-nal answer but also on the authenticity and reliability of the cited sources. To mitigate hallucinations, recent work has explored Retrieval-Augmented Genera-tion (RAG) approaches. While RAG im-proves access to relevant information and en-hances factual faithfulness and citation accu-racy (Noureldien et al., 2025; Alowaidi, 2025), it remains insufficient for answering ques-tions that require multi-step reasoning. This limitation has motivated the development of reasoning-oriented models that explicitly sup-port multi-step inference. In this context, re-cent research has increasingly focused on such models that aim to move beyond surface-level text generation and promote more reliable rea-soning. Models such o3 , GPT-5 (Singh et al., 2025), Gemini-2.5 (Anil et al., 2023), Gemini3 ,
+
+DeepSeek-R1 (DeepSeek AI, 2024), along with open models such as Fanar-C-2-27B , Falcon-H1R (Abbas et al., 2025) and Qwen3 (Shen et al., 2025) illustrate this trend by promoting more consistent multi-step inference through instruction tuning and large-scale pretrain-ing. Evaluations of reasoning-oriented lan-guage models have largely focused on math-ematical and logical benchmarks, on which these models have achieved strong results, par-ticularly in arithmetic reasoning, symbolic ma-nipulation, and competition-style mathemat-ics (Cobbe et al., 2021a; Hendrycks et al., 2021b; Wei et al., 2023). Beyond mathemat-ical and logical benchmarks, recent work has begun to investigate LLM reasoning in legally grounded settings by evaluating models on legal benchmarks such as BRIEFME (Woo et al., 2025), which require structured argu-mentation and rule-based reasoning. The authors show that GPT-4o can outperform human annotators on argument summariza-tion by producing clear and coherent sum-maries. Even within the Islamic domain, in-heritance law has received growing attention as a challenging testbed for LLM reasoning (AlDahoul and Zaki, 2025; R’baiti et al., 2025; Farouk Zaki, 2025). In particular, QIAS 2025 1
+
+> 1https://sites.google.com/view/qias2025/
+
+(Bouchekif et al., 2025a) a shared task ded-icated to Islamic inheritance law (ʿilm al-mawārīth ), focusing on the evaluation of large language models under strict, rule-based le-gal and numerical constraints, using a bench-mark of 2200 MCQs. A similar MCQs bench-mark is MirathQA (Almasoud et al., 2026), built from 1394 inheritance cases. Studies re-port that commercially deployed ( e.g., Gem-ini and ChatGPT ), reasoning-oriented mod-els consistently outperform non-reasoning or general-purpose models on benchmarks requir-ing multi-step inference and structured rea-soning (Bouchekif et al., 2025b; AL-Smadi, 2025; Bekhouche et al., 2025; Motasim Hamed et al., 2025; Hossain and Afli, 2025). Addi-tionaly, Elrefai et al. (2025) show that a fine-tuned Qwen3 model achieved top-ranked per-formance on the QIAS 2025 shared task. How-ever, this evaluation setup does not allow as-sessing whether models truly reason correctly. Models were required to select a single cor-rect answer among six options, without any evaluation of the validity of their intermedi-ate reasoning steps or the correctness of the le-gal justifications leading to that choice. More-over, Bouchekif et al. (2025c) show that even when a model selects the correct answer, the underlying reasoning can still be incorrect or legally invalid. In contrast, the present study requires models to perform end-to-end inher-itance reasoning, explicitly generating inter-mediate reasoning steps, applying jurispruden-tial rules, and computing the final inheritance shares. 
+
+3 Background: Islamic Inheritance Law 
+
+Resolving an Islamic inheritance case (mawārīth ) requires a well-defined, multi-step procedure that combines juristic rules with precise fractional calculations. It begins with identifying all potential heirs mentioned in the estate description. Eligibility is then assessed: eligible heirs receive their prescribed shares, while others are excluded according to the rules of blocking (ḥajb). Two adjustment mechanisms may apply thereafter: • Radd (redistribution) applies when the to-tal of the prescribed shares assigned to the heirs is less than the whole estate and no residuary heir is present. In this situa-tion, after all fixed shares have been dis-tributed, a portion of the estate remains unassigned. This remaining portion is then redistributed proportionally among the eligible fixed-share heirs, according to their original shares. For example, if a mother receives 1/6 of the estate and a daughter receives 1/2 , the total assigned share is 1/6 + 1/2 = 2/3 . Since 2/3 is less than the full estate, the remaining 1/3 is redistributed among the mother and the daughter through radd .• ʿAwl (proportional reduction) applies when the total of the prescribed shares ex-ceeds the whole estate . In this case, the ini-tially assigned shares cannot all be satis-fied in full. To resolve this, all prescribed shares are proportionally reduced so that their sum becomes exactly equal to the es-tate. For instance, if the prescribed shares add up to 1/2 + 1/6 + 2/3 = 8/6 , which is greater than 1, each share is scaled down proportionally through ʿawl so that the total distribution fits within the estate. A correct solution requires accurate identifica-tion of heirs, strict adherence to juristic rules, and precise numerical computation. Errors at any intermediate stage propagate deterministi-cally and invalidate the final distribution, mak-ing mawārīth a suitable domain for evaluating structured, multi-step, and rule-based reason-ing. 
+
+4 Data Description 
+
+We construct a dataset of 12 ,500 Islamic in-heritance problems written in Arabic, fol-lowing the opinion of the majority opinion (al-jumhūr ). Each problem is written as a natural-language inheritance scenario that de-scribes the deceased and the surviving rela-tives. The corpus covers the full set of kin-ship relations defined in classical Islamic in-heritance law, including direct ascendants and descendants, siblings, spouses, and extended agnatic relatives across multiple generations (e.g., nephews, cousins, uncles, and grandpar-ents). Additional details on the dataset com-position, including the distribution of kinship relations, are provided in appendix A. 2 4 6 8 10 12          
+
+> 0
+> 500
+> 1000
+> 1500
+> 2000
+> Number of cases
+> 93
+> 906
+> 1699
+> 2065
+> 2225
+> 2026
+> 1620
+> 859
+> 300
+> 120 50 70
+> Train
+> 246810 12
+> 0
+> 20
+> 40
+> 60
+> 80
+> 00
+> 13
+> 28
+> 48
+> 72
+> 89 89
+> 72
+> 48
+> 28
+> 13
+> Test
+> Distribution of cases by number of distinct heir categories
+> Number of distinct heir categories
+
+Figure 1: Distribution of cases by number of distinct heir categories in the training and test splits. Heir categories represent distinct kinship types (e.g., father, mother, siblings). For dataset analysis, multiple individuals within the same kinship group are grouped into a single category.” The training and test sets share the same distributional profile, differing only in scale. 
+
+4.1 Data Collection 
+
+The corpus was constructed through a multi-stage pipeline: • Case generation. We first generated inheritance cases using the Almawarith 
+
+inheritance calculator 2, which relies on structured, option-based inputs. Eligible heirs were selected via predefined options specifying kinship types and counts. For each structured configuration, the calcula-tor deterministically computed the corre-sponding inheritance shares and produced brief explanatory notes accompanying the numerical allocations. • Natural-language conversion. We then converted the structured inputs into Arabic natural-language inheritance de-scriptions. For example, a structured in-put specifying wife (2) , daughter (5) , and 
+
+maternal brother (2) 
+
+(i.e. , ܇׍ﺕ ﻭޟ޻ﻙ: ﺯﻭڕـڶ )2( ﻭ ས༺׮ )5( ﻭ ﺃﺥ টগﻡ )2( )was converted into: 
+
+܇׍ﺕ ﻭޟ޻ﻙ: ﺯﻭڕـ൘ഽ ﻭᅋᄸ ܺ৓౼׍ﺕ ﻭﺃڐݮটগ ੪੎ﻡ. ܇׍ ڷݮ ܷؔၣထ ׻ཛྷ ﻭﺭಗ౵؟ 
+
+• Expert enrichment. The calculator outputs were reviewed and enriched by expert in Islamic studies, who added de-tailed computations and juristic justifica-
+
+> 2https://almwareeth.com/new_masaala
+
+tions that reflect how a qualified human would solve the problem step by step. • Standardization. The expert expla-nations were rewritten and standardized using Gemini-2.5-flash to improve clar-ity, coherence, and linguistic consistency while preserving the underlying juristic reasoning. • Validation. Finally, all instances were subjected to validation checks, including verification of heir counts, consistency be-tween reasoning steps and final shares, and correctness of numerical computa-tions. Cases involving complex blocking relations or adjustment mechanisms were manually reviewed by experts. 
+
+4.2 Reasoning Representation 
+
+Each dataset instance contains two key compo-nents: answer and answer_structured . The 
+
+answer contains two parts: a detailed inter-mediate reasoning trace and a final response. The detailed reasoning is enclosed in <think> 
+
+tags, while the final answer is provided within 
+
+<answer> tags. 
+
+> {"id": "example_id", "question": "Arabic inheritance case ...", "answer": "<think> ... </think>\n <answer> ... </answer>", "answer_structured": { "heirs": [], "blocked": [], "shares": [], "awl_or_radd": "none | awl | radd", "awl_stage": {}, // optional in awl/radd cases "post_tasil": {} }}
+
+The <think> section contains a step-by-step procedure that describes the reasoning process followed by experts in Islamic inheritance com-putation. It includes: (i) the extraction of po-tential heirs from the textual description, (ii) 
+
+the determination of eligibility through block-ing rules (ḥajb), (iii) the assignment of pre-scribed shares, (iv) the application of adjust-ment mechanisms such as radd or ʿawl when applicable, and (v) the computation of the fi-nal inheritance distribution. Appendix B provides an illustrative example showing how a case is solved in <think> and summarized in <answer> . During the heir-identification stage, the <think> section justi-fies the inclusion (or exclusion) of each candi-date heir by applying blocking rules (ḥajb) and may cite relevant Qur’anic evidence when in-voking a prescribed-share rule.Then, for each eligible heir, it explains why a specific fraction is assigned and how this fraction depends on the presence or absence of other heirs. The rea-soning also makes the numerical procedure ex-plicit: it derives the base denominator ( taʾṣīl ), distributes the residue to the ʿaṣaba (resid-uary heirs), applies correction when needed (taṣḥīḥ ), and reports final shares as normalized fractions and percentages. Finally, it performs a consistency check by summing all allocated shares to verify that the total equals the full estate ( i.e. , the shares add up to 1). The <answer> section then presents the final result in a brief, practical summary format: it reports only the essential final shares assigned to each heir, without repeating the intermedi-ate legal reasoning and numerical steps given in <think> .For model evaluation, we use a structured for-mat that exposes the outputs of the main rea-soning stages: (i) the list of heirs who actu-ally inherit, (ii) the list of present but blocked heirs, (iii) the initial shares before any adjust-ment, (iv) the type of global adjustment ap-plied ( ʿawl or radd ), (v) the final normalized distribution (taṣīl). Appendix C details the structured output schema of our data and pro-vides a case-general template. 
+
+4.3 Dataset Overview 
+
+The dataset is divided into 12,000 training in-stances and 500 test instances. It spans a wide range of family configurations, from sim-ple cases with a single heir category to com-plex scenarios involving up to twelve heir cat-egories. The corpus covers 36 distinct heir categories,                 
+
+> Split Simple ʿAwl Radd Total
+> Training 11 ,079 577 344 12 ,000
+> Test 456 39 55 00
+> Total 11 ,535 616 349 12 ,500
+> Table 1: Distribution of inheritance cases by legal complexity
+
+ranging from close first-degree relatives (such as parents, children, and spouses) to more dis-tant extended family members across multiple generations. These configurations require the application of a wide range of juristic inheri-tance rules, including fixed shares, residuary principles, blocking relations, and exceptional adjustment cases. Figure 1 illustrates the dis-tribution of inheritance cases according to the number of distinct heir categories in both the training and test splits. Here, the term num-ber of heir categories refers to the number of distinct heir types involved in an inheritance instance, rather than the total number of indi-vidual heirs. Given that the corpus is primar-ily intended for fine-tuning reasoning models, the majority of instances are allocated to the training split in order to maximize exposure to diverse reasoning patterns. In particular, sim-pler cases involving one or two heir categories are predominantly included in the training set, allowing models to first learn the fundamen-tal inheritance rules before being evaluated on more complex configurations. 
+
+5 Evaluation Metric: MIR-E 
+
+Prior work evaluates reasoning models using either final-answer scoring or LLM-as-a-judge evaluation. However, both strategies have lim-itations for multi-step reasoning tasks. LLM-based judging can be sensitive to prompt de-sign and difficult to reproduce consistently. Final-answer scoring, in contrast, reduces the entire reasoning process to a set of final values and therefore cannot distinguish between qual-itatively different failure modes—for example, a model that makes an early error (e.g., in heir eligibility or blocking) and a model that per-forms the legal reasoning correctly but makes a numerical error only at the final calculation stage. To address these limitations, we introduce 
+
+MIR-E (Mawarith Inheritance Reasoning Evaluation), a fine-grained metric designed to assess not only the correctness of the final numerical allocation, but also the validity of intermediate legal reasoning steps. For each inheritance case, models are required to pro-duce outputs in a predefined structured for-mat (as shown in Appendix C), enabling de-tailed comparison with a gold reference solu-tion. Concretely, this format provides struc-tured intermediate outputs for the main rea-soning stages, including: (i) the list of effec-tive (inheriting) heirs, (ii) the list of present but blocked heirs, (iii) the initial prescribed shares before any adjustment, (iv) the type of global adjustment ( ʿawl or radd ), (v) the post-adjustment state, and (vi) the final normalized distribution ( taʾṣīl ). MIR-E decomposes inheritance reasoning into five components, each capturing a distinct source of potential error. 
+
+Notation. Let Hgold and Hpred denote the sets of heirs identified in the gold solution and the model prediction, respectively. Let Bgold 
+
+and Bpred denote the sets of heirs that should be blocked ( ḥajb ) according to the gold solu-tion and the model prediction. We define the sets of effective heirs Heff after blocking as: 
+
+Hgold  
+
+> eff
+
+= Hgold \Bgold , Hpred  
+
+> eff
+
+= Hpred \Bpred .
+
+We further define: 
+
+Hmiss = Hgold  
+
+> eff
+
+\ Hpred  
+
+> eff
+
+(missing heirs) .Hspur = Hpred  
+
+> eff
+
+\ Hgold  
+
+> eff
+
+(spurious heirs) .
+
+For each heir h, let ch and ˆch denote the gold and predicted multiplicities (counts), and let ph and ˆph denote the gold and predicted numerical shares or percentages. Let α ∈{none , ʿawl , radd } denote the normalization regime applied after taʾṣīl .
+
+Heirs and Blocking Identification. This component evaluates whether the model cor-rectly identifies eligible heirs, blocked heirs, and the count of heirs. We first measure set-level agreement over effective heirs using an F 1
+
+score: Fheirs  
+
+> 1
+
+= 2·| Hgold      
+
+> eff ∩Hpred
+> eff ||Hgold
+> eff |+|Hpred
+> eff |
+
+.
+
+Explicit penalties are applied for: (i) missing heirs in Hmiss , (ii) spurious heirs in Hspur ,
+
+(iii) heirs incorrectly predicted as eligible de-spite belonging to Bgold , and (iv) heirs incor-rectly blocked despite being in Hgold ef f .For heirs correctly identified in both sets, we additionally evaluate count accuracy: Acc count = 1  
+
+> |Hgold
+> eff ∩Hpred
+> eff |
+
+∑ 
+
+> h∈Hgold
+> eff ∩Hpred
+> eff
+
+I(ch = ˆ ch).
+
+The final score of this component combines heir identification, blocking consistency, and multiplicity correctness: 
+
+Sh = Fheirs  
+
+> 1
+
+· Acc count .
+
+Share Assignment. This component evalu-ates the correctness of numerical share values assigned to eligible heirs. All predicted shares are normalized into numeric values in [0 , 1] .For each heir h ∈ Hgold ef f , a predicted share is considered correct if: 
+
+|ˆph − ph| ≤ εshare ,
+
+where εshare is a small tolerance threshold. The share assignment score is computed as: 
+
+Ss = 1 
+
+> |Hgold
+> eff |
+
+∑
+
+> h∈Hgold
+> eff
+
+I(|ˆph − ph| ≤ εshare ) .
+
+Adjustment This component evaluates the model’s ability to determine the need for nor-malization and correctly identify its type. Let 
+
+αgold , α pred ∈ {none , ʿawl , radd } denote the gold and predicted normalization labels. In our benchmark, 92.3% of inheritance cases do not require any normalization adjust-ment (i.e., αgold = none). Although normaliza-tion is relatively infrequent, its correct identi-fication remains important, as both ʿawl (pro-portional reduction) and radd (redistribution of surplus) depend directly on the correctness of earlier reasoning steps. Islamic inheritance reasoning is sequential. The need for normalization can only be de-termined after correctly identifying the effec-tive heirs and computing their base shares. If 0 20 40 60 80 
+
+Cumulative pipeline success                 
+
+> Gemini-2.5-flash
+> Qwen3-32B
+> Llama-3.3-70b
+> Fanar-Sadiq
+> Gpt-oss-120b
+> Fanar-C-2-27B
+> 78.2%
+> 24.4%
+> 14.8%
+> 12.8%
+> 21.6%
+> 8.8%
+> 74.6%
+> 11.8%
+> 5.2%
+> 7.2%
+> 5.2%
+> 2.4%
+> 74.4%
+> 11.0%
+> 5.0%
+> 6.6%
+> 4.0%
+> 2.2%
+> 72.4%
+> 8.6%
+> 4.4%
+> 4.2%
+> 3.8%
+> 1.2%
+> (Sh= 1)
+> (Sh= 1, Ss= 1)
+> (Sh= 1, Ss= 1, SA= 1)
+> (Sh= 1, Ss= 1, SA= 1, Sf= 1)
+
+Figure 2: Cumulative pipeline success rates across stages (Step1–Step4) for each model. 
+
+these previous stages are incorrect, the condi-tions that justify applying ʿawl or radd are no longer valid. For this reason, normalization is evaluated con-ditionally. The score is defined as: 
+
+Sa =
+
+{
+
+I(αgold = αpred ) if Sh = 1 and Ss = 1 ,
+
+0 otherwise .
+
+Overall MIR-E Score. The final MIR-E score is computed as a weighted sum of the four evaluation components: MIR-E = αh Sh + αs Ss + αa Sa + αf Sf.
+
+We set αh = αs = αf = 0 .30 and αa = 0 .10 ,reflecting the importance of correct heir iden-tification and final distribution while still re-warding intermediate reasoning steps. 
+
+6 Experiments and Results 
+
+This section describes the experimental setup, evaluated models, and the results obtained on the MAWARITH dataset. 
+
+6.1 Experimental Setup 
+
+We evaluate six LLMs in a zero-shot set-ting using Arabic prompts, without any task-specific fine-tuning. The prompt specifies the inheritance scenario, the required rea-soning steps, and the target output schema, and it enforces adherence to the formal rules of Islamic inheritance law, enabling a fair and controlled comparison across mod-els. The evaluated models include Fa-nar 3 (an Arabic-centric LLM, evaluated in both its general-purpose variant, Fanar-C-2-27B , and its Islamic-specialized variant, 
+
+Fanar-Sadiq ), open-source multilingual mod-els (LLaMA 3 70B 4 and GPT-OSS 120B 5), a multilingual reasoning model (Qwen3-32B 6), and a commercial model (Gemini-2.5-flash). Model sizes range from 27B to over 120B pa-rameters; however, the exact parameter count of Gemini is not publicly disclosed. We ob-tained predictions via the Fanar API for both Fanar models and the Groq API 7 for LLaMA and GPT-OSS. For Qwen3-32B, we ran in-ference locally on a server with three GPUs (144GB total memory). Across all models, we use a context window of 4096 tokens and set the decoding temperature to 0.1. For each in-stance, the model is required to produce out-puts in the structured format described in Sec-tion 4.2, which enables fine-grained evaluation and error analysis by comparing intermediate 
+
+> 3
+
+https://api.fanar.qa/docs#description/ introduction 
+
+> 4
+
+https://huggingface.co/meta-llama/ Meta-Llama-3-70B 
+
+> 5
+
+https://huggingface.co/openai/gpt-oss-120b 
+
+> 6
+
+https://huggingface.co/Qwen/Qwen3-32B 
+
+> 7
+
+https://console.groq.com/ Validation Test Model type Model Sheirs Sshares Snorm MIR-E Sheirs Sshares Snorm MIR-E                                                       
+
+> C-ML-R Gemini-2.5-flash 0.965 0.899 0.892 0.918 0.945 0.929 0.894 0.901
+> OS-ML-R Qwen3-32B 0.761 0.439 0.237 0.438 0.690 0.446 0.265 0.437
+> OS-ML GPT-oss-120B 0.692 0.311 0.273 0.389 0.693 0.327 0.271 0.391
+> OS-ML Llama-3.3 0.676 0.321 0.148 0.345 0.648 0.403 0.215 0.390
+> OS-A Fanar-Sadiq 0.655 0.443 0.204 0.393 0.621 0.367 0.204 0.368
+> OS-A Fanar-C-2-27B 0.645 0.340 0.176 0.351 0.584 0.314 0.178 0.328
+
+Table 2: (C:commerical, OS: open-source, ML: multilingual, A:Arabic, R: reasoning) Component-wise MIR-E scores on the validation (200 cases) and test (500 cases) sets. Validation results are used for model selection, while all comparisons and conclusions are based on the held-out test set. 
+
+decisions against the gold reference. All models are evaluated using the same data split as the QIAS 2026 shared task 8, with 200 
+
+validation instances and 500 test instances. 
+
+6.2 Overall Performance and Reasoning Analysis 
+
+Table 2 reports the overall MIR-E scores ob-tained by all evaluated models, including their performance across the main reasoning steps (heir identification, share assignment, and fi-nal distribution accuracy) on both the valida-tion and test sets. A similar performance pattern is observed on both the validation and test sets, with Gem-ini clearly outperforming the other models and achieving a MIR-E score close to 90%. In contrast, the open-weight models obtain overall MIR-E scores below 45%. Among them, Qwen3-32B achieves the strongest per-formance, followed by Fanar-Sadiq. Although Qwen3-32B, Fanar-Sadiq, and GPT-OSS-120B are capable of generating multi-step reasoning, they often make early-stage errors (e.g., incorrect heir identification or blocking decisions), which then propagate and inval-idate the final allocation. This behavior is expected in inheritance reasoning, where the steps are strongly interdependent: each heir’s share depends on the presence or absence of other heirs, their assigned shares, and the cor-rect application of arithmetic and normaliza-tion rules. As a result, intermediate mistakes can cascade into a fully incorrect solution. Figure 2 shows the cumulative success rate across inheritance reasoning pipeline, where each stage is evaluated conditionally on all pre-ceding stages being correct (Step1: heir iden-
+
+> 8http://sites.google.com/view/qias2026/
+
+tification and blocking; Step2: share assign-ment; Step3: adjustment; Step4: final allo-cation). We observe that, except for Gemini, the models struggle to correctly identify eligi-ble heirs and exclude blocked heirs: Gemini achieves a success rate of 78.2%, whereas all other models remain below 25% at this stage. It also appears that errors propagate: early mistakes significantly reduce the number of cases that can succeed at later stages. All open-weight models experience their largest degradation between Step1 and Step2, high-lighting share assignment as the main bot-tleneck under fixed heirs (e.g. , Qwen3-32B drops from 24.4% to 11.8%). This perfor-mance gap may be partially explained by dif-ferences in model scale and training data . Gem-ini benefits from a larger scale and proprietary training resources. Model scale and training data diversity likely contribute to more reli-able multi-step reasoning under structured le-gal constraints. 
+
+7 Analysis of Errors Across Reasoning Stages 
+
+To better understand model weaknesses across the inheritance reasoning pipeline, we perform a fine-grained, stage-level error analysis. Our findings show that errors extend beyond the application of Islamic inheritance rules to ear-lier linguistic parsing steps. Indeed, all models exhibit linguistic parsing errors when extract-ing heirs from Arabic problem statements. For example, in the case: ܺ ``܇׍ﺕ ﻭޟ޻ﻙ: ﺃڐݮ੪੎ ݈ٵسٵ൘ഽ ﻭᅋᄸ ﺃڐݮﺍﺕ ݈ٵسٵ׍ﺕ ﻭﺃﺏ ﺍটগﺏ ﻭﺃﺭؑכ ৓౼׍ﺕ ﺍ੪੕ ﺍ੪੕. ܇׍ ڷݮ ܷؔၣထ ׻ཛྷ ﻭﺍﺭﺙ؟'' , some models fail to correctly interpret the compound kinship expression ``ﺃﺭؑכ ৓౼׍ﺕ ﺍ੪੕ ''੪੕ﺍ (i.e. , four daughters of a son’s son). Instead of treating it as a single heir type with an as-sociated count, the model incorrectly decom-poses it into two separate heirs (e.g., ''੪੕׍ﺕ ﺍ৓౼`` 
+
+×4 plus ''੪੕ﺍ`` ), effectively splitting one heir into two and introducing spurious heirs. Moreover, models sometimes modify the heir type names even when explicitly instructed to preserve them exactly as provided. For instance, the model may replace ``ﺃﺏ ﺍটগﺏ'' with the equiva-lent term ''ٔ਎ﺍߓ`` , despite the prompt explicitly requiring the model to keep the original heir names without introducing synonyms or alter-native expressions. This shows that LLMs of-ten rephrase the heirs, which can bias the eval-uation if it relies on exact string matching and does not account for semantic equivalence. We observe that this error type is relatively rare for Gemini, yet frequent in the other mod-els. Even with an explicit prompt that pro-vides a complete list of heir types and requires the model to select heirs only from this prede-fined list, such errors still occur, showing that linguistic understanding remains a key bottle-neck in the reasoning pipeline. To focus the evaluation on the models’ ability to apply Islamic inheritance knowledge rather than on their ability to parse complex Arabic descriptions, we explicitly present the heirs in a structured form. Instead of requiring the model to identify heirs only from the full nar-rative description, we provide the extracted heirs as a separate list, keeping both the heir type and the count in natural language (e.g., 
+
+> ]ﺃڐݮ੪੎ ݈ٵسٵᅋᄸ ،൘ഽ ܺﺃڐݮﺍﺕ ݈ٵسٵ׍ﺕ، ﺃﺏ ﺍটগﺏ، ﺃﺭؑכ ৓౼׍ﺕ [੪੕ﺍ ੪੕ﺍ
+
+). This design reduces linguistic ambi-guity and allows the evaluation to primarily assess whether the model correctly applies in-heritance rules and computes the appropriate shares. By controlling for linguistic parsing er-rors, the benchmark more accurately measures the models’ reasoning capabilities in Islamic inheritance law. 
+
+7.1 Heir Identification Errors 
+
+Heir identification is the foundational step of inheritance reasoning, since all subsequent stages depend on predicting the correct set of eligible heirs. We distinguish three types of structural errors: (i) False Blocking (FB): ,where an eligible heir is incorrectly excluded, which decreases the number of beneficiaries. 
+
+(ii) False Eligibility (FE): a non-entitled heir is incorrectly included, increasing the number of beneficiaries. (iii) Count Mis-match Errors (ME): the model predicts wrong heir counts due to misreading Arabic expressions in the question (e.g., numbers and plural forms), by adding or reducing the num-ber of heirs, which then affects the shares as-signed to the other heirs.                              
+
+> Model FB FE ME Total_err Gemini-2.5-flash 77 66 0143 Fanar-Sadiq 285 456 0741 GPT-OSS-120B 415 327 1743 LLaMA-3.3-70B 287 619 1907 Fanar-C-2-27B 168 937 01105
+> Total 1232 2405 23639
+> Table 3: Structural heir-identification errors on the test corpus. FB: false blocking; FE: false eligibil-ity; ME: count mismatch errors; Total_err: total errors.
+
+Table 3 reports the distribution of heir-identification errors ( FB/FE/ME ) across mod-els. The results highlight large differences in models’ ability to apply basic inheritance rules. Gemini-2.5-flash achieves a score of 0.94 on this step, while the other models do not exceed 0.70. We also observe that GPT-OSS-120B performs even better than the Ara-bic model Fanar. Fanar-C-2-27B often makes false-eligibility errors: it adds extra heirs who should not inherit because they are blocked. In contrast, its Islamic-adapted version (with RAG) selects eligible heirs more accurately, because it retrieves the relevant blocking rules from trusted inheritance references (e.g., clas-sical inheritance books or close fatwa-style rul-ings) and uses them to guide the eligibility de-cision. Across most systems, false eligibility is the dominant failure mode, suggesting that mod-els often add heirs to the heir list even though they have no right to inherit under Islamic in-heritance law. This is followed by false block-ing errors, where the model incorrectly ex-cludes heirs who are entitled to inherit. Count mismatch errors are rare and appear mostly in open-source multilingual models (e.g., LLaMA and GPT-OSS) . These errors are less related to inheritance knowledge and are more likely due to Arabic number understanding (num-bers written in words) and plural morphology. For example, ᅋᄸ ܺ৓౼׍ﺕ ﺍ੪੕ (five son’s daughters )Fanar-C2-27B   
+
+> Fanar-Sadiq
+> Gemini-2.5-Flash
+> GPT-OSS-120B
+> LLaMA-3.3-70B
+> Qwen3-32B
+> 0
+> 200
+> 400
+> 600
+> 800
+> 1000
+> errors
+> 168
+> 945
+> 285
+> 456
+> 77 66
+> 415
+> 327
+> 287
+> 621
+> 363 369
+> Blocking errors by heir-level (FB vs FE) across models
+> Heir-level
+> level 1
+> level 2
+> level 3
+> level 4
+> level 5
+> level 6
+> level 7
+> level 8
+> FB (wrongly blocked)
+> FE (added eligible)
+
+Figure 3: Blocking errors by genealogical heir level across models. For each model, the left bar shows false blocking (FB: wrongly blocked eligible heirs) and the right bar shows false eligibility (FE: added eligible heirs). Colors indicate heir levels (1–8), as defined in Appendix A 
+
+should be interpreted as ( ੪੕ﺍ ׮ས༺ × 5), but the model predicted ( ੪੕ﺍ ׮ས༺ × 3). In this case, the heir category is correct, but the numeric count is wrong. We consider this an isolated error, since the same heir type with the correct count is predicted correctly in many other instances. For example, in the case: ``܇׍ﺕ ﻭޟ޻ﻙ: ﺃڐݮ੪੎ ݈ٵسٵ൘ഽ ﻭᅋᄸ ܺﺃڐݮﺍﺕ ݈ٵسٵ׍ﺕ ﻭﺃﺏ ﺍটগﺏ ﻭﺃﺭؑכ ৓౼׍ﺕ ﺍ੪੕ ﺍ੪੕. ܇׍ ڷݮ ܷؔ׻ཛྷ ၣထ ﻭﺍﺭﺙ؟'' , some models fail to correctly inter-pret the compound kinship expression ``ﺃﺭؑכ ৓౼׍ﺕ ''੪੕ﺍ ੪੕ﺍ (i.e., four great-granddaughters through the son’s son). Instead of treating it as a single heir type with multiplicity, the model incor-rectly decomposes it into two separate heirs (e.g., ''੪੕׍ﺕ ﺍ৓౼`` ×4 plus ''੪੕ﺍ`` ×1), effectively splitting one heir into two and introducing spu-rious heirs. Although our prompt explicitly guides the model to extract the complete heir list carefully before applying inheritance rules, such errors still occur, showing that linguistic understanding remains a key bottleneck in the reasoning pipeline. To study models’ inheritance knowledge in more detail, we analyze false blocking (FB) and false eligibility (FE) by genealogical heir level. Figure 3 shows heir-identification er-rors across Levels 1–8, separating false block-ing (FB) and false eligibility (FE). The heirs included in each level are listed in Appendix A. Levels 1–2 correspond to close family (spouse, parents, and children), while Levels 5–8 cor-respond to more distant relatives (such as un-cles, and cousins). We observe that most mod-els (except Gemini ) often add distant heirs who are not eligible when closer heirs are present. For example, LLaMA sometimes in-cludes brothers and uncles even when a son is present, even though a son blocks these collat-eral relatives under mawārīth rules. Such er-rors are relatively rare for close relatives (Lev-els 1–3), who are generally eligible, but be-come more frequent in the middle tiers and among the most distant levels. At the same time, models tend to make the opposite mis-take less often: the most distant heirs are the least frequently wrongly blocked , which is in-tuitive since they are typically blocked when closer heirs are present. These results can be explained by the fact that these models were not trained specifically for inheritance-law reasoning. In practice, they often approximate an answer by (i) matching the query to the most similar case seen dur-ing pretraining ( e.g. , in fatwas) and reusing its outcome, or (ii) applying isolated rules ex-tracted from islamic sources without ensuring global consistency across the full set of con-straints. They may have some general knowl-edge about inheritance terms, but this knowl-edge is often insufficient to apply the full set of rules consistently across cases. 
+
+7.2 Share Errors 
+
+Share errors can be produced by two factors: 
+
+(i) limited knowledge of the jurisprudential rules that determine each heir’s fraction, and 
+
+(ii) error propagation from the identification step. Indeed, mawārīth shares depend on the list of eligible heirs, and any change in this list directly affects the share assigned to each heir. We analyse share errors by keeping only test examples where the selection of eligible heirs is correct , and then computing the mean share score on this subset. Table 4 compares models on share computation after removing error propagation from the heir-identification step. We keep only test cases where heir iden-tification is perfectly correct ( Sheirs = 1 ) and compute the mean share score Sshares on this subset. Gemini-2.5-flash achieves a very high Model #(Sh=1) #(Ss | Sh=1) 
+
+Gemini-2.5-flash 390 0.977 Fanar-Sadiq 64 0.727 Llama-3.3-70b 74 0.612 Fanar-C-2-27B 44 0.542 GPT-oss-120b 108 0.526 
+
+> Table 4: Share-allocation score conditioned on cor-rect heir identification
+
+share score ( Sshares = 0 .977 ) on 390 eamples, showing strong rule-based share computation when the eligible-heir set is correct. In con-trast, the other models have much smaller sub-sets (from NSheirs =1 = 44 to 108 ) and their share scores are lower ( Sshares = 0 .526 –0.727 ). This indicates that, beyond FB/FE propaga-tion, these models still make share-calculation errors even when the heir set is correct, re-flecting weaker coverage of mawārīth alloca-tion rules. For example, in the following in-heritance case: ﺃﺭؑכ ﺃڐݮﺍﺕ টগﻡ، ﻭﺃﻡ، ﻭﺃﻡ ܇׍ﺕ ﻭޟ޻ﻙ: ﺍটগﺏ، ﻭௌேؚؚڶ ﺃ৓౼׍ﺀ ﺃﺥ টগﺏ، ﻭﺃﺏ ﺍটগﺏ، ﻭﺃﺏ. ܇׍ ڷݮ ܷؔၣထ ׻ཛྷ ﻭﺭಗ౵؟ , the heirs mentioned include the mother (ﺍটগﻡ ), the father ( ﺍটগﺏ ), and four maternal half-sisters of the decedent ( ﺃﺭؑכ ﺃڐݮﺍﺕ টগﻡ ). Even when the model correctly identifies the eligible heirs (only the parents inherit, since the father excludes the sisters), it may still incorrectly as-sign the mother a share of 1/3 by citing : ``٩َ׌ռ ﻥ ''ُۿُװպّ܇ِّڲ ِﺍ۹قպ௏ِேَ َؑݮَﺍﻩ ٩ُᔝ ٌﻭَﻭَﺭَِؚڲ ُﺃ ჸَუَ ُﻭჭ ոّ უ َُۣ܌؊ْ ᔧ ոّ ᇬ (Q 4:11) However, the same verse immediately states an explicit exception: ''ُُٔﺱ պّ ܇ِّڲ ِﺍ۹ݐպ௏ِேَ ڐْݮَﺓ ٩ٌռُﺇ ჭَუَ ﻥၨَထ  ﻥռ٩َ׌`` 
+
+(Q 4:11) Since ﺃڐݮﺍﺕ টগﻡ are siblings of the decedent, the condition ``ჭუ ﺇڐݮﺓ'' is satisfied, which reduces the mother’s share to 1/6 un-der the majority view ( ﺍ঻যদڹݮﺭ ). Therefore, the correct allocation is mother 1/6 and father 
+
+5/6 (the remainder by ﺍ۹ـשܷ׻ཛྷ ), whereas the model predicts mother = 1/3 and father 2/3 .This illustrates that some models exhibit rule-knowledge gaps in applying Qur’anic condi-tional clauses, even when the eligible-heir set is correctly determined. 
+
+7.3 Adjustment Errors 
+
+We evaluate the adjustment step only on in-stances where blocking decisions and share as-signment are correct ( i.e. , B=1 and Ss=1 ). This restriction is important because the ad-justment ( ʿawl/radd ) outcome is determined by the assigned fractions and their sum: ʿawl 
+
+applies when the total exceeds 1, while radd 
+
+applies when the total is below 1 and no residuary heir ( ʿaṣabah ) absorbs the remain-der. If heirs are incorrectly blocked/unblocked or shares are incorrect (wrong fractions, miss-ing/extra heirs), the adjustment decision is not interpretable. The table 5 shows that Gemini-2.5-flash makes only one error out of 373 adjustment-evaluable instances (0.27%). Most other models make only a few adjustment mistakes (3.85–8.33%), whereas GPT-OSS-120B exhibits a higher er-ror rate (23.08%). This means that, once ear-lier steps are correct, the adjustment step is generally reliable for most models. A typical adjustment error is a confusion be-tween remainder handling and radd . When the sum of fixed shares is below 1, the remain-der should be absorbed by a residuary heir (taṣīl) if one exists; otherwise, it should be redistributed through radd rules. In several cases, models label these instances as radd (or omit the adjustment step) without checking for a residuary heir, which results in an incor-rect adjustment decision even when the fixed fractions are otherwise correct. A second error type occurs when the model skips the adjustment step, failing to determine whether the case requires ʿawl or radd , and instead proceeding directly from share assign-Model #(Sh=1 , S s=1) #(Sa=1 | Sh=1 , S s=1) #(Sa=0 | Sh=1 , S s=1) (%) 
+
+Gemini-2.5-flash 373 372 1 (0.27) Qwen3-32B 59 55 4 (6.78) Fanar-Sadiq 36 33 3 (8.33) GPT-oss-120b 26 20 6 (23.08) Llama-3.3-70b 26 25 1 (3.85) Fanar-C-2-27B 12 11 1 (8.33)      
+
+> Table 5: Adjustment accuracy conditioned on correct previous steps (heir identification Sh=1 and share assignment Ss=1 ). We report the subset size # (Sh=1 , S s=1) and the number of correct/incorrect ad-justment outcomes ( Sa=1/0 ) within this subset.
+
+ment to the final allocation. For example, with a wife (1/8), a mother (1/6), and two daugh-ters (2/3), the fixed shares sum to 23/24 (< 1), so the case requires handling a remain-der ( radd ) rather than applying ʿawl . How-ever, some models omit this check and finalize the distribution without accounting for the re-mainder. In other cases, they wrongly treat the case as ʿawl even though the total does not exceed one, effectively bypassing the ad-justment step. 
+
+7.4 Final Allocation Errors 
+
+This category captures computational failures rather than lack of knowledge of mawārīth 
+
+rules. As shown in Figure 2 , such errors are relatively rare. They mainly occur at the last stage of the pipeline, final allocation . In many cases, models correctly identify that an heir should receive გႮ ૯૔۹ﺍ ᇖᆰؑ׍ (the remainder), but fail to materialize this remainder into ex-plicit numeric final shares. In some cases, models miscompute the remaining share af-ter allocating the fixed fractions and/or mis-convert it into percentages, leading to incor-rect final allocations. It is important to note that in our dataset, ʿawl and radd require recomputing the heirs’ shares. However, in our evaluation we only assess whether a case requires adjustment and which type applies (ʿawl or radd ). This strategy is adopted be-cause most instances in our corpus are simple cases without adjustment, where an “adjusted-shares” output is not applicable; scoring ad-justed shares in such cases would introduce in-consistencies in the evaluation metric. More-over, when adjustment is required, the ad-justed shares largely coincide with the final al-location, so any error in the recomputed shares would directly propagate to the final allocation step. We also observe a less common error where models report group-level shares rather than per-individual allocations (e.g., one value for “three brothers” rather than one value per brother). 
+
+8 Conclusion 
+
+This paper introduced MAWARITH , adataset and benchmark for evaluating legal reasoning in Arabic Islamic inheritance law. 
+
+MAWARITH is designed to support reason-ing training by breaking down complex inheri-tance queries into explicit, step-by-step reason-ing stages. Each stage is explained and justi-fied with relevant Islamic legal texts, and re-quires accurate jurisprudential knowledge and strict rule application: (i) identifying eligi-ble heirs and blocking relations, (ii) assigning fixed shares and residuary portions, and (iii) 
+
+producing a final distribution. To support fine-grained and interpretable evaluation, we pro-pose MIR-E , a metric that breaks down perfor-mance into step-level subscores aligned with the inheritance reasoning pipeline, enabling fine-grained error analysis. Our evaluation highlights a clear gap between commercial and open-weight models. Al-though some models can generate convincing explanations, they often fail at early structural steps (e.g., missing or hallucinated heirs, incor-rect blocking). These early errors propagate to later steps, leading to inconsistent share as-signments and invalid final distributions. We hypothesize that a primary cause is limited exposure to inheritance-law knowledge during training, since most training data is generic and insufficient to solve inheritance problems end-to-end. We expect MAWARITH to be an important resource for building reasoning and Islamic-domain LLMs that can solve in-heritance cases with detailed, step-by-step rea-soning. Future work will explore reinforcement learn-ing approaches, including Process Reward Models, to better align model reasoning with legal constraints. By providing step-level feed-back, these methods can guide models toward valid reasoning trajectories and reduce error propagation in multi-step legal reasoning. We will also extend the corpus to cover more complex remaining inheritance cases, includ-ing pregnancy-related cases, multiple deaths, the missing person ( mafqūd ), and the intersex heir ( khunthā ). 
+
+Funding and Acknowledgments 
+
+This work was supported by the ARG grant ARG01-0524-230318, awarded by the Qatar Research, Development, and Innovation Coun-cil (QRDI Council). 
+
+References 
+
+Ummar Abbas, Mohammad Shahmeer Ahmad, Firoj Alam, Enes Altinisik, Ehsannedin Asgari, Yazan Boshmaf, Sabri Boughorbel, Sanjay Chawla, Shammur Chowdhury, Fahim Dalvi, Kareem Darwish, Nadir Durrani, Mohamed Elfeky, Ahmed Elmagarmid, Mohamed Eltabakh, Ma-soomali Fatehkia, Anastasios Fragkopoulos, Maram Hasanain, Majd Hawasly, and 22 others. 2025. Fanar: An arabic-centric mul-timodal generative ai platform. Preprint ,arXiv:2501.13944. Mohammad AL-Smadi. 2025. QU-NLP at QIAS 2025 shared task: A two-phase LLM fine-tuning and retrieval-augmented gener-ation approach for islamic inheritance rea-soning. In Proceedings of The Third Ara-bic Natural Language Processing Confer-ence: Shared Tasks , pages 892–898, Suzhou, China. Association for Computational Lin-guistics. Nouar AlDahoul and Yasir Zaki. 2025. NYUAD at QIAS shared task: Benchmark-ing the legal reasoning of LLMs in Arabic islamic inheritance cases. In Proceedings of The Third Arabic Natural Language Process-ing Conference: Shared Tasks , pages 861– 866, Suzhou, China. Association for Com-putational Linguistics. Ameera Almasoud, Sharefah Al-Ghamdi, Reem Alqifari, Noof Alfear, and Hend Al-Khalifa. 2026. Mirathqa: A dataset for eval-uating large language models on hanbali is-lamic inheritance reasoning tasks. Data in Brief , page 112589. Sanaa Alowaidi. 2025. SEA-team at QIAS 2025: Enhancing LLMs for question answer-ing in islamic texts. In Proceedings of The Third Arabic Natural Language Processing Conference: Shared Tasks , pages 940–946, Suzhou, China. Association for Computa-tional Linguistics. Rohan Anil, Sebastian Borgeaud, Jean-Baptiste Alayrac, Jiahui Yu, Radu Sori-cut, Johan Schalkwyk, Andrew M Dai, Anja Hauth, Katie Millican, and 1 oth-ers. 2023. Gemini: a family of highly ca-pable multimodal models. arXiv preprint arXiv:2312.11805 .Salah Eddine Bekhouche, Abdellah Zakaria Sellam, Hichem Telli, Cosimo Distante, and Abdenour Hadid. 2025. Cvpd at qias 2025 shared task: An efficient encoder-based approach for islamic inheritance reasoning. 
+
+Preprint , arXiv:2509.00457. Gagan Bhatia, Hamdy Mubarak, Mustafa Jar-rar, George Mikros, Fadi Zaraket, Mah-moud Alhirthani, Mutaz Al-Khatib, Lo-gan Cochrane, Kareem Darwish, Rashid Yahiaoui, and Firoj Alam. 2026. From rag to agentic rag for faithful islamic question answering. Preprint , arXiv:2601.07528. Abdessalam Bouchekif, Samer Rashwani, Emad Soliman Ali Mohamed, Mutaz Alkhatib, Heba Sbahi, Shahd Gaben, Wajdi Zaghouani, Aiman Erbad, and Mohammed Ghaly. 2025a. QIAS 2025: Overview of the shared task on islamic inheritance rea-soning and knowledge assessment. In Pro-ceedings of The Third Arabic Natural Lan-guage Processing Conference: Shared Tasks ,pages 851–860, Suzhou, China. Association for Computational Linguistics. Abdessalam Bouchekif, Samer Rashwani, Heba Sbahi, Shahd Gaben, Mutaz Al-Khatib, and Mohammed Ghaly. 2025b. As-sessing large language models on islamic le-gal reasoning: Evidence from inheritance law evaluation. In Proceedings of The Second Arabic Natural Language Process-ing Conference (ArabicNLP 2025) , Suzhou, China. Association for Computational Lin-guistics. Abdessalam Bouchekif, Samer Rashwani, Heba Sbahi, Shahd Gaben, Mutaz Al-Khatib, and Mohammed Ghaly. 2025c. Assessing large language models on is-lamic legal reasoning: Evidence from in-heritance law evaluation. arXiv preprint arXiv:2509.01081 .Ilias Chalkidis, Abhik Jana, Dirk Hartung, Michael Bommarito, Ion Androutsopoulos, Daniel Martin Katz, and Nikolaos Aletras. 2022. Lexglue: A benchmark dataset for le-gal language understanding in english. In 
+
+Proceedings of the 60th Annual Meeting of the Association for Computational Linguis-tics (ACL) .Karl Cobbe, Vineet Kosaraju, Mohammad Bavarian, Mark Chen, Heewoo Jun, Lukasz Kaiser, Matthias Plappert, Jerry Tworek, Jacob Hilton, Reiichiro Nakano, Christo-pher Hesse, and John Schulman. 2021a. Training verifiers to solve math word prob-lems. CoRR , abs/2110.14168. Karl Cobbe, Vineet Kosaraju, Mohammad Bavarian, Mark Chen, Heewoo Jun, Lukasz Kaiser, Matthias Plappert, Jerry Tworek, Jacob Hilton, Reiichiro Nakano, and 1 oth-ers. 2021b. Training verifiers to solve math word problems. arXiv preprint arXiv:2110.14168 .DeepSeek AI. 2024. Deepseek-r1: Incentiviz-ing reasoning capability in large language models. Technical report, DeepSeek AI. Technical Report. Eman Elrefai, Mohamed Lotfy Elrefai, and Aml Hassan Esmail. 2025. Gumball at QIAS 2025: Arabic LLM automated reasoning in islamic inheritance. In Proceedings of The Third Arabic Natural Language Processing Conference: Shared Tasks , pages 953–959, Suzhou, China. Association for Computa-tional Linguistics. Osama Farouk Zaki. 2025. CIS-RG at QIAS 2025 shared task: Approaches for enhanc-ing performance of LLM on islamic legal reasoning and its mathematical calculations. In Proceedings of The Third Arabic Natu-ral Language Processing Conference: Shared Tasks , pages 935–939, Suzhou, China. Asso-ciation for Computational Linguistics. Neel Guha, Julian Nyarko, Daniel E. Ho, Christopher Ré, Adam Chilton, and 1 oth-ers. 2023. Legalbench: A collaboratively built benchmark for measuring legal reason-ing in large language models. arXiv preprint arXiv:2308.11462 .Dan Hendrycks, Collin Burns, Saurav Kada-vath, Akul Arora, Steven Basart, Eric Tang, Dawn Song, and Jacob Steinhardt. 2021a. Measuring mathematical problem solving with the math dataset. arXiv preprint arXiv:2103.03874 .Dan Hendrycks, Collin Burns, Saurav Ka-davath, Akul Arora, Steven Basart, Eric Tang, Dawn Song, and Jacob Steinhardt. 2021b. Measuring mathematical problem solving with the math dataset. Preprint ,arXiv:2103.03874. Shehenaz Hossain and Haithem Afli. 2025. ADAPT–MTU HAI at QIAS2025: Dual-expert LLM fine-tuning and constrained de-coding for Arabic islamic inheritance rea-soning. In Proceedings of The Third Ara-bic Natural Language Processing Confer-ence: Shared Tasks , pages 923–928, Suzhou, China. Association for Computational Lin-guistics. Yunsoo Kim, Jinge Wu, Yusuf Abdulle, and Honghan Wu. 2024. Medexqa: Medical ques-tion answering benchmark with multiple ex-planations. In Proceedings of the Work-shop on Biomedical Language Processing (BioNLP) .Takeshi Kojima, Shixiang Shane Gu, Machel Reid, Yutaka Matsuo, and Yusuke Iwasawa. 2023. Large language models are zero-shot reasoners. Preprint , arXiv:2205.11916. Rana Malhas, Watheq Mansour, and Tamer Elsayed. 2022. Qur’an QA 2022: Overview of the first shared task on question answer-ing over the holy qur’an. In Proceedinsg of the 5th Workshop on Open-Source Arabic Corpora and Processing Tools with Shared Tasks on Qur’an QA and Fine-Grained Hate Speech Detection , pages 79–87, Marseille, France. European Language Resources As-sociation. Mohamed Motasim Hamed, Nada Ghneim, and Riad Sonbol. 2025. HIAST at QIAS 2025: Retrieval-augmented LLMs with top-hit web evidence for Arabic islamic rea-soning QA. In Proceedings of The Third Arabic Natural Language Processing Confer-ence: Shared Tasks , pages 883–891, Suzhou, China. Association for Computational Lin-guistics. Hamdy Mubarak, Rana Malhas, Watheq Man-sour, Abubakr Mohamed, Mahmoud Fawzi, Majd Hawasly, Tamer Elsayed, Kareem Mo-hamed Darwish, and Walid Magdy. 2025. Is-lamicEval 2025: The first shared task of cap-turing LLMs hallucination in islamic con-tent. In Proceedings of The Third Ara-bic Natural Language Processing Confer-ence: Shared Tasks , pages 480–493, Suzhou, China. Association for Computational Lin-guistics. Joel Niklaus, Veton Matoshi, Pooja Rani, An-drea Galassi, Matthias Stürmer, and Ilias Chalkidis. 2023. Lextreme: A multi-lingual and multi-task benchmark for the legal do-main. In Findings of EMNLP .Yossra Noureldien, Hassan Suliman, Farah At-tallah, Abdelrazig Mohamed, and Sara Ab-dalla. 2025. Athar at QIAS2025: LLM-based question answering systems for is-lamic inheritance and classical islamic knowledge. In Proceedings of The Third Arabic Natural Language Processing Confer-ence: Shared Tasks , pages 914–922, Suzhou, China. Association for Computational Lin-guistics. OpenAI, Josh Achiam, Steven Adler, Sandhini Agarwal, Lama Ahmad, Ilge Akkaya, Flo-rencia Leoni Aleman, Diogo Almeida, Janko Altenschmidt, Sam Altman, Shyamal Anad-kat, Red Avila, Igor Babuschkin, Suchir Bal-aji, Valerie Balcom, Paul Baltescu, Haim-ing Bao, Mohammad Bavarian, Jeff Belgum, and 262 others. 2024. Gpt-4 technical report. 
+
+Preprint , arXiv:2303.08774. Ankit Pal, Logesh Kumar Umapathi, and Malaikannan Sankarasubbu. 2022. Medm-cqa: A large-scale multi-subject multi-choice dataset for medical domain question answering. In Proceedings of the Conference on Health, Inference, and Learning (CHIL) .Jihad R’baiti, Chouaib El Hachimi, Youssef Hmamouche, and Amal El Fal-lah Seghrouchni. 2025. MorAI at QIAS 2025: Collaborative LLM via voting and retrieval-augmented generation for solving complex inheritance problems. In Proceed-ings of The Third Arabic Natural Language Processing Conference: Shared Tasks , pages 947–952, Suzhou, China. Association for Computational Linguistics. Weizhou Shen, Ziyi Yang, Chenliang Li, Zhiyuan Lu, Miao Peng, Huashan Sun, Yingcheng Shi, Shengyi Liao, Shaopeng Lai, Bo Zhang, Dayiheng Liu, Fei Huang, Jingren Zhou, and Ming Yan. 2025. Qwenlong-l1.5: Post-training recipe for long-context reasoning and memory man-agement. Preprint , arXiv:2512.12967. Aaditya Singh, Adam Fry, Adam Perel-man, Adam Tart, Adi Ganesh, Ahmed El-Kishky, Aidan McLaughlin, Aiden Low, AJ Ostrow, Akhila Ananthram, Akshay Nathan, Alan Luo, Alec Helyar, Alek-sander Madry, Aleksandr Efremov, Alek-sandra Spyra, Alex Baker-Whitcomb, Alex Beutel, Alex Karpenko, and 465 others. 2025. Openai gpt-5 system card. Preprint ,arXiv:2601.03267. Mirac Suzgun, Nathan Scales, Nathanael Schärli, Sebastian Gehrmann, Yi Tay, Hyung Won Chung, Aakanksha Chowd-hery, Quoc V. Le, Ed H. Chi, Denny Zhou, and Jason Wei. 2022. Challeng-ing BIG-Bench tasks and whether chain-of-thought can solve them. arXiv preprint arXiv:2210.09261 .Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Brian Ichter, Fei Xia, Ed Chi, Quoc Le, and Denny Zhou. 2023. Chain-of-thought prompting elicits reason-ing in large language models. Preprint ,arXiv:2201.11903. Jesse Woo, Fateme Hashemi Chaleshtori, Ana Marasović, and Kenneth Marino. 2025. Briefme: A legal nlp benchmark for as-sisting with legal briefs. arXiv preprint arXiv:2506.06619 .Nguyen Xuan Phuc and Thìn Đặng Văn. 2025. PuxAI at QIAS 2025: Multi-agent retrieval-augmented generation for islamic inheri-tance and knowledge reasoning. In Pro-ceedings of The Third Arabic Natural Lan-guage Processing Conference: Shared Tasks ,pages 905–913, Suzhou, China. Association for Computational Linguistics. 
+
+A Appendix: Heir Categories and Kinship Coverage 
+
+Islamic inheritance law defines a rich and struc-tured set of potential heirs, reflecting varying degrees of kinship with the deceased. In our dataset, we explicitly cover all 36 legally rec-ognized heir categories as defined in classical Islamic inheritance law. These categories span a wide spectrum of kinship relations, ranging from close family members to more distant rel-atives. The dataset includes close relatives heirs who are directly related to the deceased, such as parents, spouses, and children. These close relatives typically appear with high frequency across inheritance cases and constitute the core of most inheritance configurations. They include ascendants ( e.g. , father, mother, and grandparents), descendants (e.g., sons, daugh-ters, and grandchildren), as well as spouses. In addition to these direct relatives, collat-eral relatives are also considered, including sib-lings and half-siblings (full, paternal, or ma-ternal). Under Islamic inheritance law, these heirs become legally relevant in many scenar-ios, particularly when direct ascendants or de-scendants are absent, and their entitlement is governed by well-defined blocking and priori-tization rules. For analysis, we group the 37 
+
+heir categories into 8 kinship levels , ordered by proximity to the deceased (Level 1: closest rel-atives; Level 8: most distant extended-family relatives); see Figure 4. As shown in the figure, heirs from Levels 1–3 are the most frequent in the corpus, whereas distant heirs from higher levels occur much less often (Levels 6–8). More generally, Islamic inheritance law rec-ognizes that all legally defined heirs may be-come entitled to inherit depending on the absence of closer relatives. Accordingly, ex-tended relatives across multiple generational levels—such as nephews, uncles, cousins, and their descendants—play a legally significant role in inheritance cases where nearer heirs are absent. In such situations, inheritance is deter-mined by hierarchical succession rules, making these cases particularly suitable for evaluating long-range dependency reasoning and complex blocking mechanisms. Arabic heir English gloss Arabic heir English gloss  
+
+> ﺃﻡ
+
+Mother ﺃﺥ ݈ٵسܗ Full brother  
+
+> ﺯﻭﺝ
+
+Husband ﺃڐ׮ ݈ٵسٵڶ Full sister  
+
+> ﺍ੪੕
+
+Son ﺃﺥ টগﺏ Paternal half-brother (same father)  
+
+> ﺃﺏ
+
+Father ﺃڐ׮ টগﺏ Paternal half-sister (same father)  
+
+> ﺯﻭ໩ڶ
+
+Wife ﺃﺥ টগﻡ Maternal half-brother (same mother)  
+
+> ས༺׮
+
+Daughter ﺃڐ׮ টগﻡ Maternal half-sister (same mother)  
+
+> ੪੕ﺍ ׮ས༺
+
+Son’s daughter (granddaugh-ter)  
+
+> ﺍ੪੕ ﺃﺥ ݈ٵسܗ
+
+Son of a full brother (full nephew)  
+
+> ੪੕ﺍ ੪੕ﺍ ׮ས༺
+
+Son’s son’s daughter (great-granddaughter)  
+
+> ﺍ੪੕ ﺃﺥ টগﺏ
+
+Son of a paternal half-brother (paternal nephew)  
+
+> ੪੕ﺍ ੪੕ﺍ
+
+Son’s son (grandson) ﺍ੪੕ ﺍ੪੕ ﺃﺥ ݈ٵسܗ Son of a full nephew (grand-nephew)  
+
+> ੪੕ﺍ ੪੕ﺍ ੪੕ﺍ
+
+Son’s son’s son (great-grandson)  
+
+> ﺍ੪੕ ﺍ੪੕ ﺃﺥ টগﺏ
+
+Son of a paternal nephew (grand-nephew)  
+
+> ﺃﺏ ﺍটগﺏ
+
+Paternal grandfather (fa-ther’s father)  
+
+> ע܄ ݈ٵسܗ
+
+Full paternal uncle (father’s full brother)  
+
+> ﺃﻡ ﺍটগﻡ
+
+Maternal grandmother (mother’s mother)  
+
+> ע܄ টগﺏ
+
+Paternal half-uncle (father’s half-brother)  
+
+> ﺃﻡ ﺍটগﺏ
+
+Paternal grandmother (fa-ther’s mother)  
+
+> ע܄ ﺍটগﺏ
+
+Father’s full paternal uncle (pa-ternal grand-uncle)  
+
+> ﺃﺏ ﺃﺏ ﺍটগﺏ
+
+Paternal great-grandfather (father’s father’s father)  
+
+> ע܄ ﺍটগﺏটগ ﺏ
+
+Father’s paternal half-uncle (paternal grand-uncle)  
+
+> ﺃﻡ ﺃﻡ ﺍটগﻡ
+
+Maternal great-grandmother (mother’s mother’s mother)  
+
+> ﺍ੪੕ ע܄ ݈ٵسܗ
+
+Son of a full paternal uncle (paternal cousin)  
+
+> ﺃﻡ ﺃﻡ ﺍটগﺏ
+
+Paternal great-grandmother (father’s mother’s mother)  
+
+> ﺍ੪੕ ע܄ টগﺏ
+
+Son of a paternal half-uncle (paternal cousin)  
+
+> ﺃﻡ ﺃﺏ ﺍটগﺏ
+
+Paternal great-grandmother (father’s father’s mother)  
+
+> ﺍ੪੕ ﺍ੪੕ ע܄ ݈ٵسܗ
+
+Son of a paternal cousin (cousin’s son)  
+
+> ﺍ੪੕ ﺍ੪੕ ע܄ টগﺏ
+
+Son of a paternal cousin (cousin’s son)  
+
+> ﺍ੪੕ ע܄ ﺍটগﺏ
+
+Son of father’s full paternal uncle (father’s cousin) 
+
+Table 6: Arabic–English glosses for the 36 heir categories used in our corpus. 0 250 500 750 1000 1250 1500 1750 
+
+Number of cases 
+
+ﺃﻡ 
+
+ﺯﻭﺝ 
+
+ﺍﺑﻦ 
+
+ﺃﺏ 
+
+ﺯﻭﺟﺔ 
+
+ﺑﻨﺖ 
+
+ﺑﻨﺖ ﺍﺑﻦ 
+
+ﺑﻨﺖ ﺍﺑﻦ ﺍﺑﻦ 
+
+ﺍﺑﻦ ﺍﺑﻦ 
+
+ﺍﺑﻦ ﺍﺑﻦ ﺍﺑﻦ 
+
+ﺃﺏ ﺍﻷﺏ 
+
+ﺃﻡ ﺍﻷﻡ 
+
+ﺃﻡ ﺍﻷﺏ 
+
+ﺃﺏ ﺃﺏ ﺍﻷﺏ 
+
+ﺃﻡ ﺃﻡ ﺍﻷﻡ 
+
+ﺃﻡ ﺃﻡ ﺍﻷﺏ 
+
+ﺃﻡ ﺃﺏ ﺍﻷﺏ 
+
+ﺃﺥ ﺷﻘﻴﻖ 
+
+ﺃﺧﺖ ﺷﻘﻴﻘﺔ 
+
+ﺃﺥ ﻷﺏ 
+
+ﺃﺧﺖ ﻷﺏ 
+
+ﺃﺥ ﻷﻡ 
+
+ﺃﺧﺖ ﻷﻡ 
+
+ﺍﺑﻦ ﺃﺥ ﺷﻘﻴﻖ 
+
+ﺍﺑﻦ ﺃﺥ ﻷﺏ 
+
+ﺍﺑﻦ ﺍﺑﻦ ﺃﺥ ﺷﻘﻴﻖ 
+
+ﺍﺑﻦ ﺍﺑﻦ ﺃﺥ ﻷﺏ 
+
+ﻋﻢ ﺷﻘﻴﻖ 
+
+ﻋﻢ ﻷﺏ 
+
+ﻋﻢ ﺍﻷﺏ 
+
+ﻋﻢ ﺍﻷﺏ ﻷﺏ 
+
+ﺍﺑﻦ ﻋﻢ ﺷﻘﻴﻖ 
+
+ﺍﺑﻦ ﻋﻢ ﻷﺏ 
+
+ﺍﺑﻦ ﺍﺑﻦ ﻋﻢ ﺷﻘﻴﻖ 
+
+ﺍﺑﻦ ﺍﺑﻦ ﻋﻢ ﻷﺏ 
+
+ﺍﺑﻦ ﻋﻢ ﺍﻷﺏ 
+
+1854 
+
+1558 
+
+1121 
+
+1017 
+
+1009 
+
+800 
+
+1757 
+
+1407 
+
+916 
+
+857 
+
+1784 
+
+1585 
+
+1470 
+
+1515 
+
+1389 
+
+1115 
+
+906 
+
+1390 
+
+1360 
+
+1113 
+
+988 
+
+667 
+
+658 
+
+621 
+
+552 
+
+435 
+
+398 
+
+311 
+
+258 
+
+125 
+
+103 
+
+255 
+
+192 
+
+171 
+
+141 
+
+63 Figure 4: Frequency distribution of all heir types in the corpus, ordered by kinship proximity. B Illustrative Example (Arabic) 
+
+ﺍ٪ہ۔ﺍﻝ: 
+
+܇׍ﺕ ﻭޟ޻ﻙ: ﺃڐݮ੪੎ ݈ٵسٵ൘ഽ ﻭᅋᄸ ܺﺃڐݮﺍﺕ ݈ٵسٵ׍ﺕ ﻭﺃﺏ ﺍটগﺏ ﻭﺃﺭؑכ ৓౼׍ﺕ ﺍ੪੕ ﺍ੪੕. ܇׍ ڷݮ ܷؔၣထ ׻ཛྷ ﻭﺍﺭﺙ؟ 
+
+<think> 1
+
+ᇖᆱ ڷٓﻩ ﺍঔঐݐאჱუ، ﺍঔঐـݮᇐᆱ ޟ޻ﻙ ﺍ൘ഽ৓ಅ ﺇڐݮﺓ ﺃ݈ٵ׍ﺀ، ﻭᅋᄸ ܺﺃڐݮﺍﺕ ݈ٵسٵ׍ﺕ، ﻭﺃﺏ ﺍটগﺏ، ﻭﺃﺭؑכ ৓౼׍ﺕ ﺍ੪੕ ﺍ੪੕. 2
+
+۹ؽཀྵغכ ڐݠݮﺍﺕ ﺍߓ۳ਊ ﺍঔঐשـ܊ ۹ٔـ໶ٔࡺ ܷ࢜ؔၣထ ׻ཛྷ ﻭﺍﺭﺙ. 3
+
+- ﺍ݄ॺۑ۟ﺓ ﺍऐईﻭ഑෮ :ᅁᄴׅ߫ࠍ օڨ࿔ྂ լໍ ﻭﺍﺭﺙ ٸٽ ﺃԾ഑ഏﺏ ﺍ٪קڗﻭﺽ ﻭ՚ֈ֤೉ಮ ﺍ٪՚ڨ֫Ծﺕ 4
+
+ච๷ გႮݐ׻ ﺍ۹ٶܦﻭﺽ ﺍศ༖۹עسڶ، ﻭ܇܌ ሙል ؊ُשݠݶ ﺍ۹غ׍኱ካ ᇖᆰשܷغڶ ﺇﻥ ﻭ໩ٔﻭﺍ: ৐౿ٔﺃ యఠ௱ٔࡺ ܷ࢜ؔၣထ ׻ཛྷ ﻭﺍﺭﺙ ܇܌ ﺍ૯૔۹ 5
+
+:Ռւﺭऐईﺍ ৛৆ऍईﺍ ৛৆ﺍ ﺕԾॄ௭ 6
+
+გႮ، ﻭﺫটগ ኿ካﻥ৓౼ ׍ﺕ ﺍ੪੕জগ ـ ﻭ܇قۿڹ܌ ৓౼׍ﺕ ﺍ੪੕ ﺍ੪੕জগ ـ ؊ُש׍܇ۿ܌ ܇ש׍܇ჱჩ ﺍ۹غؽ׍ﺕ עؽ ໣ٔٔﻡ ﻭڕݮﺩ ܇܌ ܷؔኟኋཛྷ܌ ڷݮ ﺍ۹قۿق׍ﻥ )2/3( ܇܌ ﺍ૯૔۹ 7
+
+ච๰ڦኟኋ܌۹ၨထ ،غས׮ ﺍ۹ܷۿغسڶ ﺃﻭ ﺍ੪੕ ﺍ۹ܷۿ׻ ﺃﻭ ﺍ੪੕ ﺍ੪੕ ﺃौु໣ ܇ኟ኎܌. ﻭޟ޻ﺙ ﺍ۹ݮﺍ໥ٔﺓ ﺍ۹ؽܷٞ، ﻭፆﺫﺍ ۑ܌ ّﺃۑ૯૖ ܇܌ ﻭﺍ໥ٔﺓ ٩ۿڹ܌ ﺍ۹قۿق׍ﻥ، ศต෻ﻁ ໣ٔﻡ ﻭڕݮﺩ ﺍ੪੕ ﺍᇖᆱ ੪੕ ﺩﺭڕኟኑ܌ ؊שܷኟኋ܌. َِٔﺓ ٩ًَۿَڹَ׍໥ْﻭَﺍ ಕَ౿ၨَထْ ﻥ ռ ُؚۿُقَ׍ ܇َ׍ ޟَ޻َﻙ َﻭፆَ ոّ ઱ِઝَ׍ﺀ ٩ًَݮْﻕ َﺍསْགྷَـ൘ْഽَ ٩َِۿَڹُ܌ ոّ  ﻥ ْۑُ܌ռ٩َِ׌ ൘ْഽََسཫ༽պটগِ܇ِق۳ْ ُڑَݙ ِّﺍஂَ ୧ ոّჷጅِካْ ᔧُᇜِﺩজَগْ ﻭᔝﺃ ᇖِᆱُ ԵոّԴԳُﺍ ᔥُ੷ُݮِܲس؊» :ᇐᇃؗש׍ ԵឝԳﻭ٨ ٨ٔ׍ﻝ ﺍ 8
+
+.«ُْٞﺍ۹ؽِّܷ 
+
+ﺃﺏ ﺍऐईﺏ )ﺍ݄ॿ ׅﺍ٪ڨ֤ؓױ(: 9
+
+გႮ، ﺃﻭ ؚۿװ টগ ،გႮؔڲ ﻭ໩ُ ٔ܇כ ﺇڐݮﺓ ﻭ܇כ ﻭڕݮﺩ ܲ׍ڑ׻ ٩ܦﺽ، ૯ે٩ﺙ ؑא٩ܵ۳ ﺍটগڑݮﺍﻝ ﺍ۹قௌேؚڶ: ﺍঔঐݓ׍ﺭ ܷؔཛྷغڲ ڷݮ ﺍ۹ݐٔﺱ )1/6( ܇܌ ﺍ૯૔۹ 10 
+
+ﺍ۹غ׍ᇖᆰ، ﺃﻭ ݅ٔﺱ ﺍঔঐ׍ﻝ ჭၑထ. ﻭᇖᆱ ڷٓﻩ ﺍঔঐݐאၨထ ჱუﻥ ݅ٔﺱ ﺍঔঐ׍ﻝ ჭၑထ ڷݮ ﺍটগﻭ٩ܦ ჭუ، ૯ે٩ﺙ ﺍ۹ݐٔﺱ. 
+
+ﺍऌई۟ﺓ ﺍऐईڹצԾﺀ ﺍԾॄ௶ऍईﻥ ﻭﺍऐई۟ﺍﺕ ﺍ٪ۄצ֤צԾﺕ ﺍबछगګ: 11 
+
+୧ ஂ܇ق۳ ڑݙ ﺍཫ༽টগسኟብটগ ،൘ഽ܄ עܷغڶ ؑ׍۹ؽٶ ܺﺫۑݮﺭًﺍ ﻭፆؔ׍ྠً׍. ჷጅካ ܄ኟ኎ཛྷ༺ྂ ༓غً׍، ﻭ ؊ُٵཛྷؗשܷ გႮ ޒ޻ؚݮﻥ ܇׍ ؑߚ ߱܇܌ ﺍ૯૔۹ 12 
+
+- ﺍ݄ॺۑ۟ﺓ ﺍ٪ֳऺ௰ԾاՁֈ :ڣ֤٤ ﺍअँہၢၔՁ 13 
+
+৓౼׍ﺕ ﺍ੪੕ ﺍଚଖ ੪੕জগ܌ ﺍ۹قۿق׍ﻥ )2/3(. 14 
+
+ﺃﺏ ﺍটগﺏჭუ  ﺍ۹ݐٔﺱ )1/6(. 15 
+
+܇ٵ׍܇׍ﺕ ﺍ۹ٶܦﻭﺽ ᇖᇇ 3 ﻭ6، ٩سۣݮﻥ ﺃܲ۳ ﺍঔঐݐאჱუ ڷݮ 6. 16 
+
+ؗݮﺯ ؊כ ﺍኡ༓۹׍ﻡ ौु໣ ﺃܲ۳ ﺍঔঐݐאჱუ: 17 
+
+৓౼׍ﺕ ﺍ੪੕ ﺍ੪੕জগ ﺍটগﺭؑכ: 4 ﺃኡ༈܄. 18 
+
+ﺃﺏ ﺍটগﺏ1 : ኡ༈܄. 19 
+
+ᅋଢଜݮﻉ ኡ༈׍ﻡ ﺃචඞ׍ﺏ ﺍ۹ٶܦﻭﺽ = 5 ﺃኡ༈܄. 20 
+
+ﺍ۹غ׍1 = ᇖᆰ = 5 - 6 ኡ༈܄، ﻭڷݮ ܷؔ׻ཛྷ ﺍ۹שܷغڶ. 21 
+
+- ﺍ݄ॺۑ۟ﺓ ﺍ٪ֳԾ٪ֳا: ֈڨ֤ؓױ ﺍअँہၢၔՁ ﻭ೰೒኷ﺍﺝ օڨ࿔ྂ լໍ ךڗﺩ 22 
+
+ኡ༈܄ ﺍ۹שܷغڶ )1( ච๰ـ׍ﺝ ﺇᇐᇃ ﺍ۹ـٵݐࠝ࠸ ौु໣ ﺍ൘ഽ৓ಅ ﺇڐݮﺓ ﺃ݈ٵ׍ﺀ ﻭᅋᄸ ܺﺃڐݮﺍﺕ ݈ٵسٵ׍ﺕ. 23 
+
+୧ ஂ܇ق۳ ڑݙ ﺍཫ༽টগس൘ഽ: ච๺ݐ׻ ໣ٔﺩ ﺍ۹ݮ໥ٔﺍﺕ ﻭ٩ܗ ٨׍໣ٔﺓ: ჷጅካ 24 
+
+9 = (1 × 2 ﺇڐݮﺓ × 2( + )5 ﺃڐݮﺍﺕ) 25 
+
+ﻭୗୂ׍ ﺃﻥ ﺍኡ༓۹܄৓౵ জগ ٵ༓ ौु໣ྂ 9، ُܷؔڢڀ ﺍঔঐݐאศ༣ؑ ჱუﺏ ﺃܲۿڹ׍ ໣ ᇖᆱٔﺩ ﺍ۹ݮ໥ٔﺍﺕ: 26 
+
+.܊ً׍ኡ༈ 6 × 9 = 54 = ჱუݐאঔঐ׍܇שڶ ﺍ໩ 27 
+
+ֈ۟ﺯ Ռջ ﺍ٪Ծሒຄﻡ՚ւ  ׅﺍ٪ֱڨ֤ؓױ: 28 
+
+:Ռւﺭऐईﺍ ৛৆ऍईﺍ ৛৆ﺍ ﺕԾॄ௭ -1 29 
+
+.׮ས༺ ၣ၁۹ ܄ኡ༈܊ً׍، ﺃﻱ 9 ﺃኡ༈ 4 × 9 = 36 30 
+
+.׮ས༺ ၣ၁۹ (9/54) × 100% = 67%.16 :ذݮ ؊ڶঔঐݐغڶ ﺍས۹ﺍ 31 
+
+2- ﺃﺏ ﺍऐईﺏ: 32 
+
+.܄ኡ༈9 × 1 ﺃ = 9 33 
+
+.(9/54) × 100% = 67%.16 :ذݮ ؊ڶঔঐݐغڶ ﺍས۹ﺍ 34 3- ﺍ٪՚ڨ֫ا )ﺍऌई۟ﺓ ﻭﺍऐई۟ﺍﺕ ﺍऐईڹצԾﺀ(: 35 
+
+:ٔﺍﺕ໥9 ﻭ ौु໣ ܄ኡ༈9 ﺃ ܄ଚଖ 36 
+
+ၣထ ﺃﺥ ݈ٵسܗ: 2 ኡ༈܊൘ഽ. 37 
+
+.(2/54) × 100% = 7%.3 :ذݮ ؊ڶঔঐݐغڶ ﺍས۹ﺍ 38 
+
+ၣထ ﺃڐ׮ ݈ٵسٵڶ: 1 ኡ༈܄. 39 
+
+.(1/54) × 100% = 85%.1 :ذݮ ؊ڶঔঐݐغڶ ﺍས۹ﺍ 40 
+
+ଽସ๕ڣا ﺍօऐईڨ֫ا ﺍ٪קڗﺩջا: 41 
+
+.(67%.16) ܄ኡ༈9 ﺃ :੪੕ﺍ ੪੕ﺍ ׮ས༺ ၣထ 42 
+
+.(67% .16) ܄ኡ༈9 ﺃ :ﺏটগﺃﺏ ﺍ 43 
+
+.(7% .3) ܄ኡ༈ 2 :ﺃﺥ ݈ٵسܗ ၣထ 44 
+
+ၣထ ﺃڐ׮ ݈ٵسٵڶ: 1 ኡ༈܄ )1.85%(. 45 
+
+ﻭᅋ຺ຠכ ﺍটগܷؔغڶ: 46 
+
+4) × (9 + 1) × (9 + 2) × (2 + 5) × (1 47 
+
+،܊ً׍ኡ༈ = 36 + 9 + 4 + 5 = 54 48 
+
+ﻭࢁ࢛઱ઓ ኿ካـٵࠝ࠸ ﺍ۹ـٵݐࠝ࠸ ﺩﻭﻥ ؔٵܭ ﺃﻭ ﺯ ؊׍ﺩﺓ. 49 
+
+</think> 50 
+
+<answer> 51 
+
+ﺍ݄ॿ۟ﺍﺏ: 52 
+
+ौु໣ً ﺍঔঐשݠس׍ﺕ ﺍ۹ݮﺍﺭﺩﺓ ᇖᆱ ﺍঔঐݐאჱუ، ﻭﺍ෥්۹ ؗٶس ٔؑݮ٩׍ﺓ ﺍঔঐݮﺭّﺙ ﻭޟ޻ﻙ: ﺃﺭؑכ ৓౼׍ﺕ ﺍ੪੕ ﺍ੪੕، ﻭﺃﺏ ﺍটগﺏ، ﻭﺍ൘ഽ৓ಅ ﺇڐݮﺓ ﺃ݈ٵ׍ﺀ، ﻭᅋᄸ ܺﺃڐݮﺍﺕ ৓౼׍ﺀ 53 
+
+ौु໣ྂ ﺍ۹ؽڢݮ ﺍᇖᆊঠগ ﻭ٩ٵً׍ ၨ၁໥টগﻡ ﺍศ༖۹ ؊שڶ ﺍছগ݅ௌே܇سڶ: ոّ ༓ُؗٵ გႮ ݈ٵسٵ׍ﺕ؛ ٩׌ﻥ ﺍ૯૔۹ 
+
+:Ռւﺭऐईﺍ ৛৆ऍईﺍ ৛৆ऍईﺍ ﺕԾॄ௭ .1 54 
+
+ُؚۿُقَ׍ ܇َ׍ ޟَ޻َﻙَ«. ﻭ໣ۿسڲ، ؊ۣݮﻥ ܷؔၣထ ׻ཛྷ ﻭﺍ໥ٔﺓ ոّ ઱ِઝَ׍ﺀ ٩ًَݮْﻕ َﺍསْགྷَـ൘ْഽَ ٩َِۿَڹُ܌ ոّ  ﻥ ْۑُ܌ռ٩َ׌» :ᇐᇃؗש׍ ჭუ٨ݮ ᇖᆱ ׍ﺀ໩ Ⴂ႔ၴ ،გႮ ઱ઓـڢٵ܌ ﺍ۹قۿق൘ഽ ܇܌ ၨထ܇۳ ﺍ૯૔۹ 55 
+
+.გႮ ܇܌ ৓౼׍ﺕ ﺍ੪੕জগ ﺍ઱ઠ ੪੕জগשڶ ﺃൽ൦ﺍﺀ ܇܌ ﺃﺭؑשڶ ﻭᅋᄸݐൽ൦ ൘ഽﺀًﺍ )9/54( ܇܌ ﺍ૯૔۹ .გႮ გႮ ٩ܦًܰ׍. ﻭ໣ۿسڲ، ؊ۣݮﻥ ܷؔཛྷغڲ ઱ઠשڶ ﺃൽ൦ﺍﺀ ܇܌ ﺃﺭؑשڶ ﻭᅋᄸݐൽ൦ ൘ഽﺀًﺍ )9/54( ܇܌ ﺍ૯૔۹ ઱ઓـڢܗ ݅ٔﺱ ﺍ૯૔۹ 2. ﺃﺏ ﺍऐईﺏ )ﺍ݄ॿׅ(: 56 
+
+୧ ஂ܇ኟ኎܄ ܇ق۳ ڑݙ ﺍཫ༽টগس൘ഽ. ﻭ໣ۿسڲ: ჷጅካ ،غً׍ཛྷؗשܷ გႮ ૯૔۹ﺍ ᇖᆰؑ׍ ᇖᆱ ۑݮﻥ૯૔઴ઓ 3. ﺍऌई۟ﺓ ﺍऐईڹצԾﺀ ﻭﺍऐई۟ﺍﺕ ﺍ٪ۄצ֤צԾﺕ: 57 
+
+.გႮ ઱ઓـڢܗ ൽ൦ﺃ੪੎ ܇܌ ﺃﺭؑשڶ ﻭᅋᄸݐൽ൦ ൘ഽﺀًﺍ )2/54( ܇܌ ﺍ૯૔۹ ࿔ྂ ﺃﺥ ٸٽ ﺍ৛ি۟ऐई ﺍ٪ۄצ֤צ೉ಮ: • 58 
+
+.გႮ ًﺍ ﻭﺍ໥ًٔﺍ ܇܌ ﺃﺭؑשڶ ﻭᅋᄸݐൽ൦ ൘ഽﺀًﺍ )1/54( ܇܌ ﺍ૯૔۹ ઱ઠـڢܗ ൽ൦ﺀ ࿔ྂ ﺃ՟ ٸٽ ﺍऐई۟ﺍﺕ ﺍ٪ۄצ֤צԾﺕ ﺍबछगګ: • 59 
+
+ﻭ๔ٰ֤أ، ջٔ۟ﻥ օڨ࿔ྂ լໍ ﻭﺍﺭﺙ Ծւ٪ֱקڨ֤٤ ᅇ჻Ձջ ဓစ࿥: 60 
+
+.გႮ ૯૔۹9/54( ܇܌ ﺍ) :Ռւﺭऐईﺍ ৛৆ऍईﺍ ৛৆ऍईﺍ ﺕԾॄ௭ ٸٽ ՟໗ຫ ࿔ྲ٪ • 61 
+
+.გႮ ૯૔۹9/54( ܇܌ ﺍ) ऐईﺏ ﺍऐईﺏ: • 62 
+
+.გႮ ૯૔۹2/54( ܇܌ ﺍ) ٪࿔ྲ ﺃﺥ ٸٽ ﺍ৛ি۟ऐई ﺍ٪ۄצ֤צ೉ಮ: • 63 
+
+.გႮ ૯૔۹1/54( ܇܌ ﺍ) ٪࿔ྲ ﺃ՟ ٸٽ ﺍऐई۟ﺍﺕ ﺍ٪ۄצ֤צԾﺕ ﺍबछगګ: • 64 
+
+</answer> 65 C Structured Solution Format 
+
+To support deterministic and fine-grained evaluation, each model output includes, in addition to the free-form <think> and the concise <answer> , a structured field 
+
+answer_structured . This field provides machine-readable intermediate results that mirror the standard inheritance workflow used by legal experts and can be parsed automati-cally. 
+
+General schema. For each instance, 
+
+answer_structured is a JSON object with the following components: • heirs : the list of heirs who actually in-herit (eligible heirs), each with heir (Ara-bic label) and count (multiplicity). • blocked : the list of present but excluded heirs (blocked by hajb ), each with heir 
+
+and count .• shares : the initial allocation before 
+
+any global adjustment (ʿawl or radd ). Each entry specifies heir , count , and a 
+
+fraction string. • awl_or_radd : a categorical flag indicat-ing whether a global adjustment is ap-plied: "none" / "awl" / "radd" (in the dataset: জগ / עݮﻝ / ﺭﺩ ). • awl_stage : the state of the prob-lem after adjustment (used only when 
+
+awl_or_radd is "awl" or "radd" ). It in-cludes asl_after_awl and an adjusted 
+
+distribution .• post_tasil : the final normalized distri-bution ( taṣīl ). It contains total_shares 
+
+(final denominator) and per-head fi-nal results via per_head_shares and 
+
+per_head_percent .
+
+Conventions. Heir names must follow the benchmark taxonomy (Arabic labels). Counts must be explicit whenever an heir type ap-pears multiple times. Fractions are repre-sented as strings (e.g., "1/6" , "2/3" , "3/24" ). When no adjustment is needed, awl_or_radd 
+
+is "none" , asl_after_awl is null , and 
+
+awl_stage.distribution may be empty. This structured representation makes in-heritance reasoning measurable at multiple levels: eligibility and blocking decisions (heirs /blocked ), initial share assignment (shares ), correct handling of global adjust-ment ( awl_or_radd and awl_stage ), and the final normalized distribution ( post_tasil ). 
+
+Template (case-general JSON).

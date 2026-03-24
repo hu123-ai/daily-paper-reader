@@ -1,0 +1,1542 @@
+Title: 2603.04982v1.pdf
+
+URL Source: https://arxiv.org/pdf/2603.04982v1
+
+Published Time: Fri, 06 Mar 2026 01:44:50 GMT
+
+Number of Pages: 41
+
+Markdown Content:
+Training for Technology: Adoption and Productive Use of Generative AI in Legal Analysis 
+
+Benjamin M. Chen 1 Bao Hong 2
+
+Abstract 
+
+Can targeted user training unlock the productive potential of generative artificial 
+
+intelligence (GenAI) in professional settings? We investigate this question using a randomized 
+
+study involving 164 law students completing an issue -spotting examination. Pa rticipants were 
+
+assigned to one of three conditions: no GenAI access, optional access to a large language model 
+
+(LLM), or optional access accompanied by an approximately ten -minute training intervention. 
+
+Training significantly increased LLM adoption —the usage rate rose from 26% to 41% —
+
+and improved examination performance. Students with trained access scored 0.27 grade points 
+
+higher than those with untrained access (p = 0.027), equivalent to roughly one -thi rd of a letter 
+
+grade. By contrast, access to an LLM without training did not improve performance and was 
+
+associated with shorter answers relative to no access . Using principal stratification, we 
+
+decompose the overall effect into adoption and effectiveness channels. Point estimates are 
+
+consistent with training operating primarily by expanding the scope of GenAI use rather than by 
+
+enhancing effectiveness among existing users, though confidence intervals are wide. 
+
+Overall, our findings provide evidence that complementary investments in user training 
+
+are critical for realizing GenAI productivity gains in knowledge -intensive fields where concerns 
+
+about reliability may inhibit adoption.       
+
+> 1Associate Professor, the University of Hong Kong Faculty of Law. This is a first draft. Comments and
+> criticisms are welcome and should be directed to benched@hku.hk.
+> 2PhD student, the University of Hong Kong Faculty of Law.
+
+1. Introduction 
+
+The advent of generative artificial intelligence (GenAI) represents one of the most 
+
+significant technological transformations for the learned professions since the computerization of 
+
+white -collar labor in the late twentieth century. Specifically, large language models (LLM s) tout 
+
+capabilities that range from drafting technical documents to dispensing high -stakes advice . Yet 
+
+the deployment of GenAI has proceeded unevenly across and within disciplines . This gap 
+
+between rhetoric and reality reflects a fundamental tension: while GenAI promise s to raise labor 
+
+productivity and complement human expertise, its eventual impact depends on whe re , how , and 
+
+by whom the technology is deployed .
+
+This article asks whether user training can enhance human productivity by increasing use 
+
+of GenAI —or the effectiveness of such use —for applications where the technology may not be 
+
+fully reliable and where mistakes can be especially costly. We present evidence suggesting that it 
+
+can. 
+
+Our experiment took the form of a mock examination administered to 164 law 
+
+undergraduate (LLB) and graduate (JD) students enrolled in a core module in contract law at the 
+
+University of Hong Kong. Participants were randomly assigned to one of three groups. The first 
+
+group did not have access to any GenAI assistance . The second group was permitted to use a n
+
+LLM  but did not receive any guidance on how they should use it. The third group was not only 
+
+permitted to use a n LLM but also watched an instructional video and took a short quiz on how 
+
+GenAI can help identify and analyze legal issues raised by a fact pattern. 
+
+Overall, access to an LLM did not noticeably improve performance on the examination 
+
+absent user training . Indeed, if anything, participants who had access to an LLM without any 
+
+intervention wrote less and scored worse than those who did not have such access although the latter decline is small and statistically insignificant . Compared to participants who only had 
+
+access to an LLM, participants who received the intervention reported substantially higher rates 
+
+of GenAI usage and achieved, on average, scores that were better by nearly one third of a letter 
+
+grade .
+
+While many studies have documented the ability of GenAI tools to execute cognitively 
+
+burdensome tasks, unsupervised professional practice by GenAI remains a distant possibility. 
+
+More attention should therefore be paid to how humans call on, relate to, and collaborate with 
+
+GenAI. Our findings indicate that targeted instruction on how GenAI can and ought to be 
+
+employed for certain kinds of applications may be critical in fully realizing the benefits of GenAI 
+
+for knowledge -intensive fields .
+
+2. Background 
+
+2.1. GenAI and its Impact s on the Labor Market 
+
+Economists have long recognized that major technological revolutions affect workers 
+
+unevenly across the labor market. In the early 2000s, efforts to understand the consequences of 
+
+computerization led to skill -based and task -based frameworks that distinguis hed between routine 
+
+and non -routine work. This line of literature s argued that computerization primarily substituted 
+
+for low - and middle -skill workers performing routine tasks, while complementing higher -skill 
+
+workers engaged in cognitive, non -routine acti vities (Acemoglu & Autor, 2011; Autor et al., 
+
+2003) .
+
+The emergence of artificial intelligence complicates this framework. Unlike earlier 
+
+computing technologies —characterized by “faultless and nearly costless execution of routine, 
+
+procedural tasks” —AI systems exhibit capabilities associated with acquiring tac it knowledge and exercising forms of expert judgment (Autor, 2024) . Empirical evidence suggests that large 
+
+language models (LLMs) may therefore expose higher -income and higher -skill occupations to 
+
+technological change to a greater extent than previous innovations (Eloundou et al., 2023) . This 
+
+raises the possibility that AI differs fundamentally from earlier technologies by augmenting, 
+
+rather than bypassing, non -routine tasks traditionally performed by highly skilled workers. 
+
+Despite this possibility, much of the recent empirical literature adopts a more cautious 
+
+view. Acemoglu (2025) , for example, asserts that observed productivity gains from AI are 
+
+concentrated in relatively “easy tasks” across domains such as customer support, software 
+
+development, and professional writing. Related studies likewise document levelling effects, 
+
+whereby AI disproportionately benefits less -skilled workers and compresses performance 
+
+differences rather than amplifying skill premia (Brynjolfsson et al., 2023; Cui et al., 2025; Noy 
+
+& Zhang, 2023; Peng et al., 2023) . These findings suggest continuity rather than rupture with 
+
+earlier patterns of task -based technological change. 
+
+At the same time, evidence from boundary applications —tasks that are judgment -
+
+intensive, error -sensitive, and context -dependent —reveals a more complex pattern. In such 
+
+settings, the effects of generative AI depend critically on the nature of the task and on how users 
+
+interact with the technology (Dell ’Acqua et al., 2023) . Autor (2024) , in a more optimistic 
+
+account, argues that AI may ultimately enable middle -skill workers to perform complex non -
+
+routine tasks that have historically been “arrogated to elite experts,” pointing toward a potential 
+
+restructuring of occupational hierarchies rather than straightforward automation. 2.2. GenAI and the Legal Profession 
+
+The legal profession provides a particularly salient case for examining the effects of 
+
+generative artificial intelligence. A growing body of academic research demonstrates that GenAI 
+
+can perform a wide range of legal tasks, including drafting contractual c lauses  (Lam et al., 2023) ,
+
+summarizing judicial opinions (Bauer et al., 2023) , and even producing case commentary (Engel 
+
+& Kruse, 2025) . In principle, these capabilities promise to reduce the cost of legal services by 
+
+accelerating the completion of standardized and time -intensive assignments. Empirical studies 
+
+largely corroborate this prospect in controlled settings. For example, Schwarcz e t al. (2025) find 
+
+that the use of retrieval -augmented generation (RAG) and AI reasoning models improves the 
+
+time -adjusted quality of law students’ work by more than 50% across tasks ranging from drafting 
+
+legal memoranda to analyzing complaints. Nielsen et al. (2024) report that AI -generated 
+
+highlighting of legal filings reduces the time required for law students to understand and answer 
+
+questions about complaints by up to 30%. Similarly, Choi et al. (2024) estimate time savings of 
+
+10% to 30% when law students use GPT -4 to perform basic legal tasks such as drafting contracts 
+
+or memoranda. Consistent with findings from other domains, this study also documents levelling 
+
+effects, with larger gains accruing to l ower -performing students. 
+
+Despite these encouraging results, evidence from legal practice points to substantial 
+
+hesitation in adopting GenAI for complex or high -stakes tasks. A 2025 survey of more than 
+
+2,800 lawyers reports that only 21% of law firms currently use GenAI tools (American Bar 
+
+Association, 2025) . Practitioners appear particularly cautious in contexts where accuracy is 
+
+critical. Surveys conducted by LexisNexis and Thomson Reuters show that adoption rates for 
+
+legal drafting lag behind those for document review and legal research (LexisNexis, 2024; 
+
+Thomson Reuters, 2025) . Notably, 74% of surveyed firms identify concerns about hallucinated or fabricated content as a major barrier to deployment (LexisNexis, 2024) . These concerns are 
+
+well founded: Dahl et al. (2024) report hallucination rates as high as 58% for tasks such as 
+
+identifying the legal rule established by a judicial decision. Correspondingly, at least 851 court 
+
+opinions have addressed the submission of AI -fabricated content by lawyers or litigants 
+
+(Charlotin, n.d.) .
+
+The divergence between positive results in laboratory -style studies and cautious adoption 
+
+in practice suggests that the expected value of GenAI use in the legal profession is highly 
+
+sensitive to how humans interact with the technology. In settings characte rized by legal 
+
+ambiguity, high error costs, and professional accountability, effective collaboration between 
+
+users and GenAI systems may be a critical determinant of whether adoption enhances or 
+
+undermines performance. 
+
+2.3. User Training as a Mechanism for GenAI Adoption and Productivity 
+
+At the current stage of technological development, we assume that GenAI primarily 
+
+augments rather than automates professional labor (Agrawal et al., 2026) . This study examines 
+
+whether the legal profession can realize greater productivity gains from generative artificial 
+
+intelligence through appropriate user interventions, particularly for high -skill workers engaged in 
+
+non -routine tasks. 
+
+We begin by sketching a simple conceptual framework in which GenAI can enhance 
+
+human productivity through two distinct channels: by expanding the scope of GenAI use —that 
+
+is, the set of tasks for which users are willing to adopt the technology —and by improving the 
+
+effectiveness of use conditional on adoption. We hypothesize that user training increases the likelihood that high -skill professionals will employ GenAI for complex, non -routine tasks and 
+
+also improves how users interact with the technology once adoption occurs. 
+
+An interdisciplinary literature examined the factors influencing technology adoption and 
+
+proficiency from psychological, managerial (Freitas, 2025; Humlum & Vestergaard, 2024) or 
+
+educational (so -called “AI literacy”) (Ng et al., 2021) perspectives with a recurring theme that 
+
+the absence of user training inhibits efficacious adoption of GenAI t ools . However, there is not 
+
+yet any study directly linking training interventions to objective productivity outcomes. The most 
+
+relevant evidence from the legal profession comes from a pilot field study by Chien and Kim 
+
+(2025) , in which legal aid lawyers were given temporary access to paid GenAI tools, with a 
+
+subset also receiving concierge support that included peer use cases and office hours. 
+
+Participants assigned to this concierge support condition reported higher perceived productivity 
+
+and stronger intentions to adopt GenAI in the future, but the study relied on self -reported 
+
+outcomes rather than objective measures of performance. Related experimental studies involving 
+
+law students featured instruction in using GenAI but do not isolate the marginal contribution of 
+
+user training (Choi et al., 2024; Choi & Schwarcz, 2025; Schwarcz et al., 2025) . For example, 
+
+Choi and Schwarcz (2025) compare students without access to GenAI to students who use 
+
+GenAI following extensive preparation , finding performance gains on multiple -choice questions 
+
+but not on essay -based tasks. 
+
+Our study differs from prior research in several important respects. First, we recognize 
+
+that lawyers today typically have a choice about whether to use GenAI. Accordingly, access to 
+
+an LLM in our experiment was optional rather than required. Second, we focus on tasks that 
+
+demand both professional judgment and accuracy by situating our experiment in the context of 
+
+an issue -spo tting examination that requires participants to identify and analyze legal issues raised by a complex fact pattern. Third, we explicitly examine the role of user training in shaping both 
+
+adoption decisions and the quality of professional output. To this end, our experimental design 
+
+includes two treatment groups with identical access to an LLM, differing only in whether 
+
+participants received a brief instructional intervention in the form of a training video and quiz. 
+
+Together, these design choices allow us to more clearly assess how user training mediates the 
+
+productivity effects of GenAI and to draw broader implications for the future organization of the 
+
+learned professions. 
+
+3. Theoretical Motivation 
+
+This section develops a stylized model to clarify how training can enhance productivity 
+
+by enhancing the scope or the effectiveness of GenAI use . Consider a lawyer with ability  𝜃 
+
+performing a legal task indexed by its complexity  𝑐 ∈ [0,1]. The lawyer can choose whether to 
+
+employ GenAI. Individual productivity is 
+
+𝑌 𝑇 = 𝜃 + 𝐷 ⋅ (1 − 𝜃 )[𝐴 ⋅ 𝑒 𝑇 − 𝐿 (𝑐 , 𝑒 𝑇 )]
+
+where  𝜃  represents professional ability,  𝐷 ∈ {0,1} represents the adoption decision,  𝐴  represents 
+
+the base capability of the technology,  𝑇 ∈ {0,1} represents exposure to training,  𝑒 𝑇 ∈ [0,1]
+
+represents effectiveness of use as a function of training , and  𝐿 (𝑐 , 𝑒 𝑇 ) is the expected loss from 
+
+errors caused by using GenAI . Training does not hurt effectiveness, i.e.,  𝑒 1 ≥ 𝑒 0 and does not 
+
+increase the cost of adoption, i.e.  𝑘 1 ≤ 𝑘 0. Expected loss is 
+
+𝐿 (𝑐 , 𝑒 𝑇 ) = 𝑝 (𝑐 , 𝑒 𝑇 ) ⋅ 𝑙 (𝑐 )
+
+where  𝑝 (𝑐 , 𝑒 𝑇 ) is the probability of error and  𝑙 (𝑐 ) is the co st of error on task  𝑐 . Error rates are 
+
+higher on more complex tasks , i.e.  𝜕𝑝  
+
+> 𝜕𝑐
+
+> 0, and more effective use reduces error rates , i.e.  𝜕𝑝 
+
+> 𝜕 𝑒 𝑇
+
+<
+
+0. Errors are also costlier for more complex tasks , i.e.  𝜕𝑙  
+
+> 𝜕𝑐
+
+> 0.The net productivity gain from using GenAI is thus: 
+
+Δ𝑌 𝑇 (𝑐 , 𝑒 𝑇 , 𝜃 ) = (1 − 𝜃 ) ⋅ [𝐴 ⋅ 𝑒 𝑇 − 𝑝 (𝑐 , 𝑒 𝑇 ) ⋅ 𝑙 (𝑐 )].
+
+All else equal , a higher ability lawyer benefits less from GenAI adoption than a lower ability 
+
+lawyer . Moreover, f or boundary applications where  𝑐  is large , the loss term can dominate 
+
+making  𝛥 𝑌 𝑇 < 0 even when  𝐴 · 𝑒 𝑇  is substantial. Effectiveness here is independent of ability  𝜃 .
+
+The marginal value of effectiveness, however, does depend on ability. In general, higher 
+
+effectiveness increases productivity conditional on adoption ,
+
+𝜕 Δ𝑌 
+
+𝜕 𝑒 𝑇 
+
+= (1 − 𝜃 ) [𝐴 − 𝜕𝑝 
+
+𝜕 𝑒 𝑇 
+
+⋅ 𝑙 (𝑐 )] > 0
+
+but it does so more for lower ability compared to higher ability individuals, 
+
+𝜕 2Δ𝑌 
+
+𝜕 𝑒 𝑇 𝜕𝜃 = − [𝐴 − 𝜕𝑝 
+
+𝜕 𝑒 𝑇 
+
+⋅ 𝑙 (𝑐 )] < 0.
+
+Under this model, a lawyer of ability  𝜃  uses GenAI for task  𝑐  if 
+
+(1 − 𝜃 ) ⋅ [𝐴 ⋅ 𝑒 𝑇 − 𝑝 (𝑐 , 𝑒 𝑇 ) ⋅ 𝑙 (𝑐 )] > 𝑘 𝑇 
+
+where  𝑘 𝑇 > 0, the cost of adoption , is a function of training . 𝑘 𝑇  here can include time and 
+
+money , risk premium , and psychological barriers . This equation gives rise to a natural distinction 
+
+between always users —those who would adopt GenAI for a given task even in the absence of 
+
+training —and induced users, whose adoption is triggered by training. Assuming  𝐴 ⋅ 𝑒 0 −
+
+𝑝 (𝑐 , 𝑒 0) ⋅ 𝑙 (𝑐 ) > 0, always users are those for whom 
+
+𝜃 < 1 − 𝑘 0
+
+𝐴 ⋅ 𝑒 0 − 𝑝 (𝑐 , 𝑒 0) ⋅ 𝑙 (𝑐 )
+
+and induced users are those for whom 
+
+1 − 𝑘 0
+
+𝐴 ⋅ 𝑒 0 − 𝑝 (𝑐 , 𝑒 0) ⋅ 𝑙 (𝑐 ) ≤ 𝜃 < 1 − 𝑘 1
+
+𝐴 ⋅ 𝑒 1 − 𝑝 (𝑐 , 𝑒 1) ⋅ 𝑙 (𝑐 ).For always users, training operates primarily through improvements in effectiveness, reducing 
+
+error rates and increasing net productivity conditional on adoption. For induced users, training 
+
+operates through the extensive margin by lowering adoption costs or mitigating perceived risks, 
+
+thereby expanding the set of tasks for which GenAI use becomes attractive. 
+
+4. Experimental Design 
+
+To explore the effect of user training on the scope and effectiveness of GenAI use , we ran 
+
+an experiment featuring a single -factor, between -subjects design. 
+
+Participants were invited to take a mock examination on contract law . The examination 
+
+was open -book, and all participants were given one hour and fifteen minutes to submit their 
+
+answers , with fifteen minutes being reserved for reading and six ty  minutes for typing. The 
+
+examination question required participants to identify the legal issues presented by a hypothetical 
+
+fact pattern and to analyze them to reach a conclusion about the merits of a party’s argument. 
+
+This type of examination is commonly known as an issue -spotter and tests , among other things, 
+
+candidates’ knowledge of black -letter law, their sensitivity to normatively relevant facts , their 
+
+capacity to navigate legal ambiguity and their judgment in assessing the strength of competing 
+
+arguments. The examination here was adapted from a n official, supplementary examination 
+
+administered in 2021 .3 The marking rubric enumerates four major issues, namely, formation of 
+
+the contract, misrepresentation, promissory estoppel and breach of implied terms. A total of 
+
+twelve sub -issues were listed under these four headings.  
+
+> 3The supplementary examination was taken by a small number of students, none of whom were eligible for
+> this study, and has not been made available as part of the University of Hong Kong Law Library’s collection of past
+> year papers.
+
+Participants were randomly assigned to one of three groups for the mock examination .
+
+Those in the first group , i.e. Group 1, could only query a traditional legal database , Westlaw, 
+
+through the internet and were not permitted to use any GenAI tools. Participants in the second 
+
+and third groups , i.e. Groups 2 and 3, could query both Westlaw and DeepSeek. Participants in 
+
+Group 2 did not receive any guidance on using an LLM for issue -spotting. By contrast, 
+
+participants in Group 3 watched a nine -minute thirty -second video entitled “Using Large 
+
+Language Models to Help Your Legal Analysis ” (
+
+Figure 1).4 They also had to complete a five -question multiple -choice quiz about the 
+
+contents of the video before starting the examination. 
+
+Figure 1: A Screenshot of the Training Video 
+
+The training video at the core of our intervention consisted of two parts. The first part 
+
+described how LLMs could be used to help analyze a legal problem . Recommendations, drawn 
+
+from prior research, included repeating the prompt several times so that the model generates 
+
+more perspectives , breaking the task down into intermediate steps to facilitate chain -of -thought    
+
+> 4This material was created using Youyan 3D, a video generation platform.
+
+reasoning, and giving the model both positive and negative feedback so that it return s more 
+
+tailored completions (Schwarcz & Choi, 2023) . This part of the video also cautioned that: 
+
+“Generic LLMs produce responses based on probabilistic models of language and there is no 
+
+guarantee that the text they generate make sound or accurate claims.” It advised that an LLM 
+
+should be employed to assist on a legal task only if the user has sufficient knowledge to check 
+
+the accuracy of output, that the user should ask the LLM to give ideas or directions for solving a 
+
+legal problem rather than relying on it for a solution, and that the user should always double -
+
+check output from an LLM, including all facts, rules, and cases referred to. The second part of 
+
+the video then showed how these techniques and strategies could be applied in practice . The 
+
+demo nstration made use of a stylized fact pattern implicating a legal issue irrelevant to the ones 
+
+tested in the examination . By visualiz ing the interaction between a human and the LLM , the 
+
+video demonstrated the steps participants could take if they chose to take advantage of GenAI for 
+
+the examination .
+
+After taking the mock examination, all participant s were surveyed about their experiences 
+
+with and attitudes toward GenAI tools. Specifically, they were asked whether they had received 
+
+any previous training in using LLMs for legal research or legal analysis, whether they used 
+
+DeepSeek in the examination, whether they agreed that having access to LLMs would help them 
+
+in law examination s, and whether they agreed that students should be allowed to have access to 
+
+LLMs for law examinations. 
+
+Several directional and non -directional hypotheses were enumerated in a pre -registration 
+
+plan lodged by the authors on the Open Science Framework website .5      
+
+> 5Hypotheses tests reported in the article that were not pre -registered on the Open Science Framework will
+> be declared as such. Hypotheses tests that were pre -registered but omitted from the article for reasons of brevity are
+> reported in the appendix.
+
+5.  Data Collection 
+
+Participants were recruited from students enrolled in undergraduate , i.e. LL .B., and 
+
+graduate , i.e. J .D., contract law courses at the University of Hong Kong. The mock examination 
+
+was scheduled for 30 November 2025. 6 An email inviting students to participate was sent 
+
+approximately two months before their official mid -year examination on 15 December 2025 .
+
+Students were promised HKD 100 Starbucks gift -cards and feedback on the mock examination if 
+
+they completed the study. 
+
+A total of 213 students registered for the mock exam ination . Among them, 171 were 
+
+LL.B. students and 52 were J.D. students. 60 participants were randomly assigned to Group 1, 76 
+
+to Group 2, and 77 to Group 3. All participants were instructed to bring a laptop computer to the 
+
+examination. Participants were given different reporting locations depending on their group 
+
+numbers. To preserve the stable unit treatment value assumption and to minimize differential 
+
+attrition across groups, students were not informed in advance that some of them would be 
+
+permitted to access DeepSeek during the examination. 
+
+Group 1 was split across two small classrooms, each supervised by one invigilator. Group 
+
+2 was in one large classroom supervised by two invigilators . Group 3 was in another large 
+
+classroom supervised by two invigilators. 7 Invigilators implemented the protocol to be followed 
+
+for the classrooms they were supervising. Recall that Group 1 could only access Westlaw. Group 
+
+2 could access Westlaw and DeepSeek but did not receive any training on how a n LLM might be 
+
+helpful for legal analysis . Group 3 could access Westlaw and DeepSeek and , in addition,        
+
+> 6Around two weeks before the mock examination, the most important English language newspaper in
+> Hong Kong , the South China Morning Post, ran stories about the retraction of a journal article authored by a
+> prominent professor at the University of Hong Kong and his PhD student. 20 of 61 references in the article did not
+> exist and were hallucination s by GenAI .
+> 7Invigilators were selected to be demographically similar to one another to minimize any possibility of
+> stereotype threat.
+
+received the training intervention. For Groups 2 and 3 , the option of consulting DeepSeek was 
+
+stated on the front page of the question paper and reiterated by invigilators before the 
+
+examination commenced . The same information was also displayed on electronic screens at the 
+
+front of the classrooms (Figure 2).
+
+Figure 2: Information Displayed on Electronic Screens in Classrooms 
+
+At the end of the mock examination, a nswers were submitted electronically through 
+
+Moodle, a course management platform. Participants were then asked to fill out the post -
+
+examination questionnaire . Participants were identified solely by their university student 
+
+numbers. Ultimately , 164 of the 213 participants who signed up finished the study : 49 from 
+
+Group 1, 57 from Group 2, and 58 from Group 3 .8 All participants used the maximum amount of 
+
+time allotted for the examination. 
+
+6.  Results 
+
+6.1.  Comparing DeepSeek Us e
+
+The main outcomes variables for the study are self -reported use of DeepSeek and 
+
+performance on the mock examination. Self -reported use is retrieved directly from the post -            
+
+> 8One participant originally assigned to Group 3 was ten minutes late and missed the training video. This
+> participant was allowed to finish the exam ination in Group 3’s classroom but is labelled as belonging to Group 2 .
+
+examination questionnaire and is recorded as a binary variable . We hypothesized that the training 
+
+intervention would increase the rate of self -reported use in Group 3 compared to Group 2 .
+
+Figure 3 plots self -reported use by group. Of the 57 participants in Group 2, 15 declared 
+
+that they used DeepSeek during the examination, giving an adoption rate of 26.32%. By 
+
+comparison, 24 of 58 participants in Group 3 declared such use, giving an adoption rate of 
+
+41.38%. The difference of 15.06% points is statistically significant ( p = 0.044 *, one -tailed z-
+
+test). 9
+
+Figure 3: Rates of Self -Reported Use of DeepSeek        
+
+> 9As the pre -registration prescribed a t-test for all group -wise comparisons and neglected to specify a z-test
+> for comparing proportions, the p-value for a one -tailed t-test is also reported here as 0.045 *.
+
+6.2.  Comparing Examination Performance 
+
+Performance is scored according to a marking rubric. All 164 validly submitted answers 
+
+were anonymized and shuffled before being graded. For each answer, the grader marked whether 
+
+an issue had been spotted or omitted. If an issue was omitted, the score for that issue was 
+
+recorded as “NA.” If the issue was spotted, the score for that issue may range from zero to two, 
+
+three or five, depending on the maximum number of sub -issues available. To be clear, then, an 
+
+“NA” is distinguished from a zero by the fact tha t in the former case the answer did not address 
+
+the issue at all whereas in the latter case the issue was considered but in a way that was wholly 
+
+off the mark. The total score for an answer is the sum of scores across all four issues tested. For 
+
+the purpos es of the total score, an NA counts as zero. Two measures of qualitative performance 
+
+can be derived. The first is a grade point that corresponds to the letter grade achieved based on 
+
+the total score. Grade point is a discrete variable that takes on values ranging from 1 to 4.3. The 
+
+second is the number of issues missed. Number of issues missed is a discrete variable that 
+
+assumes integer values between 0 and 4. 
+
+The grade point distribution for all participants is presented in  Table 1. Figure 4 overlays 
+
+the distribution density of grade point by groups. Graphically, there appears to be a right -shift in 
+
+the distribution between Groups 1 and 2 and Group 3. Figure 4: Distribution Density of Grade Point by Groups 
+
+The first measure of performance is grade point. We hypothesized that access to 
+
+DeepSeek without the training intervention would increase or decrease the average grade point in 
+
+Letter Grade  Grade Point  Count 
+
+D 1 9
+
+D+  1.3  11 
+
+C- 1.7  25 
+
+C 2 25 
+
+C+  2.3  28 
+
+B- 2.7  21 
+
+B 3 19 
+
+B+  3.3  13 
+
+A- 3.7  9
+
+A 4 2
+
+A+  4.3  2
+
+Table 1: Distribution of Letter Grades and Grade Points Group 2 compared to Group 1. We also hypothesized that access to DeepSeek with the training 
+
+intervention would increase the average grade point in Group 3 compared to Groups 1 and 2. 
+
+Figure 5 plots mean grade point by group. Subjects in Group 1 attained a mean grade 
+
+point of 2.290 (SD = 0.779) , subjects in Group 2 attained a mean grade point of 2.251 (SD = 
+
+0.7 14 ), and subjects in Group 3 attained a mean grade point of 2.52 1 (SD = 0.7 71 ). On average, 
+
+participants in Group 2 seemed to perform worse than participants in Group 1 on the grade point 
+
+measure but this decline is not statistically significant ( d = -0.039; p = 0.790, two -tailed t-test). 
+
+Participants in Group 3 did better than participants in Group 2 on the same measure, indicating 
+
+that the treatment intervention increased the quality of answers ( d = 0.270; p = 0.027 *, one -tailed 
+
+t-test). Participants in Group 3 also appeared to outscore participants in Group 1 although the 
+
+improvement does not attain conventional levels of statistical significance ( d = 0.231; p = 0.064, 
+
+one -tailed t-test). Figure 5: Average G rade Point by Group 
+
+The second measure of performance is t he number of issues missed . We hypothesized 
+
+that access to DeepSeek would decrease the average number of issues missed in Group s 2 and 3 
+
+compared to Group 1. 
+
+Figure 6 plots mean number of issues missed by group. The mean number of issues 
+
+missed is 1.102 (SD = 0.941) for subjects in Group 1, 1.228 (SD = 1.069) for subjects in Group 2 
+
+and 0.983 (SD = 0.927) for subjects in Group 3. These figures suggest, contrary to our 
+
+expectations, that participants in Group 2 performed worse than participants in Group 1 on 
+
+missed issues . This effect is , however, not stati sti cally significant (d = 0.126 ; p = 0.740, one -tailed t-test ). On average , p articipants in Group 3 missed fewer issues than participants in Group 
+
+1, but this difference is also not statistically significant ( d = -0.119 ; p = 0.256, one -tailed t-test ).
+
+Figure 6: Average Number of Missed Issues by Group 
+
+Overall, there is no evidence that access to DeepSeek alone enhanced participants’ 
+
+performance on the examination as measured by grade point or by number of issues missed. The 
+
+training intervention increased the proportion of participants who reported usin g DeepSeek on 
+
+the examination. Among participants who had access to DeepSeek, the training intervention also 
+
+enhanced performance as measured by grade point .6.3.  Comparing Answer Readability and Length 
+
+To get a sense of how access to DeepSeek and the training intervention may have 
+
+modified subject behavior, we also examined the readability and length of answers. Readability 
+
+was quantified using the Flesch –Kincaid score (Nielsen et al., 2024) . We hypothesized that 
+
+access to DeepSeek would increase or decrease the average readability of answers in Group s 2
+
+and 3 compared to Group 1. The mean readability of answers is 12.845 (SD = 2.151) for Group 
+
+1, 12.379 (SD = 1.989) for Group 2 and 12.131 (SD = 1.911) for Group 3. There are n o
+
+statistically significant differences in readability between answers in Group 1 and Group 2 (d = -
+
+0.466 ; p = 0.253, two -tailed t-test ) or between Group 1 and Group 3 ( d = -0.714 ; p = 0.075, two -
+
+tailed t-test ). 
+
+Length  of answers was quantified by total number of words of each  answer. We 
+
+hypothesized that access to DeepSeek would increase the average length of answers in Group s 2
+
+and 3 compared to Group 1.  Figure 7 plots mean length of answers by group. The mean length of 
+
+answers is 1059.673 (SD = 406.135) in Group 1 , 895.737 (SD = 279.167) in Group 2 , and 
+
+1001.638 in Group 3 (SD = 272.029). Contrary to our expectations, answers in Group 2 ( d = -
+
+163.937; p = 0.990, one -tailed t-test) and Group 3 ( d = -58.036; p = 0.802, one -tailed t-test) were 
+
+not longer, on average, than answers in Group 1. If anything, answers in Group 2 were on the 
+
+whole shorter than answers in Group 1 ( d = -163.937; p = 0.019 *, two -tailed t-test) and Group 3 
+
+(d = -105.901; p = 0.042 *, two -tailed t-test). 10  
+
+> 10 These tests were not pre -registered.
+
+Figure 7: Average Length by Group 
+
+These patterns are intriguing because it seems almost obvious that answers should be 
+
+longer when drafted with the help of GenAI. One possible explanation for our data is that Group 
+
+2 participants who had access to DeepSeek without receiving the training intervention spent time 
+
+interacting unfruitfully with the LLM. 
+
+6.4.  Decomposing the Effect of Training on Performance 
+
+Overall, our intervention increased self -reported use of DeepSeek and improved 
+
+performance on the mock examination for participants in Group 3. Did training raise the average grade point by enhancing the effectiveness of DeepSeek use for those who would have used it 
+
+anyway or by encouraging the adoption of DeepSeek by those who would not have used it 
+
+otherwise? 
+
+The standard approach to evaluating training interventions uses instrumental variables 
+
+(IV) to estimate the Local Average Treatment Effect (LATE) of treatment on outcomes (Angrist 
+
+et al., 1996) . This approach treats assignment to treatment as an instrument for treatment and 
+
+estimates the effect of adoption for compliers , i.e. those who take the treatment because of 
+
+assignment to treatment . However, this framework rests critically on an exclusion restriction: 
+
+that the instrument affects outcomes only through its effect on the endogenous variable , e.g. 
+
+individuals choosing to take treatment . This assumption is not satisfied in many realistic settings .
+
+Here, t raining may impact outcomes through two distinct channels . First, by inducing non -
+
+adopters to adopt GenAI —the adoption effect , and second, by changing how existing users 
+
+employ GenAI —the effectiveness effect. When the exclusion restriction fails, the LATE 
+
+conflates both mechanisms .
+
+We address this identification challenge using principal stratification (Frangakis & 
+
+Rubin, 2002) with partial identification.  Following the potential outcomes framework (Rubin, 
+
+1974, 1976, 1997; Splawa -Neyman et al., 1990) , let  𝑍 ∈ {0, 1} represent assignment to the 
+
+training intervention,  𝐷 (𝑍 ) ∈ {0,1} represent potential use of DeepSeek given assignment to 
+
+training, and  𝑌 (𝑍 , 𝐷 ) represent potential grade point given DeepSeek use and assignment to 
+
+training. Never users , 𝑁 , are participants for whom  𝐷 (0) = 𝐷 (1) = 0. Always users , 𝐴 , are 
+
+participants for whom  𝐷 (0) = 𝐷 (1) = 1. Induced users , C, are participants for whom  𝐷 (0) = 0
+
+and  𝐷 (1) = 1. Defiers are participants for whom  𝐷 (0) = 1 and  𝐷 (1) = 0.Define  𝜏 𝑎𝑑𝑜𝑝𝑡𝑖𝑜𝑛 ≡ 𝐸 [𝑌 (1,1) − 𝑌 (0,0)|𝐶 ] as the adoption effect for induced users and 
+
+𝜏 𝑒𝑓𝑓𝑒𝑐𝑡𝑖𝑣𝑒𝑛𝑒𝑠𝑠 ≡ 𝐸 [𝑌 (1,1) − 𝑌 (0,0)|𝐴 ] as the effectiveness effect for always users.  We derive 
+
+sharp bounds on the adoption and effectiveness effects under three plausible assumptions: 
+
+1)  monotone treatment response, i.e.  𝐷 (1) ≥ 𝐷 (0) for all participants ;
+
+2)  an exclusion restriction for never users, i.e.  𝑌 (0,1) = 𝑌 (0,0); and 
+
+3)  a global support restriction that grade points must lie in [ 𝑌 𝑚𝑖𝑛 = 1.0, 𝑌 𝑚𝑎𝑥 = 4.3]
+
+for all participants under all potential outcome states. 
+
+The monotone treatment response assumption  posits that  training can only encourage , not 
+
+discourage , DeepSeek use and that there are therefore no defiers. The exclusion restriction for 
+
+never users claims that training has no effect on participants who would not use DeepSeek , even 
+
+if they received the intervention .
+
+Several quantities are point -identified under random assignment and monotone treatment 
+
+response , as stated in the following propositions .
+
+Proposition 1 (Stratum Proportions). Under random assignment and monotone 
+
+treatment response :
+
+i. 𝜋 𝐴 = 𝑃 (𝐷 = 1|𝑍 = 0)
+
+ii. 𝜋 𝑁 = 𝑃 (𝐷 = 0|𝑍 = 1)
+
+iii. 𝜋 𝐶 = 𝑃 (𝐷 = 0|𝑍 = 0) − 𝑃 (𝐷 = 0|𝑍 = 1)
+
+Proposition 2 (Baseline Potential Outcomes ).  Under monotonicity and the exclusion 
+
+restriction for never users :
+
+i. 𝐸 [𝑌 (0,0)|𝑁 ] = 𝐸 [𝑌 |𝑍 = 1, 𝐷 = 0]ii. 𝐸 [𝑌 (0,1)|𝐴 ] = 𝐸 [𝑌 |𝑍 = 0, 𝐷 = 1]
+
+iii. 𝐸 [𝑌 (0,0)|𝐶 ] = 𝐸 [𝑌 |𝑍 = 0, 𝐷 = 0]−𝑤 𝑁 ×𝐸 [𝑌 (0,0)|𝑁 ]
+
+> 𝑤 𝐶
+
+Trained users here are a mixture of induced and always users :
+
+𝐸 [𝑌 |𝑍 = 1, 𝐷 = 1] = 𝑤 𝐶 × 𝐸 [𝑌 (1,1)|𝐶 ] + 𝑤 𝐴 × 𝐸 [𝑌 (1,1)|𝐴 ] (6)
+
+where  𝑤 𝐶 = 𝜋 𝐶 
+
+> 𝜋 𝐶 +𝜋 𝐴
+
+and  𝑤 𝐴 = 𝜋 𝐴 
+
+> 𝜋 𝐶 +𝜋 𝐴
+
+. 𝐸 [𝑌 (1,1)|𝐶 ] and  𝐸 [𝑌 (1,1)|𝐴 ] are not directly observed. 
+
+Hence, unless additional assumptions are made, both adoption and effectiveness effects are 
+
+partially identified. 
+
+Proposition 3 (Bounds Under Global Support Restriction ).  Under  monotone treatment 
+
+response  and the global support restriction ,
+
+𝜏 𝑎𝑑𝑜𝑝𝑡𝑖𝑜𝑛 ∈ [𝐿 𝑎𝑑𝑜𝑝𝑡𝑖𝑜𝑛 , 𝑌 𝑚𝑎𝑥 − 𝐸 [𝑌 (0,0)|𝐶 ]]
+
+where 
+
+𝐿 𝑎𝑑𝑜𝑝𝑡𝑖𝑜𝑛 = (𝐸 [𝑌 |𝑍 = 1, 𝐷 = 1] − 𝑤 𝐴 × 𝑌 𝑚𝑎𝑥 )
+
+𝑤 𝐶 
+
+− 𝐸 [𝑌 (0,0)|𝐶 ]
+
+and 
+
+𝜏 𝑒𝑓𝑓𝑒𝑐𝑡𝑖𝑣𝑒𝑛𝑒𝑠𝑠 ∈ [𝑌 𝑚𝑖𝑛 − 𝐸 [𝑌 (0,1)|𝐴 ], 𝑈 𝑒𝑓𝑓𝑒𝑐𝑡𝑖𝑣𝑒𝑛𝑒𝑠𝑠 ]
+
+where 
+
+𝑈 𝑒𝑓𝑓𝑒𝑐𝑡𝑖𝑣𝑒𝑛𝑒𝑠𝑠 = (𝐸 [𝑌 |𝑍 = 1, 𝐷 = 1] − 𝑤 𝐶 × 𝑌 𝑚𝑖𝑛 )
+
+𝑤 𝐴 
+
+− 𝐸 [𝑌 (0,1)|𝐴 ].
+
+Table 2 reports e mpirical bounds under global support restriction . The bounds are wide and 
+
+uninformative about the sign of either effect. Effect  Lower Bound  Upper Bound  Width 
+
+Adoption  -0.45 4 2.846  3.300 
+
+Effectiveness  -1.093  1.226  2.319 
+
+Table 2: Bounds Under Support Restriction Onl y
+
+To tighten the bounds, we introduce a nother assumption :
+
+4)  mean dominance , i.e.  𝐸 (𝑌 (1,1)|𝐶 ) ≥ 𝐸 (𝑌 (1,1)|𝐴 ) − 𝛾  for  𝛾 ≥ 0.
+
+This assumption states that trained induced users perform as well as trained always users up to a 
+
+tolerance  𝛾 . The parameter γ allows relaxation of strict dominance for sensitivity analysis .
+
+Proposition 4 (Bounds Under Mean Dominance ).  Under  monotone treatment response 
+
+the global support restriction , and mean dominance , define the upper bound on 
+
+𝐸 [𝑌 (1,1)|𝐴 ] as 
+
+𝑈 1,1,𝑎𝑙𝑤𝑎𝑦𝑠 = min {𝐸 [𝑌 |𝑍 = 1, 𝐷 = 1] + 𝑤 𝐶 × 𝛾 , 𝑌 𝑚𝑎𝑥 }
+
+and the lower bound on  𝐸 [𝑌 (1,1)|𝐶 ] as 
+
+𝐿 1,1,𝑖𝑛𝑑𝑢𝑐𝑒𝑑 = max {𝐸 [𝑌 |𝑍 = 1, 𝐷 = 1] − 𝑤 𝐴 × 𝑈 1,1,𝑎𝑙𝑤𝑎𝑦𝑠 
+
+𝑤 𝐶 
+
+, 𝑌 𝑚𝑖𝑛 }.
+
+The n
+
+𝜏 𝑎𝑑𝑜𝑝𝑡𝑖𝑜𝑛 ∈ [𝐿 1,1,𝑖𝑛𝑑𝑢𝑐𝑒𝑑 − 𝐸 [𝑌 (0,0)|𝐶 ], 𝑌 𝑚𝑎𝑥 − 𝐸 [𝑌 (0,0)|𝐶 ]
+
+and 
+
+𝜏 𝑒𝑓𝑓𝑒𝑐𝑡𝑖𝑣𝑒𝑛𝑒𝑠𝑠 ∈ [𝑌 𝑚𝑖𝑛 − 𝐸 [𝑌 (0,1)|𝐴 ], 𝑈 1,1,𝑎𝑙𝑤𝑎𝑦𝑠 − 𝐸 [𝑌 (0,1)|𝐴 ]].Table 3 reports e mpirical bounds under mean dominance for varying levels of  𝛾 . It also reports 
+
+95%  confidence intervals constructed with 2000 replications using the percentile bootstrap 
+
+method (Imbens & Manski, 2004) .
+
+𝛾  𝐿 𝑒𝑓𝑓𝑒𝑐𝑡𝑖𝑣𝑒𝑛𝑒𝑠𝑠  𝑈 𝑒𝑓𝑓𝑒𝑐𝑡𝑖𝑣𝑒𝑛𝑒𝑠𝑠  𝐿 𝑎𝑑𝑜𝑝𝑡𝑖𝑜𝑛  𝑈 𝑎𝑑𝑜𝑝𝑡𝑖𝑜𝑛 
+
+0.000 
+
+-1.093 
+
+[-1.473, -0.702] 
+
+0.419 
+
+[-0.049, 0.938] 
+
+1.05 9
+
+[-0.364, 1.740] 
+
+2.846 
+
+[ 1.44 9, 3.300] 
+
+0.400  0.56 5
+
+[ 0.08 3, 1.096] 
+
+0.80 5
+
+[-0.627, 1.472] 
+
+0.640  0.652 
+
+[ 0.12 4, 1.20 7]
+
+0.652 
+
+[-0.78 6, 1.32 2]
+
+1.000  0.783 
+
+[ 0.215, 1.400] 
+
+0.42 3
+
+[-1.009, 1.11 5]
+
+1.665  1.025 
+
+[ 0.325, 1.74 2]
+
+0.000 
+
+[-1.455, 0.710] 
+
+Table 3: Bounds as Functions of Mean Dominance Relaxation 
+
+The point estimates suggest that the adoption effect for induced users is greater than the 
+
+effectiveness effect for always users . When  𝛾 = 0, the adoption lower bound exceeds the 
+
+effectiveness upper bound by 0.64 grade points. However, confidence intervals are wide and 
+
+overlapping and we cannot statistically reject the possibility of effectiveness rather than adoption 
+
+being the dominant mechanism . The sensitivity analysis does show , however, th at  the point 
+
+estimate pattern persists unless always -users substantially outperform compliers post -tr aining. 
+
+7.  Discussion 
+
+We distinguished at the outset between two channels through which generative artificial 
+
+intelligence may affect professional productivity: the scope of use —whether users choose to adopt the technology for a given task —and the effectiveness of use conditional on adoption. The 
+
+experimental evidence presented here indicates that user training plays an important role along 
+
+the extensive margin. Training significantly increases the likel ihood that participants employ 
+
+GenAI for boundary applications, expanding the scope of use to tasks that would otherwise be 
+
+avoided. Moreover, GenAI adoption induced by training is associated with higher -quality legal 
+
+output, suggesting that adoption in th ese settings is productive when accompanied by appropriate 
+
+instruction. 
+
+At the same time, the design of our experiment does not permit sharp identification of 
+
+whether training also improves the effectiveness of use among individuals who would adopt 
+
+GenAI regardless of instruction. Our principal stratification analysis neverthe less indicates that 
+
+improvements in overall performance may plausibly reflect a combination of expanded adoption 
+
+and more effective use. Conversely, access to GenAI without training does not improve 
+
+performance on average and may be unproductive, although the available evidence does not 
+
+allow firm conclusions about negative effects. Taken together, these findings underscore that the 
+
+productivity consequences of GenAI depend critically on how and by whom the technology is 
+
+used. 
+
+These results carry direct implications for legal education and for the organization of legal 
+
+practice. In educational settings, they support proposals to incorporate instruction on effective 
+
+human –AI collaboration as a core component of professional train ing. Such instruction should 
+
+emphasize both practical skills —such as how to structure prompts and interrogate model 
+
+output —and conceptual understanding of how GenAI systems function and where they are prone 
+
+to error. For law firms and legal departments, th e findings suggest that successful GenAI 
+
+integration requires coordinated investment in both technology access and human capital. Providing access to GenAI tools without accompanying training may yield little benefit and 
+
+could even undermine short -run productivity, potentially fostering resistance to adoption that 
+
+slows longer -run innovation. 
+
+More broadly, our findings contribute to debates in labor economics on task -based 
+
+technological change, the evolution of professional work, and the returns to training investment. 
+
+Traditional models of skill -biased and task -based technological change treat cognitive non -
+
+routine tasks —typically performed by high -skill workers —as relatively insulated from 
+
+productivity -enhancing automation (Acemoglu & Autor, 2011; Acemoglu & Restrepo, 2019; 
+
+Autor et al., 2003) . Our results suggest that GenAI may alter this pattern when human capital 
+
+investments shape adoption decisions. In particular, the evidence is consistent with higher -ability 
+
+individuals being induced users —those who adopt GenAI only when training reduces pe rceived 
+
+risks —while lower -ability individuals are more likely to be always users. This pattern offers a 
+
+qualification to findings that GenAI disproportionately benefits lower -skilled workers. When 
+
+training is absent, lower -skilled individuals may adopt G enAI but use it ineffectively, while 
+
+higher -skilled individuals abstain. When training is provided, adoption expands among more 
+
+able professionals, enabling productivity gains in judgment -intensive tasks that have historically 
+
+resisted technological substi tution. 
+
+Finally, the results speak to the diffusion of GenAI as a general -purpose technology 
+
+(Bresnahan & Trajtenberg, 1995) . While GenAI exhibits broad applicability and the potential for 
+
+complementary innovation, our findings indicate that realizing these benefits requires learning 
+
+and adaptation that are often task -specific. The brief training intervention in our study focuse d
+
+narrowly on legal issue -spotting rather than general AI literacy. That even such minimal, 
+
+application -focused instruction improves outcomes is encouraging for diffusion. At the same time, the task -specific nature of effective training suggests that different occupations —and even 
+
+individual organizations —may need to develop tailored training protocols. This requirement may 
+
+slow diffusion and generate temporary advantages for early adop ters who successfully integrate 
+
+GenAI with complementary human capital investments. 
+
+8.  Limitations 
+
+Several limitations qualify our conclusions. First, the experimental setting —an issue -
+
+spotting examination —captures only a subset of professional legal practice. While such 
+
+examinations assess individual legal reasoning under time constraints, legal work i n practice is 
+
+often collaborative, iterative, and embedded in organizational processes. In addition, our sample 
+
+consists of law students from a single institution. The effects of user training on GenAI adoption 
+
+and performance may differ across levels of p rofessional experience, practice areas, or 
+
+institutional environments. These considerations limit external validity and suggest the value of 
+
+replications in more naturalistic or field -based settings. 
+
+Second, our performance measures reflect a discrete work product produced over a short 
+
+time horizon. Although examination scores provide a meaningful and widely used proxy for 
+
+legal competence, they do not reveal whether the benefits of training persist or evolve with 
+
+repeated use. Longitudinal studies that track behavior and performance over extended periods 
+
+would be useful for assessing the durability of training interventions and potential learning or 
+
+decay effects. 
+
+Third, our principal stratification analysis relies on assumptions —including monotonicity 
+
+and baseline ordering —that are standard in the econometrics literature but not directly testable. 
+
+While these assumptions are consistent with our experimental design and observed data, 
+
+violations could affect the interpretation of the bounds we derive. Future research could explore alternative identification strategies, for example by incorporating pre -treatment measures of 
+
+ability or richer behavioral data. 
+
+Finally, our analysis focuses on individual -level performance and abstracts from 
+
+organizational and institutional factors that shape technology adoption in professional settings. In 
+
+practice, law firms face collective action problems in training investment , uncertainty about the 
+
+quality and returns to training, and agency issues between firm management and individual 
+
+attorneys. Understanding how organizational structure and incentives influence GenAI training 
+
+and adoption represents an important direction f or future research. 
+
+More broadly, our single intervention in a controlled setting leaves several questions 
+
+open. How do training effects vary across different GenAI tools and professional domains? What 
+
+are the optimal timing, intensity, and content of training interventions? How do organizational 
+
+and labor market institutions shape access to training and patterns of adoption? And how do the 
+
+returns to training evolve as GenAI technologies improve? Addressing these questions will 
+
+require research programs that combine experimen tal, observational, and computational 
+
+approaches across diverse contexts. 
+
+9.  Conclusion 
+
+The emergence of generative artificial intelligence parallels earlier technological 
+
+transformations that reshaped knowledge -intensive occupations, but it differs in a fundamental 
+
+respect. Whereas computers and the internet primarily enhanced the storage, r etrieval, and 
+
+transmission of information, large language models attempt to perform analytical and generative 
+
+functions that have traditionally defined professional expertise. This shift brings GenAI closer to 
+
+the core of professional work than prior techn ologies, heightening both its potential value and its 
+
+associated risks. These features create a central tension in GenAI adoption. On the one hand, the high 
+
+opportunity cost of professional time creates strong incentives to deploy tools that promise 
+
+efficiency gains in research, drafting, and analysis. On the other hand, profe ssional 
+
+accountability and the high cost of error constrain reliance on technologies whose outputs cannot 
+
+be taken at face value. LLMs embody this tension acutely: they can accelerate legal work while 
+
+also producing confident but fabricated citations, miss tatements of legal doctrine, and reasoning 
+
+that appears plausible yet is fundamentally flawed. Whether GenAI enhances or undermines 
+
+professional performance therefore depends critically on how it is used. 
+
+This paper advances a simple theoretical proposition: user training can shape the 
+
+productivity effects of GenAI through two channels —by expanding the scope of use to tasks for 
+
+which professionals would otherwise refrain from adoption, and by improving the effectiveness 
+
+of use conditional on adoption. Evidence from our study shows that even a brief training 
+
+intervention increases GenAI adoption for boundary applications and improves the quality of 
+
+legal analysis produced under time constraints. The results f urther provide suggestive, though not 
+
+definitive, evidence that training may also enhance the returns to GenAI use among individuals 
+
+who would adopt the technology even in the absence of instruction. 
+
+For legal educators and practitioners, these findings underscore the importance of 
+
+coordinated investment in both GenAI tools and user training. Access to GenAI alone is unlikely 
+
+to deliver reliable productivity gains and may yield limited or inconsistent returns. By contrast, 
+
+even modest investments in training can meaningfully improve performance on tasks that are 
+
+central to legal practice. More broadly, the results contribute to ongoing debates about skill -
+
+biased technological change, human capital inves tment, and the diffusion of general -purpose technologies. The productivity effects of GenAI are not technologically predetermined but 
+
+depend on complementary investments in knowledge and capability. Moreover, the task -specific 
+
+nature of effective GenAI use suggests that productivity gains may emerge unevenly over time, 
+
+as organizations experiment with, refine, and institutionalize training practices that enable 
+
+productive human –AI collaboration. Appendix 
+
+Comparing Participant Perceptions and Preferences 
+
+We further examine d the attitudes of participants toward GenAI as a tool for legal 
+
+analysis and found no significant results. The two variables here are preferences about allowing 
+
+GenAI to be used in law examinations, i.e. permission , and perceptions about the helpfulness of 
+
+using GenAI for law examinations, i.e. helpfulness . Both variables were elicited on a 1 to 5 
+
+scale, with a higher score indicating a stronger perception of helpfulness or a stronger preference 
+
+for permission. 
+
+We hypothesized that access to DeepSeek would increase or decrease the average 
+
+permission score in Groups 2 or 3 compared to Group 1. We also hypothesized that the training 
+
+intervention would increase the average permission score in Group 3 compared to Group 2. 
+
+Figure 8 shows  the  mean permission score is 3.571 (SD = 1.118) for participants in Group 1 ,
+
+3.228 (SD=1.086) for participants in Group 2 and 3.379 (SD=1.167) for participants in Group 3. 
+
+There are n o statistically significant effects between Group 1 and Group 2 (d = -0.343 ; p = 0.113, 
+
+two -tailed t-test ), between Group 1 and Group 3 ( d = -0.192 ; p = 0.387, two -tailed t-test ), or 
+
+between Group 2 and Group 3 ( d = 0.151; p = 0.237, one -tailed t-test ). 
+
+The lack of variation between the groups after some subjects had been given the 
+
+opportunity and even training to use DeepSeek for an issue -spotter may not be entirely 
+
+surprising. Given that examination grades are often awarded on a curve, participants coul d have 
+
+taken into account not just the absolute improvement in their performance from using GenAI but 
+
+also their improvement relative to others who also have access to the same technology. In this 
+
+regard, we should note that the average permission scores f or users in Group 2 ( d = 0.414, p =0.290; two -tailed t-test) and Group 3 ( d = 0.206, p = 0.522; two -tailed t-test) are higher but 
+
+ultimately not significantly different from the mean scores for non -users in these groups. 11 
+
+Turning to perception , we hypothesized that access to DeepSeek without the training 
+
+intervention would decrease the average score in Group 2 compared to Group 1. We also 
+
+hypothesized that access to DeepSeek with the training intervention would increase or decrease 
+
+the average score in Group 3 compared to Groups 1 and 2.  Figure 8 also shows  the mean 
+
+helpfulness score is 3.122 (SD = 1.269) for participants in Group 1, 3.246 (SD = 1.405) for 
+
+participants in Group 2, and 3.293 (SD = 1.298) for participants in Group 3. Again, there are n o
+
+statistically significant effects between Group 1 and Group 2 (d = 0.123; p = 0.682, one -tailed t-
+
+test ), between Group 1 and Group 3 ( d = 0.171; p = 0.494, two -tailed t-test ), or between Group 2 
+
+and Group 3 ( d = 0.047; p = 0.851, two -tailed t-test ). At the same time, users in Groups 2 and 3 
+
+rated the helpfulness of GenAI more highly than non -users in the same group. The difference for 
+
+Group 2 is not statistically significant ( d = 0.571, p = 0.186; two -sided t-test) while the 
+
+difference for Group 3 is ( d = 0.922, p = 0.005 ** ; two -sided t-test). 12   
+
+> 11 These tests were not pre -registered.
+> 12 These tests were not pre -registered.
+
+Figure 8: Average Permission (Left) and Helpfulness (Right) by Group References 
+
+Acemoglu, D. (2025). The Simple Macroeconomics of AI. Economic Policy , 40 (121), 13 –58. 
+
+https://doi.org/10.1093/epolic/eiae042 
+
+Acemoglu, D., & Autor, D. (2011). Skills, Tasks and Technologies: Implications for 
+
+Employment and Earnings. In Handbook of Labor Economics (Vol. 4, pp. 1043 –1171). 
+
+Elsevier. https://doi.org/10.1016/S0169 -7218(11)02410 -5
+
+Acemoglu, D., & Restrepo, P. (2019). Automation and New Tasks: How Technology Displaces 
+
+and Reinstates Labor. Journal of Economic Perspectives , 33 (2), 3 –30. 
+
+https://doi.org/10.1257/jep.33.2.3 
+
+Agrawal, A. K., McHale, J., & Oettl, A. (2026). Enhancing Worker Productivity Without 
+
+Automating Tasks: A Different Approach to AI and the Task -Based Model (Working 
+
+Paper No. 34781). National Bureau of Economic Research. 
+
+https://doi.org/10.3386/w34781 
+
+American Bar Association. (2025, May 6). The Legal Industry Report 2025 [Law Technology 
+
+Today]. https://www.americanbar.org/groups/law_practice/resources/law -technology -
+
+today/2025/the -legal -industry -report -2025/ 
+
+Angrist, J. D., Imbens, G. W., & Rubin, D. B. (1996).  Identification of Causal Effects Using 
+
+Instrumental Variables. Journal of the American Statistical Association , 91 (434), 444 –
+
+455. https://doi.org/10.1080/01621459.1996.10476902 
+
+Autor, D. H. (2024). Applying AI to Rebuild Middle Class Jobs (Working Paper No. 32140). 
+
+National Bureau of Economic Research. https://doi.org/10.3386/w32140 Autor, D. H., Levy, F., & Murnane, R. J. (2003). The Skill Content of Recent Technological 
+
+Change: An Empirical Exploration. The Quarterly Journal of Economics , 118 (4), 1279 –
+
+1333. https://doi.org/10.1162/003355303322552801 
+
+Bauer, E., Stammbach, D., Gu, N., & Ash, E. (2023). Legal Extractive Summarization of U.S. 
+
+Court Opinions. CEUR Workshop Proceedings , 3594 . https://ceur -ws.org/Vol -
+
+3594/paper1.pdf 
+
+Bresnahan, F., & Trajtenberg, M. (1995). General Purpose Technologies ‘Engines of Growth’? 
+
+Journal of Econometrics , 65 (1), 83 –108. https://doi.org/10.1016/0304 -4076(94)01598 -T
+
+Brynjolfsson, E., Li, D., & Raymond, L. R. (2023). Generative AI at Work (Working Paper No. 
+
+31161). National Bureau of Economic Research. https://doi.org/10.3386/w31161 
+
+Charlotin, D. (n.d.). AI Hallucination Cases . Retrieved January 28, 2026, from 
+
+https://www.damiencharlotin.com/hallucinations/ 
+
+Chien, C. V., & Kim, M. (2025).  Generative AI and Legal Aid: Results from a Field Study and 
+
+100 Use Cases to Bridge the Access to Justice Gap. Loyola of Los Angeles Law Review ,
+
+57 (4), 903 –988. 
+
+Choi, J. H., Monahan, A., & Schwarcz, D. B. (2024). Lawyering in the Age of Artificial 
+
+Intelligence. Minnesota Law Review , 109 (1), 147 –218. 
+
+https://doi.org/10.24926/265535.4225 
+
+Choi, J. H., & Schwarcz, D. B. (2025). AI Assistance in Legal Analysis: An Empirical Study. 
+
+Journal of Legal Education , 73 (2), 384 –420. 
+
+Cui, K. Z., Demirer, M., Jaffe, S., Musolff, L., Peng, S., & Salz, T. (2025). The Effects of 
+
+Generative AI on High -Skilled Work: Evidence from Three Field Experiments with Software Developers . Massachusetts Institute of Technology, Department of Economics. 
+
+https://economics.mit.edu/sites/default/files/2024 -01/draft_copilot_experiments.pdf 
+
+Dahl, M., Magesh, V., Suzgun, M., & Ho, D. E. (2024).  Large Legal Fictions: Profiling Legal 
+
+Hallucinations in Large Language Models. Journal of Legal Analysis , 16 (1), 64 –93. 
+
+https://doi.org/10.1093/jla/laae003 
+
+Dell’Acqua, F., McFowland, E., Mollick, E. R., Lifshitz -Assaf, H., Kellogg, K., Rajendran, S., 
+
+Krayer, L., Candelon, F., & Lakhani, K. R. (2023). Navigating the Jagged Technological 
+
+Frontier: Field Experimental Evidence of the Effects of AI on Knowledge Wo rker 
+
+Productivity and Quality. SSRN Electronic Journal . https://doi.org/10.2139/ssrn.4573321 
+
+Eloundou, T., Manning, S., Mishkin, P., & Rock, D. (2023). GPTs are GPTs: An Early Look at 
+
+the Labor Market Impact Potential of Large Language Models (arXiv:2303.10130). 
+
+arXiv. https://doi.org/10.48550/arXiv.2303.10130 
+
+Engel, C., & Kruse, J. (2025). LLM as a Law Professor: Having a Large Language Model Write 
+
+a Commentary on Freedom of Assembly . MPI Collective Goods Discussion Paper. 
+
+https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5435276 
+
+Frangakis, C. E., & Rubin, D. B. (2002).  Principal Stratification in Causal Inference. Biometrics ,
+
+58 (1), 21 –29. https://doi.org/10.1111/j.0006 -341X.2002.00021.x 
+
+Freitas, J. (2025, January). Why People Resist Embracing AI. Harvard Business Review .
+
+https://hbr.org/2025/01/why -people -resist -embracing -ai 
+
+Humlum, A., & Vestergaard, E. (2024). The Adoption of ChatGPT (IZA Discussion Paper No. 
+
+16992). IZA Institute of Labor Economics. 
+
+Imbens, G. W., & Manski, C. F. (2004). Confidence Intervals for Partially Identified Parameters. 
+
+Econometrica , 72 (6), 1845 –1857. https://doi.org/10.1111/j.1468 -0262.2004.00555.x Lam, K. -Y., Cheng, V. C. W., & Yeong, Z. K. (2023).  Applying Large Language Models for 
+
+Enhancing Contract Drafting. Proceedings of the Third International Workshop on 
+
+Artificial Intelligence and Intelligent Assistance for Legal Professionals in the Digital 
+
+Workspace , 3423 . https://ceur -ws.org/Vol -3423/paper7.pdf 
+
+LexisNexis. (2024). The State of GenAI in Law: A LexisNexis Report .
+
+https://www.lexisnexis.com/pdf/genai -report.pdf 
+
+Ng, D. T. K., Leung, J. K. L., Chu, K. W. S., & Qiao, M. S. (2021). AI Literacy: Definition, 
+
+Teaching, Evaluation and Ethical Issues. Proceedings of the Association for Information 
+
+Science and Technology , 58 (1), 504 –509. https://doi.org/10.1002/pra2.487 
+
+Nielsen, A., Skylaki, S., Norkute, M., & Stremitzer, A. (2024). Building a Better Lawyer: 
+
+Experimental Evidence that Artificial Intelligence can Increase Legal Work Efficiency. 
+
+Journal of Empirical Legal Studies , 21 (4), 979 –1022. https://doi.org/10.1111/jels.12396 
+
+Noy, S., & Zhang, W. (2023). Experimental Evidence on the Productivity Effects of Generative 
+
+Artificial Intelligence.  Science , 381 (6654), 187 –192. 
+
+https://doi.org/10.1126/science.adh2586 
+
+Peng, S., Kalliamvakou, E., Cihon, P., & Demirer, M. (2023).  The Impact of AI on Developer 
+
+Productivity: Evidence from GitHub Copilot (arXiv:2302.06590). arXiv. 
+
+https://doi.org/10.48550/arXiv.2302.06590 
+
+Rubin, D. B. (1974). Estimating Causal Effects of Treatments in Randomized and 
+
+Nonrandomized Studies. Journal of Educational Psychology , 66 (5), 688 –701. 
+
+https://doi.org/10.1037/h0037350 
+
+Rubin, D. B. (1976). Inference and Missing Data. Biometrika , 63 (3), 581 –592. 
+
+https://doi.org/10.1093/biomet/63.3.581 Rubin, D. B. (1997). Estimating Causal Effects from Large Data Sets Using Propensity Scores. 
+
+Annals of Internal Medicine , 197 (8_Part_2), 757 –763. https://doi.org/10.7326/0003 -
+
+4819 -127 -8_Part_2 -199710151 -00064 
+
+Schwarcz, D., & Choi, J. H. (2023). AI Tools for Lawyers: A Practical Guide. Minnesota Law 
+
+Review Headnotes , 108 (1), 1 –39. 
+
+Schwarcz, D., Manning, S., Barry, P. J., Cleveland, D. R., Prescott, J. J., & Rich, B. (2025). AI -
+
+Powered Lawyering: AI Reasoning Models, Retrieval Augmented Generation, and the 
+
+Future of Legal Practice . SSRN. https://doi.org/10.2139/ssrn.5162111 
+
+Splawa -Neyman, J., Dabrowska, D. M., & Speed, T. P. (1990). On the Application of Probability 
+
+Theory to Agricultural Experiments. Essay on Principles. Section 9. Statistical Science ,
+
+5(4). https://doi.org/10.1214/ss/1177012031 
+
+Thomson Reuters. (2025). How AI is Transforming the Legal Profession .
+
+https://legal.thomsonreuters.com/blog/how -ai -is -transforming -the -legal -profession/

@@ -1,0 +1,635 @@
+Title: SinhaLegal: A Benchmark Corpus for Information Extraction and Analysis in Sinhala Legislative Texts
+
+URL Source: https://arxiv.org/pdf/2603.04854v1
+
+Published Time: Fri, 06 Mar 2026 01:36:01 GMT
+
+Number of Pages: 18
+
+Markdown Content:
+# SINHA LEGAL : A Benchmark Corpus for Information Extraction and Analysis in Sinhala Legislative Texts 
+
+Minduli Lasandi a and Nevidu Jayatilleke baSchool of Computing, Informatics Institute of Technology, Sri Lanka 
+
+> b
+
+Department of Computer Science & Engineering, University of Moratuwa, Sri Lanka 
+
+minduli.20220374@iit.ac.lk, nevidu.25@cse.mrt.ac.lk 
+
+Abstract 
+
+SINHA LEGAL introduces a Sinhala legislative text corpus containing approximately 2 mil-lion words across 1,206 legal documents. The dataset includes two types of legal documents: 1,065 Acts dated from 1981 to 2014 and 141 Bills from 2010 to 2014, which were system-atically collected from official sources. The texts were extracted using OCR with Google Document AI , followed by extensive post-processing and manual cleaning to ensure high-quality, machine-readable content, along with dedicated metadata files for each document. A comprehensive evaluation was conducted, in-cluding corpus statistics, lexical diversity, word frequency analysis, named entity recognition, and topic modelling, demonstrating the struc-tured and domain-specific nature of the cor-pus. Additionally, perplexity analysis using both large and small language models was per-formed to assess how effectively language mod-els respond to domain-specific texts. The S IN -
+
+> HA
+
+LEGAL corpus represents a vital resource designed to support NLP tasks such as sum-marisation, information extraction, and analy-sis, thereby bridging a critical gap in Sinhala legal research. 
+
+1 Introduction 
+
+Legal documentation forms the backbone of mod-ern legal systems. These documents provide an authoritative textual basis for legislation, interpreta-tion and judicial decision making (Pietrosanti and Graziadio, 1999). As a result, legal texts require a high level of precision, consistency, and well-defined structure. They commonly contain com-plex sentence constructions and specialised legal vocabulary that differ from those found in general-purpose texts (Jayatilleke and Weerasinghe, 2025). These characteristics make legal documents more difficult to process automatically and highlight the need for specialised computational approaches to support various tasks. The digitalisation of legal documents is an es-sential prerequisite for building reliable legal NLP systems (Boella et al., 2019). In many such con-texts, legal texts are available only in scanned or image-based formats, introducing additional chal-lenges related to Optical Character Recognition 
+
+(OCR), layout preservation, and noise reduction. These constraints restrict broader access to legal in-formation, reinforcing the need for systematically constructed, high-quality legal text datasets. The Sinhala language is part of the Indo-European language family, specifically within the Indo-Aryan branch. It is the first language (L1) spoken by approximately 16 million people in Sri Lanka (De Silva, 2019). Sinhala features a unique script that descends from the Indian Brahmi script (Fernando, 1949). Although Sinhala is clas-sified as a large institutional language by the Eth-nologue categorisation system, it is considered a low-resource language (Category 02) according to the criteria outlined by Ranathunga and de Silva (2022). In this study, we introduce S INHA LEGAL 1, a dataset that includes Sinhala legal acts and bills from 1981 CE to 2014 CE. We provide a detailed discussion of the systematic steps taken in creating this dataset, which include data collection, prepro-cessing, filtration, and text extraction using OCR. This process is followed by manual post-processing and concludes with the creation of metadata. 
+
+2 Related Work 
+
+Researchers have prioritised the development of datasets containing legislative text in various lan-guages and jurisdictions. These datasets support tasks such as summarisation, classification, in-formation retrieval, and both diachronic and syn-chronic analysis, forming the basis for significant advancements in the field. 
+
+> 1https://bit.ly/4buVbKx
+> arXiv:2603.04854v1 [cs.CL] 5 Mar 2026
+
+2.1 Sri Lanka Document Dataset 
+
+This repository is a comprehensive collection of official Sri Lankan governmental, legal and admin-istrative documents spanning several decades and sources from authoritative institutions (Senaratna, 2025). The repository contains official Sri Lankan governmental, legal, and administrative docu-ments, including parliamentary records such as Hansard, Acts (1981–2025), Bills, and Extraordi-nary Gazettes (2010–2025), government communi-cations such as police press releases and Treasury announcements, documents from the Disaster Man-agement Centre, sector-specific reports from the Ministry of Fisheries, historic Central Bank annual reports, and educational publications from the Ed-ucational Publications Department. In total, the collection comprises 230,091 documents spanning from the 1950s to the 2020s. SINHA LEGAL focuses exclusively on the Acts and Bills contained in the Sri Lanka Document Dataset by Senaratna (2025). In the original reposi-tory, these legal documents are primarily available as PDF files within a much broader collection. Our study builds on this existing resource by extract-ing, cleaning, and structuring the Acts and Bills into a dedicated machine-readable corpus, which is further discussed in section 3. 
+
+2.2 Cambridge Law Corpus (CLC) 
+
+The Cambridge Law Corpus (CLC ) is a substantial dataset for legal Artificial Intelligence research that comprises over 250,000 UK court cases (Östling et al., 2023). This corpus consists of 258,146 court cases drawn from 53 courts spanning over the 16th century to the 21st century It includes approxi-mately 0.8 billion tokens, stored in XML format that captures both the full case body and rich metadata such as judge names, parties, and dates. During the process of creation, the word and 
+
+PDF files were cleaned, OCR processed through the Tesseract engine (Kay, 2007) and normalised into 
+
+XML format and iteratively refined through a cycle query-driven methodology inspired by Voormann and Gut (2008). Due to the corpus size, only a strat-ified subset of 638 cases received expert-annotated outcomes. The CLC dataset has become an important bench-mark for advanced legal AI tasks. It supports appli-cations such as case outcome prediction and long-form legal text processing. Previous studies have tested models such as RoBERTa (Liu et al., 2019) and GPT-4 (OpenAI, 2023) on this corpus, show-ing that long legal cases require models to handle difficult reasoning and strong semantic links across the text 
+
+2.3 Other Legal Datasets 
+
+Considering other legal datasets, BIGPATENT is one of the most influential large-scale datasets used for summarisation (Sharma et al., 2019). This consists of 1.3 million records of U.S. patent documents, sourced from Google Patents Public Datasets. 2.Each entry pair has a full patent description and a human-written abstract (the gold-standard sum-mary). The Japanese Tort-case Dataset (JTD ), the first legal judgment prediction resource for the Japanese jurisdiction, consist of 3,477 real civil judgments focused on tort cases such as defamation and privacy infringement (Yamada et al., 2025). Extending this line of multilingual legal-NLP work, the Indian Legal Corpus (ILC )by Trivedi et al. (2023) offers 3,000+ expert-written abstractive summaries of Indian legal judg-ments. Similarly, Nigam et al. (2025) intro-duced NyayaAnumana , a large-scale Indian legal judgment-prediction dataset with 702,945 pro-cessed cases from across the judiciary. Ma et al. (2021) introduced LeCaRD , a Chinese legal case-retrieval dataset, comprising 107 query cases and over 43,000 candidate cases drawn from Supreme People’s Court criminal judgments. Elaraby et al. (2024) created a curated research subset from the Canadian Legal Information Insti-tute (CanLII 3), an open-access repository of Cana-dian case law, containing 1,049 long-form judicial opinions with expert-written abstractive summaries, each annotated for argument roles including Issue, Reason, and Conclusion. Leitner et al. (2020) intro-duced a German legal Named Entity Recognition dataset under the EU (European) Lynx 4 project, with 750 court decisions, 54,000 manually anno-tated entities across 19 categories. And the survey done by Ariai et al. (2024) gives a review of the current landscape of NLP, focusing extensively on datasets and benchmarks in the legal domain. Other datasets include LEGAL-UQA , the first Urdu-English legal question-answering dataset with 619 parallel question-answer pairs derived from Pak-istan’s constitution (Faisal and Yousaf, 2024); 
+
+> 2https://bit.ly/4rSS4BN
+> 3https://www.canlii.org/en/
+> 4http://www.lynx-project.eu/
+
+the Hindi Legal Documents Corpus (HLDC ) with 912,568 district court documents for bail predic-tion (Kapoor et al., 2022); the ILDC with 34,816 Supreme Court cases for judgment prediction (Ma-lik et al., 2021); MultiLegalPile , a 689 GB multi-lingual corpus spanning 24 languages and 17 legal systems for LLM pretraining (Niklaus et al., 2024); and VLQA , a Vietnamese dataset with 3,129 expert-annotated questions for legal question answering and information retrieval (Nguyen et al., 2025). Collectively, existing legal NLP datasets show substantial progress for high-resource languages such as English, Chinese, German, and Hindi, sup-porting tasks including judgment prediction, sum-marisation, and question answering. In contrast, Sinhala resources are largely limited to general text collections, with no dedicated legal-domain datasets. This gap motivates the present study, which aims to develop a foundational resource for Sinhala legal NLP. 
+
+3 Methodology 
+
+This methodology section describes the complete process followed to create the dataset. The work-flow begins with collecting publicly available legal documents, followed by organising the files and extracting text from them using OCR. After extrac-tion, several post-processing steps are implemented to correct errors and standardise the content. Fi-nally, the structure of the dataset is established, and the inclusion of metadata information is discussed. 
+
+3.1 Data Acquisition 
+
+The initial stage involved gathering Sinhala legal documents from a publicly available repository on GitHub 5 (Senaratna, 2025), which is detailed in 2.1. These documents were available in PDF format and contain the Sinhala version of national laws. At the time the repository was accessed (Au-gust 2025) , the documents were organised into four categories: Acts, Bills, Gazettes, and Extraor-dinary Gazettes. The collection included 1,500+ Acts, 1,300+ Bills, 6,300+ Gazettes and 35,000+ Extraordinary Gazettes. During the data acquisi-tion process, Gazettes and Extraordinary Gazettes were excluded because many of the PDF files had multi-column layouts and dense formatting, which are known to reduce OCR accuracy (Fleischhacker et al., 2025). All the accessible Acts and Bills were downloaded to create a raw collection for further 
+
+> 5https://github.com/nuuuwan/lk_legal_docs
+
+processing. In total, 2,865 PDFs were gathered. These documents covered a wide range of publica-tion years, with Acts spanning from 1981 to 2025 and Bills from 2010 to 2025. 
+
+3.2 Data Organisation 
+
+All the downloaded legal documents were system-atically organised to ensure consistency. For each metadata file processed, the corresponding Sinhala PDF (if available) was downloaded. Each file was saved using a descriptive and uniform naming con-vention automatically generated during the down-loading process. The file name was constructed using three main components: the document type, publication date, and the cleaned descrip-tion field (doc_type_date_cleaned-description-or-id_si.pdf) . If the generated file name exceeded the file system length limits, it was automatically truncated during the download process to ensure compatibility. Documents published in languages other than Sinhala were also excluded. If duplicate files were available, they were automatically detected when downloading and skipped to prevent redundancy. The downloaded documents were arranged into a hierarchical directory structure based on the docu-ment type (Bills or Acts) and again into subfolders based on their publication year. 
+
+3.3 Text Extraction Using OCR 
+
+After the document organisation process, all the 2,865 documents were processed using Google Document AI 6 to perform OCR and extract the text from the PDF documents. A comparative study conducted by Jayatilleke and de Silva (2025b) eval-uated the performance of various OCR engines. Among the five engines tested on a synthetically created dataset for Sinhala, Surya 7 emerged as the standout performer. However, when assessing a dataset of real scanned Sinhala documents, it be-came clear that Document AI achieved higher accu-racy in its results (Jayatilleke and de Silva, 2025a). Since Google Document AI has a limit of 15 pages per processing request, the documents that had more than 15 pages were divided into chunks of 15 pages each. This ensured that all documents, regardless of length, were fully processed without losing any content. During this process, informa-tion such as the OCR confidence, the number of 
+
+> 6https://cloud.google.com/document-ai/
+> 7https://github.com/VikParuchuri/surya
+
+pages in the document, the number of chunks pro-cessed, document type, and published year was recorded. After extraction, the text files were organised by publication years to maintain the chronologi-cal structure. The same filename convention used during the data acquisition was retained for consis-tency. This ensured that every extracted text file could easily be traced back into its original PDF and document category. 
+
+3.4 Data Filtration 
+
+We performed an Exploratory Data Analysis (EDA) on all the documents to assess the dataset’s struc-ture, distribution, and OCR quality before imple-menting any filtration steps. Based on the findings from the EDA, we applied several filtering steps to ensure that only high-quality, usable documents were retained for building the dataset. 
+
+3.4.1 Exploratory Data Analysis 
+
+Acts and Bills were analysed separately due to dif-ferences in length and formatting. Bills were gen-erally longer with an average of 17.2 pages, com-pared to 14.3 pages for Acts. OCR performance across both categories was strong, with average confidence scores of 0.967 for Acts and 0.950 for Bills. The dataset spans 46 years, beginning in 1981. The most legislative years were identified based on the combined number of Acts and Bills. The analy-sis showed that 2016 had 144 documents, 2021 had 190 documents, 2022 had 175 documents, 2023 had 168 documents, and 2024 had 161 documents. This trend highlights a substantial increase in document publication in recent years. OCR confidence values were available for all 2,865 documents. Documents were categorised into three quality levels based on their OCR con-fidence scores: High quality for scores above 0.8, Medium quality for scores between 0.6 and 0.8, and Low quality for scores below 0.6. Of the 2,864 documents, 2,767 (96.6%) were classified as High Quality, 92 (3.2%) as Medium Quality, and 5 (0.2%) as Low. Based on the page count, 1,825 documents (63.7%) were classified as Small (<10 pages), 857 (29.9%) as Medium (11–50 pages), and only 183 (6.4%) as Large (>50 pages). The page distribu-tions for each category can be seen in Figure 1. More information on the EDA is discussed in the Appendix A. Acts  Bills        
+
+> 0500 1000 1500 2000
+> Large (>50)
+> Medium (11-50)
+> Small (<10)
+> Number of Documents
+> Page Count 82 101
+> 426 431
+> 1021 804
+
+Figure 1: Distribution of document size of Acts and Bills 
+
+3.4.2 Filtration Strategy 
+
+The downloaded documents contained a total of 2,865 legal documents, of which 1,529 were Acts, and 1,336 were Bills. As a first step, the dataset was restricted based on publication year, retaining only Acts published between 1981 and 2014 and Bills published between 2010 and 2014, which re-sulted in 1,238 Acts and 155 Bills. Acts from the years 1992, 1996, and 1997, comprising 96 docu-ments, were subsequently excluded due to visible double-sided printing that caused severe OCR er-rors. This ended with a count of 1,142 Acts. A page-count filter was then applied to the remain-ing documents, and those exceeding 50 pages were removed, as longer Acts and Bills often contained extensive tables and complex layouts that reduced OCR reliability; within the restricted year ranges, this step excluded 49 Acts and 13 Bills. In addition to the page-count filtering, docu-ments containing tables and multi-column layouts were removed, as these formats produced frag-mented or unusable OCR text. Within the time ranges, this layout-based filtering excluded a fur-ther 26 Acts and only 1 Bill. After the filtration process, 1,065 Acts and 139 Bills advanced to the next stages of research. This resulted in a total of 1,206 retained documents. A summary of the filtering stages, including the initial types of documents, page count categories, and the proportions of retained to removed documents, is presented in Figure 2. This collection of 1,206 high-quality legal documents provided a final dataset suitable for a viable post-processing procedure. 
+
+3.5 Document Post-Processing 
+
+After OCR, several post-processing steps were per-formed to ensure the dataset was clean and con-Figure 2: The flow of documents through each stage of the filtration process. *The initial dataset consists of documents that were available in the repository on the date of access (20th August 2025). 
+
+sistent. Despite having a high accuracy score in OCR for most of the documents, the extracted text still contained structural inconsistencies that re-quired careful cleaning. These steps were carried out manually by the authors, who are native Sinhala speakers. The post-processing included the following cor-rections to address identified issues based on document-level analysis and the work by Jay-atilleke and de Silva (2025a): 
+
+Word-level corrections: OCR output often con-tained misspelt words, broken words or incor-rect character substitution caused by poor quality. These were manually corrected to preserve the ac-curacy of the text. 
+
+Removal of footer content and page numbers: 
+
+Legal documents included footers and page num-bers that disrupted the flow of paragraphs. This included the removal of such footers and page num-bers. 
+
+Removal of extra sentences: Most of the acts contained small sentences that could be seen out-side the involved removing such sentences to main-tain the flow and accuracy of the textragraphs. This step included removing such sentences to maintain flow, as well as the accuracy of the sentences. 
+
+Removal of seal content and prices: This step included removing the identified watermarks that were shown as official stamps. The prices men-tioned at the start of the document were also re-moved. 
+
+Removal of repeated titles: Since document ti-tles appeared multiple times per page, they were removed. The title on the title page and the first page of the document were kept. 
+
+Spacing errors: This involved the correction of the inconsistent spaces between sentences and para-graphs. 
+
+Removal of unnecessary characters: Occasion-ally, the extracted text contained characters such as underscores and dashes. These were removed since they interrupted the flow of the sentences and since they were not related to the content of the document. These post-processing steps were conducted on all 1,065 Acts and 141 Bills in the S INHA LEGAL 
+
+corpus. Appendix B provides further discussion and examples of these steps. 
+
+3.6 Creating the Structure of S INHA LEGAL 
+
+The dataset was first categorised into document type: Acts and Bills. Each document type was further organised into year-wise folders based on the year of publication. Within each year, sepa-rate directories were created for individual legal documents, with each directory named after the corresponding document. Each document direc-tory contained the full text of the legal document and an accompanying metadata file with structured descriptive information. An example of the com-posed dataset structure is depicted in Figure 3. Fur-thermore, the creation of metadata files and their records is further described in Appendix C. 
+
+4 Evaluation 
+
+4.1 Corpus Statistics 
+
+First, we conducted a document-level evaluation of the S INHA LEGAL dataset using the entire corpus. Our analysis reveals that, on average, each docu-ment contains 1,677 word tokens, with a median length of 1,213 word tokens. The distribution of SINHALEGAL  
+
+> Bills Acts
+> 1981
+> 1982
+> 1983
+> 2010
+> 2011
+> 2012
+> 2012_Bill_1
+> 2012_Bill_2
+> 1983_Act_1
+> 1983_Act_2
+> 2012_Bill_2.txt
+> metadata.json
+> 1983_Act_2.txt
+> metadata.json
+> 2014 2014
+
+Figure 3: Structure of the S INHA LEGAL dataset 
+
+word token counts demonstrates significant vari-ability, ranging from short texts of 95 word tokens to lengthy documents that exceed 23,000 word to-kens. In total, the corpus consists of 12.8 million characters, averaging 10,678 characters per docu-ment. The figures presented in Table 3 illustrate the heterogeneity of the legal documents. 
+
+Statistic Value 
+
+Average word tokens per document 1,677 Median word tokens per document 1,213 token count range 95 - 23,430 Total characters 12,877,970 Average characters per document 10,678 
+
+Table 1: Summary statistics of the S INHA LEGAL dataset 
+
+4.2 Lexical Diversity 
+
+The lexical diversity of the dataset was assessed through the Type Token Ratio (TTR) and the dis-tribution of hapax legomena 8. Tokenisation was performed using a simple rule-based whitespace tokeniser after the non-Sinhala characters were re-moved using Unicode range filtering. A summary of the total word tokens, vocabulary size, and TTR for Acts, Bills, and the overall dataset is provided in Table 2. The dataset contains over two million tokens and 39,169 unique word types. TTR was length-normalised using Herdan’s C (Ross and Herdan, 1960), computed as the ratio of the logarithm of vocabulary size to the logarithm of total tokens. It is observed that the Acts account for the majority of the word tokens (1,778,265) and show a TTR of 0.7315. In contrast, Bills are smaller in size (243,942 word tokens) and demonstrate a TTR of 
+
+> 8Word types that occur only once within a given corpus.
+
+0.7456.             
+
+> Statistic Acts Bills Total Corpus
+> Total word tokens 1,778,265 243,942 2,022,207 Vocabulary size 37,326 10,390 39,169 TTR 0.7315 0.7456 0.7284
+
+Table 2: The number of total word tokens, vocabulary size and type token ratio for Acts, Bills and the total dataset. 
+
+The analysis of hapax legomena further high-lights the distribution of rare words. Across the corpus, 18,074 word types (46.14% of the vocabu-lary) occur only once. Acts contain 17,632 hapax types (47.24% of their vocabulary), while Bills contain 4,026 hapax types (38.75%) as depicted in Table 3. This high proportion of single - occurrence words reflects the specialised nature of legal lan-guage, where frequent formulaic terms coexist with a long tail of rare items such as unique case names, bill titles, and technical terminology. 
+
+Documents Hapax legomena Count Ratio 
+
+Acts 17,632 47.24% Bills 4,026 38.75% Total corpus 18,074 46.14% 
+
+Table 3: Distribution of hapax legomena across Acts, Bills, and the total corpus. 
+
+4.3 Word Frequency and Coverage 
+
+Word frequency analysis provides insight into the distribution of lexical items across the S INHA LE- 
+
+> GAL
+
+corpus. Coverage statistics show that a rela-tively small set of high - frequency words accounts for a substantial proportion of the text. In Acts, the top 20 words cover 23.00% of all word tokens, while in Bills the top 20 words cover 23.32%. Ex-panding to the top 50 words increases coverage to 35.04% in Acts and 35.53% in Bills, and the top 100 words account for nearly half of the corpus (45.89% in Acts and 46.39% in Bills). These fig-ures highlight the repetitive and formulaic nature of Sinhala legal language. It could be seen that conjunctions such as ෙහෝ, සහ \ hɔ, sʌhʌ , particle words such as වන, ඒ, ෙම‍් \ vʌnʌ, eː, meː 
+
+and other terms such as කිරීම,යුතු , සඳහා \ kɪriːmʌ, jʊθʊ, sʌnðʌhɑː 
+
+were re-peated mostly. Bills show a similar distribution, with high coverage by a similar set of words. The top 10 identified frequent words are discussed in Appendix D. The coverage statistics demonstrate that Sinhala legal texts rely heavily on a small core vocabu-lary, while still maintaining lexical breadth through lower -frequency items. This shows that these doc-uments are highly standardised in their functional framing, yet expansive in their incorporation of specialised terminology. 
+
+4.4 Calculating Text Accuracy and Structure 
+
+This dataset was evaluated using character-level and word-level error metrics, following a similar approach to CLC (Östling et al., 2023). For this, the corrected text was taken as the ground truth. Word Error Rate (WER) and Character Error Rate (CER) were computed with and without text normalisation. The results show WERs of 26.87% and 23.44%, and CERs of 24.07% and 24.06%, respectively. Structural differences such as line breaks were also analysed; further details are provided in Appendix F and G. 
+
+4.5 Named Entity Recognition 
+
+A rule-based Named Entity Recognition (NER) was implemented to identify salient entities in this dataset. Although various libraries exist for NER, they are not domain-specific and are incompatible for the legal domain (Badji, 2018), especially con-sidering Sinhala. Therefore, a rule-based approach was implemented in Python , utilising regular ex-pression matching and keyword-based rules to iden-tify legal entities. This approach was designed to capture six major types of entities: 
+
+Date: Since dates are central to legal documents, the years and date expressions were captured using digit-based patterns (e.g., \b\d 4}\b ) and extended rules for textual date formats. 
+
+Title: Institutional roles and titles such as ජනාධිපතිවරයා \ dʒʌnɑːðʰɪpʌθɪvʌrʌjɑː 
+
+(President) and අමාත්‍යවරයා \ ʌmɑːθyvʌrʌjɑː (Minister) were identified and listed. This ensured capturing references to officials and positions within the legal system. 
+
+Organisation: These were extracted using a keyword dictionary of institutional terms fre-quently occurring in Sinhala legal texts such as අධිකරණය \ ʌðʰɪkʌrʌnʌjʌ (court of justice), පාර‍්ලිෙම‍්න‍්තුව \ pɑːrlɪmeːnθʊvʌ 
+
+(parliament). 
+
+Law: Law names are highly formulaic, often ending with the word පනත \ pʌnʌθʌ (‘act’), and to avoid false positives, common prefixes such as දරන, එම \ ðʌrʌnʌ, ɛmʌ (bear with, that same), were removed. 
+
+Person: Personal names in legal texts are typically followed by honorifics such as මහතා, මහත‍්මිය \ mʌhʌθɑː, mʌhʌθmɪjʌ 
+
+(Mister, Miss). This was used to capture up to two preceding words, ensuring that both single and compound names were recognised. 
+
+Amount: Monetary values are expressed with numerals followed by currency markers, such as රැපියල‍් \ rʊpɪjʌl 
+
+or the letter රැ \ rʊ (rupees), ensur-ing accurate identification of financial references. The pipeline extracted a total of 28,937 entities across the corpus, and the frequencies are depicted in Table 4. It could be seen that, on average, each document contains 24 entities, with a maximum of 361 and a minimum of 4 for a document, which highlights the density of entities in the corpus.         
+
+> Entity type Number of Entities
+> Date [DATE] 13,532 Title [TITLE] 8,736 Organisations [ORG] 4,281 Law [LAW] 2,255 Person [PERSON] 126 Amount [AMOUNT] 7
+> Table 4: Number of entities extracted from the S IN -
+> HA LEGAL dataset
+
+4.6 Topic Modelling 
+
+We performed topic modelling to explore the the-matic structures within the dataset using Latent Dirichlet Allocation (LDA) (Blei et al., 2003), and it was implemented using the Gensim library in 
+
+Python . Prior to this implementation, we per-formed standard preprocessing steps, including to-kenisation and removal of stop words. The corpus was preprocessed to ensure consis-tency and reduce noise. Texts were tokenised into word units, normalised to reduce orthographic vari-ation (Manning, 2008). The Sinhala stop words were taken from an available public GitHub 9 repos-itory that was created by Lakmal et al. (2020), and later modified manually with the common stop words in the S INHA LEGAL dataset. Topic coherence was computed to analyse the model’s behaviour across different values of K, with k=15 achieving the highest value. However, prior studies have shown that coherence alone is 
+
+> 9https://bit.ly/4tihUQj
+
+insufficient for determining the optimal number of topics, as larger values of K may lead to over-clustering and unstable topic solutions (Greene et al., 2014). Therefore, the topic model was trained with ten topics to balance interpretability and coverage (Griffiths and Steyvers, 2004). The results revealed recurring themes cen-tred on the legislative acts (පනත \ pʌnʌθʌ ), institutional references such as courts (අධිකරණය \ ʌðʰɪkʌrʌnʌjʌ ), themes related to money ( මුදල‍් \ mʊðʌl ), pension ( විශ§ාම \ ʋiʃˈraːmə ), commissions ( ෙකාමිෂන‍් \ kɒmɪʃʌn ) and elections (ඡන‍්ද \ tʃʰʌnðʌ ). Representative word distribution for each topic is provided in the Appendix E. 
+
+4.7 Evaluation of Language Models 
+
+Perplexity is a standard evaluation metric in lan-guage modelling that measures how well a model predicts the next token (Meister and Cotterell, 2021). Perplexity was used to evaluate how well different language models handle legal domain text, and the scores were compared with a general Sin-hala dataset named MADLAD CulturaX 10 (Aravinda et al., 2025). To calculate the perplexity, we created balanced evaluation samples. The S INHA LEGAL dataset was divided into sentences and clustered using the 
+
+KMeans algorithm with k set to 10. We selected 200 sentences from each of the 10 clusters, resulting in a total of 2,000 sentences for our analysis. This clustering step ensured that sentences were grouped by similarity, allowing us to sample proportionally from each cluster. This approach preserved diver-sity in terms of sentence length, topics, and overall coverage. For the general Sinhala dataset, which contained 10 million sentences, we randomly selected a sam-ple of 100,000 sentences. We then applied the same clustering method as used for the legal dataset, ulti-mately extracting another set of 2,000 sentences. To compare the differences between general Sinhala and legal Sinhala corpora, we selected two subsets of 2000 sentences each, created us-ing MADLAD CulturaX and S INHA LEGAL . Each sentence was tokenised using a custom Sinhala to-keniser that removes non-Sinhala characters and splits text into tokens, as detailed in subsection 4.2. We then computed normalised word distributions for both corpora and measured their divergence using the Jensen-Shannon divergence (JSD) (Lin, 
+
+> 10 https://huggingface.co/datasets/polyglots/ MADLAD_CulturaX_cleaned
+
+2002), which quantifies the similarity between two probability distributions. The computed JSD between the legal and gen-eral Sinhala corpora was 0.614, indicating a sub-stantial difference in their word distributions. This confirms that legal Sinhala employs a distinct vo-cabulary and word usage compared to general lan-guage, complementing the perplexity-based eval-uation and providing a quantitative measure of domain-specific linguistic characteristics. For the perplexity-based evaluation, we considered several modern transformer ar-chitectures that support Sinhala, including 
+
+Llama-3.1-8B 11 (Kassianik et al., 2025), 
+
+Mistral-7B 12 (Jiang et al., 2023), and 
+
+Falcon-7B 13 (Almazrouei et al., 2023), 
+
+Deepseek-1.3B 14 (Guo et al., 2024), 
+
+DistilGPT-2 15 , a distilled variant of GPT-2 .We also included Gemma-2B 16 (Team et al., 2024) a compact model released by Google that demonstrates competitive performance in resource-constrained environments. This diverse selection of models allowed us to examine how the size and architecture influence perplexity across legal and general Sinhala corpora.               
+
+> Model Name MADLAD CulturaX SINHA LEGAL
+> Llama-3.1 3.05 2.55
+> Deepseek-1.3B 3.30 2.94
+> Mistral-7B 3.68 3.18
+> Falcon-7B 2.77 2.61
+> DistilGPT-2 6.45 5.77
+> Gemma-2B 8.75 5.59
+
+Table 5: Comparison of perplexity scores of the two datasets. Bold: indicates best performance and Underline: indicates the second best. 
+
+During the evaluation, all models exhibited lower perplexity scores on the S INHA LEGAL cor-pus in comparison to the MADLAD CulturaX dataset. This suggests that domain -specific legal text is more predictable than general cultural content. Even though legal terms are more complex than general Sinhala, lower perplexity can likely occur due to repetitive structures and frequent patterns in texts (Yao et al., 2025). Frequent phrases such as "ෙමම පනතට ඇතුළත‍් වන‍්ෙන‍් " meaning "this act contains" ( mɛmʌ pʌnʌθʌtθʌ ʌθʊlʌθ vʌnneː ), can 
+
+> 11 https://bit.ly/49Ieoa4
+> 12 https://bit.ly/49nZLHD
+> 13 https://huggingface.co/tiiuae/falcon-7b
+> 14 https://bit.ly/3N76iiC
+> 15 https://huggingface.co/distilbert/distilgpt2
+> 16 https://huggingface.co/google/gemma-2b
+
+be seen multiple times across documents. This repeated usage, along with the findings on the non-uniformity of word frequencies discussed in sub-section 4.3, likely contributes to the lower perplex-ity scores observed when compared to the general Sinhala dataset. 
+
+Llama 3.1 and Falcon-7B achieved the low-est perplexity on both datasets, followed by 
+
+Deepseek-1.3B , indicating strong predictive per-formance. Mistral-7B also performed competi-tively, with slightly higher perplexity scores. As expected, the smaller models exhibited high per-plexity values, in which DistilGPT-2 produced moderate scores, while Gemma-2B showed the high-est perplexity, particularly on the general corpus as presented in Table 5. 
+
+5 Conclusion 
+
+This study introduced S INHA LEGAL , a Sinhala legal dataset designed to support research in le-gal NLP and information extraction tasks, specifi-cally facilitating diachronic analysis of legal docu-ments. The dataset includes a total of 1,206 legal documents, of which 141 are Bills ranging from 2010-2014 CE, and 1,065 are Acts ranging from 1981-2014 CE. The process of creating this dataset included performing OCR, filtering unwanted doc-uments, and post-processing them manually to re-duce noise and improve quality. The conducted evaluation included the lexical diversity, word fre-quency and coverage, NER and topic modelling to identify the number of entities and topics within the dataset. Finally, the perplexity scores were mea-sured on selected language models to see how well the models respond to domain-specific data. For future work, this dataset can be expanded with additional types of legal documents beyond Acts and Bills. Its utility can also be enhanced by applying further post-processing methods, such as segmenting documents into sections. S INHA LE- 
+
+> GAL
+
+fills a significant gap in legal NLP for Sinhala and provides a reliable foundation for future re-search. 
+
+Limitations 
+
+Scope restricted to Acts and Bills: This study considers only Acts and Bills. But the new repos-itory in GitHub 17 mentioned in section 2.1 has been updated later and contains many additional categories. 
+
+> 17 https://github.com/nuuuwan/lk_datasets
+
+Temporal coverage for Acts and Bills: Al-though Acts in the repository span a broader range from 1981 to 2025, and Bills a range from 2010-2025, this analysis consists of Acts and Bills pub-lished between 2014. 
+
+Document structure not explicitly segmented: 
+
+While some documents contain section boundaries, the documents in the dataset are provided as con-tinuous text and are not consistently segmented into structural sections (e.g., preamble, definitions, clauses, schedules). 
+
+Language coverage limited to Sinhala: Al-though official English and Tamil versions of legal documents, including Acts and Bills, were avail-able, this study focuses exclusively on the Sinhala versions of the documents. 
+
+Manual evaluation of the NER task: Due to the language-specific characteristics of named enti-ties, automated evaluation methods were not fully applicable. Consequently, the NER task can be considered for manual evaluation. 
+
+Consideration of lengthy documents: For prac-tical reasons for manual post-processing, docu-ments longer than 50 pages were not considered in this study. They can be considered for future expansion of this dataset. 
+
+References            
+
+> Ebtesam Almazrouei, Hamza Alobeidli, Abdulaziz Al-shamsi, Alessandro Cappelli, Ruxandra Cojocaru, Mérouane Debbah, Étienne Goffinet, Daniel Hess-low, Julien Launay, Quentin Malartic, and 1 others. 2023. The falcon series of open language models.
+> arXiv preprint arXiv:2311.16867 .HWK Aravinda, Rashad Sirajudeen, Samith Karunathi-lake, Nisansa de Silva, Rishemjit Kaur, and Surangika Ranathunga. 2025. Sinllama-a large lan-guage model for sinhala. In 2025 Moratuwa En-gineering Research Conference (MERCon) , pages 617–622. IEEE. Farid Ariai, Joel Mackenzie, and Gianluca Demartini. 2024. Natural language processing for the legal do-main: A survey of tasks, datasets, models, and chal-lenges. ACM Computing Surveys .Ines Badji. 2018. Legal entity extraction with NER systems . Ph.D. thesis, ETSI_Informatica. David M Blei, Andrew Y Ng, and Michael I Jordan. 2003. Latent dirichlet allocation. Journal of machine Learning research , 3(Jan):993–1022.
+
+Guido Boella, Luigi Di Caro, and Valentina Leone. 2019. Semi-automatic knowledge population in a legal doc-ument management system. Artificial intelligence and Law , 27(2):227–251. Nisansa De Silva. 2019. Survey on publicly avail-able sinhala natural language processing tools and research. arXiv preprint arXiv:1906.02358 .Mohamed Elaraby, Huihui Xu, Morgan Gray, Kevin Ashley, and Diane Litman. 2024. Adding argumenta-tion into human evaluation of long document abstrac-tive summarization: A case study on legal opinions. In Proceedings of the Fourth Workshop on Human Evaluation of NLP Systems (HumEval) @ LREC-COLING 2024 , pages 28–35, Torino, Italia. ELRA and ICCL. Faizan Faisal and Umair Yousaf. 2024. Legal-uqa: A low-resource urdu-english dataset for legal question answering. arXiv preprint arXiv:2410.13013 .PEE Fernando. 1949. Palaeographical development of the brahmi script in ceylon from 3rd century bc to 7th century ad. David Fleischhacker, Roman Kern, and Wolfgang Göderle. 2025. Enhancing ocr in historical docu-ments with complex layouts through machine learn-ing. International Journal on Digital Libraries ,26(1):3. Derek Greene, Derek O’Callaghan, and Pádraig Cun-ningham. 2014. How many topics? stability analy-sis for topic models. In Joint European conference on machine learning and knowledge discovery in databases , pages 498–513. Springer. Thomas L Griffiths and Mark Steyvers. 2004. Find-ing scientific topics. Proceedings of the National academy of Sciences , 101(suppl_1):5228–5235. Daya Guo, Qihao Zhu, Dejian Yang, Zhenda Xie, Kai Dong, Wentao Zhang, Guanting Chen, Xiao Bi, Yu Wu, YK Li, and 1 others. 2024. Deepseek-coder: When the large language model meets programming–the rise of code intelligence. arXiv preprint arXiv:2401.14196 .Nevidu Jayatilleke and Nisansa de Silva. 2025a. Sidiac: Sinhala diachronic corpus. arXiv preprint arXiv:2509.17912 .Nevidu Jayatilleke and Nisansa de Silva. 2025b. Zero-shot OCR accuracy of low-resourced languages: A comparative analysis on Sinhala and Tamil. In Pro-ceedings of the 15th International Conference on Recent Advances in Natural Language Processing -Natural Language Processing in the Generative AI Era , pages 471–480, Varna, Bulgaria. INCOMA Ltd., Shoumen, Bulgaria. Nevidu Jayatilleke and Ruvan Weerasinghe. 2025. A hybrid architecture with efficient fine tuning for ab-stractive patent document summarization. In 2025 International Research Conference on Smart Com-puting and Systems Engineering (SCSE) , pages 1–6. IEEE. Albert Q. Jiang, Alexandre Sablayrolles, Arthur Men-sch, Chris Bamford, Devendra Singh Chaplot, Diego de las Casas, Florian Bressand, Gianna Lengyel, Guil-laume Lample, Lucile Saulnier, Lélio Renard Lavaud, Marie-Anne Lachaux, Pierre Stock, Teven Le Scao, Thibaut Lavril, Thomas Wang, Timothée Lacroix, and William El Sayed. 2023. Mistral 7b. Preprint ,arXiv:2310.06825. Arnav Kapoor, Mudit Dhawan, Anmol Goel, Arjun TH, Akshala Bhatnagar, Vibhu Agrawal, Amul Agrawal, Arnab Bhattacharya, Ponnurangam Kumaraguru, and Ashutosh Modi. 2022. Hldc: Hindi legal documents corpus. In Findings of the association for computa-tional linguistics: ACL 2022 , pages 3521–3536. Paul Kassianik, Baturay Saglam, Alexander Chen, Blaine Nelson, Anu Vellore, Massimo Aufiero, Fraser Burch, Dhruv Kedia, Avi Zohary, Sajana Weeraward-hena, and 1 others. 2025. Llama-3.1-foundationai-securityllm-base-8b technical report. arXiv preprint arXiv:2504.21039 .Anthony Kay. 2007. Tesseract: an open-source op-tical character recognition engine. Linux Journal ,2007(159):2. Dimuthu Lakmal, Surangika Ranathunga, Saman Pera-muna, and Indu Herath. 2020. Word embedding eval-uation for Sinhala. In Proceedings of the Twelfth Lan-guage Resources and Evaluation Conference , pages 1874–1881, Marseille, France. European Language Resources Association. Elena Leitner, Georg Rehm, and Julian Moreno-Schneider. 2020. A dataset of German legal doc-uments for named entity recognition. In Proceedings of the Twelfth Language Resources and Evaluation Conference , pages 4478–4485, Marseille, France. Eu-ropean Language Resources Association. Jianhua Lin. 2002. Divergence measures based on the shannon entropy. IEEE Transactions on Information theory , 37(1):145–151. Yinhan Liu, Myle Ott, Naman Goyal, Jingfei Du, Man-dar Joshi, Danqi Chen, Omer Levy, Mike Lewis, Luke Zettlemoyer, and Veselin Stoyanov. 2019. Roberta: A robustly optimized bert pretraining ap-proach. arXiv preprint arXiv:1907.11692 .Simon M. Lucas, Alex Panaretos, Luis Sosa, Anthony Tang, Shirley Wong, Robert Young, Kazuki Ashida, Hiroki Nagai, Masayuki Okamoto, Hiroaki Ya-mamoto, Hidetoshi Miyao, JunMin Zhu, WuWen Ou, Christian Wolf, Jean-Michel Jolion, Leon Todoran, Marcel Worring, and Xiaofan Lin. 2005. ICDAR 2003 robust reading competitions: entries, results, and future directions. 7(2):105–122. Yixiao Ma, Yunqiu Shao, Yueyue Wu, Yiqun Liu, Ruizhe Zhang, Min Zhang, and Shaoping Ma. 2021. Lecard: a legal case retrieval dataset for chinese law system. In Proceedings of the 44th international ACM SIGIR conference on research and development in information retrieval , pages 2342–2348. Vijit Malik, Rishabh Sanjay, Shubham Kumar Nigam, Kripabandhu Ghosh, Shouvik Kumar Guha, Arnab Bhattacharya, and Ashutosh Modi. 2021. Ildc for cjpe: Indian legal documents corpus for court judg-ment prediction and explanation. In Proceedings of the 59th annual meeting of the association for com-putational linguistics and the 11th international joint conference on natural language processing (volume 1: long papers) , pages 4046–4062. Christopher D Manning. 2008. Introduction to informa-tion retrieval . Syngress Publishing,. Clara Meister and Ryan Cotterell. 2021. Language model evaluation beyond perplexity. In Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers) , pages 5328–5339, Online. Association for Computational Linguistics. Tan-Minh Nguyen, Hoang-Trung Nguyen, Trong-Khoi Dao, Xuan-Hieu Phan, Ha-Thanh Nguyen, and Thi-Hai-Yen Vuong. 2025. Vlqa: The first comprehensive, large, and high-quality vietnamese dataset for legal question answering. arXiv preprint arXiv:2507.19995 .Shubham Kumar Nigam, Deepak Patnaik Balaramama-hanthi, Shivam Mishra, Noel Shallum, Kripabandhu Ghosh, and Arnab Bhattacharya. 2025. Nyayaanu-mana and inlegalllama: The largest indian legal judg-ment prediction dataset and specialized language model for enhanced decision analysis. In Proceed-ings of the 31st International Conference on Compu-tational Linguistics , pages 11135–11160. Joel Niklaus, Veton Matoshi, Matthias Stürmer, Ilias Chalkidis, and Daniel Ho. 2024. Multilegalpile: A 689gb multilingual legal corpus. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) ,pages 15077–15094. R OpenAI. 2023. Gpt-4 technical report. arxiv 2303.08774. View in Article , 2(5):1. Andreas Östling, Holli Sargeant, Huiyuan Xie, Ludwig Bull, Alexander Terenin, Leif Jonsson, Måns Mag-nusson, and Felix Steffek. 2023. The cambridge law corpus: A dataset for legal ai research. Advances in Neural Information Processing Systems , 36:41355– 41385. Ettore Pietrosanti and B Graziadio. 1999. Advanced techniques for legal document processing and re-trieval. Artificial intelligence and law , 7(4):341–361. Surangika Ranathunga and Nisansa de Silva. 2022. Some languages are more equal than others: Prob-ing deeper into the linguistic disparity in the NLP world. In Proceedings of the 2nd Conference of the Asia-Pacific Chapter of the Association for Compu-tational Linguistics and the 12th International Joint Conference on Natural Language Processing (Vol-ume 1: Long Papers) , pages 823–848, Online only. Association for Computational Linguistics. Alan Strode Campbell Ross and Gustav Herdan. 1960. Type-token mathematics : a textbook of mathematical linguistics. Nuwan I Senaratna. 2025. Sri lanka document datasets: A large-scale, multilingual resource for law, news, and policy. arXiv preprint arXiv:2510.04124 .Eva Sharma, Chen Li, and Lu Wang. 2019. BIG-PATENT: A large-scale dataset for abstractive and coherent summarization. In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics , pages 2204–2213, Florence, Italy. Asso-ciation for Computational Linguistics. Gemma Team, Morgane Riviere, Shreya Pathak, Pier Giuseppe Sessa, Cassidy Hardin, Surya Bhupati-raju, Léonard Hussenot, Thomas Mesnard, Bobak Shahriari, Alexandre Ramé, and 1 others. 2024. Gemma 2: Improving open language models at a practical size. arXiv preprint arXiv:2408.00118 .Pawan Trivedi, Digha Jain, Shilpa Gite, Ketan Kotecha, Anant Bhatt, and Nithesh Naik. 2023. Indian legal corpus (ilc): A dataset for a dataset summarizing indian legal proceeding using natural language. En-gineered Science , 27:1022. Holger Voormann and Ulrike Gut. 2008. Agile corpus creation. Corpus Linguistics & Linguistic Theory ,4(2). Hiroaki Yamada, Takenobu Tokunaga, Ryutaro Ohara, Akira Tokutsu, Keisuke Takeshita, and Mihoko Sum-ida. 2025. Japanese tort-case dataset for rationale-supported legal judgment prediction. Artificial Intel-ligence and Law , 33(3):783–807. Junchi Yao, Shu Yang, Jianhua Xu, Lijie Hu, Mengdi Li, and Di Wang. 2025. Understanding the repeat curse in large language models from a feature perspective. In Findings of the Association for Computational Linguistics: ACL 2025 , pages 7787–7815, Vienna, Austria. Association for Computational Linguistics. 
+
+A Exploratory Data Analysis 
+
+Figure 5 presents the yearly distribution of the doc-uments, separated by Acts and Bills. This shows a clear increase in legislative document production in recent years, particularly after 2010. While Acts are consistently present throughout the entire time span, Bills become more prominent in later years. The stacked representation further shows that Bills contribute significantly to the overall docu-ment count in peak years such as 2021, 2022 and 2023. Overall, this figure highlights how legal documentation has evolved, with an increasing vol-ume and complexity in recent years, potentially reflecting changes in governance, policy focus, or administrative practices. 
+
+> Figure 4: Relationship between the page count and OCR confidence
+
+The scatter plot shown in Figure 4 depicts the relationship between document length (number of pages) and the OCR confidence scores for both Acts and Bills. It was seen that the shorter docu-ments generally exhibited high OCR confidence values, often exceeding 0.9. As document length increases, greater variability in OCR confidence can be observed, mostly for documents exceeding 50 pages. Longer documents frequently contain complex layouts such as multi-column formatting and ta-bles. This can negatively impact the performance of OCR and lead to noisy text extraction. This pattern directly informed the page-count-based fil-tration criteria applied during dataset construction. Figure 6 illustrates the distribution of page counts for Acts and Bills. Both document types generally have a low median page count, indicat-ing that most acts and bills are relatively short. However, there is a notable presence of outliers, particularly among acts, with some extending be-yond 500 pages. This suggests that while the ma-jority of these documents are concise, acts tend to vary more widely in length and can be signif-icantly longer than bills. The variability in page count highlights the diverse complexity and scope of legislative documents within these categories. 
+
+B Document Post-Processing 
+
+Seven errors were identified and addressed during the post-processing phase. This was carried out by the author, who is a native Sinhala speaker and is fluent in Sinhala The acts contained small sections of sentences that could be seen next to paragraphs. These were often seen to be breaking the flow of the paragraphs and creating low accuracy of the meaning of the mentioned text. Hence, these were removed. Some examples are shown in Table 6.  
+
+> Extra Sentences Extracted Text
+> Table 6: Examples of extra sentences in the scanned PDF and extracted text removed during post-processing.
+
+Some of the years contained low-quality scanned PDFs, hence the output contained fragmented and misspelt words. Several paragraphs were seen to be broken, and this required manually correcting the spelling and order of the sentences. Some words could not be identified at all, and they too had to be manually typed and added into the extracted text. This took the most amount of time compared to the other errors that were fixed. Some of the above-mentioned errors and the corrected version can be seen in Table 17. These documents also contained footers and page numbers that were not relevant to the legal content of the document. The page numbers were normally present at the end of each page, and the footers at the end of each document or section. Some of the Acts could be seen with seal content, which also does not have an impact on the content present in the legal document. Hence, these seal contents were removed from the documents. The titles of the document could be seen repeatedly on every page of the document. The title on the title page (the very first page) and the first page of the document were kept, and the others were removed to keep the flow of the document without the titles interrupting the paragraphs. A large portion of the document exhibited in-consistent spacing. In some cases, excessive blank spaces appeared between lines, while in others, paragraphs, numbered lists and bullet points were merged with no spacing at all. These inconsis-Acts  Bills 
+
+> 1981
+> 1982
+> 1983
+> 1984
+> 1985
+> 1986
+> 1987
+> 1988
+> 1989
+> 1990
+> 1991
+> 1992
+> 1993
+> 1994
+> 1995
+> 1996
+> 1997
+> 1998
+> 1999
+> 2000
+> 2001
+> 2002
+> 2003
+> 2004
+> 2005
+> 2006
+> 2007
+> 2008
+> 2009
+> 2010
+> 2011
+> 2012
+> 2013
+> 2014
+> 2015
+> 2016
+> 2017
+> 2018
+> 2019
+> 2020
+> 2021
+> 2022
+> 2023
+> 2024
+> 2025
+> 0
+> 50
+> 100
+> 150
+> 200
+> Year
+> Number of Documents
+
+Figure 5: Distribution of Acts and Bills throughout the years from 1981-2025 
+
+Figure 6: Boxplot showing the distribution of page counts for legal documents by type. 
+
+tencies made the text visually congested and diffi-cult to read. During post-processing, proper line breaks and spacing were restored between para-graphs, numbered lists and bullet points to ensure a clear and well-structured document layout. An example of the mentioned spacing error and its respective corrections can be seen in Table 18. The extracted text also contained various unnec-essary characters produced by OCR misidentifica-tion, including underscores, dashes, semicolons, brackets, random English letters and other stray symbols (e.g., _; - { :] /) . These artefacts appeared randomly throughout the text and did not carry any semantic meaning. All such charac-ters were removed during post-processing to ensure clean and consistent documents. 
+
+C Creating Metadata Files 
+
+During the OCR process, document-level infor-mation was extracted and recorded for each legal document. Following post-processing, the relevant information related to each document was taken into separate metadata files and grouped accord-ingly. Maintaining document-level metadata also supports reproducibility and auditability, allowing OCR results and evaluation metrics to be traced back to their original source documents. 
+
+Figure 7: Example of the metadata record for a docu-ment 
+
+The metadata files consisted of the document ID, the file name, the document type (Acts/Bills), the year of publication, the total number of pages, the number of chunks (1 chunk = 15 pages maxi-mum) processed during the OCR process and the overall OCR confidence for the relevant document. An example of a metadata record is shown in Fig-ure 7. The overall OCR confidence represents the aggregate confidence score provided by the OCR engine, reflecting the estimated recognition relia-bility across all pages of the document. 
+
+D Word Frequency Coverage 
+
+This appendix provides detailed word frequency statistics to complement the analysis mentioned in Section 4.3. The Table 7 summarises the proportion of the corpus accounted for by the most frequent words. Coverage is calculated as the percentage of total word tokens represented by the top 20, 50, and 100 words in Acts and Bills. These figures illustrate the dominance of a small set of high-frequency function words in Sinhala legal texts. 
+
+Number of Word Covered Acts Bills 
+
+Top 20 words 23.00% 23.32% Top 50 words 35.04% 35.53% Top 100 words 45.89% 46.39% 
+
+Table 7: Coverage of the most frequent words in Acts and Bills.                      
+
+> Most Frequent words in Acts Count ෙහෝ \hɔː
+> 47,559 වන \vʌnʌ
+> 32,380 සහ \sʌhʌ
+> 29,775 යම‍් \jʌm
+> 28,440 ğĢÑ \vɪsɪn
+> 25,494 කරනු \kʌrʌnʊ
+> 25,105 ඒ\eː
+> 24,947 ǉƽ \jʊθʊ
+> 24,027 ය\jʌ
+> 21,079 සඳහා \sʌnðʌhɑː
+> 19,933
+
+Table 8: The top 10 frequent words seen in Acts                      
+
+> Most Frequent words in Bills Count ෙහෝ \hɔː
+> 5,489 සහ \sʌhʌ
+> 5,309 වන \vʌnʌ
+> 4,136 කිරීම \kɪriːmʌ
+> 3,776 ǉƽ \jʊθʊ
+> 3,622 ය\jʌ
+> 3,372 යම‍් \jʌm
+> 3,249 ğĢÑ \vɪsɪn
+> 3,235 සඳහා \sʌnðʌhɑː
+> 3,124 කරනු \kʌrʌnʊ
+> 2,885
+
+Table 9: The top 10 frequent words seen in Bills 
+
+The top 10 frequent words were taken from Acts and Bills separately. They are shown in Table 8 and Table 9. Unlike general Sinhala text, legal text contains complex wordings, but also contains a vast number of repetitive words, which are mostly conjunctions. As shown in the two tables, Acts and Bills mostly contained the same set of frequent words, just in different amounts. Bills mostly con-tained lower amounts than Acts since the number of Acts in the dataset is higher than that of Bills. The top 10 most frequently seen bigrams 18 
+
+were also taken. This count was taken as an addition of both Acts and Bills. Words such as යුතුය \ jʊθʊ jʌ ,ශී§ලංකා \ ʒriː lʌŋkɑː ,ෙම‍් පනත \ mæː pʌnʌθʌ 
+
+could be seen to be used frequently across the document. The top 10 bi-grams can be seen in Table 10. As mentioned in the Section 4.7, these may be the reason legal documents had lower perplexity scores than that of general Sinhala text. These repetitive words and frequent structures are well known to reduce perplexity, as they make it easier for the model to guess the next word. (Yao et al., 2025).                      
+
+> Most Frequent Bigrams Count යුතුය \jʊθʊ jʌ
+> 17,912 කරනු ලබන \kʌrʌnʊ lʌbʌnʌ
+> 9,004 අංක දරන \ʌŋkʌ ðʌrʌnʌ
+> 7,814 ලැබියයුතු \læbɪjʌ jʊθʊjʌ
+> 7,453 කරනු ලැබිය \kʌrʌnʊ læbɪjʌ
+> 7,268 කරන ලද \kʌrʌnʌ lʌðʌ
+> 6,860 ශී§ලංකා \ʒriː lʌŋkɑː
+> 6,463 වියයුතු \vɪjʌ jʊθʊ
+> 5,566 ෙම‍් පනත \mæː pʌnʌθʌ
+> 5,202 පහත දැක‍්ෙවන \pʌhʌθʌ ðækvɛnʌ
+> 5,089
+
+Table 10: The top 10 frequent bigrams seen in S IN -
+
+> HA
+
+LEGAL 
+
+E Topic Modelling 
+
+Topic modelling was done in order to detect the main themes distributed within the dataset. Before this, the corpus text was tokenised into units. (Man-ning, 2008). A list of Sinhala stop words taken from a publicly available repository (mentioned in Section E), including conjunctions and other func-tion words, was removed to reduce noise. The list was modified with some common stop words that were also seen in the S INHA LEGAL dataset. LDA (Blei et al., 2003) was selected for topic modelling because of its ability to uncover latent thematic structures in large corpora and its inter-pretability in corpus linguistics. The model was implemented using the Gensim library in Python. After exploratory runs, the number of topics was set to ten, balancing interpretability with coverage. 
+
+> 18 A pair of consecutive written units such as letters or words
+
+Topic Word Distributions Probabilities 
+
+Topic 1 පනත \ pʌnʌθʌ 
+
+0.034 පධාන \ prʌðʰɑːnʌ 
+
+0.018 පඥාපනත \ prʌ/ɲaː/pʌnʌθʌ 
+
+0.018 සංෙශෝධනය \ sʌnʃɔːðʰʌnʌjʌ 
+
+0.018 උපවගන‍්තිය \ ʊpʌvʌgʌnθɪjʌ 
+
+0.017 Topic 2 සංස‍්ථාව \ sʌŋsθɑːvʌ 
+
+0.020 සංගමය \ sʌŋsθɑːvʌ 
+
+0.015 මහතා, මහත‍්මිය \ mʌhʌθɑː, mʌhʌθmɪjʌ 
+
+0.012 පනත \ pʌnʌθʌ 
+
+0.012 ගමන \ gʌmʌnʌ 
+
+0.011 Topic 3 මණ‍්ඩලය \ mʌndʌlʌjʌ 
+
+0.021 ආයතනය \ ɑːjʌθʌnʌjʌ 
+
+0.016 කාර‍්ය \ kɑːrjʌ 
+
+0.014 පනත \ pʌnʌθʌ 
+
+0.012 පධාන \ prʌðʰɑːnʌ 
+
+0.011 Topic 4 සභාව \ sʌbɑːvʌ 
+
+0.039 ෙකාමිෂන‍් \ kɒmɪʃʌn 
+
+0.032 පනත \ pʌnʌθʌ 
+
+0.014 ව්‍යවස‍්ථාව \ vyʌvʌsθɑːvʌ 
+
+0.009 දක‍්වන \ ðʌkvʌnʌ 
+
+0.008 Topic 5 සංස‍්ථාව \ sʌŋsθɑːvʌ 
+
+0.049 පනත \ pʌnʌθʌ 
+
+0.019 පරමාර‍්ථ \ pʌrʌmɑːrθʰʌ 
+
+0.012 ගමන \ gʌmʌnʌ 
+
+0.012 සියලු \ sɪjʌlʊ 
+
+0.011 Topic 6 ඡන‍්ද \ tʃʰʌnðʌ 
+
+0.0019 පනත \ pʌnʌθʌ 
+
+0.010 සඳහන‍් \ sʌnðʌhʌn 
+
+0.009 විශ§ාම \ ʋiʃˈraːmə 
+
+0.009 උපවගන‍්තිය \ ʊpʌvʌgʌnθɪjʌ 
+
+0.008 Topic 7 පනත \ pʌnʌθʌ 
+
+0.0017 අධිකරණය \ ʌðʰɪkʌrʌnʌjʌ 
+
+0.013 මණ‍්ඩලය \ mʌndʌlʌjʌ 
+
+0.011 කාර‍්ය \ kɑːrjʌ 
+
+0.008 සම‍්බන‍්ධෙයන‍් \ sʌmbʌnðʌjɛn 
+
+0.007 Topic 8 පනත \ pʌnʌθʌ 
+
+0.021 ෙකාටස \ kɒtʌsʌ 
+
+0.010 උපවගන‍්තිය \ ʊpʌvʌgʌnθɪjʌ 
+
+0.010 භාණ‍්ඩ \ bʰɑːndʌ 
+
+0.010 දක‍්වන \ ðʌkvʌnʌ 
+
+0.010 Topic 9 සභාව \ sʌbɑːvʌ 
+
+0.037 පෙද‍්ශය \ prʌðeːʃʌjʌ 
+
+0.026 මණ‍්ඩලය \ mʌndʌlʌjʌ 
+
+0.015 පනත \ pʌnʌθʌ 
+
+0.012 නගර \ nʌgʌrʌ 
+
+0.011 Topic 10 පනත \ pʌnʌθʌ 
+
+0.016 මුදල‍් \ mʊðʌl 
+
+0.011 උපවගන‍්තිය \ ʊpʌvʌgʌnθɪjʌ 
+
+0.009 ඇතළත \ æθʊlʌθʌ 
+
+0.009 සම‍්බන‍්ධෙයන‍් \ sʌmbʌnðʌjɛn 
+
+0.008 
+
+Table 11: The word distributions and their word probabilities for the identified topics from topic modelling. The revealing topics revealed recurring themes in Sinhala legal discourse. The word distribution for each topic is listed in Table 11. Across mul-tiple topics පනත \ pʌnʌθʌ meaning “Act/Law”, emerged as a dominant term, reflecting the central-ity of legislative acts in the corpus. Other topics highlighted institutional ref-erences such as "Council" (සභාව \ sʌbɑːvʌ ), "Court" (අධිකරණය \ ʌðʰɪkʌrʌnʌjʌ ), "Com-mission (ෙකාමිෂන‍් \ kɒmɪʃʌn )" and "Election (ඡන‍්ද \ tʃʰʌnðʌ )". Themes related to "Money" (මුදල‍් \ mʊðʌl ), "Pension" (විශ§ාම \ ʋiʃˈraːmə ), "Towns" ( නගර \ nʌgʌrʌ ) were also to be seen among the listed words. These topics highlight the dominance of legislative references across the corpus, alongside institutional and procedural vocabulary. 
+
+F Calculating WER and CER 
+
+To calculate the WER and CER, a subset that con-sisted of 100 legal documents was taken. It con-tained over 184,000 words and 911,000 characters. Documents vary substantially in length, reflecting the natural diversity of legal texts, with word counts ranging from short to long legal documents. More information regarding the sample subset can be found in Table 12.         
+
+> Statistic Value
+> Documents analysed 100 Total words 184,011 Average words per document 1,840 Median words per document 1,295 Word count range 112 - 9,028 Total characters 911,524 Average characters per document 9,115
+> Table 12: Summary statistics of the evaluated document subset
+
+Two types of assessments were conducted to pro-vide a fair assessment. This included the original CER and WER, which include formatting differ-ences and a normalised evaluation focusing solely on content errors. First, an original evaluation was conducted where the raw OCR texts were compared directly against the post-processed texts. The randomly se-lected 100 documents were matched with the same files to the raw OCR files to calculate the WER and CER. The results showed a CER value of 24.07% and a WER value of 26.87%. To assess the content-level fidelity independently of formatting, the post-processed texts were nor-malised (Lucas et al., 2005). The normalisation included collapsing multiple consecutive spaces into a single space, reducing multiple consecutive line breaks to a single line break, removing leading and trailing white spaces from each line, and dis-carding empty lines. After the normalisation, the CER and WER were recalculated using the same document subset. As shown in Table 13, normal-isation reduced WER while leaving CER largely unchanged.       
+
+> Metric Original Evaluation Normalized Evaluation
+> CER 24.07% 24.06% WER 26.87% 23.44%
+> Table 13: Comparison of OCR evaluation metrics before and after text normalisation.
+
+The minor change in CER suggests that the re-moval of formatting doesn’t affect the result of the calculation and that the earlier results of the CER were mostly accurate, while the WER dropped by nearly 3%. 
+
+G Structural Analysis 
+
+Other than calculating the WER and CER, a structural comparison was done. This was illus-trated using a single document from the 100 doc-uments already sampled to provide a concrete ex-ample (Document name: acts_1988-04 21_Evi-dence_Amendment_si.txt). It was seen that the post-processing effectively reduced redundant line breaks and spaces, which improves consistency and readability for future tasks.          
+
+> Feature Raw OCR Post-processed Difference
+> Line breaks 39 22 17 Spaces 173 94 79
+> Table 14: Structural comparison of raw OCR and post-processed text, showing the number of line breaks and spaces removed during post-processing.
+
+To qualitatively illustrate OCR errors and post-processing corrections, a character-level compari-son of the same representative document was done. The Table 15 highlights the removal of spurious dig-its, punctuation, redundant line breaks, and OCR-induced noise in Sinhala characters. In addition to the document-level structural il-lustration, a corpus-level structural analysis was conducted over the full subset of 100 documents to quantify the overall impact of post-processing on document length characteristics. At the document Figure 8: Distribution of words per document before and after OCR 
+
+Operation Characters Added or Removed 
+
+Removed 2Removed 8Removed 1Removed 'ු' \ ʊ
+
+Removed ◌ා 
+
+Removed න \ nʌ 
+
+Added \n Added ය \ jʌ 
+
+Table 15: The character-level differences between a raw OCR and post-processed text in a document 
+
+level, the average number of words per document decreased from 2,113 in the raw OCR to 1,840 after post-processing. Similarly, the average character count decreased from 12,506 to 11,007 characters per document. Removing unnecessary characters, stamp content, and footers results in a decrease in the number of words. Table 16 includes more information regarding the change of words and characters during the process. Figure 8 also demon-strates the distribution of the words per document before and after OCR.             
+
+> Statistic Raw OCR Post-processed
+> Total words 211,317 184,011 Total characters 1,250,623 1,100,695 Average words per document 2,113 1,840 Average characters per document 1,2506 11007 Word count range 213–9891 112–9028
+
+Table 16: Values comparing raw OCR and post-processed documents on the word and character count. 
+
+Taken together, these results demonstrate that the post-processing approach improves structural consistency throughout the corpus. While Table 14 and the qualitative examples highlight localised corrections within a single document, the aggregate statistics confirm that similar structural improve-ments are achieved across the entire dataset. Scanned Document View OCR Extracted Text Corrected Text 
+
+Table 17: Example of scanned PDF, OCR text, and corrected text for word-level corrections. 
+
+Scanned Document View OCR Extracted Text Corrected Text 
+
+Table 18: Example of scanned PDF, extracted text, and corrected text for spacing errors.

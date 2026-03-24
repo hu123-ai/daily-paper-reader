@@ -1,0 +1,627 @@
+{
+  "mode": "skims",
+  "generated_at": "2026-03-24T11:35:37.779375+00:00",
+  "stats": {
+    "mode": "skims",
+    "forced_all_quick": true,
+    "min_score": 8.0,
+    "deep_divecandidates": 17,
+    "deep_cap": null,
+    "deep_selected": 0,
+    "quick_candidates": 17,
+    "quick_skim_target": null,
+    "quick_selected": 17
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.01651v1",
+      "title": "LexChronos: An Agentic Framework for Structured Event Timeline Extraction in Indian Jurisprudence",
+      "abstract": "Understanding and predicting judicial outcomes demands nuanced analysis of legal documents. Traditional approaches treat judgments and proceedings as unstructured text, limiting the effectiveness of large language models (LLMs) in tasks such as summarization, argument generation, and judgment prediction. We propose LexChronos, an agentic framework that iteratively extracts structured event timelines from Supreme Court of India judgments. LexChronos employs a dual-agent architecture: a LoRA-instruct-tuned extraction agent identifies candidate events, while a pre-trained feedback agent scores and refines them through a confidence-driven loop. To address the scarcity of Indian legal event datasets, we construct a synthetic corpus of 2000 samples using reverse-engineering techniques with DeepSeek-R1 and GPT-4, generating gold-standard event annotations. Our pipeline achieves a BERT-based F1 score of 0.8751 against this synthetic ground truth. In downstream evaluations on legal text summarization, GPT-4 preferred structured timelines over unstructured baselines in 75% of cases, demonstrating improved comprehension and reasoning in Indian jurisprudence. This work lays a foundation for future legal AI applications in the Indian context, such as precedent mapping, argument synthesis, and predictive judgment modelling, by harnessing structured representations of legal events.",
+      "authors": [
+        "Anka Chandrahas Tummepalli",
+        "Preethu Rose Anish"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-03-02T09:31:05+00:00",
+      "link": "https://arxiv.org/pdf/2603.01651v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "agentic framework for judgment prediction",
+      "llm_evidence_cn": "用于判决预测的智能体框架",
+      "llm_evidence": "用于判决预测的智能体框架",
+      "canonical_evidence": "用于判决预测的智能体框架",
+      "llm_tldr_en": "Proposes LexChronos, an agentic framework for structured event extraction to improve legal judgment prediction.",
+      "llm_tldr_cn": "提出LexChronos智能体框架，通过提取结构化事件时间线来提升法律判决预测的准确性。",
+      "llm_tldr": "提出LexChronos智能体框架，通过提取结构化事件时间线来提升法律判决预测的准确性。",
+      "llm_tags": [
+        "query:q1"
+      ],
+      "matched_query_tag": "query:q1",
+      "matched_query_text": "legal judgment prediction using large language models",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.11446v1",
+      "title": "LLM-Assisted Causal Structure Disambiguation and Factor Extraction for Legal Judgment Prediction",
+      "abstract": "Mainstream methods for Legal Judgment Prediction (LJP) based on Pre-trained Language Models (PLMs) heavily rely on the statistical correlation between case facts and judgment results. This paradigm lacks explicit modeling of legal constituent elements and underlying causal logic, making models prone to learning spurious correlations and suffering from poor robustness. While introducing causal inference can mitigate this issue, existing causal LJP methods face two critical bottlenecks in real-world legal texts: inaccurate legal factor extraction with severe noise, and significant uncertainty in causal structure discovery due to Markov equivalence under sparse features. To address these challenges, we propose an enhanced causal inference framework that integrates Large Language Model (LLM) priors with statistical causal discovery. First, we design a coarse-to-fine hybrid extraction mechanism combining statistical sampling and LLM semantic reasoning to accurately identify and purify standard legal constituent elements. Second, to resolve structural uncertainty, we introduce an LLM-assisted causal structure disambiguation mechanism. By utilizing the LLM as a constrained prior knowledge base, we conduct probabilistic evaluation and pruning on ambiguous causal directions to generate legally compliant candidate causal graphs. Finally, a causal-aware judgment prediction model is constructed by explicitly constraining text attention intensity via the generated causal graphs. Extensive experiments on multiple benchmark datasets, including LEVEN , QA, and CAIL, demonstrate that our proposed method significantly outperforms state-of-the-art baselines in both predictive accuracy and robustness, particularly in distinguishing confusing charges.",
+      "authors": [
+        "Yuzhi Liang",
+        "Lixiang Ma",
+        "Xinrong Zhu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-03-12T02:14:16+00:00",
+      "link": "https://arxiv.org/pdf/2603.11446v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "LLM-assisted causal factor extraction for legal judgment prediction",
+      "llm_evidence_cn": "大语言模型辅助的法律判决预测因果要素提取",
+      "llm_evidence": "大语言模型辅助的法律判决预测因果要素提取",
+      "canonical_evidence": "大语言模型辅助的法律判决预测因果要素提取",
+      "llm_tldr_en": "Proposes an enhanced causal framework for LJP to improve factor extraction and model robustness using LLMs.",
+      "llm_tldr_cn": "提出一种增强的因果法律判决预测框架，利用LLM提高要素提取的准确性与鲁er性。",
+      "llm_tldr": "提出一种增强的因果法律判决预测框架，利用LLM提高要素提取的准确性与鲁er性。",
+      "llm_tags": [
+        "query:q1"
+      ],
+      "matched_query_tag": "query:q1",
+      "matched_query_text": "legal judgment prediction using large language models",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.15937v1",
+      "title": "Why Avoid Generative Legal AI Systems? Hallucination, Overreliance, and their Impact on Explainability",
+      "abstract": "This article argues that the deployment of generative AI systems in legal profession requires strong restraint due to the critical risks of hallucination and overreliance. Central to this analysis is the definition of Generative Legal AI (GLAI), an umbrella term for systems specifically adapted for the legal domain which is ranging from document drafting to decision support in criminal justice. Unlike traditional AI, GLAI models are built on architectures designed for statistical token prediction rather than legal reasoning, often leading to confabulations where the system prioritizes linguistic fluency over factual accuracy. These hallucinations obscure the reasoning process, while the persuasive, human-like nature of the output encourages professional overreliance. The paper situates these dynamics within the framework of European AI governance, arguing that the interaction between fabricated data and automation bias fundamentally weakens the principle of explainability. The article concludes that without effective mechanisms for meaningful human scrutiny, the routine adoption of GLAI poses significant challenges to judicial independence and the protection of fundamental rights.",
+      "authors": [
+        "Gizem Gültekin Varkonyi"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC",
+        "cs.CY"
+      ],
+      "published": "2026-03-16T21:40:43+00:00",
+      "link": "https://arxiv.org/pdf/2603.15937v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Generative Legal AI for decision support in criminal justice",
+      "llm_evidence_cn": "用于刑事司法决策支持的生成式法律AI",
+      "llm_evidence": "用于刑事司法决策支持的生成式法律AI",
+      "canonical_evidence": "用于刑事司法决策支持的生成式法律AI",
+      "llm_tldr_en": "An analysis of risks like hallucination in generative AI systems used for legal reasoning and decision support.",
+      "llm_tldr_cn": "分析了用于法律推理和决策支持的生成式AI系统中的幻觉和过度依赖风险。",
+      "llm_tldr": "分析了用于法律推理和决策支持的生成式AI系统中的幻觉和过度依赖风险。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.01710v1",
+      "title": "Legal RAG Bench: an end-to-end benchmark for legal RAG",
+      "abstract": "We introduce Legal RAG Bench, a benchmark and evaluation methodology for assessing the end-to-end performance of legal RAG systems. As a benchmark, Legal RAG Bench consists of 4,876 passages from the Victorian Criminal Charge Book alongside 100 complex, hand-crafted questions demanding expert knowledge of criminal law and procedure. Both long-form answers and supporting passages are provided. As an evaluation methodology, Legal RAG Bench leverages a full factorial design and novel hierarchical error decomposition framework, enabling apples-to-apples comparisons of the contributions of retrieval and reasoning models in RAG. We evaluate three state-of-the-art embedding models (Isaacus' Kanon 2 Embedder, Google's Gemini Embedding 001, and OpenAI's Text Embedding 3 Large) and two frontier LLMs (Gemini 3.1 Pro and GPT-5.2), finding that information retrieval is the primary driver of legal RAG performance, with LLMs exerting a more moderate effect on correctness and groundedness. Kanon 2 Embedder, in particular, had the largest positive impact on performance, improving average correctness by 17.5 points, groundedness by 4.5 points, and retrieval accuracy by 34 points. We observe that many errors attributed to hallucinations in legal RAG systems are in fact triggered by retrieval failures, concluding that retrieval sets the ceiling for the performance of many modern legal RAG systems. We document why and how we built Legal RAG Bench alongside the results of our evaluations. We also openly release our code and data to assist with reproduction of our findings.",
+      "authors": [
+        "Abdur-Rahman Butler",
+        "Umar Butler"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.IR",
+        "cs.LG"
+      ],
+      "published": "2026-03-02T10:34:28+00:00",
+      "link": "https://arxiv.org/pdf/2603.01710v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "benchmark for legal retrieval and reasoning",
+      "llm_evidence_cn": "法律检索与推理基准",
+      "llm_evidence": "法律检索与推理基准",
+      "canonical_evidence": "法律检索与推理基准",
+      "llm_tldr_en": "Introduces a comprehensive benchmark for evaluating RAG systems on complex legal questions and procedures.",
+      "llm_tldr_cn": "引入了一个综合基准，用于评估检索增强生成系统在处理复杂法律问题和程序时的表现。",
+      "llm_tldr": "引入了一个综合基准，用于评估检索增强生成系统在处理复杂法律问题和程序时的表现。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.04804v1",
+      "title": "Can LLMs Synthesize Court-Ready Statistical Evidence? Evaluating AI-Assisted Sentencing Bias Analysis for California Racial Justice Act Claims",
+      "abstract": "Resentencing in California remains a complex legal challenge despite legislative reforms like the Racial Justice Act (2020), which allows defendants to challenge convictions based on statistical evidence of racial disparities in sentencing and charging. Policy implementation lags behind legislative intent, creating a 'second-chance gap' where hundreds of resentencing opportunities remain unidentified. We present Redo.io, an open-source platform that processes 95,000 prison records acquired under the California Public Records Act (CPRA) and generates court-ready statistical evidence of racial bias in sentencing for prima facie and discovery motions. We explore the design of an LLM-powered interpretive layer that synthesizes results from statistical methods like Odds Ratio, Relative Risk, and Chi-Square Tests into cohesive narratives contextualized with confidence intervals, sample sizes, and data limitations. Our evaluations comparing LLM performance to statisticians using the LLM-as-a-Judge framework suggest that AI can serve as a powerful descriptive assistant for real-time evidence generation when ethically incorporated in the analysis pipeline.",
+      "authors": [
+        "Aparna Komarla"
+      ],
+      "primary_category": "cs.HC",
+      "categories": [
+        "cs.HC"
+      ],
+      "published": "2026-03-05T04:46:48+00:00",
+      "link": "https://arxiv.org/pdf/2603.04804v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "LLM-assisted sentencing bias analysis and court-ready evidence",
+      "llm_evidence_cn": "大模型辅助量刑偏差分析与法庭证据生成",
+      "llm_evidence": "大模型辅助量刑偏差分析与法庭证据生成",
+      "canonical_evidence": "大模型辅助量刑偏差分析与法庭证据生成",
+      "llm_tldr_en": "Uses LLMs to analyze sentencing bias and generate statistical evidence for legal claims.",
+      "llm_tldr_cn": "利用大模型分析量刑偏差并为法律诉求生成统计证据。",
+      "llm_tldr": "利用大模型分析量刑偏差并为法律诉求生成统计证据。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.17328v1",
+      "title": "A Progressive Visual-Logic-Aligned Framework for Ride-Hailing Adjudication",
+      "abstract": "The efficient adjudication of responsibility disputes is pivotal for maintaining marketplace fairness. However, the exponential surge in ride-hailing volume renders manual review intractable, while conventional automated methods lack the reasoning transparency required for quasi-judicial decisions. Although Multimodal LLMs offer a promising paradigm, they fundamentally struggle to bridge the gap between general visual semantics and rigorous evidentiary protocols, often leading to perceptual hallucinations and logical looseness. To address these systemic misalignments, we introduce RideJudge, a Progressive Visual-Logic-Aligned Framework. Instead of relying on generic pre-training, we bridge the semantic gap via SynTraj, a synthesis engine that grounds abstract liability concepts into concrete trajectory patterns. To resolve the conflict between massive regulation volume and limited context windows, we propose an Adaptive Context Optimization strategy that distills expert knowledge, coupled with a Chain-of-Adjudication mechanism to enforce active evidentiary inquiry. Furthermore, addressing the inadequacy of sparse binary feedback for complex liability assessment, we implement a novel Ordinal-Sensitive Reinforcement Learning mechanism that calibrates decision boundaries against hierarchical severity. Extensive experiments show that our RideJudge-8B achieves 88.41\\% accuracy, surpassing 32B-scale baselines and establishing a new standard for interpretable adjudication.",
+      "authors": [
+        "Weiming Wu",
+        "Zi-Jian Cheng",
+        "Jie Meng",
+        "Peng Zhen",
+        "Shan Huang",
+        "Qun Li",
+        "Guobin Wu",
+        "Lan-Zhe Guo"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-03-18T03:46:30+00:00",
+      "link": "https://arxiv.org/pdf/2603.17328v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "automated adjudication and responsibility disputes",
+      "llm_evidence_cn": "自动化裁决与责任纠纷预测",
+      "llm_evidence": "自动化裁决与责任纠纷预测",
+      "canonical_evidence": "自动化裁决与责任纠纷预测",
+      "llm_tldr_en": "A multimodal LLM framework for ride-hailing dispute adjudication with rigorous evidentiary protocols.",
+      "llm_tldr_cn": "一种用于网约车纠纷裁决的多模态大模型框架，强调证据协议和逻辑对齐。",
+      "llm_tldr": "一种用于网约车纠纷裁决的多模态大模型框架，强调证据协议和逻辑对齐。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.17930v1",
+      "title": "Interpretable Traffic Responsibility from Dashcam Video via Legal Multi Agent Reasoning",
+      "abstract": "The widespread adoption of dashcams has made video evidence in traffic accidents increasingly abundant, yet transforming \"what happened in the video\" into \"who is responsible under which legal provisions\" still relies heavily on human experts. Existing ego-view traffic accident studies mainly focus on perception and semantic understanding, while LLM-based legal methods are mostly built on textual case descriptions and rarely incorporate video evidence, leaving a clear gap between the two. We first propose C-TRAIL, a multimodal legal dataset that, under the Chinese traffic regulation system, explicitly aligns dashcam videos and textual descriptions with a closed set of responsibility modes and their corresponding Chinese traffic statutes. On this basis, we introduce a two-stage framework: (1) a traffic accident understanding module that generates textual video descriptions; and (2) a legal multi-agent framework that outputs responsibility modes, statute sets, and complete judgment reports. Experimental results on C-TRAIL and MM-AU show that our method outperforms general and legal LLMs, as well as existing agent-based approaches, while providing a transparent and interpretable legal reasoning process.",
+      "authors": [
+        "Jingchun Yang",
+        "Jinchang Zhang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-18T17:04:48+00:00",
+      "link": "https://arxiv.org/pdf/2603.17930v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "transforming video into responsibility under legal provisions",
+      "llm_evidence_cn": "将视频转化为法律条款下的责任认定",
+      "llm_evidence": "将视频转化为法律条款下的责任认定",
+      "canonical_evidence": "将视频转化为法律条款下的责任认定",
+      "llm_tldr_en": "A multimodal legal dataset for predicting traffic accident responsibility using LLM-based reasoning.",
+      "llm_tldr_cn": "一个利用大模型推理预测交通事故责任的多模态法律数据集。",
+      "llm_tldr": "一个利用大模型推理预测交通事故责任的多模态法律数据集。",
+      "llm_tags": [
+        "query:q1"
+      ],
+      "matched_query_tag": "query:q1",
+      "matched_query_text": "legal judgment prediction using large language models",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.02858v1",
+      "title": "LLM-based Argument Mining meets Argumentation and Description Logics: a Unified Framework for Reasoning about Debates",
+      "abstract": "Large Language Models (LLMs) achieve strong performance in analyzing and generating text, yet they struggle with explicit, transparent, and verifiable reasoning over complex texts such as those containing debates. In particular, they lack structured representations that capture how arguments support or attack each other and how their relative strengths determine overall acceptability. We encompass these limitations by proposing a framework that integrates learning-based argument mining with quantitative reasoning and ontology-based querying. Starting from a raw debate text, the framework extracts a fuzzy argumentative knowledge base, where arguments are explicitly represented as entities, linked by attack and support relations, and annotated with initial fuzzy strengths reflecting plausibility w.r.t. the debate's context. Quantitative argumentation semantics are then applied to compute final argument strengths by propagating the effects of supports and attacks. These results are then embedded into a fuzzy description logic setting, enabling expressive query answering through efficient rewriting techniques. The proposed approach provides a transparent, explainable, and formally grounded method for analyzing debates, overcoming purely statistical LLM-based analyses.",
+      "authors": [
+        "Gianvincenzo Alfano",
+        "Sergio Greco",
+        "Lucio La Cava",
+        "Stefano Francesco Monea",
+        "Irina Trubitsyna"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-03-03T11:06:23+00:00",
+      "link": "https://arxiv.org/pdf/2603.02858v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "argument mining and reasoning about debates",
+      "llm_evidence_cn": "论点挖掘与辩论推理",
+      "llm_evidence": "论点挖掘与辩论推理",
+      "canonical_evidence": "论点挖掘与辩论推理",
+      "llm_tldr_en": "Integrates LLM argument mining with logic for verifiable reasoning over complex debate texts.",
+      "llm_tldr_cn": "结合大模型论点挖掘与逻辑推理，实现对复杂辩论文本的可验证推理。",
+      "llm_tldr": "结合大模型论点挖掘与逻辑推理，实现对复杂辩论文本的可验证推理。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "computational models of legal reasoning",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.04854v1",
+      "title": "SinhaLegal: A Benchmark Corpus for Information Extraction and Analysis in Sinhala Legislative Texts",
+      "abstract": "SinhaLegal introduces a Sinhala legislative text corpus containing approximately 2 million words across 1,206 legal documents. The dataset includes two types of legal documents: 1,065 Acts dated from 1981 to 2014 and 141 Bills from 2010 to 2014, which were systematically collected from official sources. The texts were extracted using OCR with Google Document AI, followed by extensive post-processing and manual cleaning to ensure high-quality, machine-readable content, along with dedicated metadata files for each document. A comprehensive evaluation was conducted, including corpus statistics, lexical diversity, word frequency analysis, named entity recognition, and topic modelling, demonstrating the structured and domain-specific nature of the corpus. Additionally, perplexity analysis using both large and small language models was performed to assess how effectively language models respond to domain-specific texts. The SinhaLegal corpus represents a vital resource designed to support NLP tasks such as summarisation, information extraction, and analysis, thereby bridging a critical gap in Sinhala legal research.",
+      "authors": [
+        "Minduli Lasandi",
+        "Nevidu Jayatilleke"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-03-05T06:13:44+00:00",
+      "link": "https://arxiv.org/pdf/2603.04854v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "AI for information extraction and analysis in legislative texts",
+      "llm_evidence_cn": "用于立法文本信息提取和分析的 AI",
+      "llm_evidence": "用于立法文本信息提取和分析的 AI",
+      "canonical_evidence": "用于立法文本信息提取和分析的 AI",
+      "llm_tldr_en": "Introduces a benchmark corpus for information extraction and analysis of Sinhala legislative texts.",
+      "llm_tldr_cn": "引入了一个用于僧伽罗语立法文本信息提取和分析的基准语料库。",
+      "llm_tldr": "引入了一个用于僧伽罗语立法文本信息提取和分析的基准语料库。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "artificial intelligence for legal analysis",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.04982v1",
+      "title": "Training for Technology: Adoption and Productive Use of Generative AI in Legal Analysis",
+      "abstract": "Can targeted user training unlock the productive potential of generative artificial intelligence (GenAI) in professional settings? We investigate this question using a randomized study involving 164 law students completing an issue-spotting examination. Participants were assigned to one of three conditions: no GenAI access, optional access to a large language model (LLM), or optional access accompanied by an approximately ten-minute training intervention. Training significantly increased LLM adoption--the usage rate rose from 26% to 41%--and improved examination performance. Students with trained access scored 0.27 grade points higher than those with untrained access (p = 0.027), equivalent to roughly one-third of a letter grade. By contrast, access to an LLM without training did not improve performance and was associated with shorter answers relative to no access. Using principal stratification, we decompose the overall effect into adoption and effectiveness channels. Point estimates are consistent with training operating primarily by expanding the scope of GenAI use rather than by enhancing effectiveness among existing users, though confidence intervals are wide. Overall, our findings provide evidence that complementary investments in user training are critical for realizing GenAI productivity gains in knowledge-intensive fields where concerns about reliability may inhibit adoption.",
+      "authors": [
+        "Benjamin M. Chen",
+        "Hong Bao"
+      ],
+      "primary_category": "cs.CY",
+      "categories": [
+        "cs.CY",
+        "cs.AI",
+        "cs.HC"
+      ],
+      "published": "2026-03-05T09:23:30+00:00",
+      "link": "https://arxiv.org/pdf/2603.04982v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "LLM use in legal issue-spotting and analysis",
+      "llm_evidence_cn": "大语言模型在法律争点识别与分析中的应用",
+      "llm_evidence": "大语言模型在法律争点识别与分析中的应用",
+      "canonical_evidence": "大语言模型在法律争点识别与分析中的应用",
+      "llm_tldr_en": "Investigates how training improves law students' performance when using LLMs for legal analysis tasks.",
+      "llm_tldr_cn": "研究针对性培训如何提高法学院学生利用大语言模型进行法律分析任务的效率和表现。",
+      "llm_tldr": "研究针对性培训如何提高法学院学生利用大语言模型进行法律分析任务的效率和表现。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "artificial intelligence for legal analysis",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.05171v1",
+      "title": "Guidelines for the Annotation and Visualization of Legal Argumentation Structures in Chinese Judicial Decisions",
+      "abstract": "This guideline proposes a systematic and operational annotation framework for representing the structure of legal argumentation in judicial decisions. Grounded in theories of legal reasoning and argumentation, the framework aims to reveal the logical organization of judicial reasoning and to provide a reliable data foundation for computational analysis. At the proposition level, the guideline distinguishes four types of propositions: general normative propositions, specific normative propositions, general factual propositions, and specific factual propositions. At the relational level, five types of relations are defined to capture argumentative structures: support, attack, joint, match, and identity. These relations represent positive and negative argumentative connections, conjunctive reasoning structures, the correspondence between legal norms and case facts, and semantic equivalence between propositions. The guideline further specifies formal representation rules and visualization conventions for both basic and nested structures, enabling consistent graphical representation of complex argumentation patterns. In addition, it establishes a standardized annotation workflow and consistency control mechanisms to ensure reproducibility and reliability of the annotated data. By providing a clear conceptual model, formal representation rules, and practical annotation procedures, this guideline offers methodological support for large-scale analysis of judicial reasoning and for future research in legal argument mining, computational modeling of legal reasoning, and AI-assisted legal analysis.",
+      "authors": [
+        "Kun Chen",
+        "Xianglei Liao",
+        "Kaixue Fei",
+        "Yi Xing",
+        "Xinrui Li"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-03-05T13:39:54+00:00",
+      "link": "https://arxiv.org/pdf/2603.05171v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "legal argumentation structures in judicial decisions",
+      "llm_evidence_cn": "司法判决中的法律论证结构",
+      "llm_evidence": "司法判决中的法律论证结构",
+      "canonical_evidence": "司法判决中的法律论证结构",
+      "llm_tldr_en": "Proposes an annotation framework for legal reasoning and argumentation in Chinese judicial decisions.",
+      "llm_tldr_cn": "提出了一个用于表示中国司法判决中法律推理和论证结构的标注框架。",
+      "llm_tldr": "提出了一个用于表示中国司法判决中法律推理和论证结构的标注框架。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "computational models of legal reasoning",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.05392v1",
+      "title": "Legal interpretation and AI: from expert systems to argumentation and LLMs",
+      "abstract": "AI and Law research has encountered legal interpretation in different ways, in the context of its evolving approaches and methodologies. Research on expert system has focused on legal knowledge engineering, with the goal of ensuring that human-generated interpretations can be precisely transferred into knowledge-bases, to be consistently applied. Research on argumentation has aimed at representing the structure of interpretive arguments, as well as their dialectical interactions, to assess of the acceptability of interpretive claims within argumentation frameworks. Research on machine learning has focused on the automated generation of interpretive suggestions and arguments, through general and specialised language models, now being increasingly deployed in legal practice.",
+      "authors": [
+        "Václav Janeček",
+        "Giovanni Sartor"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-03-05T17:22:56+00:00",
+      "link": "https://arxiv.org/pdf/2603.05392v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "evolution of AI in legal interpretation and LLMs",
+      "llm_evidence_cn": "法律解释中AI与大模型的演进",
+      "llm_evidence": "法律解释中AI与大模型的演进",
+      "canonical_evidence": "法律解释中AI与大模型的演进",
+      "llm_tldr_en": "Reviews the transition from expert systems to LLMs in legal interpretation and automated argument generation.",
+      "llm_tldr_cn": "综述了法律解释领域从专家系统到大模型的演进，探讨了自动化论证生成的现状。",
+      "llm_tldr": "综述了法律解释领域从专家系统到大模型的演进，探讨了自动化论证生成的现状。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.07539v1",
+      "title": "MAWARITH: A Dataset and Benchmark for Legal Inheritance Reasoning with LLMs",
+      "abstract": "Islamic inheritance law ('ilm al-mawarith) is challenging for large language models because solving inheritance cases requires complex, structured multi-step reasoning and the correct application of juristic rules to compute heirs' shares. We introduce MAWARITH, a large-scale annotated dataset of 12,500 Arabic inheritance cases to train and evaluate the full reasoning chain: (i) identifying eligible heirs, (ii) applying blocking (hajb) and allocation rules, and (iii) computing exact inheritance shares. Unlike prior datasets that restrict inheritance case solving to multiple-choice questions, MAWARITH supports the full reasoning chain and provides step-by-step solutions, including intermediate legal decisions and justifications based on classical juristic sources and established inheritance rules, as well as exact share calculations. To evaluate models beyond final-answer accuracy, we propose MIR-E (Mawarith Inheritance Reasoning Evaluation), a weighted multi-stage metric that scores key reasoning stages and captures error propagation across the pipeline. We evaluate five LLMs in a zero-shot setting. Gemini-2.5-flash achieves about 90% MIR-E on both validation and test, while Fanar-C, Fanar-Sadiq, LLaMA 3, and Qwen 3 remain below 50%. Our error analysis identifies recurring failure patterns, including scenario misinterpretation, errors in heir identification, errors in share allocation, and missing or incorrect application of key inheritance rules such as 'awl and radd. The MAWARITH dataset is publicly available at https://github.com/bouchekif/inheritance_evaluation.",
+      "authors": [
+        "Abdessalam Bouchekif",
+        "Shahd Gaben",
+        "Samer Rashwani",
+        "Somaya Eltanbouly",
+        "Mutaz Al-Khatib",
+        "Heba Sbahi",
+        "Mohammed Ghaly",
+        "Emad Mohamed"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-03-08T08:54:33+00:00",
+      "link": "https://arxiv.org/pdf/2603.07539v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "LLM reasoning for legal inheritance cases",
+      "llm_evidence_cn": "大语言模型在法律继承案件中的推理",
+      "llm_evidence": "大语言模型在法律继承案件中的推理",
+      "canonical_evidence": "大语言模型在法律继承案件中的推理",
+      "llm_tldr_en": "Presents a dataset for multi-step legal reasoning and rule application in Islamic inheritance law using LLMs.",
+      "llm_tldr_cn": "提供了一个用于LLM在伊斯兰继承法中进行多步法律推理和规则应用的标注数据集。",
+      "llm_tldr": "提供了一个用于LLM在伊斯兰继承法中进行多步法律推理和规则应用的标注数据集。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "computational models of legal reasoning",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.08286v1",
+      "title": "LAMUS: A Large-Scale Corpus for Legal Argument Mining from U.S. Caselaw using LLMs",
+      "abstract": "Legal argument mining aims to identify and classify the functional components of judicial reasoning, such as facts, issues, rules, analysis, and conclusions. Progress in this area is limited by the lack of large-scale, high-quality annotated datasets for U.S. caselaw, particularly at the state level. This paper introduces LAMUS, a sentence-level legal argument mining corpus constructed from U.S. Supreme Court decisions and Texas criminal appellate opinions. The dataset is created using a data-centric pipeline that combines large-scale case collection, LLM-based automatic annotation, and targeted human-in-the-loop quality refinement. We formulate legal argument mining as a six-class sentence classification task and evaluate multiple general-purpose and legal-domain language models under zero-shot, few-shot, and chain-of-thought prompting strategies, with LegalBERT as a supervised baseline. Results show that chain-of-thought prompting substantially improves LLM performance, while domain-specific models exhibit more stable zero-shot behavior. LLM-assisted verification corrects nearly 20% of annotation errors, improving label consistency. Human verification achieves Cohen's Kappa of 0.85, confirming annotation quality. LAMUS provides a scalable resource and empirical insights for future legal NLP research. All code and datasets can be accessed for reproducibility on GitHub at: https://github.com/LavanyaPobbathi/LAMUS/tree/main",
+      "authors": [
+        "Serene Wang",
+        "Lavanya Pobbathi",
+        "Haihua Chen"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-03-09T12:01:42+00:00",
+      "link": "https://arxiv.org/pdf/2603.08286v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "mining functional components of judicial reasoning",
+      "llm_evidence_cn": "挖掘司法推理的功能性组成部分",
+      "llm_evidence": "挖掘司法推理的功能性组成部分",
+      "canonical_evidence": "挖掘司法推理的功能性组成部分",
+      "llm_tldr_en": "Introduces LAMUS, a large-scale corpus for mining legal arguments from U.S. caselaw using LLM-based annotation.",
+      "llm_tldr_cn": "引入LAMUS语料库，利用大模型自动标注技术从美国判例法中挖掘法律论证要素。",
+      "llm_tldr": "引入LAMUS语料库，利用大模型自动标注技术从美国判例法中挖掘法律论证要素。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "computational models of legal reasoning",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.11772v1",
+      "title": "Legal-DC: Benchmarking Retrieval-Augmented Generation for Legal Documents",
+      "abstract": "Retrieval-Augmented Generation (RAG) has emerged as a promising technology for legal document consultation, yet its application in Chinese legal scenarios faces two key limitations: existing benchmarks lack specialized support for joint retriever-generator evaluation, and mainstream RAG systems often fail to accommodate the structured nature of legal provisions. To address these gaps, this study advances two core contributions: First, we constructed the Legal-DC benchmark dataset, comprising 480 legal documents (covering areas such as market regulation and contract management) and 2,475 refined question-answer pairs, each annotated with clause-level references, filling the gap for specialized evaluation resources in Chinese legal RAG. Second, we propose the LegRAG framework, which integrates legal adaptive indexing (clause-boundary segmentation) with a dual-path self-reflection mechanism to ensure clause integrity while enhancing answer accuracy. Third, we introduce automated evaluation methods for large language models to meet the high-reliability demands of legal retrieval scenarios. LegRAG outperforms existing state-of-the-art methods by 1.3% to 5.6% across key evaluation metrics. This research provides a specialized benchmark, practical framework, and empirical insights to advance the development of Chinese legal RAG systems. Our code and data are available at https://github.com/legal-dc/Legal-DC.",
+      "authors": [
+        "Yaocong Li",
+        "Qiang Lan",
+        "Leihan Zhang",
+        "Le Zhang"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-03-12T10:27:40+00:00",
+      "link": "https://arxiv.org/pdf/2603.11772v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "benchmarking RAG for legal documents",
+      "llm_evidence_cn": "法律文档检索增强生成的基准测试",
+      "llm_evidence": "法律文档检索增强生成的基准测试",
+      "canonical_evidence": "法律文档检索增强生成的基准测试",
+      "llm_tldr_en": "A new benchmark and system for Chinese legal document consultation using RAG technology.",
+      "llm_tldr_cn": "一个针对中国法律文档咨询的检索增强生成基准数据集和系统。",
+      "llm_tldr": "一个针对中国法律文档咨询的检索增强生成基准数据集和系统。",
+      "llm_tags": [
+        "query:q2"
+      ],
+      "matched_query_tag": "query:q2",
+      "matched_query_text": "large language models in legal applications",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.18116v1",
+      "title": "Responsible AI in criminal justice: LLMs in policing and risks to case progression",
+      "abstract": "There is growing interest in the use of Large Language Models (LLMs) in policing, but there are potential risks. We have developed a practical approach to identifying risks, grounded in the policing and legal system of England and Wales. We identify 15 policing tasks that could be implemented using LLMs and 17 risks from their use, then illustrate with over 40 examples of impact on case progression. As good practice is agreed, many risks could be reduced. But this requires effort: we need to address these risks in a timely manner and define system wide impacts and benefits.",
+      "authors": [
+        "Muffy Calder",
+        "Marion Oswald",
+        "Elizabeth McClory-Tiarks",
+        "Michele Sevegnani",
+        "Evdoxia Taka"
+      ],
+      "primary_category": "cs.CY",
+      "categories": [
+        "cs.CY"
+      ],
+      "published": "2026-03-18T15:08:14+00:00",
+      "link": "https://arxiv.org/pdf/2603.18116v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "LLMs in policing and impact on criminal justice case progression",
+      "llm_evidence_cn": "大语言模型在警务中的应用及其对刑事司法案件进展的影响",
+      "llm_evidence": "大语言模型在警务中的应用及其对刑事司法案件进展的影响",
+      "canonical_evidence": "大语言模型在警务中的应用及其对刑事司法案件进展的影响",
+      "llm_tldr_en": "Identifies policing tasks for LLMs and analyzes risks to case progression within the legal system.",
+      "llm_tldr_cn": "识别了可应用大语言模型的警务任务，并分析了其对法律体系内案件进展的风险。",
+      "llm_tldr": "识别了可应用大语言模型的警务任务，并分析了其对法律体系内案件进展的风险。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.19042v1",
+      "title": "Man and machine: artificial intelligence and judicial decision making",
+      "abstract": "The integration of artificial intelligence (AI) technologies into judicial decision-making - particularly in pretrial, sentencing, and parole contexts - has generated substantial concerns about transparency, reliability, and accountability. At the same time, these developments have brought the limitations of human judgment into sharper relief and underscored the importance of understanding how judges interact with AI-based decision aids. Using criminal justice risk assessment as a focal case, we conduct a synthetic review connecting three intertwined aspects of AI's role in judicial decision-making: the performance and fairness of AI tools, the strengths and biases of human judges, and the nature of AI+human interactions. Across the fields of computer science, economics, law, criminology and psychology, researchers have made significant progress in evaluating the predictive validity of automated risk assessment instruments, documenting biases in judicial decision-making, and, to a more limited extent, examining how judges use algorithmic recommendations. While the existing empirical evidence indicates that the impact of AI decision aid tools on pretrial and sentencing decisions is modest or inexistent, our review also reveals important gaps in the canvassed literatures. Further research is needed to evaluate the performance of AI risk assessment instruments, understand how judges navigate noisy decision making environments and how individual characteristics influence judges' responses to AI advice. We argue that AI vs Human comparisons have the potential to yield new insights into both algorithmic tools and human decision-makers and advocate greater interdisciplinary integration and cross-fertilization in future research.",
+      "authors": [
+        "Arthur Dyevre",
+        "Ahmad Shahvaroughi"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-03-19T15:38:50+00:00",
+      "link": "https://arxiv.org/pdf/2603.19042v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "AI in judicial decision-making and criminal justice risk assessment",
+      "llm_evidence_cn": "司法决策中的AI与刑事司法风险评估",
+      "llm_evidence": "司法决策中的AI与刑事司法风险评估",
+      "canonical_evidence": "司法决策中的AI与刑事司法风险评估",
+      "llm_tldr_en": "Reviews the integration of AI in judicial decision-making, focusing on performance, fairness, and human interaction.",
+      "llm_tldr_cn": "综述了AI在司法决策中的整合，重点关注性能、公平性以及人机交互。",
+      "llm_tldr": "综述了AI在司法决策中的整合，重点关注性能、公平性以及人机交互。",
+      "llm_tags": [
+        "query:q4"
+      ],
+      "matched_query_tag": "query:q4",
+      "matched_query_text": "judicial decision-making and artificial intelligence",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ]
+}

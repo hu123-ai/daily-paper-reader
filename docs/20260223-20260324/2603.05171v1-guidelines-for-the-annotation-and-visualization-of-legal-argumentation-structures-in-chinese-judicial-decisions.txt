@@ -1,0 +1,3832 @@
+Title: 2603.05171v1.pdf
+
+URL Source: https://arxiv.org/pdf/2603.05171v1
+
+Published Time: Fri, 06 Mar 2026 02:01:24 GMT
+
+Number of Pages: 55
+
+Markdown Content:
+# Guidelines for the Annotation and Visualization of Legal 
+
+# Argumentation Structures in Chinese Judicial Decisions 
+
+Working Draft v1.0(March 2026) 
+
+Kun Chen 1, Xianglei Liao 1, Kaixue Fei 1, Yi Xing 1, Xinrui Li 1
+
+# Abstract 
+
+This Guideline aims to construct a systematic, operational, and reproducible annotation 
+
+framework for legal argumentation structures, designed to reveal the logical structure of judicial 
+
+reasoning in court decisions. Grounded in legal argumentation theory, the Guideline establishes 
+
+formal representation rules and diagrammatic standards through clearly defined categories of 
+
+proposition types and inter-propositional relation types. It further incorporates rigorous annotation 
+
+procedures and consistency control mechanisms, thereby providing a reliable data foundation for 
+
+subsequent automated analysis, structural mining, and model training. 
+
+At the proposition level, the Guideline distinguishes four types: General Normative Judgments 
+
+(GM), Particular Normative Judgments (SM), General Factual Judgments (GF), and Particular 
+
+Factual Judgments (SF), and sets out principles for sub -classifying GM. The annotation process 
+
+emphasizes principles such as prioritized matching , non-duplication , and reliance on explicit 
+
+textual expression to ensure stability and consistency in type identification. 
+
+At the relational level, five relation types are defined: Support Relation (S), Attack Relation (A), 
+
+Joint Relation (J), Match Relation (M), and Identity Relation (I). These relations capture the 
+
+logical connections among propositions within judicial reasoning. Support and attack relations 
+
+represent positive and negative argumentative directions; joint relations characterize conjunctive 
+
+structures in which multiple propositions are jointly necessary; match relations describe the 
+
+correspondence between general rules and specific case facts; and identity relations address 
+
+semantic equivalence. The Guideline further specifies formal expression rules for each relation 
+
+type, distinguishes between non-nested and multi-level nested structures, and establishes strict 
+
+hierarchical representation rules. 
+
+At the diagrammatic level, the Guideline introduces unified visualization standards: proposition 
+
+nodes are represented by rectangles, relation nodes by circles, and different circle styles (solid, 
+
+hollow, and “+”) distinguish support, attack , joint, and match relations, respectively; identity is 
+
+represented by a slash “/” within a rectangular node. For nested structures, diagrams must be 
+
+constructed layer by layer from the innermost relation outward, preserving the independence and 
+
+hierarchical clarity of each relational node, thereby ensuring readability and verifiability of 
+
+structural representations.       
+
+> 1Law School, Nanjing University .Email: chenkun@nju.edu.cn .
+
+In addition, the Guideline provides a comprehensive example demonstrating the full annotation 
+
+workflow —from determining annotation scope and segmenting propositions to type annotation, 
+
+relation annotation, and argument diagram construction —explicitly illustrating the 
+
+correspondence between formal representations and diagrammatic methods, thus enhancing 
+
+practical applicability. 
+
+Overall, this Guideline establishes a structurally coherent, logically rigorous, and formally unified 
+
+framework for annotating legal argumentation. It provides methodological foundations and 
+
+technical standards for the quantitative analysis, computational modeling, and intelligent 
+
+applications of judicial reasoning structures. 
+
+Keywords: Legal Argumentation Structure; Legal Argument Mining; Legal Artificial Intelligence; 
+
+Legal Proposition Types; Legal Argument Diagram 1
+
+# 1. Motivation, Objectives, Significance, and Target Users 
+
+## 1.1 Motivation 
+
+In judicial adjudication, legal reasoning occupies a central position. The core of legal evaluation 
+
+lies not merely in the conclusion of a judgment, but in whether the reasons supporting that 
+
+conclusion are sufficient, whether the reasoning process is justified, and whether the 
+
+argumentation is acceptable. For this reason, judicial practice in China has long emphasized the 
+
+explanatory function of judicial decisions. In 2018, the Supreme People's Court issued the Guiding 
+
+Opinions on Strengthening and Regulating the Reasoning in Judicial Documents, systematically 
+
+clarifying the importance and normative requirements of reasoned adjudication. 
+
+With the ongoing advancement of digital governance and the rapid development of judicial 
+
+artificial intelligence, the reasoning function of judicial documents has been situated within a new 
+
+technological and institutional context. Judicial decisions are increasingly used in scenarios such 
+
+as similar-case retrieval, judgment evaluation, legal supervision, and decision support. In these 
+
+applications, the internal structure of legal argumentation embedded in judicial documents 
+
+becomes a crucial entry point for understanding judicial decision-making mechanisms, evaluating 
+
+adjudicative quality, and enabling intelligent judicial systems. 
+
+However, most existing research in judicial artificial intelligence has focused primarily on 
+
+outcome prediction or document generation. The treatment of judicial reasoning typically remains 
+
+at the level of surface-level textual or statistical features, lacking a fine-grained representation of 
+
+argumentative structure, inferential relations, and normative constraints. Although such 
+
+approaches may achieve certain technical performance gains, they struggle to meet the intrinsic 
+
+demand for explainability in judicial decision-making and are insufficient to support auditable 
+
+intelligent adjudication systems. 
+
+Against this background, systematically annotating the structure of legal argumentation in judicial 
+
+decisions becomes a necessary bridge between doctrinal legal theory and computational legal 
+
+studies. By explicitly identifying argumentative elements and their interrelations within judicial 
+
+texts, the inferential processes that are otherwise implicit in natural language can be transformed 
+
+into structured objects that are observable, analyzable, and computationally tractable. This 
+
+transformation not only provides an empirical basis for validating and refining theories of legal 
+
+argumentation, but also establishes the data and methodological foundations for subsequent 
+
+research on argument mining, argument evaluation, argumentative conclusion computation, and 
+
+automated reasoning generation, thereby promoting the development of explainable legal artificial 
+
+intelligence. 
+
+## 1.2 Objectives 2
+
+This guideline aims to propose a structured annotation and visualization framework for legal 
+
+argumentation in the reasoning sections of Chinese judicial decisions. It is designed to provide a
+
+unified, reproducible, and extensible operational standard for manual annotation, dataset 
+
+construction, and related research. 
+
+Specifically, the objectives of this guideline are as follows: 
+
+ To define the fundamental elements of legal argumentation and establish a
+
+corresponding attribute labeling scheme. By distinguishing different types of 
+
+argumentative components within judicial decisions, this guideline identifies and 
+
+annotates their respective properties and functional roles in the argumentative process, 
+
+thereby providing clear analytical units for understanding the internal composition of 
+
+judicial reasoning. 
+
+ To specify the types of relationships among argumentative elements and formulate 
+
+corresponding annotation rules. The framework focuses on capturing core relational 
+
+structures such as support, attack , joint and match , thereby revealing the modes and 
+
+pathways through which reasoning unfolds in judicial justifications. 
+
+ To represent the overall structure of legal argumentation through graphical 
+
+visualization. Based on element-level and relation-level annotations, the argumentative 
+
+process embedded in judicial decisions is transformed into an intuitive and interpretable 
+
+structured diagram, illustrating the logical trajectory through which adjudicative 
+
+conclusions are derived. 
+
+ To establish a unified foundation for subsequent research and applications. By 
+
+developing a standardized annotation and visualization framework, this guideline 
+
+provides the data and methodological basis for future studies on automated argument 
+
+mining, argument evaluation, argumentative conclusion computation, and argument 
+
+generation. 
+
+## 1.3 Significance 
+
+Annotating and visualizing the structure of legal argumentation in judicial decisions holds 
+
+substantial significance for legal education, legal research, the standardization of judicial 
+
+reasoning, and the development of legal artificial intelligence. 
+
+1.3.1 Legal Education 
+
+In legal education, judicial decisions have long served as essential materials for cultivating legal 
+
+reasoning and argumentative competence. However, students often struggle to grasp the internal 
+
+structure of judicial justifications, tending to focus primarily on final conclusions or isolated 
+
+argumentative fragments. 
+
+By introducing structural annotation and graphical representation of legal argumentation, this 
+
+guideline provides an intuitive and operational pedagogical tool for teaching judicial decisions. 3
+
+Through visualized argumentative structures, students can clearly observe the inferential 
+
+relationships among factual propositions, normative propositions, and adjudicative conclusions, 
+
+thereby gaining a more comprehensive understanding of how judicial reasoning unfolds. 
+
+This approach not only enhances students ’ ability to read and analyze judicial decisions but also 
+
+fosters the development of structured and normatively disciplined legal reasoning in their own 
+
+writing and argumentation. 
+
+1.3.2 Legal Research 
+
+For legal scholars, this guideline offers a structured, comparable, and accumulative analytical 
+
+framework for the study of judicial reasoning. Traditionally, research on judicial justification and 
+
+legal argumentation has relied heavily on abstract doctrinal analysis or case-by-case examination. 
+
+As a result, conclusions often rest on holistic interpretation or experiential judgment, making 
+
+systematic comparison across cases difficult. 
+
+By standardizing the annotation of argumentative elements and their interrelations, this guideline 
+
+enables the decomposition, reconstruction, and reproduction of reasoning processes embedded in 
+
+judicial texts. It thus provides empirically examinable research materials for theories of legal 
+
+argumentation, legal methodology, and empirical studies of judicial justification. 
+
+Such an approach facilitates the identification of structural similarities and differences across 
+
+cases, judges, and courts, promoting a shift in legal research from purely abstract analysis toward 
+
+more fine-grained and empirically grounded investigation. 
+
+1.3.3 Standardization of Judicial Reasoning 
+
+At the level of judicial practice, the annotation and visualization of legal argumentation structures 
+
+contribute to enhancing the transparency and examinability of judicial reasoning. By presenting 
+
+justificatory structures in a structured format, the argumentative foundations of adjudicative 
+
+conclusions can be more clearly displayed. 
+
+This structured representation assists litigants and the broader public in understanding judicial 
+
+logic, thereby providing a rational basis for evaluating adjudicative quality and strengthening 
+
+judicial supervision. 
+
+1.3.4 Development of Judicial Artificial Intelligence 
+
+In the development of judicial artificial intelligence, the annotation of legal argumentation 
+
+structures plays a foundational and prerequisite role. Unlike outcome-oriented predictive models, 
+
+AI systems designed for judicial applications must be capable of articulating their reasoning 
+
+grounds and argumentative pathways in order to satisfy legal requirements of explainability, 
+
+normativity, and accountability. 
+
+By systematically annotating argumentative elements, relational structures, and overall reasoning 4
+
+configurations, this guideline establishes a unified data foundation and methodological reference 
+
+for automated argument mining, representation, computation, evaluation, and generation. 
+
+This framework not only supports the training and validation of explainable judicial AI models but 
+
+also provides explicit criteria for assessing their rationality and compliance, thereby constructing a
+
+stable interface between technological development and the normative demands of the rule of law. 
+
+1.4 Target Users 
+
+The annotation and visualization framework for legal argumentation structures proposed in this 
+
+guideline is applicable to a variety of research and practical scenarios centered on the reasoning 
+
+sections of Chinese judicial decisions. It is primarily intended for the following audiences: 
+
+ Legal Scholars. This guideline is suitable for researchers engaged in the study of judicial 
+
+justification, legal argumentation, legal methodology, and judicial institutions. By 
+
+employing the proposed framework, scholars can conduct systematic and structured 
+
+analyses of the reasoning processes embedded in judicial decisions, thereby generating 
+
+reproducible analytical results in case studies, comparative research, and empirical 
+
+investigations. 
+
+ Law Teachers and Students. This guideline is applicable to instructors and learners who 
+
+use judicial decisions as teaching materials in legal education, particularly in courses on 
+
+legal methodology, case analysis, and the close reading of judicial opinions. The 
+
+annotation and visualization of judicial reasoning structures enable learners to intuitively 
+
+grasp the unfolding process of legal argumentation, thereby enhancing their ability to 
+
+read judicial decisions and to construct well-structured legal arguments. Members of the 
+
+Public and Legal Practitioners. 
+
+ This guideline is relevant to individuals engaged in the evaluation of adjudicative quality. 
+
+Through the structured annotation and graphical representation of legal argumentation in 
+
+judicial decisions, users can better understand the logical organization of judicial 
+
+reasoning and obtain standards and reference points for assessing the quality of judicial 
+
+opinions. 
+
+ Researchers in Law and Artificial Intelligence. This guideline is designed for technical 
+
+researchers and interdisciplinary teams working at the intersection of law and artificial 
+
+intelligence, particularly those engaged in tasks such as automated argument mining, 
+
+evaluation, computation, and generation. The framework may serve as a foundational 
+
+specification for manual annotation, dataset construction, and model evaluation, 
+
+enabling such research to meet technical objectives while maintaining sensitivity to 
+
+legal normativity and explainability requirements. 
+
+# 2. Annotation Targets, Scope, and Granularity 
+
+## 2.1 Annotation Targets 5
+
+The primary annotation targets of this guideline are judicial decision documents , including: 
+
+ Original judgments published on China Judgments Online (https://wenshu.court.gov.cn); 
+
+ Guiding cases and reference cases published in the People ’s Court Case Database 
+
+(https://rmfyalk.court.gov.cn/). 
+
+These documents constitute the textual corpus within which legal argumentation structures are to 
+
+be identified and annotated. 
+
+## 2.2 Annotation Scope 
+
+This guideline distinguishes between legal argumentation annotation and case information 
+
+annotation , each serving distinct analytical purposes. 
+
+2.2.1 Scope of Legal Argumentation Annotation 
+
+The scope of legal argumentation annotation is limited to the reasoning sections of original 
+
+judgments, guiding cases, and reference cases. 
+
+To further clarify the boundaries of annotation, examples drawn from original judgments, guiding 
+
+cases, and reference cases will be provided below. These examples serve to illustrate the specific 
+
+textual segments that fall within the annotation scope and to delineate the portions of judicial 
+
+documents that are excluded from structural argumentation annotation .
+
+Document I: Example of an Original Judgment 
+
+Civil Judgment (First Instance) in a Labor Contract Dispute between Yu and Xu 
+
+People ’s Court of Gulou District, Nanjing, Jiangsu Province Civil Judgment 
+
+(2023) Su 0106 Min Chu No. 18909 
+
+Plaintiff: Yu. 
+
+Defendant: Xu. 
+
+The plaintiff Yu filed a lawsuit against the defendant Xu in a labor contract dispute. After 
+
+the case was docketed on December 8, 2023, this Court applied the small-claims 
+
+procedure in accordance with the law and conducted a public hearing. The plaintiff Yu 
+
+appeared in court to participate in the proceedings. The defendant Xu, having been duly 
+
+summoned by this Court, failed to appear in court without justified reason. The case has 
+
+now been concluded. 
+
+The plaintiff Yu submitted the following claims to this Court: the defendant shall pay the 
+
+plaintiff labor remuneration in the amount of RMB 11,600. 
+
+Facts and reasons: From 2019 to the end of 2021, the plaintiff was employed by the 
+
+defendant to perform work in Gulou District, Nanjing, during which part of the labor 
+
+remuneration was paid intermittently. After the completion of the project, the parties 
+
+conducted a settlement and confirmed that RMB 17,000 remained unpaid as the 
+
+outstanding balance of labor remuneration. On January 10, 2022, the defendant signed an 
+
+IOU stating: “I hereby owe the plaintiff labor wages in the amount of RMB 17,000. ” On 
+
+January 17, 2022, the plaintiff was again employed by the defendant to carry materials at 
+
+Building No. 6 in Nanjing, with labor remuneration totaling RMB 600. At this point, the 
+
+defendant owed the plaintiff a total of RMB 17,600 in labor remuneration. On January 30, 6
+
+2022, the defendant transferred RMB 6,000 to the plaintiff via WeChat as payment of 
+
+labor remuneration. Up to the present date, the defendant still owes the plaintiff RMB 
+
+11,600 in labor remuneration. The plaintiff has repeatedly demanded payment, but the 
+
+defendant has refused to answer phone calls or reply to WeChat messages in an attempt to 
+
+evade responsibility. In order to safeguard the plaintiff ’s lawful rights and interests, the 
+
+plaintiff has filed this lawsuit and requests that the Court render judgment as prayed. 
+
+The defendant Xu did not appear in court. 
+
+Upon trial, this Court ascertains the following facts: On January 10, 2022, the defendant 
+
+issued an IOU to the plaintiff, stating: “I owe Yu labor wages in the amount of RMB 
+
+17,000. ”
+
+On January 30, 2022, a third party, Xu (whom the plaintiff stated to be the son of Xu), 
+
+transferred RMB 6,000 to the plaintiff via WeChat. 
+
+During the hearing, the plaintiff stated that the additional RMB 600 was remuneration for 
+
+services provided after the issuance of the IOU. The corresponding evidence included a
+
+location sent by the defendant to the plaintiff via WeChat, which indicated the address 
+
+where the services were performed. 
+
+This Court holds that a legally established contract shall take effect upon its formation. 
+
+The parties shall fully perform their respective obligations in accordance with the 
+
+agreement. Where one party fails to pay the agreed price, remuneration, rent, interest, or 
+
+fails to perform other monetary obligations, the other party may request payment. In this 
+
+case, a labor contract relationship existed between the plaintiff and the defendant. The 
+
+plaintiff has performed labor in accordance with the agreement, and the defendant shall 
+
+pay labor remuneration in accordance with the agreement between the parties. Based on 
+
+the IOU submitted by the plaintiff and the WeChat transfer records, it can be determined 
+
+that the defendant still owes the plaintiff RMB 11,000 in labor remuneration, and the 
+
+defendant shall pay the RMB 11,000 to the plaintiff. The plaintiff further claims an 
+
+additional RMB 600 in labor remuneration; however, the evidence provided is insufficient 
+
+to substantiate this claim. Therefore, this Court does not support the plaintiff ’s request 
+
+that the defendant pay the additional RMB 600 in labor remuneration .
+
+In summary, in accordance with Articles 502, 509, and 579 of the Civil Code of the 
+
+People ’s Republic of China, and Article 40(2), Article 67(1), Article 147, and Article 165 
+
+of the Civil Procedure Law of the People ’s Republic of China, the judgment is as follows: 
+
+The defendant Xu shall pay the plaintiff Yu labor remuneration in the amount of RMB 
+
+11,000 within three days from the effective date of this judgment; 
+
+The plaintiff Yu ’s other claims are dismissed. 
+
+If the monetary obligation is not performed within the period specified in this judgment, 
+
+interest on the debt during the period of delayed performance shall be doubled in 
+
+accordance with Article 260 of the Civil Procedure Law of the People ’s Republic of 
+
+China. 
+
+The case acceptance fee of RMB 45 shall be borne as follows: RMB 7.50 by the plaintiff 
+
+Yu and RMB 37.50 by the defendant Xu. 
+
+This judgment is final. 
+
+Judge: XX 
+
+December 28, 2023 7
+
+Clerk: XXX 
+
+From the above example of the judgment, it can be observed that original judgments do not 
+
+contain explicit structural labels. However, judgments drafted in accordance with the document 
+
+format issued by the Supreme People ’s Court can generally be divided into three main parts: the 
+
+introductory part (including the title, case number, party information, and case overview), the 
+
+main body (including facts, reasoning, and the decision), and the concluding part (including the 
+
+allocation of litigation costs, signatures, and date, etc.). 
+
+The court ’s reasoning is reflected in the portion of the main body that appears after the phrase 
+
+“This Court holds that ” and before the sentence introducing the dispositive section, namely “The 
+
+judgment is as follows. ”
+
+Document II: Example of a Guiding Case 
+
+Shanghai Centaline Property Consultants Co., Ltd. v. Tao Dehua — Dispute over an 
+
+Intermediary Contract 
+
+(Discussed and adopted by the Judicial Committee of the Supreme People ’s Court and 
+
+released on December 20, 2011) 
+
+Keywords: Civil; Intermediary Contract; Second-hand Housing Sale; Breach of Contract 
+
+Adjudication Highlights 
+
+In a housing sale intermediary contract, a clause prohibiting the buyer from using housing 
+
+information provided by the intermediary company while bypassing that intermediary to 
+
+conclude a housing sale contract with the seller is lawful and valid. However, where the 
+
+seller lists the same property for sale through multiple intermediary companies, and the 
+
+buyer obtains the same housing information through other legitimate and publicly 
+
+accessible channels, the buyer has the right to choose an intermediary company offering a
+
+lower quotation and better services to facilitate the conclusion of the housing sale contract. 
+
+In such circumstances, the buyer ’s conduct does not constitute the use of housing 
+
+information provided by the previously contracted intermediary company and therefore 
+
+does not constitute a breach of contract. 
+
+Relevant Legal Provision 
+
+Article 424 of the Contract Law of the People ’s Republic of China 
+
+Basic Facts of the Case 
+
+The plaintiff, Shanghai Centaline Property Consultants Co., Ltd. (hereinafter referred to 
+
+as “Centaline ”), alleged that: the defendant Tao Dehua used the housing sale information 
+
+for a property located at No. ___, Zhuzhou Road, Hongkou District, Shanghai, which had 
+
+been provided by Centaline, deliberately bypassed the intermediary, and privately 
+
+concluded a housing purchase contract directly with the seller, thereby violating the 
+
+agreement in the “Real Estate Purchase Confirmation Letter. ” This constituted malicious 
+
+“order-jumping ” behavior. Centaline requested that the court order Tao Dehua to pay 
+
+liquidated damages of RMB 16,500 in accordance with the agreement. 
+
+The defendant Tao Dehua argued that: the original property owner, Li, had entrusted 8
+
+multiple intermediary companies to sell the property involved in the case. Centaline did 
+
+not exclusively possess the housing information, nor was it the exclusive sales agent. Tao 
+
+Dehua did not use information provided by Centaline, and no “order-jumping ” breach of 
+
+contract occurred. 
+
+Upon trial, the court ascertained the following facts: In the second half of 2008, the 
+
+original property owner Li listed the property for sale with multiple real estate 
+
+intermediary companies. On October 22, 2008, a Shanghai real estate brokerage company 
+
+showed the property to Tao Dehua; on November 23, a Shanghai real estate consultancy 
+
+company (hereinafter referred to as “the consultancy company ”) showed the property to 
+
+Tao Dehua ’s wife, Cao; on November 27, Centaline showed the property to Tao Dehua 
+
+and, on the same day, signed a “Real Estate Purchase Confirmation Letter ” with him. 
+
+Article 2.4 of the Confirmation Letter provided that within six months after inspecting the 
+
+property, if Tao Dehua, or persons associated with him (including entrusted persons, 
+
+agents, representatives, or other related individuals), used information or opportunities 
+
+provided by Centaline but concluded a transaction with a third party without going 
+
+through Centaline, Tao Dehua shall pay Centaline liquidated damages equal to 1% of the 
+
+actual transaction price agreed upon with the seller. 
+
+At that time, Centaline quoted a price of RMB 1.65 million for the property, whereas the 
+
+consultancy company quoted RMB 1.45 million and actively negotiated the price with the 
+
+seller. On November 30, under the mediation of the consultancy company, Tao Dehua and 
+
+the seller signed a housing sale contract at a transaction price of RMB 1.38 million. 
+
+Thereafter, the parties completed the transfer procedures, and Tao Dehua paid the 
+
+consultancy company a commission of RMB 13,800. 
+
+Judgment Results 
+
+On June 23, 2009, the Hongkou District People ’s Court of Shanghai rendered Civil 
+
+Judgment (2009) Hong Min San (Min) Chu No. 912, ordering that the defendant Tao 
+
+Dehua shall, within ten days from the effective date of the judgment, pay the plaintiff 
+
+Centaline liquidated damages of RMB 13,800. 
+
+After the pronouncement of the judgment, Tao Dehua filed an appeal. On September 4, 
+
+2009, the Shanghai No. 2 Intermediate People ’s Court rendered Civil Judgment (2009) 
+
+Hu Er Zhong Min Er (Min) Zhong No. 1508, ruling as follows: 
+
+The Civil Judgment (2009) Hong Min San (Min) Chu No. 912 of the Hongkou District 
+
+People ’s Court of Shanghai is revoked; 
+
+Centaline ’s claim requesting Tao Dehua to pay liquidated damages of RMB 16,500 is not 
+
+supported. 
+
+Court ’s Reasoning 
+
+The effective judgment held that the “Real Estate Purchase Confirmation Letter ” signed 
+
+between Centaline and Tao Dehua was in the nature of an intermediary contract. Article 
+
+2.4 thereof constituted a commonly used standard clause in housing sale intermediary 
+
+contracts prohibiting “order-jumping. ” Its purpose was to prevent a buyer from using 
+
+housing information provided by the intermediary company while bypassing the 
+
+intermediary to purchase the property, thereby depriving the intermediary of its due 
+
+commission. This clause did not exempt one party from liability, increase the other party ’s
+
+liability, or exclude the other party ’s principal rights, and should therefore be deemed 9
+
+valid. 
+
+According to this clause, the key to determining whether the buyer committed 
+
+“order-jumping ” in breach of contract lies in whether the buyer used the housing 
+
+information or opportunities provided by the intermediary company. If the buyer did not 
+
+use the information or opportunities provided by that intermediary company but instead 
+
+obtained the same housing information through other legitimate and publicly accessible 
+
+channels, the buyer has the right to choose an intermediary offering a lower quotation and 
+
+better services to facilitate the conclusion of the housing sale contract, and such conduct 
+
+does not constitute “order-jumping ” in breach of contract. 
+
+In this case, the original property owner listed the same property for sale through multiple 
+
+intermediary companies. Tao Dehua and his family obtained information about the same 
+
+property through different intermediary companies and ultimately concluded the housing 
+
+sale contract through another intermediary. Therefore, Tao Dehua did not use the 
+
+information or opportunities provided by Centaline and did not constitute a breach of 
+
+contract. Accordingly, Centaline ’s claims were not supported. 
+
+Document III: Example of a Reference Case 
+
+Huayin City XX Shareholding Economic Cooperative v. Huayin City XX Comprehensive 
+
+Market Management Service Center — Dispute over a Lease Contract 
+
+— The portion of the lease term of collectively owned construction land exceeding 
+
+twenty years is invalid 
+
+Keywords: Civil; Lease Contract; Collectively Owned Construction Land; Lease Term; 
+
+Twenty Years 
+
+Basic Facts 
+
+The plaintiff, Huayin City XX Shareholding Economic Cooperative (hereinafter referred 
+
+to as “the Cooperative ”), alleged that: the “Agreement on Leasing Land for the 
+
+Construction of the South Ring XX Market ” and the “Supplementary Agreement on 
+
+Leasing Land for the South Ring XX Market ” signed between the Cooperative and 
+
+Huayin City XX Comprehensive Market Management Service Center (hereinafter 
+
+referred to as “the Service Center ”) both stipulated a lease term of thirty years. Pursuant 
+
+to Article 705 of the Civil Code of the People ’s Republic of China, which provides that 
+
+“where the lease term exceeds twenty years, the portion exceeding twenty years shall be 
+
+invalid, ” the agreed lease term exceeding twenty years should be deemed invalid, and the 
+
+Service Center should return the leased land. The Cooperative therefore filed suit, 
+
+requesting that the court: (1) declare invalid the portion of the lease term exceeding 
+
+twenty years in the agreements signed on March 8, 2001, namely the period from July 1, 
+
+2021 to June 30, 2030; and (2) terminate the contracts at issue and order the payment of 
+
+rent, etc. 
+
+The defendant Service Center argued that: the subject matter of the contracts at issue was 
+
+land and was not subject to the twenty-year limitation. According to the contract, the 
+
+Service Center leased land from Nansi Village to construct buildings. Article 4 of the 
+
+Ministry of Land and Resources ’ “Opinions on Regulating the Leasing of State-Owned 
+
+Land ” (Guo Tu Zi Fa [1999] No. 222) should apply by analogy. The Service Center ’s10 
+
+construction of buildings after leasing the land should be treated by reference to renewal 
+
+of a long-term lease. The agreed thirty-year land use term did not exceed the maximum 
+
+term for the transfer of land use rights for similar purposes and complied with the relevant 
+
+requirements. 
+
+Upon trial, the court found that on March 8, 2001, the Nansi Group of XX Village, 
+
+Huayin City (Party A), and the Service Center (Party B) signed the “Agreement on 
+
+Leasing Land for the Construction of the South Ring XX Market, ” which provided: (1) In 
+
+order to promote Party A’s commodity market, Party B’s preparatory office shall lease 
+
+1.79 mu of land from Party A; … (2) Party B’s preparatory office shall construct 16 
+
+vegetable greenhouses, a road 9 meters wide and 78 meters long running north to south, 
+
+sidewalks, and other works; (3) The annual rent shall be RMB 1,500 per mu, totaling 
+
+RMB 2,700 per year; (4) Payment shall be made in full by the end of December each year; 
+
+(5) The lease term shall be thirty years, from July 1, 2001 to the end of June 2030. The 
+
+agreement bore the seals of the XX Village Committee of Huayin City and the Service 
+
+Center, as well as the signatures and seals of relevant individuals. 
+
+On May 18, 2001, the same parties signed the “Supplementary Agreement on Leasing 
+
+Land for the South Ring XX Market, ” which provided in Article 4 that the lease term 
+
+shall be thirty years, from July 1, 2001 to June 30, 2030. The agreement bore the 
+
+corresponding seals and signatures. 
+
+On May 14, 2018, the Service Center paid RMB 23,850 for the land of the South Ring 
+
+XX Market, covering the period from May 2018 to May 2020. A receipt for payment by a
+
+rural collective economic organization of Huayin City was issued. 
+
+It was further ascertained that the Nansi Group of XX Village is the same as Group Three 
+
+of XX Village, Huayin City, and that the Cooperative is the collective economic 
+
+organization established by Group Three of that village. The current land use map of 
+
+Huayin City shows that the land involved is classified as construction land. 
+
+On June 7, 2023, the People ’s Court of Huayin City, Shaanxi Province rendered Civil 
+
+Judgment (2023) Shaan 0582 Min Chu No. 128, ruling: (1) the portion of the lease term 
+
+exceeding twenty years in the agreements signed on March 8, 2001 and May 18, 2001, 
+
+namely the period from July 1, 2021 to June 30, 2030, is invalid; (2) the contracts at issue 
+
+are terminated, the Service Center shall return all the leased land and pay rent of RMB 
+
+21,389 for the period from June 1, 2020 to February 7, 2023, as well as a land occupation 
+
+fee of RMB 21.78 per day from February 8, 2023 until the actual return of the land; and 
+
+(3) the Cooperative ’s other claims are dismissed. 
+
+After the judgment was pronounced, the Service Center filed an appeal. On November 28, 
+
+2023, the Intermediate People ’s Court of Weinan City, Shaanxi Province rendered Civil 
+
+Judgment (2023) Shaan 05 Min Zhong No. 2039, dismissing the appeal and upholding the 
+
+original judgment. 
+
+Court ’s Reasoning 
+
+The disputed issues in this case are: (1) whether the portion of the lease term of the 
+
+collectively owned construction land exceeding twenty years is valid; and (2) when the 
+
+contracts at issue were terminated. 
+
+Regarding the first issue, Article 361 of the Civil Code of the People ’s Republic of China 
+
+provides that collectively owned land used for construction shall be handled in 11 
+
+accordance with land administration laws. Article 63(4) of the Land Administration Law 
+
+of the People ’s Republic of China provides that the leasing of collectively owned 
+
+commercial construction land, as well as the grant, maximum term, transfer, exchange, 
+
+capital contribution, gift, and mortgage of the right to use collectively owned construction 
+
+land, shall be implemented by reference to state-owned construction land of similar use, 
+
+with specific measures to be formulated by the State Council. Article 467(1) of the Civil 
+
+Code provides that where a contract is not expressly provided for in this Code or other 
+
+laws, the general provisions of this Book shall apply, and the provisions on the most 
+
+similar type of contract may be applied by reference. Article 705 provides that the lease 
+
+term shall not exceed twenty years, and any portion exceeding twenty years shall be 
+
+invalid. 
+
+The land involved in the agreements at issue is construction land. The contracts signed by 
+
+the parties constitute lease contracts for collectively owned construction land as provided 
+
+by law. The lease term should be subject to measures formulated by the State Council. As 
+
+the State Council has not yet formulated relevant measures or provisions, the lease term 
+
+of collectively owned construction land shall be handled in accordance with the 
+
+provisions of the Civil Code concerning lease terms. Accordingly, the portion of the lease 
+
+term exceeding twenty years in the agreements at issue is invalid. 
+
+Regarding the second issue, Article 734 of the Civil Code provides that where the lease 
+
+term expires and the lessee continues to use the leased property without objection from 
+
+the lessor, the original lease contract remains valid but the lease term becomes indefinite. 
+
+After the agreements at issue expired on June 30, 2021, the Service Center continued to 
+
+occupy and use the market land, and the Cooperative did not take measures or raise 
+
+objections. Therefore, the contracts continued to be valid, and the lease term became 
+
+indefinite. 
+
+Article 730 of the Civil Code provides that where the parties have not agreed on the lease 
+
+term or the agreement is unclear and cannot be determined pursuant to Article 510, the 
+
+lease shall be deemed indefinite; either party may terminate the contract at any time upon 
+
+reasonable notice. Article 565 provides that where a party claims termination of a contract 
+
+by filing a lawsuit or applying for arbitration without notifying the other party, and the 
+
+people ’s court or arbitral institution confirms the claim, the contract shall be terminated 
+
+upon service of the copy of the complaint or arbitration application on the other party. 
+
+In this case, during the performance of the indefinite lease contract, the Cooperative filed 
+
+a lawsuit in February 2023 requesting termination of the contract. The Service Center 
+
+received a copy of the complaint on February 7, 2023. Therefore, in accordance with the 
+
+above provisions, the lease contract between the parties shall be deemed terminated on 
+
+February 7, 2023. In light of the facts concerning land occupation in this case, the court 
+
+rendered the above judgment according to law. 
+
+Adjudication Summary 
+
+According to the Land Administration Law of the People ’s Republic of China, the lease 
+
+term of collectively owned construction land shall be implemented by reference to 
+
+state-owned construction land of similar use, with specific measures to be formulated by 
+
+the State Council. As the State Council has not formulated relevant measures or 
+
+provisions concerning the lease term of state-owned construction land, the lease term of 12 
+
+collectively owned construction land shall be governed by the provisions of the Civil 
+
+Code concerning lease terms. Accordingly, the lease term of collectively owned 
+
+construction land shall not exceed twenty years, and any portion exceeding twenty years 
+
+shall be invalid. 
+
+Related Provisions 
+
+Civil Code of the People ’s Republic of China: Articles 361, 467, 705 
+
+Land Administration Law of the People ’s Republic of China (2019 Amendment): Article 
+
+63 
+
+First Instance: Civil Judgment (2023) Shaan 0582 Min Chu No. 128, People ’s Court of 
+
+Huayin City, Shaanxi Province (June 7, 2023) 
+
+Second Instance: Civil Judgment (2023) Shaan 05 Min Zhong No. 2039, Intermediate 
+
+People ’s Court of Weinan City, Shaanxi Province (November 28, 2023) 
+
+It can be observed that, in guiding cases and reference cases, the reasoning section has clear 
+
+textual boundaries .
+
+In Document I, Document II, and Document III above, the underlined portions indicate the scope 
+
+of legal argumentation annotation. 
+
+2.2.2 Case Information Annotation 
+
+To facilitate retrieval, organization, and statistical analysis, the following case information is 
+
+annotated for original judgment documents: case number, adjudicating court, court level, trial 
+
+level, date of judgment, case category, cause of action, and type of judgment outcome. 
+
+Table 1: Annotated Case Information in Original Judgment Documents 
+
+Field Description Example 
+
+Case Number The case number indicated at the 
+
+beginning of the judgment document 
+
+(2023) Su 0106 Min Chu No. 
+
+18909 
+
+Adjudicating Court Full name of the People ’s Court 
+
+rendering the judgment 
+
+Nanjing Gulou District People ’s
+
+Court of Jiangsu Province 
+
+Court Level Basic / Intermediate / Higher /
+
+Supreme Basic People ’s Court 
+
+Trial Level First instance / Second instance /
+
+Retrial First instance 
+
+Date of Judgment Date on which the judgment was 
+
+rendered 28-Dec-23 
+
+Case Category Civil / Criminal / Administrative /
+
+Enforcement Civil 
+
+Cause of Action General description of the legal 
+
+relationship involved in the case Labor contract dispute 
+
+Type of Judgment 
+
+Outcome 
+
+Fully upheld / Partially upheld /
+
+Dismissed Partially upheld 
+
+For guiding cases, the following case information is annotated: case type, case name, date of 
+
+release, case category, relevant legal provisions, and adjudication highlights. 13 
+
+Table 2: Annotated Information for Guiding Cases 
+
+Field Description Example 
+
+Case Type Guiding Case /
+
+Reference Case Guiding Case 
+
+Case Name Title of the case Shanghai Centaline Property Consultants Co., Ltd. v. 
+
+Tao Dehua — Dispute over an Intermediary Contract 
+
+Date of 
+
+Release 
+
+Date on which the 
+
+case was issued 20-Dec-11 
+
+Case Category 
+
+Civil / Criminal /
+
+Administrative /
+
+Enforcement 
+
+Civil 
+
+Relevant 
+
+Legal 
+
+Provisions 
+
+Relevant legal 
+
+provisions expressly 
+
+cited in the case 
+
+document 
+
+Article 424 of the Contract Law of the People ’s
+
+Republic of China 
+
+Adjudication 
+
+Highlights 
+
+The principal 
+
+adjudicative rule of 
+
+the case 
+
+Where a seller lists the same property for sale through 
+
+multiple intermediary companies, and the buyer obtains 
+
+the same housing information through other legitimate 
+
+and publicly accessible channels, the buyer has the 
+
+right to choose an intermediary offering a lower 
+
+quotation and better services to conclude the housing 
+
+sale contract. Such conduct does not constitute the use 
+
+of housing information provided by the previously 
+
+contracted intermediary company and therefore does 
+
+not constitute a breach of contract. 
+
+For reference cases, the following case information is annotated: case type, case name, database 
+
+entry number, case category, relevant legal provisions, and adjudication highlights. 
+
+Table 3: Annotated Information for Reference Cases 
+
+Field Description Example 
+
+Case Type Guiding Case / Reference 
+
+Case Reference Case 
+
+Case Name Title of the case 
+
+Huayin City XX Shareholding Economic 
+
+Cooperative v. Huayin City XX 
+
+Comprehensive Market Management 
+
+Service Center — Dispute over a Lease 
+
+Contract 
+
+Database Entry 
+
+Number 
+
+The reference case number 
+
+in the People ’s Court Case 
+
+Database 
+
+2025-07-2-111-002 
+
+Case Category 
+
+Civil / Criminal /
+
+Administrative /
+
+Enforcement 
+
+Civil 
+
+Relevant Legal 
+
+Provisions 
+
+Legal provisions cited in 
+
+the associated index section 
+
+of the judgment 
+
+Articles 361, 467, and 705 of the Civil Code 
+
+of the People ’s Republic of China; Article 
+
+63 of the Land Administration Law of the 
+
+People ’s Republic of China (2019 Revision) 
+
+Adjudication 
+
+Highlights 
+
+The adjudicative rule of the 
+
+case 
+
+The lease term for collectively owned 
+
+construction land shall be governed by the 
+
+relevant provisions on lease terms under the 
+
+Civil Code. 14 
+
+## 2.3 Granularity 
+
+The legal argumentation annotation regulated by this Guideline does not take natural language 
+
+sentences as the basic annotation unit; instead, it adopts the “proposition ” as the minimal unit of 
+
+annotation granularity. A “proposition ” refers to the smallest semantic unit within the reasoning 
+
+section of a judgment that can independently express a statement capable of being evaluated as 
+
+true or false. The focus of a proposition lies in the substantive judgment conveyed in judicial 
+
+reasoning, rather than in the superficial syntactic form of the text. 
+
+For non-argumentative elements such as basic case information, the basic annotation unit may, as 
+
+needed, be a word, a sentence, or a paragraph. 
+
+# 3. Overall Annotation Approach 
+
+This Guideline adopts a three-stage annotation approach consisting of: 
+
+ proposition type annotation ;
+
+ (inter-propositional) relation annotation ;
+
+ argument diagram construction .
+
+Propositional roles (such as premise, sub-conclusion, and conclusion) are not treated as 
+
+independent annotation items; rather, they are automatically inferred through graph analysis based 
+
+on the relational structure among propositions. 
+
+# 4. Proposition Type System 
+
+## 4.1 Design Principles 
+
+The construction of the proposition type system shall serve the stable identification and analysis of 
+
+the argumentative structure of judicial documents. In the design process, this Guideline follows 
+
+the principles below. 
+
+4.1.1 Principle of Minimal Distinction 
+
+The classification of proposition types shall be limited to what is necessary for argumentative 
+
+structure analysis, distinguishing only those categories of propositions that are decisive or 
+
+significantly influential for the development of reasoning. Propositions with minor semantic 
+
+differences and no substantive impact on the reasoning structure shall not be excessively 
+
+subdivided, so as to avoid forming an overly complex and impractical type system. 
+
+4.1.2 Centered on the Expression of Judicial Documents 
+
+This system is not a reconstruction of legal theoretical structures, but a formalized organization of 
+
+the actual modes of reasoning employed in judicial documents. Therefore, the division and 
+
+identification of sub -types are based on the expressions actually used in judicial documents, rather 
+
+than on any presupposed jurisprudential theoretical model. 15 
+
+4.1.3 Supporting Subsequent Automated Processing 
+
+The proposition type system shall provide a stable intermediate representation for subsequent 
+
+tasks such as argument mining, structural computation, and text generation. Accordingly, the 
+
+classification of types shall be identifiable and reproducible; the standards for classification shall 
+
+be as formalized as possible; the number of types shall be controlled within a computationally 
+
+manageable range; and the system shall not rely on highly subjective interpretation. 
+
+These principles and requirements provide guidance for the future revision or expansion of basic 
+
+types or sub -types. 
+
+## 4.2 Two Sets of Basic Distinction Dimensions and Four Basic Types of Judgment 
+
+This Guideline first adopts two mutually independent dimensions: “particular ” and “general, ” and 
+
+“fact ” and “norm. ” Based on these two dimensions, judgments in legal argumentation are divided 
+
+into four basic types: Particular Factual Judgment (SF), General Factual Judgment (GF), Particular 
+
+Normative Judgment (SM), and General Normative Judgment (GM) (see Table 4). 
+
+Table 4: Four Basic Types of Judgment 
+
+Particular General 
+
+Fact Particular Factual Judgment (SF) General Factual Judgment (GF) 
+
+Norm Particular Normative Judgment (SM) General Normative Judgment (GM) 
+
+Functional Positioning of the Four Basic Types of Judgment: 
+
+ GF: Provides experiential or background support for the application of norms, such as 
+
+social common sense, empirical rules, industry knowledge, or scientific principles. 
+
+ GM: Constitutes the normative foundation of legal argumentation and serves as the core 
+
+element connecting case facts with the adjudicative conclusion. 
+
+ SF: Refers to factual judgments concerning particular objects in the case and serves as 
+
+the premise for normative application. 
+
+ SM: Reflects the court ’s normative evaluation of the specific case and typically appears 
+
+as the conclusion in legal argumentation. 
+
+## 4.3 Sub -types of General Normative Judgments (GM) 
+
+Among the four basic types of propositions, General Normative Judgments (GM) play the most 
+
+central role in legal argumentation. To enhance labeling precision and analytical value, GM can be 
+
+further divided —based on their sources and authority —into six sub -types: statutory provisions, 
+
+legal interpretation, contracts and contract interpretation, customs and industry practices, morality 
+
+and value principles, and other normative judgments (see Table 5). 16 
+
+Table 5: Six Sub -types of General Normative Judgments 
+
+Code Name Definition Indicative Expressions 
+
+GM-L Statutory 
+
+Provisions 
+
+Judgments directly derived from 
+
+enacted legal norms, including 
+
+citations or summarized 
+
+restatements of statutory content. 
+
+“According to Article X
+
+of the ___ Law …” 
+
+“Pursuant to legal 
+
+provisions …” 
+
+“The law clearly 
+
+stipulates that …” 
+
+GM-I Legal Interpretation 
+
+Interpretative judgments regarding 
+
+the meaning, scope of application, or 
+
+conditions of application of legal 
+
+provisions. 
+
+“It should be understood 
+
+as …” 
+
+“It may be interpreted 
+
+as …” 
+
+“The intent of this 
+
+provision is …” 
+
+GM-C 
+
+Contracts and 
+
+Contract 
+
+Interpretation 
+
+Normative judgments derived from 
+
+contractual clauses or interpretative 
+
+understandings of contract terms. 
+
+“The parties agreed in 
+
+the contract that …” 
+
+“According to the 
+
+contractual 
+
+agreement …” 
+
+“This clause should be 
+
+understood as …” 
+
+GM-U Customs and 
+
+Industry Practices 
+
+Normative judgments derived from 
+
+social customs, trade practices, or 
+
+generally accepted industry rules. 
+
+“In accordance with 
+
+trade custom …” 
+
+“Industry practice is …” 
+
+“According to industry 
+
+convention …” 
+
+GM-M Morality and Value 
+
+Principles 
+
+Normative judgments based on 
+
+value assessments, public order and 
+
+good morals, or fundamental 
+
+principles. 
+
+“Violates public order 
+
+and good morals …” 
+
+“In consideration of the 
+
+principle of fairness …” 
+
+“Contrary to the 
+
+principle of good 
+
+faith …” 
+
+GM-O Other Normative 
+
+Judgments 
+
+General normative judgments that 
+
+cannot be clearly categorized into 
+
+the above types. 
+
+“According to relevant 
+
+policy spirit …” 
+
+“In accordance with 
+
+XXX administrative 
+
+regulations …” 
+
+## 4.4 Explanatory Notes 
+
+To enhance annotation consistency, the following principles shall be observed when labeling 
+
+sub -types: 
+
+ Priority Matching Principle: If a proposition can be clearly classified under GM-L 
+
+through GM-M, GM-O shall not be used. 
+
+ Non-Redundancy Principle: Each normative judgment shall be assigned only one 
+
+sub -type. 
+
+ Textual Explicitness Principle: Classification shall be based on the explicit textual 
+
+expression in the document, and the source of the norm shall not be supplemented on the 
+
+basis of background knowledge or inference. 17 
+
+It should further be clarified that this sub -type system is not a hierarchy of normative authority. Its 
+
+primary purposes are: (1) to analyze the structural distribution of normative sources in judicial 
+
+reasoning; and (2) to support subsequent tasks such as automated mining, evaluation, and text 
+
+generation. 
+
+# 5. Types of Inter-Propositional Relations 
+
+This Guideline currently specifies five types of relations: support, attack, joint , match , and 
+
+identity. 
+
+The establishment and identification of these relation types aim to reveal the logical connections 
+
+asserted in judicial reasoning, rather than to reconstruct the actual reasoning process or to evaluate 
+
+the correctness of the adjudicative conclusion. 
+
+## 5.1 Explanation of the Five Relation Types 
+
+5.1.1 Support Relation 
+
+A support relation exists where a single proposition or a group of propositions provides reasons 
+
+for the establishment of another proposition. In judicial documents, common expressions 
+
+indicating a support relation include: “therefore, ” “thus, ” “accordingly it can be determined that, ”
+
+“in summary, ” and “sufficient to prove, ” among others. 
+
+When a group of propositions supports another proposition, the propositions within the group may 
+
+either independently support the latter or jointly support it. In the first case, deleting any one 
+
+proposition from the group does not affect the remaining propositions ’ support for the target 
+
+proposition. In the second case, deleting any one proposition would cause the remaining 
+
+propositions to lose their supporting force. In this situation, the propositions in the group 
+
+constitute the joint relation described below. 
+
+5.1.2 Joint Relation 
+
+In practice, a single proposition is often insufficient to support a conclusion. Multiple propositions 
+
+must jointly hold in order to form a complete justification. 
+
+This structure of jointly necessary support constitutes a joint relation . The function of the joint 
+
+relation is to characterize the conjunctive structure formed when multiple propositions support the 
+
+same conclusion. 
+
+5.1.3 Match Relation 
+
+The match relation is a special form of the joint relation , primarily occurring between normative 
+
+constituent elements and case-specific facts. When the elements of a legal norm correspond to the 
+
+relevant facts of a case, a matching structure is formed. The match relation typically serves the 
+
+formation of a particular normative judgment. 
+
+The difference between a match relation and an ordinary joint relation lies in the types of 18 
+
+propositions involved: ordinary joint relation s usually occur among propositions of the same type ,
+
+and match relation s occur between two different types of propositions —namely, general 
+
+judgments and particular judgments. 
+
+5.1.4 Attack Relation 
+
+An attack relation exists where a proposition or a group of propositions provides reasons against 
+
+another proposition or against the justificatory force of a relation supporting that proposition. 
+
+Logically, an attack relation indicates that the attacked claim or inferential link cannot be accepted 
+
+on the basis of the available reasons, rather than necessarily asserting the direct negation of the 
+
+proposition itself. Common expressions in judicial documents include: “the claim cannot be 
+
+established, ” “this court does not support, ” “insufficient to prove …,” and “does not meet the 
+
+requirements …,” among others. 
+
+5.1.5 Identity Relation 
+
+An identity relation exists where multiple propositions semantically express the same judgment 
+
+content.This relation is primarily used to address repetitive expressions in judicial documents. 
+
+## 5.2 Basic Structures of Different Relation Types — No Nesting 
+
+Since the constituent elements of relations such as support and joint may consist of a group of 
+
+propositions, different types of relations may be nested. The table below presents the basic 
+
+structures and formal expressions of the five relation types in cases where no nesting occurs 
+
+(Table 6). 
+
+Table 6: Basic Structures and Formal Expressions of the Five Relation Types 
+
+Relation Type Basic Structure Formal Expression 
+
+Support (S) An ordered pair between any two propositions pi ,
+
+pj 
+
+pi supports pj 
+
+S(pi, pj) 
+
+Joint (J) A set of propositions {p1, p2, …, pn} (n ≥ 2) p1, p2, …, pn joint 
+
+J(p1, p2, ..., pn) 
+
+Match (M) An ordered pair between a particular judgment ps 
+
+and a general judgment pg 
+
+ps matches pg 
+
+M(ps, pg) 
+
+Attack (A) An ordered pair between any two propositions 
+
+po , pc 
+
+po attacks pc 
+
+A(po, pc) 
+
+Identity (I) A set of propositions {p1, p2, …, pn} (n ≥ 2), 
+
+whose members are semantically equivalent I(p1, p2, ..., pn) 
+
+## 5.3 Formal Expressions of Different Relation Types — With Nesting 
+
+5.3.1 Joint Relation Nested within a Match Relation 
+
+When a general judgment pg contains multiple constituent elements, multiple particular judgments 
+
+ps1, ps2, …, psn may correspond to pg. 
+
+In such a case, ps1, ps2, …, psn form a joint relation among themselves, which is then embedded 
+
+as a whole within a match relation .
+
+Representation: M(J(ps1, ps2, ..., psn), pg) 19 
+
+5.3.2 Match Relation Nested within a Joint Relation 
+
+The basic form of a joint relation consists of a conjunction among n propositions. However, in 
+
+certain situations, the combined objects are not original propositions but rather several match 
+
+relation s M1, M2, …, Mn .
+
+Representation: J(M1, M2, ..., Mn), or J(M(ps1, pg1), M(ps2, pg2), ..., M(psn, pgn)) 
+
+5.3.3 Joint Relation Nested within a Support Relation 
+
+The basic form of a support relation is that one proposition provides reasons for another. In 
+
+practice, however, it frequently occurs that multiple propositions pi1, pi2, …, pin jointly support 
+
+another proposition pj .
+
+In such a case, pi1, pi2, …, pin form a joint relation , which is embedded as a whole within the 
+
+support relation. 
+
+Representation: S(J(pi1, pi2, ... pin), pj) (This structure indicates that only when pi1, pi2, …, pin 
+
+all hold simultaneously can they support pj .)
+
+It should be noted that when n propositions pi1, pi2, …, pin each independently support pj , this 
+
+constitutes n separate support relations rather than a joint relation .
+
+Representation: S(pi1, pj) ∧S(pi2, pj )∧…S(pin, pj) 
+
+The two structures are logically distinct and must not be conflated. 
+
+5.3.4 Match Relation Nested within a Support Relation 
+
+Generally, when a rule applies to a particular case, a structure is formed in which a general 
+
+judgment pg and a particular judgment ps (or the conjunction of several particular judgments ps1, 
+
+ps2, …, psn ) support a conclusion pj .
+
+In this situation, a match relation is formed between pg and ps (or the conjunction of ps1, ps2, …,
+
+psn ), and this match relation is embedded as a whole within a support relation. 
+
+Representation: S(M(ps, pg), pj), or S(M(J(ps1, ps2, ..., psn), pg), pj) 
+
+5.3.5 Support Relation Nested within an Attack Relation 
+
+When the object attacked by proposition po is the support relation S(pi, pj) itself —rather than 
+
+proposition pi or pj —the support relation shall be embedded as a whole within the attack relation. 
+
+Representation: A(po, S(pi, pj)) 
+
+This structure indicates that po negates the supporting force of pi for pj , rather than directly 
+
+negating pi or pj .
+
+5.3.6 Multi-Level Nesting 
+
+Multi-level nested structures shall be expressed step by step in accordance with the basic forms 
+
+described above. 
+
+If the object of one relation is another relation, the latter shall be preserved in its entirety as a
+
+nested unit and then incorporated into the higher-level relational structure. 20 
+
+When expressing such structures, the hierarchy of parentheses shall strictly correspond to the 
+
+hierarchy of logical structure. Cross-level merging or omission of intermediate structures is not 
+
+permitted. 
+
+# 6.Graphical Representation Rules for Legal Argument Structures 
+
+## 6.1 Diagram Rules for Proposition Nodes 
+
+Each proposition corresponds to a node in the diagram. A proposition node is represented by a
+
+framed proposition identifier (e.g., p1, p2 , …, pn ). The proposition node itself does not convey 
+
+information about the type of the proposition. Information about proposition types is recorded 
+
+only in the annotation table or database and is not displayed in the diagram. 
+
+## 6.2 Graphical Representation of the Five Basic Structures 
+
+When no further relations occur between relation nodes (i.e., in a first-order structure), five types 
+
+of relations —support relation, attack relation, joint relation, match relation, and identity 
+
+relation —constitute the five basic structural patterns. 
+
+Except for the identity relation, each relation type is represented by a relation node. Proposition 
+
+nodes are depicted as rectangles, while relation nodes are depicted as circles. Different fill styles 
+
+distinguish relation types: 
+
+ Solid circles represent support relations; 
+
+ Hollow circles represent attack relations; 
+
+ Circles containing a “+” sign represent joint or match relations. 
+
+Table 7 below presents the specific graphical representations of these five basic structures. 
+
+Table 7: Diagram Methods for the Five Basic Structures 
+
+Relation 
+
+Type Diagram Method Example 
+
+Support 
+
+Represented by a directed edge with a solid circular node. 
+
+The solid circle denotes the support relation node, and the 
+
+arrow direction is: supporting element → supported 
+
+element. 
+
+(p1 supports p2 )
+
+Attack 
+
+Represented by a directed edge with a hollow circular 
+
+node. 
+
+The hollow circle denotes the attack relation node, and the 
+
+arrow direction is: attacking element → target of the attack. 
+
+(p1 attacks p2 )
+
+Joint 
+
+Represented by undirected links connected to a circle 
+
+containing a “+” sign. 
+
+The “+” circle denotes the joint relation node, indicating a
+
+conjunctive structure among multiple propositions. (p1, p2, p3 joint) 
+
+Match 
+
+Represented by a directed edge with a circle containing a
+
+“+” sign. 
+
+The “+” circle denotes the match relation node, and the 
+
+arrow direction is: matching element → matched element. 
+
+(p1 matches p2) 
+
+Identity Represented by a “/” symbol inside a rectangular node, 
+
+indicating that the propositions are semantically identical. 
+
+p1/p2 
+
+(p1 and p2 are 
+
+identical) 21 
+
+## 6.3 Nested Diagramming Methods 
+
+6.3.1 Joint Relation Embedded within a Match Relation 
+
+When several propositions first form a joint relation , and this combined whole then participates 
+
+as a single unit in a match relation , the diagram should adopt the method of Joint Relation 
+
+Embedded within a Match Relation .
+
+Diagramming Procedure :
+
+ First, use a circular node containing a “+” sign to represent the conjunctive (joint) 
+
+structure .
+
+ Then, draw a directed arrow from this “+” node to the target proposition to indicate the 
+
+match relation .
+
+ The “+” node simultaneously functions as the joint relation node, and the match relation 
+
+node. In other words, no separate nodes are created for the two relations; the same “+”
+
+node carries both functions. 
+
+Example 1
+
+Let: p3 be a general proposition , p1 and p2 be particular propositions . Propositions p1 and p2 
+
+form a joint relation , and this combined whole forms a match relation with p3. 
+
+Formal expression: M(J(p1, p2), p3) 
+
+Diagram: 
+
+6.3.2 Match relation Embedded within a Joint Relation 
+
+When several match relation s as a whole further form a conjunctive structure, the diagram shall 
+
+adopt the method of Match relation Embedded within a Joint Relation .
+
+Diagramming Procedure :
+
+ First, construct each match relation structure independently. Treat each match relation 
+
+node as an independent relational unit. 
+
+ Introduce a new circular node containing a “+” sign to connect these match relation 
+
+nodes into a joint relation . This “+” node represents the conjunctive relation among 
+
+multiple matching results. 
+
+Example 2
+
+Let: Particular proposition p1 and general proposition p2 form a match relation M1; Particular 
+
+proposition p3 and general proposition p4 form a match relation M2; M1 and M2 then form a joint 
+
+relation .
+
+Formal expression: J(M1, M2), or J(M(p1, p2), M(p3, p4)) 
+
+Diagram: 22 
+
+6.3.3 Joint Relation Embedded within a Support Relation 
+
+When several propositions must jointly hold in order to support a target proposition, the diagram 
+
+shall adopt the method of Joint Relation Embedded within a Support Relation .
+
+Diagramming Procedure :
+
+ First, use a circular node containing a “+” sign to represent the joint structure among 
+
+several propositions. Treat this “+” node as a unified supporting unit. 
+
+ From this joint node, introduce a support relation node (a solid circle ●). 
+
+ The support relation arrow points to the supported proposition. 
+
+Example 3
+
+Let the conjunction of propositions p1 and p2 support p3. 
+
+Formal expression: S(J(p1, p2), p3) 
+
+Diagram: 
+
+Example 4
+
+Let the conjunction of propositions p1, p2, and p3 support p4. 
+
+Formal expression: S(J(p1, p2, p3), p4) 
+
+Diagram: 
+
+6.3.4 Match Relation Embedded within a Support Relation 
+
+When an entire match -relation structure serves as a supporting unit that further supports another 
+
+proposition, the diagram shall adopt the method of Match Relation Embedded within a Support 
+
+Relation .
+
+Diagramming Procedur e: 23 
+
+ First, construct the match relation structure: the particular proposition points to the 
+
+general judgment through a match relation node (a “+” circle). 
+
+ Then, treat the matched general judgment node as the starting point of the support 
+
+relation (solid circle ●). The support relation arrow points to the supported proposition. 
+
+It should be noted that although, in the diagram, the support relation appears to originate from the 
+
+general judgment node, the argumentative basis lies in the fact that the norm has already been 
+
+satisfied in the particular case through the match relation . The diagram represents a structurally 
+
+simplified expression and does not alter the hierarchical logic. 
+
+Example 5
+
+Let particular proposition p1 match general proposition p2, and the conjunction of p1 and p2 
+
+support p3. 
+
+Formal expression: S(M(p1, p2), p3) 
+
+Diagram: 
+
+6.3.5 Support Relation Embedded within an Attack Relation 
+
+When a proposition does not directly attack another proposition, but instead attacks the support 
+
+relation between two propositions, the diagram shall adopt the method of Support Relation 
+
+Embedded within an Attack Relation .
+
+Diagramming Procedure :
+
+ First, construct the support relation structure. 
+
+ Then, direct the attack-relation arrow toward the support relation node (●). The attack 
+
+relation uses a hollow circle node (○), with the arrow direction: attacking proposition →
+
+attacked support-relation node .
+
+Example 6
+
+Let proposition p1 support proposition p2, and proposition p3 attack the support relation between 
+
+p1 and p2. 
+
+Formal expression: A(p3, S(p1, p2)) 
+
+Diagram: 
+
+6.3.6 Multi-Level Nesting 24 
+
+When more than two levels of relational nesting coexist within an argumentative structure, the 
+
+structure shall be constructed layer by layer from the innermost relation outward, maintaining the 
+
+independence of each relation node at every level. 
+
+Example 7
+
+Let particular propositions p1, p2, and p3 match general proposition p4, and the conjunction of p1, 
+
+p2, p3, and p4 support proposition p5. 
+
+Formal expression: S(M(J(p1, p2, p3), p4), p5) 
+
+Diagram: 
+
+# 7. Example of Legal Argumentation Annotation: Full Annotation 
+
+# Process for Document I
+
+## 7.1 Determination of Annotation Scope 
+
+According to the Guideline, the annotation scope is determined as follows: 
+
+A contract formed in accordance with the law shall take effect upon its formation. The 
+
+parties shall fully perform their respective obligations in accordance with their agreement. 
+
+Where one party fails to pay the price, remuneration, rent, interest, or fails to perform any 
+
+other monetary obligation, the other party may request payment. In the present case, the 
+
+plaintiff and the defendant are in a labor service contract relationship. The plaintiff has 
+
+provided labor services as agreed, and the defendant shall pay labor remuneration in 
+
+accordance with the agreement between the parties. Based on the IOU and the WeChat 
+
+transfer records submitted by the plaintiff, it can be determined that the defendant still 
+
+owes the plaintiff RMB 11,000 in labor remuneration, and the defendant shall pay this 
+
+RMB 11,000 to the plaintiff. The plaintiff further claims an additional RMB 600 in labor 
+
+remuneration; however, the evidence provided is insufficient to prove this claim. 
+
+Therefore, the court does not support the plaintiff ’s request that the defendant pay the 
+
+additional RMB 600 in labor remuneration. 
+
+## 7.2 Proposition Segmentation, Numbering, and Type Annotation 
+
+Table 8: Proposition Segmentation, Numbering, and Type Annotation for Document I25 
+
+Proposition No. Proposition Content Type 
+
+p1 A contract formed in accordance with the law shall take effect 
+
+upon its formation. GM-L 
+
+p2 The parties shall fully perform their respective obligations in 
+
+accordance with their agreement. GM-L 
+
+p3 
+
+Where one party fails to pay the price, remuneration, rent, 
+
+interest, or other monetary debts, the other party may request 
+
+payment. 
+
+GM-L 
+
+p4 The plaintiff and the defendant are in a labor service contract 
+
+relationship. SM 
+
+p5 The plaintiff has provided labor services as agreed. SF 
+
+p6 The defendant shall pay labor remuneration in accordance with 
+
+the agreement between the parties. SM 
+
+p7 The defendant still owes the plaintiff RMB 11,000 in labor 
+
+remuneration. SF 
+
+p8 The defendant shall pay the RMB 11,000 to the plaintiff. SM 
+
+p9 The plaintiff claims an additional RMB 600 in labor 
+
+remuneration. SF 
+
+p10 The evidence provided is insufficient to prove this claim. SF 
+
+p11 The court does not support the plaintiff ’s request that the 
+
+defendant pay the additional RMB 600. SM 
+
+Notes: 
+
+(1) In p4, the “labor service contract relationship ” constitutes a legal relationship; therefore, p4 
+
+is labeled as SM (Particular Normative Judgment). 
+
+(2) Deontic expressions such as “shall ” and “should ” are typical indicators of normative 
+
+judgments; therefore, p6 and p8 are labeled as SM. 
+
+## 7.3 Relation Annotation 
+
+Table 9: Relation Annotation for Document I
+
+Relation Type Relation Content 
+
+Joint J(p4, p5); J(p6, p7) 
+
+Match M(J(p4, p5), p2); M(J(p6, p7), p3) 
+
+Support S(M(J(p4, p5), p2), p6); S(M(J(p6, p7), p3), p8); S(p10, p11) 
+
+Attack None 
+
+Identity None 
+
+## 7.4 Argument Diagram 
+
+This example contains two arguments, which are diagrammed separately. 
+
+Diagram 1: 26 
+
+Diagram 2: 
+
+# 8. Annotation Workflow and Consistency Control 
+
+## 8.1 General Principles 
+
+The annotation work is guided by the fundamental principles of operability, reproducibility, and 
+
+verifiability , and centers on the stable identification and consistent representation of legal 
+
+argumentation structures. The workflow emphasizes: 
+
+ Conceptual primacy: All annotation labels must have clearly defined meanings 
+
+grounded in legal argumentation theory. Annotation shall not rely merely on linguistic 
+
+intuition. 
+
+ Process constraints: A staged and role-differentiated workflow design is adopted to 
+
+reduce the impact of individual interpretative differences on annotation outcomes. 
+
+ Built-in consistency control: Consistency testing is embedded throughout the 
+
+annotation process, rather than treated solely as a post hoc statistical measure. 
+
+## 8.2 Annotation Workflow Design 
+
+The annotation workflow follows a four-stage structure: Training — Pilot Annotation —
+
+Formal Annotation — Review and Revision .
+
+8.2.1 Annotator Training and Guideline Study 27 
+
+Prior to formal annotation, all annotators receive standardized training, including: 
+
+ Definitions and distinction criteria for each type of annotation object; 
+
+ A clause-by-clause explanation of the annotation guidelines, supplemented by positive 
+
+and negative examples (where available); 
+
+ Common ambiguity scenarios and corresponding resolution principles. 
+
+After the training, annotators are required to independently read the annotation guidelines and 
+
+complete a confirmation of understanding. 
+
+8.2.2 Pilot Annotation and Guideline Calibration 
+
+A selected set of judicial documents is used as pilot material, and multiple annotators 
+
+independently complete annotations. The purpose of the pilot stage is not to generate usable data, 
+
+but to: 
+
+ Test the operational feasibility of the annotation guidelines; 
+
+ Identify labels with high disagreement rates and highly uncertain cases; 
+
+ Detect rules that require further refinement or consolidation. 
+
+Pilot results are discussed collectively, and revision proposals are formulated. The guidelines are 
+
+calibrated one or more times until disagreements are reduced to an acceptable range. 
+
+8.2.3 Formal Annotation and Dual Independent Annotation 
+
+During the formal annotation stage, a dual independent annotation mechanism is adopted: 
+
+ Each annotated text must be independently annotated by at least two annotators who are 
+
+unaware of each other ’s results; 
+
+ Annotators must strictly follow the finalized version of the annotation guidelines and 
+
+may not introduce personal rules ad hoc ;
+
+ Annotation results are stored in structured form to facilitate subsequent alignment and 
+
+comparison. 
+
+8.2.4 Conflict Resolution and Expert Review 
+
+Dual-annotation results are compared automatically or semi-automatically to identify 
+
+inconsistencies, which are categorized as follows: 
+
+ Inconsistent label selection; 
+
+ Inconsistent annotation boundaries; 
+
+ Inconsistent relational direction or target assignment. 
+
+For routine disagreements, annotators resolve differences through discussion and recorded 
+
+justification. For disagreements involving core conceptual interpretations, the project lead or a
+
+domain expert is consulted for adjudication. Such cases are simultaneously incorporated into a
+
+Difficult Issues Documentation file. 
+
+## 8.3 Consistency Control Mechanisms 
+
+8.3.1 Consistency Metrics and Monitoring 28 
+
+During the annotation process, inter-annotator agreement metrics are calculated periodically to 
+
+monitor the degree of consistency among annotators. 
+
+8.3.2 Continuous Feedback and Iterative Revision 
+
+Consistency results and representative disagreement cases are periodically fed back to annotators. 
+
+Small-group discussions are conducted to strengthen shared understanding.Without compromising 
+
+the comparability of existing data, necessary supplementary clarifications may be added to the 
+
+annotation guidelines. 
+
+8.3.3 Version Control and Traceability 
+
+Versioned management is applied to the annotation guidelines, annotation data, and conflict 
+
+adjudication records to ensure: 
+
+ Any annotation result can be traced back to the corresponding version of the guidelines; 
+
+ Major rule changes are associated with clear time points and scopes of applicability; 
+
+ Reliable foundations are provided for subsequent model training, evaluation, and 
+
+reproducibility experiments. 1
+
+# 中文裁判文书说理部分法律论证结构标注与图示指南 
+
+## （v1.0 ）
+
+## 摘要： 
+
+## 本指南旨在构建一套系统化 、可操作 、可复现的法律论证结构标注体系 ，用
+
+## 于揭示裁判文书中裁判说理的逻辑结构 。指南以法律论证理论为基础 ，通过对命 
+
+## 题类型与命题间关系类型的明确界定 ，建立形式化表达规则与图示规范 ，并辅以 
+
+## 严格的标注流程与一致性控制机制 ，为后续自动化分析 、结构挖掘与模型训练提 
+
+## 供可靠的数据基础。 
+
+## 在命题层面 ，指南区分一般规范判断 （GM ）、个别规范判断 （SM ）、一般 
+
+## 事实判断（ GF ）、个别事实判断（ SF ）四个类型，并提出 GM 的子类型划分原 
+
+## 则。标注过程中强调 “优先匹配 ”“不重复标注 ”“以文本显性表达为准 ”等原 
+
+## 则，以确保类型识别的稳定性与一致性。 
+
+## 在关系层面 ，指南设定支持 关系 （Support Relation ，S）、反对 关系 （Attack 
+
+## Relation ，A）、组合（ Joint Relation ，J）、匹配（ Match Relation ，M）、同一 
+
+## （Identity Relation ，I）五种关系类型，用以刻画裁判说理中命题间的逻辑关系 。
+
+## 支持与反对关系揭示命题间的正负论证方向；组合关系刻画 对于特定支持来说 
+
+## “缺一不可 ”的合取结构 ；匹配关系专门描述规范构成要件与案件事实之间的对 
+
+## 应关系 ；同一关系用于处理语义重复 。指南进一步明确各类关系的形式化表达方 
+
+## 式，并区分无嵌套与多层嵌套结构，提出严格的层级表达规则。 
+
+## 在图示层面 ，指南建立统一的可视化规范 ：命题节点以矩形表示 ，关系节点 
+
+## 以圆形表示，并通过实心圆、空心圆、 “+”圆等形式区分支持、反对、组合与 
+
+## 匹配关系 ；同一关系以框内 “/”表示 。对于嵌套结构 ，要求自内而外逐层构造 ，
+
+## 保持各关系节点的独立性与层级清晰性 ，从而实现结构表达的可读性与可验证性。 
+
+## 指南通过完整示例展示从标注范围确定 、命题拆分与类型标注 、关系标注到 
+
+## 论证图示构建的全流程操作路径，增强实践可行性。 
+
+## 总体而言 ，本指南构建了一套结构清晰 、逻辑严谨 、形式统一的法律论证标 
+
+## 注框架 ，为裁判说理结构的定量分析 、计算建模与智能化应用提供了方法论基础 
+
+## 与技术规范支持。 
+
+## 关键词 ：法律论证结构 法律论证挖掘 法律人工智能 法律命题类型 法律论证图 2
+
+# 1. 动因、目标、意义、适用对象 
+
+## 1.1 动因 
+
+## 在司法裁判活动中 ，论证说理处于核心地位 。法律评价的重心不在于裁判结 
+
+## 论本身 ，而在于支撑该结论的理由是否充分 、推理过程是否正当 、论证是否具有 
+
+## 可接受性。正因如此，我国司法实践长期强调裁判文书的释法说理。 2018 年， 
+
+## 最高人民法院发布了 《关于加强和规范裁判文书释法说理的指导意见 》，系统明 
+
+## 确了裁判说理在司法裁判中的重要作用和规范要求 。随着数字法治建设的持续推 
+
+## 进和司法人工智能的不断发展 ，裁判文书的说理功能被置于新的技术与制度语境 
+
+## 之中 。裁判文书日益被用于类案检索 、裁判评价 、法律监督以及辅助决策等场景 。
+
+## 裁判文书中的法律论证结构成为理解司法决策机制 、评估裁判质量以及实现司法 
+
+## 智能化的关键切入点。 
+
+## 然而 ，现有司法人工智能研究大多集中于裁判结果预测或裁判文书生成 ，对
+
+## 裁判说理的处理通常止步于文本层面的统计特征 ，缺乏对论证内部结构 、推理关 
+
+## 系及规范约束的精细刻画 。这种处理方式 ，虽然在技术上取得了一定效果 ，却难 
+
+## 以回应司法决策所固有的可解释性需求 ，也难以支撑可审查的智能裁判系统 。在
+
+## 此背景下 ，对裁判文书中的法律论证结构进行系统标注 ，就构成了连接规范法学 
+
+## 与计算法学的桥梁 。通过对裁判文书中论证要素及其相互关系进行明确标注 ，可
+
+## 以将原本隐含于自然语言中的推理过程转化为可观察 、可分析 、可计算的结构化 
+
+## 对象 。这不仅为法律论证理论提供了经验层面的验证与修正基础 ，也为后续的论 
+
+## 证挖掘 、论证评估 、论辩结论计算及自动生成等研究奠定了数据和方法前提 ，从
+
+## 而推动相关路径的可解释法律人工智能的研究。 
+
+## 1.2 目标 
+
+## 本指南旨在提出一套面向中文裁判文书说理部分的法律论证结构标注与图 
+
+## 示规范 ，为人工标注 、数据构建以及相关研究提供统一 、可复现 、可扩展的操作 
+
+## 标准。具体而言，本指南的目标包括：  
+
+> 
+
+## 明确法律论证的基本要素，并设计相应的属性标签体系。通过对裁判文 
+
+## 书中不同类型论证要素的区分，识别并标注其在论证中的性质与功能， 
+
+## 为理解裁判说理的内部构成提供清晰的分析单元； 3 
+
+> 
+
+## 明确法律论证中各论证要素之间的关系类型及其标注规则。重点刻画论 
+
+## 证要素之间的支持、组合、反对等基本关系，揭示裁判理由中推理展开 
+
+## 的方式与路径；  
+
+> 
+
+## 通过图示方式刻画法律论证的整体结构。在要素标注与关系标注的基础 
+
+## 上，将裁判文书中的论证过程转化为直观、可理解的结构化图示，以展 
+
+## 示裁判结论形成的逻辑脉络；  
+
+> 
+
+## 为后续相关研究与应用奠定统一基础。通过形成规范化的标注与图示体 
+
+## 系，为法律论证的自动挖掘、评估、（论辩结论）计算与生成等进一步 
+
+## 研究提供数据与方法基础。 
+
+## 1.3 意义 
+
+## 对裁判文书中法律论证结构进行标注与图示 ，对于法学教育 、法学研究 、裁
+
+## 判说理规范化以及法律人工智能开发具有重要意义。 
+
+## 1.3.1 法学教育 
+
+## 在法学教育中，裁判文书始终是培养法律思维和法律论证能力的重要素材 ，
+
+## 但学生往往难以把握裁判理由的内部结构 ，只能停留在对结论或个别论证片段的 
+
+## 理解上 。通过引入法律论证结构的标注与图示 ，本指南为裁判文书教学提供了一 
+
+## 种直观 、可操作的教学工具 。借助图示化的论证结构 ，学生可以清晰地看到事实 
+
+## 命题 、规范命题以及裁判结论之间的推理关系 ，从而更好地理解裁判说理的展开 
+
+## 方式 。这不仅有助于提升学生对裁判文书的阅读能力 ，也有助于其在写作与论证 
+
+## 中形成结构化、规范化的法律思维。 
+
+## 1.3.2 法学研究 
+
+## 对于法学研究者而言 ，本指南为裁判说理研究提供了一种可结构化 、可比较 、
+
+## 可积累的分析方法 。长期以来 ，关于裁判理由和法律论证的研究 ，多依赖抽象规 
+
+## 范分析或个案分析 ，研究结论往往建立在整体理解或经验判断之上 ，难以在不同 
+
+## 案件之间进行系统比较 。通过对法律论证要素及其关系的规范化标注 ，本指南使 
+
+## 裁判文书中的论证过程得以被拆解 、重组和再现 ，从而为法律论证理论 、法律方 
+
+## 法论以及裁判理由的实证研究提供可反复检验的研究材料 。这种方法有助于揭示 
+
+## 不同案件 、不同法官乃至不同法院在论证结构上的共性与差异 ，推动相关研究从 
+
+## 抽象分析向更精细化、实证化的方向发展。 4
+
+## 1.3.3 裁判说理规范化 
+
+## 在司法实践层面 ，法律论证结构的标注与图示有助于提升裁判说理的透明度 
+
+## 与可检验性 。通过结构化呈现裁判理由 ，可以更直观地展示裁判结论的论证基础 ，
+
+## 有助于当事人和社会公众理解裁判逻辑 ，从而为裁判质量评估 、裁判监督提供合 
+
+## 理基础。 
+
+## 1.3.4 司法人工智能建设 
+
+## 在司法人工智能建设中 ，法律论证结构标注具有基础性和前提性的意义 。与
+
+## 以结果预测为导向的模型不同 ，面向司法应用的人工智能系统必须能够说明其推 
+
+## 理依据和论证路径 ，以满足法律对可解释性 、规范性和责任可追溯性的要求 。本
+
+## 指南通过对法律论证要素、关系及其结构的系统标注，为法律论证的自动挖掘 、
+
+## 表示 、计算 、评估与生成提供了统一的数据基础和方法参照 。这不仅有助于训练 
+
+## 和验证可解释的司法人工智能模型 ，也为评价此类模型的合理性与合规性提供了 
+
+## 明确标准，从而在技术发展与法治要求之间建立起稳定的连接机制。 
+
+## 1.4 适用对象 
+
+## 本指南所提出的法律论证结构标注与图示规范 ，适用于围绕中文裁判文书说 
+
+## 理部分开展的多种研究与应用场景，主要面向以下对象：  
+
+> 
+
+## 法学研究者。本指南适用于从事裁判理由、法律论证、法律方法论以及 
+
+## 司法制度研究的法学研究者。通过使用本指南，研究者可以对裁判文书 
+
+## 中的法律论证过程进行系统化、结构化分析，从而在个案研究、比较研 
+
+## 究或实证研究中获得可复现的分析结果。  
+
+> 
+
+## 法学教师与学生。本指南适用于在法学教育中使用裁判文书作为教学素 
+
+## 材的教师与学习者，尤其适用于法律方法、案例分析、裁判文书研读等 
+
+## 课程。通过标注与图示方式呈现裁判说理结构，有助于教学对象直观理 
+
+## 解法律论证的展开过程，提升裁判文书阅读与法律论证能力。  
+
+> 
+
+## 社会公众与相关法律工作者。本指南适用于拟从事裁判质量评估的相关 
+
+## 人员。通过对裁判文书法律论证结构的标注与图示，可以辅助理解裁判 
+
+## 理由的逻辑结构，为评估裁判文书质量提供标准与依据。  
+
+> 
+
+## 法律与人工智能交叉研究人员。本指南适用于从事法律与人工智能交叉 
+
+## 研究的技术人员与跨学科团队，尤其适用于开展法律论证自动挖掘、评 5
+
+## 估、计算与生成等研究工作。该指南可作为人工标注、数据构建和模型 
+
+## 评估的基础规范，帮助相关研究在满足技术需求的同时，保持对法律规 
+
+## 范性与可解释性的关注。 
+
+# 2. 标注对象、范围与颗粒度 
+
+## 2.1 标注对象 
+
+## 本指南的标注对象为司法裁判文书（判决书），主要包括中国裁判文书网 
+
+## （ https://wenshu.court.gov.cn ） 的 原 始 判 决 书 与 人 民 法 院 案 例 库 
+
+## （https://rmfyalk.court.gov.cn/ ）中的指导性案例与参考案例。 
+
+## 2.2 标注范围 
+
+## 本指南区分法律论证标注与案件信息标注。 
+
+## 2.2.1 法律论证标注范围 
+
+## 法律论证标注范围为原始判决书、指导性案例与参考案例的裁判理由部分 。
+
+## 下面依次给出原始判决书 、指导性案例与参考案例的示例 ，通过示例进一步明确 
+
+## 标注范围。 
+
+## 【文书一：原始判决书示例】 
+
+余某、徐某劳务合同纠纷民事一审民事判决书 
+
+江苏省南京市鼓楼区人民法院 
+
+民事判决书 
+
+(2023) 苏 0106 民初 18909 号
+
+原告：余某。 
+
+被告：徐某。 
+
+原告余某与被告徐某劳务合同纠纷一案 ,本院于 2023 年 12 月 8 日立案后 ，依
+
+法适用小额诉讼程序 ，公开开庭进行了审理 。原告余某到庭参加诉讼 。被告徐某 
+
+经本院传票传唤，无正当理由未到庭参加诉讼。本案现已审理终结。 
+
+原告余某向本院提出诉讼请求：被告向原告支付劳务报酬 11600 元。事实和 
+
+理由： 2019 年至 2021 年底期间，原告接受被告的雇请，在南京市鼓楼区干活， 
+
+期间陆续支付了一部分的劳务报酬 。工程结束后 ，双方结算确认原告的劳务报酬 
+
+尚余 17000 元尾款未支付。 2022 年 1 月 10 日，被告签署欠条一份，表明：今欠 
+
+原告人工工资 17000 元。 2022 年 1 月 17 日，原告再次受被告雇佣在南京某 6 幢
+
+做搬运材料的工作 ，劳务报酬共计 600 元。至此 ，被告欠原告劳务报酬共计 1760 0
+
+元。2022 年 1 月 30 日，被告通过微信向原告转账支付劳务报酬 6000 元。直至今 
+
+日，被告仍欠付原告劳务报酬共计 11600 元，原告多次催讨，被告不接电话、不 6
+
+回微信消息试图逃避责任 。为维护原告的合法权益 ，特向法院提起诉讼 ，望判如 
+
+所请。 
+
+被告徐某未到庭。 
+
+本院经审理认定事实如下： 2022 年 1 月 10 日，被告向原告出具一份欠条， 
+
+内容如下：今欠余某人工工资壹万柒仟元正 (17000 元)。
+
+2022 年 1 月 30 日，案外人徐某 (原告称其系徐某之子 )通过微信转账向原告支 
+
+付 6000 元。 
+
+庭审中 ，原告称 ：另外 600 元系欠条出具后提供劳务的报酬 ，相应证据有被 
+
+告在微信中向原告发送的一个定位，该定位就是提供劳务的地址。 
+
+本院认为 ，依法成立的合同 ，自成立时生效 。当事人应当按照约定全面履行 
+
+自己的义务 。当事人一方未支付价款 、报酬 、租金 、利息 ，或者不履行其他金钱 
+
+债务的 ，对方可以请求其支付 。本案中 ，原、被告之间系劳务合同关系 ，原告已 
+
+依约提供劳务 ，被告应按照原 、被告之间的约定给付劳务报酬 。根据原告提交的 
+
+欠条、微信转账记录可以认定，被告尚欠原告劳务报酬 11000 元，被告应向原告 
+
+支付该 11000 元。原告主张另有劳务报酬 600 元，但其提供的证据不足以证明其 
+
+主张，对其主张被告支付该 600 元劳务报酬的请求，本院不予支持。 
+
+综上所述，依照《中华人民共和国民法典》第五百零二条、第五百零九条 、
+
+第五百七十九条 ，《中华人民共和国民事诉讼法 》第四十条第二款 、第六十七条 
+
+第一款、第一百四十七条、第一百六十五条规定，判决如下： 
+
+一、被告徐某于本判决生效之日起三日内支付原告余某劳务报酬 11000 元； 
+
+二、驳回原告余某的其他诉讼请求。 
+
+如果未按本判决指定的期间履行给付金钱义务 ，应当依照 《中华人民共和国 
+
+民事诉讼法》第二百六十条规定，加倍支付迟延履行期间的债务利息。 
+
+案件受理费 45 元，由原告余某负担 7.50 元，由被告徐某负担 37.50 元。 
+
+本判决为终审判决。 
+
+审判员 XX 
+
+二〇二三年十二月二十八日 
+
+书记员 XXX 
+
+## 从判决书示例可以看出 ，原始判决书没有显式结构 ，但根据最高人民法院发 
+
+## 布的文书样式制作的判决书一般可以分为首部 （标题 、案号 、当事人信息 、案件 
+
+## 概述 ）、正文 （事实 、理由 、判决结果 ）与尾部 （诉讼费用负担 、署名 、日期等 ）
+
+## 三大部分 。裁判理由体现为正文部分的 “本院认为 ”之后 、“判决如下 ”所在句 
+
+## 子之前的文本内容。 
+
+## 【文书二：指导性案例示例】 
+
+上海中原物业顾问有限公司诉陶德华居间合同纠纷案 7
+
+（最高人民法院审判委员会讨论通过 2011 年 12 月 20 日发布） 
+
+关键词 民事 居间合同 二手房买卖 违约 
+
+裁判要点 
+
+房屋买卖居间合同中关于禁止买方利用中介公司提供的房源信息却绕开该 
+
+中介公司与卖方签订房屋买卖合同的约定合法有效 。但是 ，当卖方将同一房屋通 
+
+过多个中介公司挂牌出售时 ，买方通过其他公众可以获知的正当途径获得相同房 
+
+源信息的 ，买方有权选择报价低 、服务好的中介公司促成房屋买卖合同成立 ，其
+
+行为并没有利用先前与之签约中介公司的房源信息，故不构成违约。 
+
+相关法条 
+
+《中华人民共和国合同法》第四百二十四条 
+
+基本案情 
+
+原告上海中原物业顾问有限公司 （简称中原公司 ）诉称 ：被告陶德华利用中 
+
+原公司提供的上海市虹口区株洲路某号房屋销售信息 ，故意跳过中介 ，私自与卖 
+
+方直接签订购房合同，违反了《房地产求购确认书》的约定，属于恶意 “跳单 ”行
+
+为，请求法院判令陶德华按约支付中原公司违约金 1.65 万元。 
+
+被告陶德华辩称 ：涉案房屋原产权人李某某委托多家中介公司出售房屋 ，中
+
+原公司并非独家掌握该房源信息 ，也非独家代理销售 。陶德华并没有利用中原公 
+
+司提供的信息，不存在 “跳单 ”违约行为。 
+
+法院经审理查明 ：2008 年下半年 ，原产权人李某某到多家房屋中介公司挂牌 
+
+销售涉案房屋 。2008 年 10 月 22 日，上海某房地产经纪有限公司带陶德华看了该 
+
+房屋 ；11 月 23 日，上海某房地产顾问有限公司 (简称某房地产顾问公司 )带陶德华 
+
+之妻曹某某看了该房屋； 11 月 27 日，中原公司带陶德华看了该房屋，并于同日 
+
+与陶德华签订了《房地产求购确认书》。该《确认书》第 2.4 条约定，陶德华在 
+
+验看过该房地产后六个月内 ，陶德华或其委托人 、代理人 、代表人 、承办人等与 
+
+陶德华有关联的人 ，利用中原公司提供的信息 、机会等条件但未通过中原公司而 
+
+与第三方达成买卖交易的 ，陶德华应按照与出卖方就该房地产买卖达成的实际成 
+
+交价的 1% ，向中原公司支付违约金。当时中原公司对该房屋报价 165 万元，而 
+
+某房地产顾问公司报价 145 万元，并积极与卖方协商价格。 11 月 30 日，在某房 
+
+地产顾问公司居间下 ，陶德华与卖方签订了房屋买卖合同 ，成交价 138 万元 。后
+
+买卖双方办理了过户手续，陶德华向某房地产顾问公司支付佣金 1. 38 万元。 
+
+裁判结果 
+
+上海市虹口区人民法院于 2009 年 6 月 23 日作出 （2009 ）虹民三 （民）初字 
+
+第 912 号民事判决 ：被告陶德华应于判决生效之日起十日内向原告中原公司支付 
+
+违约金 1.38 万元。宣判后，陶德华提出上诉。上海市第二中级人民法院于 200 9
+
+年 9 月 4 日作出（ 2009 ）沪二中民二（民）终字第 1508 号民事判决：一、撤销 
+
+上海市虹口区人民法院 (2009) 虹民三 (民)初字第 912 号民事判决 ；二、中原公司要 
+
+求陶德华支付违约金 1.65 万元的诉讼请求，不予支持。 8
+
+裁判理由 
+
+法院生效裁判认为 ：中原公司与陶德华签订的 《房地产求购确认书 》属于居 
+
+间合同性质，其中第 2.4 条的约定，属于房屋买卖居间合同中常有的禁止 “跳单 ”
+
+格式条款，其本意是为防止买方利用中介公司提供的房源信息却 “跳”过中介公司 
+
+购买房屋 ，从而使中介公司无法得到应得的佣金 ，该约定并不存在免除一方责任 、
+
+加重对方责任 、排除对方主要权利的情形 ，应认定有效 。根据该条约定 ，衡量买 
+
+方是否 “跳单 ”违约的关键，是看买方是否利用了该中介公司提供的房源信息、机 
+
+会等条件 。如果买方并未利用该中介公司提供的信息 、机会等条件 ，而是通过其 
+
+他公众可以获知的正当途径获得同一房源信息 ，则买方有权选择报价低 、服务好 
+
+的中介公司促成房屋买卖合同成立，而不构成 “跳单 ”违约。本案中，原产权人通 
+
+过多家中介公司挂牌出售同一房屋 ，陶德华及其家人分别通过不同的中介公司了 
+
+解到同一房源信息 ，并通过其他中介公司促成了房屋买卖合同成立 。因此 ，陶德 
+
+华并没有利用中原公司的信息 、机会 ，故不构成违约 ，对中原公司的诉讼请求不 
+
+予支持。 
+
+## 【文书三：参考 案例示例】 
+
+华阴市某股份经济合作社诉华阴市某综合市场管理服务中心 
+
+租赁合同纠纷案 
+
+—— 集体建设用地的出租年限超过二十年的部分无效 
+
+关键词 民事 租赁合同 集体建设用地 租赁年限 二十年 
+
+基本案情 
+
+原告华阴市某股份经济合作社 （以下简称某合作社 ）诉称 ：某合作社与华阴 
+
+市某综合市场管理服务中心 （以下简称某服务中心 ）签订的 《关于修建南环某市 
+
+场租地协议》和《关于南环某市场租地补充协议》中合同租赁期限均为三十年 。
+
+依据 《中华人民共和国民法典 》第七百零五条 “租赁期限部分超过二十年 ，超过二 
+
+十年的部分无效 ”的规定，超过 20 年后的租赁期限的约定应属无效，某服务中心 
+
+应返还租赁的土地 。遂诉至法院 ，请求判令 :1. 某合作社与某服务中心于 2001 年 3
+
+月 8 日签订的 《关于修建南环某市场租地协议 》和《关于南环某市场租地补充协 
+
+议》中租赁期限超过二十年部分，即 2021 年 7 月 1 日至 2030 年 6 月 30 日的租 
+
+赁期限无效； 2. 解除涉案合同，并支租赁费用等。 
+
+被告某服务中心辩称：案涉合同的标的物是土地，不受二十年期限的限制 。
+
+按照合同约定 ，某服务中心是承租南寺村土地修建建筑物 ，应适用国土资源部 《关
+
+于规范国有土地租赁若干意见》（国土资发〔 1999 〕222 号）第四条的规定，即 
+
+某服务中心租赁土地后修建建筑物的行为 ，应参照适用长期租期的续期 ，合同约 
+
+定的三十年土地使用期限未超过同类用途土地出让的最高年限，符合要求。 
+
+法院经审理查明 ，2001 年 3 月 8 日，华阴市某村南寺组 （甲方 ）与某服务中 9
+
+心（乙方 ）签署 《关于修建南环某市场租地协议 》：一、为了带动甲方商品市场 、
+
+由乙方筹建处租甲方地 1.79 亩…… 。二、由乙方筹建处负责修建蔬菜大棚 16 间，
+
+以及道路 9 米宽 ，南北长 78 米，及人行道等工程 。三、租金每亩每年地价为 150 0
+
+元，共计每年租金为贰仟柒佰元整 。四、付款办法 ：每年 12 月底一次付清 。五、
+
+租用期为叁拾年 ，从 2001 年 7 月 1 日起至 2030 年 6 月底止 。后有华阴市某村民 
+
+委员会盖章、华阴市某村三组吕某发签字盖章、某服务中心盖章，苗某放签字 。
+
+2001 年 5 月 18 日，华阴市某村南寺组（甲方）与某服务中心（乙方）签署《关 
+
+于南环某市场租地补充协议 》：…… 四、租用期限 ：租期为叁拾年 ，从 2001 年 7
+
+月 1 日起至 2030 年 6 月 30 日止 。后有华阴市某村民委员会盖章 、华阴市某村三 
+
+组吕某发签字盖章、某服务中心盖章，苗某放签字。 2018 年 5 月 14 日，某服务 
+
+中心缴纳南环某市场地皮款 23850 元，缴费期限是 2018 年 5 月至 2020 年 5 月。
+
+华阴市某村、华阴市某办结算中心出具华阴市农村集体经济组织收款收据一张 。
+
+另查明 ，华阴市某村南寺组即华阴市某村三组 ，华阴市某股份经济合作社系 
+
+华阴市某村三组成立的集体经济组织 。华阴市市土地利用现状图显示涉案地块的 
+
+性质为建设用地。 
+
+陕西省华阴市人民法院于 2023 年 6 月 7 日作出 (2023) 陕 0582 民初 128 号民 
+
+事判决 ：一、2001 年 3 月 8 日某合作社与某服务中心签订的 《关于修建南环某市 
+
+场租地协议 》和 2001 年 5 月 18 日某合作社与某服务中心签订的 《关于南环某市 
+
+场租地补充协议》中租赁期限超过 20 年部分，即 2021 年 7 月 1 日至 2030 年 6
+
+月 30 日的租赁期限无效；二、解除某合作社与某服务中心签署的涉案合同，某 
+
+服务中心返还承租的全部土地 ，并支付自 2020 年 6 月 1 日至 2023 年 2 月 7 日期 
+
+间的租金 21389 元及 2023 年 2 月 8 日起至实际返还土地之日的土地占有使用费 
+
+每日 21.78 元；三、驳回某合用社的其他诉讼请求。宣判后，某服务中心不服， 
+
+提起上诉。陕西省渭南市中级人民法院于 2023 年 11 月 28 日作出 (2023) 陕 058 2
+
+民初 128 号民事判决：驳回上诉，维持原判。 
+
+裁判理由 
+
+本案的争议焦点是 ：案涉集体建设用地的出租年限超过二十年的部分是否有 
+
+效，以及案涉合同何时解除。关于第一个争议焦点。《中华人民共和国民法典 》
+
+第三百六十一条规定 ：“集体所有的土地作为建设用地的 ，应当依照土地管理的法 
+
+律规定办理。 ”《中华人民共和国土地管理法》第六十三条第四款规定： “集体经 
+
+营性建设用地的出租，集体建设用地使用权的出让及其最高年限、转让、互换 、
+
+出资 、赠与 、抵押等 ，参照同类用途的国有建设用地执行 。具体办法由国务院制 
+
+定。 ”《中华人民共和国民法典》第四百六十七条第一款规定： “本法或者其他法 
+
+律没有明文规定的合同 ，适用本编通则的规定 ，并可以参照适用本编或者其他法 
+
+律最相类似合同的规定。 ”第七百零五条规定： “租赁期限不得超过二十年，超过 
+
+二十年的超过部分无效 。”本案案涉协议及补充协议涉及的土地地块性质为建设用 
+
+地，原被告双方签订的案涉合同属上述法律规定的集体建设用地的出租合同 ，出10 
+
+租年限应当适用国务院制订的办法 。目前 ，国务院并未制定有关办法或规定 。本
+
+案双方签订的集体建设用地出租合同 ，在国务院没有制定有关办法或规定的情况 
+
+下，集体建设用地的出租期限应当依照 《中华人民共和国民法典 》有关租赁期限 
+
+的规定进行处理 ，即案涉 《关于修建南环某市场租地协议 》及《关于南环某市场 
+
+租地补充协议》的出租年限超过二十年的部分无效。 
+
+关于第二个争议焦点 。《中华人民共和国民法典 》第七百三十四条规定 ：“租
+
+赁期限届满 ，承租人继续使用租赁物 ，出租人没有提出异议的 ，原租赁合同继续 
+
+有效 ，但是租赁期限为不定期 。”本案双方签订的 《关于修建南环某市场租地协议 》
+
+及《关于南环某市场租地补充协议 》于 2021 年 6 月 30 日到期后 ，被告华阴市某 
+
+综合市场管理服务中心继续占有使用案涉市场 ，原告华阴市某股份经济合作社并 
+
+未采取措施 、提出异议 ，故双方签订的案涉合同继续有效 ，并且租赁期限变为不 
+
+定期 。《中华人民共和国民法典 》第七百三十条规定 ：“当事人对租赁期限没有约 
+
+定或者约定不明确 ，依据本法第五百一十条的规定仍不能确定的 ，视为不定期租 
+
+赁；当事人可以随时解除合同 ，但是应当在合理期限之前通知对方 。”第五百六十 
+
+五条规定 ：“当事人一方未通知对方 ，直接以提起诉讼或者申请仲裁的方式依法主 
+
+张解除合同 ，人民法院或者仲裁机构确认该主张的 ，合同自起诉状副本或者仲裁 
+
+申请书副本送达对方时解除 。”原告华阴市某股份经济合作社在案涉不定期租赁合 
+
+同的履行过程中于 2023 年 2 月向法院提起诉讼要求解除案涉合同，被告华阴市 
+
+某综合市场管理服务中心于 2023 年 2 月 7 日收到起诉状副本，故依据上述法律 
+
+规定，双方租赁合同应当认定为于 2023 年 2 月 7 日解除。结合本案土地占用等 
+
+事实，法院依法作出如上判决。 
+
+裁判要旨 
+
+根据 《中华人民共和国土地管理法 》的规定 ，集体建设用地的出租年限参照 
+
+同类用途的国有建设用地执行 ，具体办法由国务院制定 。因目前国务院没有制定 
+
+有关国有建设用地出租年限的办法或规定 ，故集体建设用地的出租年限应当适用 
+
+民法典中有关租赁期限的规定 ，即集体建设用地的租赁期限不得超过二十年 ，超
+
+过二十年的超过部分无效。 
+
+关联索引 
+
+《中华人民共和国民法典》第 361 条、第 467 条、第 705 条
+
+《中华人民共和国土地管理法》（ 2019 年修正）第 63 条
+
+一审：陕西省华阴市人民法院 (2023) 陕 0582 民初 128 号民事判决 
+
+（2023 年 6 月 7 日） 
+
+二审：陕西省渭南市中级人民法院 (2023) 陕 05 民终 2039 号民事判决 
+
+（2023 年 11 月 28 日） 
+
+## 可以看出 ，在指导性案例与参考案例的文书中 ，裁判理由部分都具有清晰的 
+
+## 文本边界 。在上述文书一 、文书二 、文书三中 ，下划线部分为法律论证标注范围 。11 
+
+## 2.2.2 案例信息标注 
+
+## 为方便检索 、整理与统计分析 ，对于原始判决书 ，标注如下案例信息 ：案号 、
+
+## 裁判法院、法院层级、审级、裁判日期、案件性质、案由、裁判结果类型等。 
+
+## 【表 1：原始判决书案件信息标注内容】 
+
+字段 说明 示例 
+
+案号 判决书首部载明的案号 (2023) 苏 0106 民初 18909 号
+
+裁判法院 作出裁判的人民法院全称 江苏省南京市鼓楼区人民法院 
+
+法院层级 基层 /中级 /高级 /最高 基层法院 
+
+审级 一审 /二审 /再审 一审 
+
+裁判日期 裁判作出的日期 2023 年 12 月 28 日
+
+案件性质 民事 /刑事 /行政 /执行 民事 
+
+案由 案件涉及法律关系性质概括 劳务合同纠纷 
+
+裁判结果类型 全部支持 /部分支持 /驳回 部分支持 
+
+## 对于指导性案例 ，标注如下案例信息 ：案例类型 、案件名称 、发布时间 、案
+
+## 件类型、相关法条、裁判要点。 
+
+## 【表 2：指导性 案例信息标注内容】 
+
+字段 说明 示例 
+
+案例类型 指导性案例 /参考案例 指导性案例 
+
+案件名称 案例标题 上海中原物业顾问有限公司诉陶 
+
+德华居间合同纠纷案 
+
+发布时间 案例发布的日期 2011 年 12 月 20 日
+
+案件类型 民事 /刑事 /行政 /执行 民事 
+
+相关法条 案例文书中载明的相关法条 《中华人民共和国合同法 》第四百 
+
+二十四条 
+
+裁判要点 案件的主要裁判规则 当卖方将同一房屋通过多个中介 
+
+公司挂牌出售时 ，买方通过其他公 
+
+众可以获知的正当途径获得相同 
+
+房源信息的，买方有权选择报价 
+
+低、服务好的中介公司促成房屋买 
+
+卖合同成立 ，其行为并没有利用先 
+
+前与之签约中介公司的房源信息 ，
+
+故不构成违约。 
+
+## 对于参考案例 ，标注如下案件信息 ：案例类型 、案件名称 、入库编号 、案件 
+
+## 类型、相关法条、裁判要旨。 
+
+## 【表 3：参考案例 信息标注内容】 
+
+字段 说明 示例 
+
+案例类型 指导性案例 /参考案例 参考案例 12                 
+
+> 案件名称 案例标题 华阴市某股份经济合作社诉华阴
+> 市某综合市场管理服务中心租赁
+> 合同纠纷案
+> 入库编号 参考案例在人民法院案例库
+> 中的编号
+> 2025-07-2-111-002
+> 案件类型 民事 /刑事 /行政 /执行 民事
+> 相关法条 关联索引部分载明的法条 《中华人民共和国民法典 》第36 1
+> 条、第467 条、第705 条；《中华
+> 人民共和国土地管理法》（ 201 9
+> 年修正）第 63 条
+> 裁判要旨 案件的裁判规则 集体建设用地的出租年限应当适
+> 用民法典中有关租赁期限的规定
+
+## 2.3 颗粒度 
+
+## 本指南所规范的法律论证标注 ，不以自然语言句子作为基本标注单元 ，而是 
+
+## 以“命题（ proposition ）”作为最小标注颗粒度。所谓 “命题 ”，是指在裁判理 
+
+## 由中能够独立表达一个可判断真假的最小语义单元 。命题关注的是裁判说理中承 
+
+## 载的实质判断内容，而非文本中的表面句法形式。 
+
+## 对案例基本信息等非论证要素的标注 ，根据需要可能以词 、句子或段落作为 
+
+## 基本标注单元。 
+
+# 3. 总体标注进路 
+
+## 本指南采用 “命题类型标注 +（命题间）关系标注 +论辩图绘制 ”三阶段标 
+
+## 注进路 。命题角色 （如前提 、子结论 、结论 ）不作为独立标注项目 ，而由命题之 
+
+## 间的关系结构通过图分析自动推导。 
+
+# 4. 命题类型体系 
+
+## 4.1 设计原则 
+
+## 命题类型体系的构建 ，应当服务于裁判文书论证结构的稳定识别与分析 。在
+
+## 设计过程中，本指南遵循以下原则 。
+
+## 4.1.1 最小区分原则 
+
+## 命题类型的划分应当以论证结构分析的实际需要为限 ，仅区分对推理展开具 
+
+## 有决定意义或重要影响的命题类别 。不对语义差异微小 、对推理结构无实质影响 
+
+## 的命题进行过度分类，避免形成过于复杂而缺乏操作性的类型体系。 
+
+## 4.1.2 以裁判文书表达为中心 
+
+## 本体系并非对法律理论结构的重构 ，而是对裁判文书实际论证方式的形式化 13 
+
+## 整理 。因此在子类型的划分与识别中 ，以裁判文书中实际使用的表达方式为基础 ，
+
+## 而非预设某种特定法学理论模型。 
+
+## 4.1.3 支持后续自动化处理 
+
+## 命题类型体系应当为论证挖掘 、结构计算与文本生成等后续工作提供稳定的 
+
+## 中间表示 。因此 ，类型划分应具备可识别性与可重复性 、类型标准应尽可能形式 
+
+## 化、类型数量应控制在可计算范围之内、不依赖高度主观解释。 
+
+## 这些原则与要求为后续基本类型或子类型的更新或扩展提供参考。 
+
+## 4.2 两组基本区分维度与四种基础判断类型 
+
+## 本指南首先 采用 “个别 ”与“一般 ”、“事实 ”与“规范 ”两个相互 独立 的
+
+## 维度， 将法律论证中的判断 分为个别事实判断（ SF ）、一般事实判断（ GF ）、 
+
+## 个别规范判断（ SM ）、一般规范判断（ GM ）四种基础判断类型（表 4）。 
+
+## 【表 4：四种基础判断类型】      
+
+> 个别 一般
+> 事实 个别事实判断（ SF ）一般事实判断（ GF ）
+> 规范 个别规范判断（ SM ）一般规范判断（ GM ）
+
+## 四种基础判断的功能定位：  
+
+> 
+
+## GF ：为规范适用提供经验或背景支撑 ，例如社会常识 、经验法则 、行业 
+
+## 知识、科学规律等。  
+
+> 
+
+## GM ：构成法律论证的规范基础 ，是连接 个案 事实与裁判结论的核心要 
+
+## 素。 
+
+> 
+
+## SF ：关于案件中个别对象的 事实 判断， 是规范适用的前提条件 。 
+
+> 
+
+## SM ：体现法院对本案的规范性评价 ，在法律论证中通常作为结论出现 。
+
+## 4.3 一般规范判断（ GM ）的子类型 
+
+## 在四种基础命题类型中 ，GM 在法律论证中承担最核心的功能 。为提升标注 
+
+## 精度与分析价值，根据来源与效力依据将其进一步区分为法律条文、法律解释 、
+
+## 合同与合同解释 、习惯与行业惯例 、道德与价值观念 、其他规范判断六类 （表 5）。
+
+## 【表 5：一般规范判断的 六种子类型】      
+
+> 代码 名称 定义说明 标志性表述
+> GM-L法律条文 直接来源于成文法规范的
+> 判断 ，包括对法律条文内容
+> 的引用或概括性复述
+> “依照 《×× 法》第×条规
+> 定”14
+
+## 4.4 说明 
+
+## 为增强标注一致性，子类型在标注时应遵循如下原则：  
+
+> 
+
+## 优先匹配原则 ：能明确归入 GM-L 至 GM-M 的，不使用 GM-O 。 
+
+> 
+
+## 不重复标注原则 ：同一规范判断仅选择一个子类型。  
+
+> 
+
+## 以文本显性表达为准 ：不根据背景知识或推测补充规范来源。 
+
+## 此外需要说明的是 ，该子类型体系不是规范效力体系 。其设计目标主要在于 ：
+
+## （1）分析裁判中规范来源的结构分布 ；（2）支持后续自动挖掘 、评估 、生成等 
+
+## 任务。 
+
+# 5. 命题间关系类型 
+
+## 本指南目前设定支持 、反对 、组合 、匹配 、同一 五种关系类型 。这些关系类 
+
+## 型的设定与识别 ，旨在揭示 裁判说理中 声称 的逻辑 联系 ，而非重构推理路径或评 
+
+## 价裁判结论正确性 。
+
+## 5.1 五种关系类型说明 
+
+## 5.1.1 支持关系 
+
+## 支持关系为单一命题或 一个 命题组 为另一命题的成立提供理由 。在裁判文书 
+
+## 中，支持关系的常见表达包括 “因此 ”“所以 ”“据此可以认定 ”“综上 ”“足
+
+## 以证明 ”等。 
+
+## 当一个命题组支持另一命题时 ，这个命题组中的命题可能分别独立地支持后 
+
+## 者，也可能组合地支持后者 。在第一种情况下 ，这个命题组中的任意一个被删除 ，       
+
+> “根据法律规定 ”
+> “法律明确规定 ”
+> GM-I法律解释
+> 对法律条文含义 、适用范围
+> 或适用条件所作的解释性
+> 判断
+> “应当理解为 ”
+> “可以解释为 ”
+> “该条规定的本意在于 ”
+> GM-C合同及合
+> 同解释
+> 来源于合同条款或对合同
+> 条款的规范性解释
+> “双方在合同中约定 ”
+> “根据合同约定 ”
+> “该条款应理解为 ”
+> GM-U习惯与行
+> 业惯例
+> 来源于社会习惯 、交易习惯
+> 或行业通行规则的规范性
+> 判断
+> “按照交易习惯 ”
+> “行业通常做法是 ”
+> “依照行业惯例 ”
+> GM-M道德与价
+> 值观念
+> 基于价值判断 、公序良俗或
+> 基本原则作出的规范性判
+> 断
+> “违反公序良俗 ”
+> “有悖公平原则 ”
+> “违背诚实信用原则 ”
+> GM-O 其他规范
+> 判断
+> 无法稳定归入上述类型的
+> 一般规范判断
+> “根据相关政策精神 ”
+> “依照xx x的管理规定 ”15
+
+## 并不影响其他命题对后者的支持 。在第二种情况下 ，这个命题组中的任意一个被 
+
+## 删除，其他命题则不能支持后者；这个命题组中的命题即为下述组合关系。 
+
+## 5.1.2 组合关系 
+
+## 在实践中 ，单一命题往往不足以支持某一结论 ，多个命题需要共同成立 ，方
+
+## 能构成完整理由 。这种 “缺一不可 ”的共同支持结构 ，即为组合关系 。组合关系 
+
+## 的功能，是刻画多个命题在支持同一结论时的合取结构。 
+
+## 5.1.3 匹配关系 
+
+## 匹配关系是组合关系的一种特殊形态 ，主要发生于规范构成要件与个案事实 
+
+## 之间 。当规范要件中的各要素与案件事实中的相应内容形成对应关系时 ，构成匹 
+
+## 配结构 。匹配关系通常服务于个别规范判断的形成 。匹配关系与普通组合关系的 
+
+## 区别在于 ：普通组合关系通常发生在同类判断之间 ，匹配关系则发生在一般与个 
+
+## 别两个不同性质的判断之间。 
+
+## 5.1.4 反对关系 
+
+## 反对关系是指一个命题或命题组为另一命题的不成立提供理由。在逻辑上 ，
+
+## 反对关系可以理解为对被反对命题之否定命题的支持 。裁判文书中的常见表述为 
+
+## “该主张不能成立 ”“ 本院不予支持 ”“ 不足以证明 ……”“ 不符合 …… 条件 ”
+
+## 等。 
+
+## 5.1.5 同一关系 
+
+## 同一关系是指多个命题在语义上表达同一判断内容 。该关系主要用于处理裁 
+
+## 判文书中的重复表达。 
+
+## 5.2 不同类型关系的基本结构 -无嵌套 
+
+## 由于支持关系 、组合关系等的构成要素可能是一个命题组 ，不同类型关系可 
+
+## 能发生嵌套 。下表给出无嵌套发生时五种类型关系的基本结构与表达方式 （表 6）。
+
+## 【表 6：五种 关系类型的 基本结构与表达形式 】                                              
+
+> 关系类型 基本 结构 表达 形式
+> 支持关系
+> （Support ，S）任意两个命题 pi 、pj 之间的有序对 pi 支持 pj
+> S(pi, pj)
+> 组合关系
+> （Joint ，J）命题集合 {p1, p2, …,pn} （n≥2）p1 、p2 、…… pn 合取
+> J(p 1, p2, ..., pn )
+> 匹配关系
+> （Match ，M）
+> 个别判 断ps与一般判 断pg之间的有
+> 序对
+> ps 匹配 pg
+> M(p s,pg)16
+> 关系类型 基本 结构 表达 形式
+> 反对关系
+> （Attack ，A）任意两个命题 po 、pc 之间的有序对 po 反对 pc
+> A(p o,pc)
+> 同一关系
+> （Identity ，I）
+> 命题集合 {p1, p2, …,pn} （n≥2）（各
+> 成员语义等同 ）I(p1, p2, ..., pn)
+
+## 5.3 不同类型关系的表达形式 -有嵌套 
+
+## 5.3.1 组合关系内嵌于匹配关系 
+
+## 当一般判断 pg 有多个构成要件时 ，可能形成多个个别判断 ps1 、ps2 、…… 、
+
+## psn 与 pg 的对应关系。此时， ps1 、ps2 、…… 、psn 之间构成组合关系，并作为 
+
+## 整体嵌入匹配关系之中。 
+
+## 表示为：  
+
+> 
+
+## M(J( ps1 , ps2, ..., psn), pg) 
+
+## 5.3.2 匹配关系内嵌于组合关系 
+
+## 组合关系的基本形式是 n 个命题之间的组合 。但在某些情形下 ，被组合的对 
+
+## 象并非原始命题，而是若干匹配关系 M1 、M2 、…… 、Mn 。
+
+## 表示为：  
+
+> 
+
+## J(M1, M2, ..., Mn) ，或  
+
+> 
+
+## J(M(ps1, pg1), M(ps2, pg2), ..., M(psn, pgn)) 
+
+## 5.3.3 组合关系内嵌于支持关系 
+
+## 支持关系的基本形式是一个命题为另一个命题提供理由 。但在实践中 ，常出 
+
+## 现多个命题 pi1 、pi2 、…… 、pin 的合取支持另一个命题 pj 。此时 ，pi1 、pi2 、…… 、
+
+## pin 之间构成组合关系，并作为整体嵌入支持关系。 
+
+## 表示为：  
+
+> 
+
+## S(J(pi1, pi2, ...pin), pj) 
+
+## 该结构表示：仅当 pi1 、pi2 、…… 、pin 同时成立时，才能对 pj 构成支持 。
+
+## 应当注意 ：当 n 个命题 pi1 、pi2 、…… 、pin 分别 、独立地支持 pj 时，视为 
+
+## 存在 n 个支持关系，而非组合关系。 
+
+## 表示为：  
+
+> 
+
+## S(pi1, pj)  
+
+> 
+
+## S(pi2, pj)  
+
+> 
+
+## …… 17  
+
+> 
+
+## S(pin, pj) 。
+
+## 两种结构在逻辑上具有本质区别，不能混同。 
+
+## 5.3.4 匹配关系内嵌于支持关系 
+
+## 一般而言 ，当规则适用于个案时 ，会形成一般判断 pg 与个别判断 ps （或若 
+
+## 干个别判断 ps1 、ps2 、…… 、psn 的合取）对结论 pj 的支持结构。此时 pg 与 ps 
+
+## （或 ps1 、ps2 、…… 、psn 的合取 ）之间形成匹配关系 ，并作为整体嵌入支持关 
+
+## 系。 
+
+## 表示为：  
+
+> 
+
+## S(M(ps, pg), pj) ，或  
+
+> 
+
+## S(M(J(ps1, ps2, ..., psn), pg), pj) 
+
+## 5.3.5 支持关系内嵌于反对关系 
+
+## 当命题 po 反对的对象为支持关系 S(pi, pj) 本身，而非命题 pi 或 pj 时，应将 
+
+## 支持关系作为整体内嵌进反对关系。 
+
+## 表示为：  
+
+> 
+
+## A(po, S(pi, pj)) 
+
+## 该结构表示： po 否定 pi 对 pj 的支持效力，而非直接否定 pi 或 pj 。
+
+## 5.3.6 多层嵌套 
+
+## 多层嵌套结构应依据上述基本形式逐层展开表达。 
+
+## 若某一关系的作用对象为另一关系 ，则应将该关系完整保留为一个嵌套单元， 
+
+## 再纳入更高层级的关系结构中 。表示时 ，应保持括号层级与逻辑层级一致 ，不得 
+
+## 跨层合并或省略中间结构。 
+
+# 6. 法律论证结构的图示规则 
+
+## 6.1 命题节点的图示规则 
+
+## 每个命题对应一个节点，节点以 带框的命题序号 表示 （如 p1 、p2 、…… 、
+
+## pn ）。命题节点本身不表达命题类型信息 （命题类型信息仅存在于标注表或数据 
+
+## 库中，不进入图示）。 
+
+## 6.2 五种基本结构的 图示 方法 
+
+## 在不考虑关系节点之间再次发生关系（即一阶结构）的情况下，支持关系 、18 
+
+## 反对关系、组合关系、匹配关系与同一关系构成五种基本结构。除同一关系外 ，
+
+## 每种关系均有关系节点 。命题节点以矩形表示 ，关系节点以圆形表示 。不同填充 
+
+## 形式区分关系类型：实心圆表示支持，空心圆表示反对，带 “+”圆表示组合或 
+
+## 匹配。下表是五种基本结构的具体图示方法（表 7）。 
+
+## 【表 7：五种基本结构的图示方法 】                 
+
+> 关系类型 图示 方法 示例
+> 支持关系
+> 使用带实心圆节点的有向边表示。
+> 实心圆为支持关系节点 ，箭头方向为 ：支
+> 持者 →被支持命题。
+> （p1 支持 p2 ）
+> 反对关系
+> 使用带空心圆节点的有向边表示。
+> 空心圆为反对关系节点 ，箭头方向为 ：反
+> 对者 →被反对者。
+> （p1 反对 p2 ）
+> 组合关系
+> 使用带 “+”圆节点的无向连线表示。
+> “+”圆为组合关系节点，表示多个命题
+> 之间的合取结构。
+> （p1 、p2 组合）
+> （p1 、p2 、p3 组合 ）
+> 匹配关系
+> 使用带 “+”圆节点的有向边表示 。带“+”
+> 圆为匹配关系节点 ，箭头方向 ：匹配者 →
+> 被反对者。
+> （p1 匹配 p2 ）
+> 同一关系 矩形框内 “/”表示 p1/p2 （p1 、p2 同一）
+
+## 6.3 嵌套图示方法 
+
+## 6.3.1 组合关系内嵌于匹配关系 
+
+## 当若干命题之间首先形成组合关系 ，并且该组合整体作为一个单元参与匹配 
+
+## 时，应当采用 “匹配关系内嵌套组合关系 ”的图示方式 。具体方法为 ：先以 “+”
+
+## 圆节点表示合取结构，再自该 “+”节点向目标命题绘制有向箭头。该 “+”节
+
+## 点同时承担组合关系节点与匹配关系节点的功能。 
+
+## 例 1：设 p3 为一般判断 ，p1 与 p2 为个别判断 。P1、p2 之间构成组合关系 ，
+
+## 并作为整体与 p3 形成匹配关系。 
+
+## 形式化表达： M(J(p 1, p2), p3)
+
+## 图示 为：
+
+## 6.3.2 匹配关系内嵌于组合关系 
+
+## 当若干匹配关系作为整体进一步形成合取结构时 ，应采取 “组合关系内嵌套 19 
+
+## 匹配关系 ”的图示方式。具体方法为：  
+
+> 
+
+## 先分别构造各自独立的匹配关系结构；  
+
+> 
+
+## 将各匹配关系节点视为独立的关系单元；  
+
+> 
+
+## 通过新增 “+”圆节点，将这些匹配关系节点连接为组合关系；  
+
+> 
+
+## 该“+”节点表示多个匹配结果之间的合取关系。 
+
+## 例 2：设个别判断 p1 与一般判断 p2 形成匹配关系 M1 ，个别判断 p3 与一般 
+
+## 判断 p4 形成匹配关系 M2 ，M1 、M2 形成组合关系。 
+
+## 形式化表达： J(M1, M2) ，或 J(M(p1, p2), M(p3, p4)) 
+
+## 图示： 
+
+## 6.3.3 组合关系内嵌于支持关系 
+
+## 当若干命题必须以合取形式共同成立 ，方能支持某一目标命题时 ，应采用 “支
+
+## 持关系内嵌套组合关系 ”的图示方式。具体方法为：  
+
+> 
+
+## 先以 “+”圆节点表示若干命题之间的组合关系（合取结构）；  
+
+> 
+
+## 将该 “+”节点作为整体支持单元；  
+
+> 
+
+## 自该组合节点引出支持关系节点（实心圆 ●）；  
+
+> 
+
+## 支持关系箭头指向被支持命题。 
+
+## 例 3：设命题 p1 与命题 p2 的合取支持 p3 。
+
+## 形式化表达： S(J(p1, p2), p3) 
+
+## 图示： 
+
+## 例 4：设命题 p1 、p2 、p3 的合取支持 p4 。20 
+
+## 形式化表达： S(J(p1, p2, p3), p4) 
+
+## 6.3.4 匹配关系内嵌于支持关系 
+
+## 当某一匹配关系结构整体作为支持单元 ，进一步支持其他命题时 ，应采用 “支
+
+## 持关系内嵌套匹配关系 ”的图示方式。具体方法为：  
+
+> 
+
+## 先构造匹配关系结构 ，个别命题经匹配关系节点指向一般判断；  
+
+> 
+
+## 以被匹配的一般判断节点为支持关系的起点（实心圆 ●） 
+
+> 
+
+## 支持关系箭头指向被支持命题 。
+
+## 值得注意的是 ，虽然支持关系在图示上自一般判断节点发出 ，但其论证根据 
+
+## 系该规范已通过匹配关系在个案中获得满足 。图示为结构简化表达 ，并不改变其 
+
+## 层级逻辑。 
+
+## 例 5：设个别判断 p1 匹配一般判断 p2 ，p1 、p2 的合取支持 p3 。
+
+## 形式化表达： S(M(p1, p2), p3) 
+
+## 图示： 
+
+## 6.3.5 支持关系内嵌于反对关系 
+
+## 当某一命题并非直接反对另一命题 ，而是反对该命题之间的支持关系时 ，应
+
+## 采用 “反对关系内嵌套支持关系 ”的图示方式。具体方法为：  
+
+> 
+
+## 先构造支持关系结构 ； 
+
+> 
+
+## 将反对关系箭头指向该支持关系节点（ ●）； 
+
+> 
+
+## 反对关系使用空心圆节点 （○），箭头方向为 ：反对命题 → 被反对之支 
+
+## 持关系节点 。
+
+## 例 6：设命题 p1 支持命题 p2 ，命题 p3 反对 p1 与 p2 之间的支持关系。 
+
+## 形式化表达： A(p3, S(p1, p2)) 21 
+
+## 图示： 
+
+## 6.3.6 多重嵌套 
+
+## 当一个论证结构中同时存在两个以上层级的关系嵌套时 ，应按照关系层级自 
+
+## 内而外逐层构造，并保持每一层关系节点的独立性。 
+
+## 例 7：设个别判断 p1 、p2 、p3 匹配一般判断 p4 ，p1 、p2 、p3 与 p4 的合取 
+
+## 支持 p5 。
+
+## 形式化表达： S(M(J(p1, p2, p3), p4), p5) 
+
+## 图示： 
+
+# 7. 法律论证标注示例：文书一的标注全流程 
+
+## 7.1 标注范围确定 
+
+## 根据指南，确定标注范围如下： 
+
+【依法成立的合同 ，自成立时生效 。当事人应当按照约定全面履行自己的义 
+
+务。当事人一方未支付价款、报酬、租金、利息，或者不履行其他金钱债务的 ，
+
+对方可以请求其支付 。本案中 ，原、被告之间系劳务合同关系 ，原告已依约提供 
+
+劳务 ，被告应按照原 、被告之间的约定给付劳务报酬 。根据原告提交的欠条 、微
+
+信转账记录可以认定，被告尚欠原告劳务报酬 11000 元，被告应向原告支付 该
+
+11000 元。原告主张另有劳务报酬 600 元，但其提供的证据不足以证明其主张， 
+
+对其主张被告支付该 600 元劳务报酬的请求，本院不予支持。 】22 
+
+## 7.2 命题拆分编号与命题类型标注 
+
+## 【表 8：文书一命题拆分、编号与类型标注 】
+
+命题序号 命题内容 命题 类型 
+
+p1 依法成立的合同，自成立时生效 GM-L 
+
+p2 当事人应当按照约定全面履行自己的义务 GM-L 
+
+p3 当事人一方未支付价款 、报酬 、租金 、利息 ，或
+
+者不履行其他金钱债务的 ，对方可以请求其支付 
+
+GM-L 
+
+p4 原、被告之间系劳务合同关系 SM 
+
+p5 原告已依约提供劳务 SF 
+
+p6 被告应按照原、被告之间的约定给付劳务报酬 SM 
+
+p7 被告尚欠原告劳务报酬 11000 元 SF 
+
+p8 被告应向原告支付该 11000 元 SM 
+
+p9 原告主张另有劳务报酬 600 元 SF 
+
+p10 其提供的证据不足以证明其主张 SF 
+
+p11 对其主张被告支付该 600 元劳务报酬的请求 ，本
+
+院不予支持 
+
+SM 
+
+注： 1，p4 中“劳务合同关系 ”为法律关系，因此 p4 标注为 SM （个别规范判断） ；
+
+2，命题的 “应”“应当 ”等道义概念是其为规范判断的典型标志 ，p6 、p8 标注为 SM 。
+
+## 7.3 关系标注 
+
+## 【表 9：文书一关系标注 】
+
+关系类型 关系内容 
+
+组合关系 J(p4, p5); J(p6, p7) 
+
+匹配关系 M(J(p4, p5), p2); M(J(p6, p7), p3) 
+
+支持关系 S(M(J(p4, p5), p2), p6); S( M(J(p6, p7), p3) , p8); 
+
+S(p10, p11) 
+
+反对关系 无
+
+同一关系 无
+
+## 7.4 论证图示 
+
+## 该示例包含两个论证，分别图示如下。 
+
+## 图示 1：23  
+
+> 图示 2：
+
+# 8. 标注流程与一致性控制 
+
+## 8.1 总体原则 
+
+## 标注工作以 “可操作 、可复现 、可检验 ”为基本原则 ，围绕法律论证结构的 
+
+## 稳定识别与一致表达展开。标注流程强调：  
+
+> 
+
+## 概念先行：所有标注标签均需有清晰的法律论证学含义界定，避免仅凭 
+
+## 语言直觉操作；  
+
+> 
+
+## 流程约束：通过分阶段、分角色的流程设计，降低个人理解差异对标注 
+
+## 结果的影响；  
+
+> 
+
+## 一致性控制 ：将一致性检验嵌入标注全过程 ，而非仅作为事后统计指标 。24 
+
+## 8.2 标注流程设计 
+
+## 标注流程采取 “训练 —试标 —正式标注 —复核修订 ”的四阶段结构。 
+
+## 8.2.1 标注员培训与指南学习 
+
+## 在正式标注前，对所有标注员开展统一培训，内容包括：  
+
+> 
+
+## 各类标注对象的定义与区分标准；  
+
+> 
+
+## 标注指南的逐条讲解，结合正反例 （如有） 进行说明；  
+
+> 
+
+## 常见歧义情形与处理原则。  
+
+> 
+
+## 培训结束后，要求标注员独立阅读标注指南，并完成理解确认。 
+
+## 8.2.2 试标阶段与指南校准 
+
+## 选取一定数量的裁判文书作为试标语料 ，由多名标注员独立完成标注 。试标 
+
+## 阶段的目的不在于产出数据，而在于：  
+
+> 
+
+## 检验标注指南的可操作性；  
+
+> 
+
+## 暴露高分歧标签与高不确定情形；  
+
+> 
+
+## 发现需要进一步细化或合并的标注规则。 
+
+## 对试标结果进行集中讨论 ，形成修改意见 ，对标注指南进行一次或多次校准 ，
+
+## 直至分歧主要集中于可接受范围内。 
+
+## 8.2.3 正式标注与双人独立标注 
+
+## 在正式标注阶段，采用 “双人独立标注 ”机制：  
+
+> 
+
+## 每一标注文本至少由两名标注员在相互不知情的情况下独立完成；  
+
+> 
+
+## 标注员仅依据最终版标注指南进行操作，不得临时引入个人规则；  
+
+> 
+
+## 标注结果以结构化形式保存，便于后续对齐与比较。 
+
+## 8.2.4 冲突处理与专家复核 
+
+## 对双人标注结果进行自动或半自动比对 ，识别不一致标注点 ，并按类型分类 ： 
+
+> 
+
+## 标签选择不一致；  
+
+> 
+
+## 标注边界不一致；  
+
+> 
+
+## 关系指向或方向不一致。 
+
+## 对于一般性分歧 ，由标注员在记录理由的基础上协商解决 ；对于涉及核心概 
+
+## 念理解的分歧 ，引入项目负责人或领域专家进行裁决 ，并同步更新 “疑难问题说 
+
+## 明文档 ”。25 
+
+## 8.3 一致性控制机制 
+
+## 8.31 一致性指标与监测 
+
+## 在标注过程中 ，定期计算标注一致性指标 ，用于监测不同标注员之间的一致 
+
+## 程度 。
+
+## 8.3.2 持续反馈与滚动修订 
+
+## 一致性结果与典型分歧案例定期反馈给标注员 ，通过小规模讨论不断强化共 
+
+## 同理解。在不改变既有数据可比性的前提下，对标注指南进行必要的补充说明 。
+
+## 8.3.3 版本控制与可追溯性 
+
+## 对标注指南、标注数据和冲突裁决结果实行版本化管理，确保：  
+
+> 
+
+## 任一标注结果均可追溯至对应的指南版本；  
+
+> 
+
+## 重要规则变动具有明确的时间节点和适用范围；  
+
+> 
+
+## 为后续模型训练、评估与复现实验提供可靠依据。

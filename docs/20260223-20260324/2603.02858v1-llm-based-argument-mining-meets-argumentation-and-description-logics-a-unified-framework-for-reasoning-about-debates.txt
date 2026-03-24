@@ -1,0 +1,652 @@
+Title: LLM-based Argument Mining meets Argumentation and Description Logics: a Unified Framework for Reasoning about Debates
+
+URL Source: https://arxiv.org/pdf/2603.02858v1
+
+Published Time: Wed, 04 Mar 2026 02:11:34 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+# LLM-based Argument Mining meets Argumentation and Description Logics: a Unified Framework for Reasoning about Debates 
+
+# Gianvincenzo Alfano , Sergio Greco , Lucio La Cava ,
+
+# Stefano Francesco Monea , Irina Trubitsyna 
+
+# Department of Informatics, Modeling, Electronics and System Engineering University of Calabria, Italy {g.alfano, greco, lucio.lacava, trubitsyna}@dimes.unical.it; stefanofrancesco.monea@unical.it 
+
+Abstract 
+
+Large Language Models (LLMs) achieve strong performance in analyzing and generating text, yet they struggle with ex-plicit, transparent, and verifiable reasoning over complex texts such as those containing debates. In particular, they lack structured representations that capture how arguments support or attack each other and how their relative strengths determine overall acceptability. We encompass these limita-tions by proposing a framework that integrates learning-based argument mining with quantitative reasoning and ontology-based querying. Starting from a raw debate text, the frame-work extracts a fuzzy argumentative knowledge base, where arguments are explicitly represented as entities, linked by at-tack and support relations, and annotated with initial fuzzy strengths reflecting plausibility w.r.t. the debate’s context. Quantitative argumentation semantics are then applied to compute final argument strengths by propagating the effects of supports and attacks. These results are then embedded into a fuzzy description logic setting, enabling expressive query answering through efficient rewriting techniques. The pro-posed approach provides a transparent, explainable, and for-mally grounded method for analyzing debates, overcoming purely statistical LLM-based analyses. 
+
+# 1 Introduction 
+
+Large Language Models (LLMs) have recently demon-strated impressive capabilities in understanding, translat-ing, and generating natural language across a wide range of domains. They are able to summarize, identify stances, and even generate persuasive arguments. However, despite these successes, LLMs have well-known limitations when it comes to reasoning tasks, which are often implicit, opaque, and difficult to verify. These limitations are particularly crit-ical in analyzing political debates, where transparency, ex-plainability, and coherence of reasoning are essential. A key reason for these shortcomings is that LLMs oper-ate as statistical learners over large text corpora. While they can implicitly encode argumentative discourse patterns, they lack an explicit representation of argumentative structure, such as which claims attack or support others, how strong these relationships are, and how the balance of a debate should be assessed. As a consequence, LLM-based anal-yses are hard to inspect, cannot be systematically queried, and do not naturally support formal consistency checking. An LLM can summarize a debate or generate a balanced narrative. However, if asked “what are the most acceptable left-wing arguments on climate?”, the answer is typically qualitative, non-repeatable, and unsupported by an explicit line of reasoning, thus lacking explainability. To overcome these limitations, there is a growing consensus that learning-based approaches should be integrated with symbolic and sub-symbolic reasoning frameworks. In particular, Argu-ment Mining techniques have emerged as a promising class of methods for extracting structured representations of ar-guments from text, providing a crucial bridge between un-structured natural language and structured representations amenable to formal reasoning. The aim is to identify argu-ments and relationships such as attacks and supports, often with associated confidence or strength values. A toy exam-ple about climate change policies is presented next. 
+
+Example 1. Consider the debate ( D) on climate change. 
+
+Representatives of the greens, traditionally associated with the left, argued that ( a1) “ Introducing a carbon tax reduces 
+
+CO 2 emissions ”. They emphasized that the party endorses this argument as a central element of its climate agenda. In response, conservatives expressed strong opposition, claim-ing that ( a2) “ A carbon tax increases costs for households and firms ”, reflecting economic concerns and motivating their rejection of the proposed climate measures. Further, the greens stated that ( a3) “ Revenues from a carbon tax can be invested in renewable energy ”. 
+
+Using argument mining, the debate can be seen as a set of arguments A = {a1, a2, a3}, and the set of the following argumentative relations: {a2 attacks a1, a3 supports a1}.Arguments can be associated with an initial strength through a function τ , reflecting factors such as the plausibil-ity w.r.t. the context of the debate, e.g., τa1 = 0 .7, τa2 = 0 .6,and τa3 = 0 .8. Similarly, an initial strength is also defined for attacks and supports. The final framework is shown in Figure 1, where attacks (resp., supports) are represented by red-colored (resp., green-colored) arrows. □
+
+While the argument-based representation adopted in the previous example allows for a more transparent view of the debate, it still does not answer the question of how the over-all balance of attacks and supports affects the final accept-ability of each argument. Indeed, the final strength of argu-ment a1 should, on the one hand, increase as it is supported 
+
+> arXiv:2603.02858v1 [cs.AI] 3 Mar 2026 Figure 1: FAKB workflow: from raw unstructured texts to FAKB generation and querying.
+
+by argument a3, and, on the other hand, decrease, as it is attacked by argument a2. Thus, it is necessary to update the strength of arguments taking into account how arguments attack and support each other. This can be carried out by means of a suitable semantics for Quantitative Bipolar Ar-gumentation Framework (QBAF) [12, 3, 1, 31]. Generally, a concrete argument is associated with a sen-tence with a proper meaning and with several additional in-formation that could be very important in answering queries and making informed decisions. By modeling a problem through a plain QBAF, we may neglect important informa-tion that can be very useful, such as those concerning the author, the text of the argument, the date it was introduced, the topic (e.g., what the argument is about), the polarity (e.g., whether the sentence conveys a positive, negative or neutral sentiment), the polarity rating, the sentence style (e.g., ve-racity, sarcasm, irony), the city and nationality of the author, and much more. Therefore, there is a need for expressive yet tractable mechanisms to integrate them with background knowledge and to answer complex queries with graded out-comes. That is, the argumentation framework should be cou-pled with a Knowledge Base (KB) containing further infor-mation contained in the text and related to arguments. In our running example, several relevant pieces of infor-mation are neglected when considering only the level of ab-straction provided by a QBAF, such as the topic (e.g., Cli-mate) or the name and wing of political parties (which we have underlined in the text for clarity). We propose a novel framework called Fuzzy Argumen-tative Knowledge Base (FAKB), that combines learning-based extraction with quantitative reasoning and ontology-based query answering. The framework is organized as a pipeline of distinct modules (see Figure 1). First, an extrac-tor—potentially based on state-of-the-art argument mining techniques—processes a debate and produces an argumen-tative knowledge base that subsumes a QBAF. The extracted knowledge is represented as a fuzzy DL-Lite ABox, called (source) fuzzy argumentative ABox (FABox), where argu-ments are explicitly modeled as individuals, linked by attack and support relations, and annotated with initial strengths re-flecting the plausibility w.r.t. the debate’s context. Unlike traditional methods that rely on external heuristics to assign initial strengths, our framework also consider transformer’s output log-probabilities, capturing the model’s internal con-fidence during the extraction phase. The extracted struc-ture (i.e., the source FABox) is then interpreted as a QBAF to compute final argument strengths via established grad-ual semantics. This step is crucial because initial strengths obtained during extraction mainly reflect plausibility; the QBAF semantics make the debate’s implicit balance explicit by propagating the impact of attackers and supporters in a principled, explainable manner. After extracting the FABox (where arguments, attacks, and supports have associated fuzzy values, whereas the re-maining entities and relationships are crisp), the user adds their own knowledge through a TBox consisting of a set of crisp DL-Lite axioms, useful for checking the consistency of the extracted data and for building a FAKB, combining debate’s information with user’s general knowledge, to be queried later. The answer to a (relational calculus) query consists of a set of fuzzy tuples, where each tuple is associ-ated with a confidence degree. 
+
+Contributions. We propose the Fuzzy Argumentative Knowledge Base (FAKB), a novel framework that integrates learning-based argument extraction with symbolic reason-ing, quantitative argumentation semantics, and ontology-based query answering. Specific contributions are: 
+
+• A pipeline that extracts a fuzzy argumentative ABox 
+
+(FABox) from raw debate text using LLM-based argument mining, where arguments, attacks, and supports are repre-sented as DL-Lite fuzzy concept and role instances. 
+
+• A new method for assigning strengths to arguments, at-tacks, and supports. Rather than directly adopting the ini-tial strengths from prompting strategies—a common prac-tice in current literature—our framework improves these values by taking into account the transformer’s output log-probabilities. This captures the model’s internal confi-dence during the extraction phase. Argument strength is then refined via established gradual QBAF semantics. 
+
+• We qualitatively and quantitatively compare our method with existing prompt-based solutions, showing a more me-aningful distribution of argument and relation strengths. 
+
+• We equip the FAKB with a reasoning mechanism to sup-port consistency checking, and formal query answering re-turning fuzzy tuples with associated confidence degrees. Moving beyond simple argumentative queries on the fi-nal acceptability of a single goal argument, our framework supports complex (conjunctive) queries over both built-in ar-gumentative predicates (e.g., att , sup ) and the broader ex-tracted knowledge (e.g., discourse topics, polarity, etc). To the best of our knowledge, this is the first work for-mally integrating LLM-based argument mining, quantita-tive argumentation semantics, and fuzzy ontology-mediated reasoning, overcoming core limitations of purely learning-based models and providing an explainable and queryable methodology for reasoning over complex (textual) debates. 
+
+# 2 Preliminaries 
+
+After recalling the Quantitative Bipolar Argumentation Framework and basic concepts underlying Description Log-ics, we briefly review the main Argument Mining tasks. 
+
+2.1 Quantitative Bipolar AF 
+
+A Quantitative Bipolar Argumentation Framework (QBAF) 
+
+Λ = ⟨A, R, S, τ ⟩ consists of a set of arguments A, disjoint sets of attack relations R ⊆ A × A and support relations 
+
+S ⊆ A × A, and a total function τ : A → [0 , 1] that as-signs the initial strength τa to every argument a ∈ A. Thus, a QBAF can be represented by a graph ⟨A, R, S ⟩ with two types of edges denoting the relation ai attacks/supports aj .Intuitively, attacking arguments contribute to decreasing the strength of the attacked argument, while supporting argu-ments contribute to increasing the strength of the supported argument. Since the strength of arguments is a real value in the range [0 , 1] , a strength 0 corresponds to the total re-jection of an argument, 1 to the total acceptance, and values between 0 and 1 express various degrees of acceptance. 
+
+Semantics. Several gradual semantics have been proposed so far to compute the acceptance of arguments. That is, a gradual semantics is the way a total update function ρ,assigning a value in [0 , 1] to all arguments, is computed. QBAF semantics are typically classified within the family of modular semantics [31], consisting in applying in se-quence (i) an aggregation function α, taking into account the strength of attackers and supporters, and (ii ) an influence function, taking into account the value computed by α and the initial strength of the argument. The final strength ρΛ(a)
+
+(or simply ρ(a)) of argument a ∈ A is iteratively computed, starting from τa, by considering the strength ρ(aj ) of each attacker/supporter aj of a.We next recall one (among several existing) modular se-mantics, called Quadratic Energy [38]. This semantics uses the following sum-based aggregation function: 
+
+α(ai) = X 
+
+> (aj,a i)∈S
+
+ρ(aj ) − X 
+
+> (aj,a i)∈R
+
+ρ(aj ) (1) while, let E(ai) = α(ai)2 
+
+> 1+ α(ai)2
+
+, the update function is:                  
+
+> ρ(ai) =
+> (1 −E(ai)) ·τaiif α(ai)≤0
+> E(ai) + (1 −E(ai)) ·τaiif α(ai)>0
+
+(2) For acyclic QBAF, ρ is computed in linear time following a topological ordering of the arguments [39]. 
+
+Example 2. Consider the QBAF Λ = ⟨{ a1, a2, a3},
+
+{(a2, a1)}, {(a3, a1)}, {τa1 = 0 .7, τ a2 = 0 .6, τ a3 = 0 .8}⟩ 
+
+underlying Example 1. As α(a1)= 0.2, then E(a1) ≈ 0.039 
+
+and ρ(a1) = E(a1) + (1 − E(a1)) · τa1 ≈ 0.712 . □
+
+2.2 Description Logics 
+
+A DL knowledge base (KB), hereafter simply called a knowledge base, consists of an Assertional Box ABox (database) and a Terminological Box TBox (ontology), which are constructed from a set NC of concept names 
+
+(unary predicates), a set of NR of role names (binary predi-cates), and a set NI of individuals (constants). Specifically, an ABox is a finite set of concept assertions of the form A(a),where A ∈ NC and a ∈ NI, and role assertions of the form 
+
+r(a, b ), where r ∈ NR and a, b ∈ NI. A TBox is a finite set of axioms whose form depends on the considered DL. In 
+
+DL-Lite R, TBox axioms are only concept inclusions of the form B ⊑ C and role inclusions of the form Q ⊆ S, formed using the following syntax (where A ∈ NC, r ∈ NR, and r−
+
+is the inverse of role r): 
+
+B := A | ∃ Q; Q := r | r−; C := B | ¬ B; S := Q | ¬ Q.
+
+An inclusion is said positive (resp. negative ) whenever the right-hand side contains a positive (resp. negated ) element. Several variants of DL-Lite have been proposed. Here-after we refer to DL-Lite R, which provides the logical un-derpinnings of the OWL 2 QL [46], though our results apply to all query-rewritable DL-Lite fragments. [10, 15, 4, 2, 5]. 
+
+Semantics. An interpretation is of the form I = (∆ I , ·I ),where ∆I is a non-empty set called interpretation domain 
+
+and ·I is an interpretation function mapping each A ∈ NC
+
+to AI ⊆ ∆I , each r ∈ NR to rI ⊆ ∆I × ∆I , and each 
+
+a ∈ NI to aI ∈ ∆I , with a̸ = b implying aI̸ = bI (the last condition is the well-known Unique Names Assumption). Being ·I a function, it can be defined as follows: i) AI :∆I → { 0, 1} with (A(a)) I = 1 if aI ∈ AI , 0 otherwise; and ii ) QI : ∆ I × ∆I → { 0, 1}, with (Q(a, b )) I = 1 if 
+
+(aI , b I ) ∈ QI , 0 otherwise. The function is extended to general concepts and roles as follows: (i) ( ∃Q(a)) I = 1 
+
+if ∃b. (Q(a, b )) I = 1 , 0 otherwise; (ii ) ( ¬A(a)) I = 1 −
+
+(A(a)) I ; (iii ) ( Q−(a, b )) I = ( Q(b, a )) I , (iv ) ( ¬Q(a, b )) I =1 − (Q(a, b )) I . An interpretation I satisfies an inclusion 
+
+G ⊑ H if (H(a)) I ≥ (G(a)) I for any a ∈ NI; it satisfies A(a)
+
+(resp. r(a, b )) if (A(a)) I ≥ 1 (resp., (r(a, b )) I ≥ 1). I
+
+is a model of ⟨T , A⟩ iff I satisfies all inclusions in T and all assertions in A. If a KB has a model, it is said to be 
+
+consistent , otherwise, it is said to be inconsistent. 
+
+Example 3. Consider the following knowledge base.                       
+
+> A3:
+> 
+> saidBy (a1,g),
+> saidBy (a2,c),
+> saidBy (a3,g),
+> Left (g),Right (c),
+> topic (ai,climate )|i∈[1 .. 3]
+> T3:
+> 
+> (1) ∃saidBy ⊑ ∃ topic
+> (2) Left ⊑Party Right ⊑Party
+> ∃saidBy −⊑Party
+> (3) Left ⊑ ¬ Right
+
+The interpretation I with ∆I = {a1, a2, a3, g, c},
+
+saidBy I = {(a1, g), (a2, c), (a3, g)}, Left I = {g},
+
+Right I = {c}, Party I = {c, g}, and topic I =
+
+{(ai, climate ) | i ∈ [1 .. 3] } is a model of ⟨A 3, T3⟩. □
+
+A conjunctive query (CQ) is a formula ∃⃗y φ (⃗x,⃗ y) where 
+
+φ is a conjunction of atoms. A boolean CQ has no free vari-ables ⃗x and is entailed by a KB if it holds in all its models. A tuple ⃗ t of individuals is a certain answer if substituting the free variables with ⃗ t yields a boolean CQ entailed by the KB. A union of CQs (UCQ) is a disjunction of CQs; its answers are the union of the answers of its disjuncts. 
+
+2.3 Argument Mining and LLMs 
+
+Argument Mining (AM) is the research area concerned with the automatic identification and extraction of argumenta-tive structures from text [25]. Given a document or a di-alogue, the goal is to detect argumentative units—such as claims, premises, and evidence—and to identify their rela-tionships, most notably attacks and supports [9]. AM pro-vides a crucial interface between raw text and structured rea-soning frameworks, and it has been deeply studied in con-texts such as political debates, legal documents [34], scien-tific articles [44], and online discussions [21]. We assume the existence of a finite set V of words called 
+
+vocabulary , and a concatenation operator ◦ taking sequences of words. For the sake of presentation, we consider words as the fundamental units of analysis, rather than conventional tokens. A textual document is a sequence D=[ w1, . . . , w n]
+
+of words in V. A textual argument of D is any subsequence 
+
+TA i=[ wbi , ..., w ei ] of D, consisting of one or more sentences to be classified according to predefined labels. The AM problem consists of four (sub)problems: - Argument Segmentation : chunks a document D into a se-quence of non-overlapping, contiguous partitional argu-ments PA 1, . . . PA k, such that D = PA 1 ◦ · · · ◦ PA k;- Argument Classification : assigns a class label (e.g., premise, claim, major claim) to each textual argument identified in D after the segmentation; - Relation Identification : determines whether a directed ar-gumentative relation holds between any pair of (labeled) textual arguments in D, following the previous steps; - Relation Classification : establishes the type (if any) of ar-gumentative relation between pairs of textual arguments, according to predefined types (e.g., support, attack). 
+
+Large Language Models. We denote by Mθ any pretrained Large Language Model (LLM) where θ may correspond to the set of parameters of a general-purpose or task-specific (i.e., fine-tuned) LLM. Mθ (or simply M whenever θ is un-derstood) corresponds to a decoder-only Transformer ar-chitecture, which maps any input (possibly raw) sequence of words D = [w1, . . . , w k] into an output sequence of words D′ = [ wk+1 , . . . , w n] by iteratively generating each 
+
+wi = M([ w1, . . . , w i−1]) (with i ∈ [k+1, n ]). Basically, 
+
+M is a classifier that assigns a probability distribution over the vocabulary V, reflecting the likelihood of each word be-ing generated, after a sequence D has been given as in-put. To this end, we denote by M(D) = [Pr( w1|D), . . . , 
+
+Pr( wm|D)] the probability distribution over the m words of the vocabulary V, that will be used to select the next word. Given the typically large size of the vocabulary, probabilities 
+
+Pr( ·) are often very low. To prevent numerical underflow problems, the natural logarithm is applied to them, obtaining the so-called log-probabilities ℓ(wi|D) = ln   Pr( wi|D).
+
+# 3 Reasoning on Textual Dialogues 
+
+Recent research increasingly emphasizes the integration of LLMs with formal reasoning frameworks [19]. LLMs rep-resent a promising approach to transform natural language debates into structured representations. We adopt this perspective and provide an LLM-based ar-chitecture (shown in Figure 1) that extracts, from a raw text representing a debate, a knowledge graph containing the rel-evant information such as arguments, relations, and addi-tional concepts considered relevant w.r.t. the debate. The re-sulting knowledge will then be stored in a fuzzy set of facts called source fuzzy argumentative ABox (FABox), where un-certainty is modeled in terms of fuzzy concepts and roles. The FABox, updated with the final argument strength com-puted via a gradual semantics over the underlying QBAF, is then paired with a TBox encoding general domain knowl-edge expressed by the user. The result is a Fuzzy Argumen-tative Knowledge Base (FAKB), presented next. While classical logic relies on absolute true/false op-posites, fuzzy logic maps truth onto a continuous spec-trum [50]. It has been integrated into several fields, e.g. databases [13, 36, 49, 48], answer-set programming [32, 6], description logics [26, 35], and formal argumentation [47]. Our framework extends fuzzy DL-Lite by also encoding argument-based concepts and roles. To this end, we as-sume the existence of: (i) an additional enumerable, lin-early ordered set NA = {a1, a 2, ... } of distinguished indi-viduals used to refer to arguments (identifiers), and (ii ) the built-in concept names Arg and TArg , respectively taking values from NA and NT. Finally, we assume existence of a set of roles NF (argument features) taking values from 
+
+NA × NI, and of the built-in role names att , sup , and 
+
+textOf , where the first two take values in NA ×NA, whereas the last one takes values in NA × NT. We use the sym-bols N+ 
+
+> I
+
+= NI ∪ NA ∪ NT, N+ 
+
+> C
+
+= NC ∪ { Arg } ∪ { TArg } and 
+
+N+ 
+
+> R
+
+= NR ∪NF ∪{ att , sup } ∪ { textOf } to denote the aug-mented sets of individuals, concepts, and roles, respectively. We also extend, as done in [40], the QBAF introduced in Section 2 to model strengths also on attacks and sup-ports. Hereafter a QBAF is a tuple ⟨A, R, S, τ, φ ⟩ where 
+
+φ : R ∪ S → [0 , 1] is a total function assigning a strength (i.e., [0 , 1] -value) to attacks and supports. With respect to the framework introduced in Section 2, the semantics is defined by only changing the definition of the aggregation function, e.g. by replacing ρ(aj ) in Equation 1 with ρ(aj )×φ(aj , a i).
+
+Example 4. Let Λ′ be the QBAF obtained from the QBAF 
+
+Λ of Example 2 by adding φ(a2, a1) = φ(a3, a1)=1 /2. As 
+
+α(a1)=0.1, the final strength of a1 under Quadratic Energy (cf. Equation 2) is ρ(a1) ≈ 0.703 . □
+
+We next present the Fuzzy Argumentative ABox, storing the fuzzy knowledge extracted from (raw, textual) debates. 
+
+Definition 1. A Fuzzy Argumentative ABox (FABox) is a finite set of fuzzy concepts ⟨A(a), v ⟩ and role assertions 
+
+⟨r(a, b ), v ⟩, with (i) A ∈ N+ 
+
+> C
+
+, (ii ) r ∈ N+ 
+
+> R
+
+, and (iii )
+
+v ∈ [0 , 1] iff A = Arg or r ∈ { att , sup }, v = 1 otherwise. Condition (iii ) states that fuzzy degrees can only be as-sociated with arguments, attacks, and supports. Clearly, for concepts and roles, the domain restrictions previously intro-duced continue to hold. As it will be clarified in the next sections, this fuzziness intuitively captures the plausibility in the extraction process, and will be used to compute the final strength of arguments. That is, this special treatment reserved for arguments only is due to the fact that the attack and support interactions among arguments were not taken into account during the extraction phase. 
+
+Definition 2. A FABox A is said to be consistent iff: • ⟨Arg (a), u ⟩, ⟨Arg (a), v ⟩ ∈ A implies u = v;• ⟨r(ai, a j ), u ⟩, ⟨s(ai, a j ), v ⟩ ∈ A with r, s ∈ { att , sup }
+
+implies r=s, u=v, and ⟨Arg (ai), v i⟩, ⟨Arg (aj ), v j ⟩ ∈ A ;• textOf defines a bijection between arguments identifiers and textual arguments in A; and ⟨textOf (ai, TA i), 1⟩ ∈ A iff ⟨Arg (ai), v i⟩, ⟨TArg (TA i), 1⟩ ∈ A .Intuitively, the first condition states that an argument can have at most one strength associated with it. Then, argu-ment concepts must belong to the FABox whenever they ap-pear in any attack or support role, and there cannot exist two distinct relations from any pair of arguments. Finally, the last condition ensures that any argument must have ex-actly one text associated with it. The motivation for intro-ducing consistent FABoxes is, as stated next, that they sub-sume a QBAF. Before presenting the result, we introduce some notation. For any concept A and role r of A, we de-note with A1={a | ⟨ A(a), v ⟩ ∈ A} , A2={(a, v ) | ⟨ A(a), v ⟩ ∈ A} , r1={(a, b ) | ⟨ r(a, b ), v ⟩ ∈ A} , and r2={(( a, b ), v ) |⟨r(a, b ), v ⟩ ∈ A} the projection on individuals and degrees. 
+
+Proposition 1. For any consistent FABox A, ΛA =
+
+⟨Arg 1, att 1, sup 1, Arg 2, att 2 ∪ sup 2⟩ forms a QBAF. 
+
+Hereafter, we assume that the FABox A is consistent, and simply call ΛA the underlying QBAF w.r.t. A.
+
+Example 5. A possible consistent source FABox, extracted from debate D of Example 1, is As={⟨ x, 1⟩ | x ∈ A 3}∪ A 5
+
+where A3 is the ABox discussed in Example 3, and 
+
+A5 =
+
+
+
+⟨Arg (a1), 0.7⟩, ⟨Arg (a2), 0.6⟩, ⟨Arg (a3), 0.8⟩⟨att (a2, a1), 0.5⟩, ⟨sup (a3, a1), 0.5⟩⟨TArg (TA ai ), 1⟩ with i ∈ [1 .. 3] 
+
+⟨textOf (ai, TA ai ), 1⟩ with i ∈ [1 .. 3] 
+
+with TA aibe the italicized textual arguments in Example 1. □
+
+The component of our architecture that is in charge of ex-tracting the source FABox As is called Knowledge Extrac-tor (see Figure 1). As it will be further explained in the next Section, it employs LLM-based argument mining tech-niques, some of which contain technical novelty. Specif-ically, the extraction of initial strengths, rather than rely-ing on purely prompting strategies, also takes into account the log-probability of the transformer’s output, capturing the model’s internal confidence during extraction. These strengths are refined by applying a gradual semantics over the underlying QBAF ΛAs to account for inter-argument re-lationships not captured during the initial extraction phase. This process yields an updated FABox, which is then paired with a user-defined TBox to form the following framework. 
+
+Definition 3. A Fuzzy Argumentative KB (FAKB) is a pair 
+
+K = ⟨T , A⟩ where A is an (updated) consistent FABox, and 
+
+T is a DL-Lite R TBox such that built-in concept and role names (i.e. Arg , TArg , att , sup and textOf ) do not occur in the right-hand side of inclusions. The restriction on the form of assertions states that argu-ments, attacks, and supports can only be defined extensively by facts contained in A, that is, they are only extracted from the input debate. Clearly, a DL-Lite R KB is a special case of FAKB, where elements in the ABox hold with degree v = 1 .
+
+Example 6. A possible FAKB, extracted from D, is K =
+
+⟨A 6, T3⟩ where A6 is obtained from the (source) FABox As
+
+of Example 5 by updating initial argument strengths, and the user-defined knowledge T3 is that of Example 3, where: axiom (1) intuitively states that arguments must have a topic. Axioms in (2) specify that any entity endorsing an argument is a political party, in turn constituted by both Left and Right parties. Finally, axiom (3) enforces the mutual exclusivity between left-wing and right-wing parties. □
+
+# 4 Extracting FABox through LLMs 
+
+The wide variety and quantity of data on which LLMs are pre-trained give them a solid knowledge base, enabling them to tackle knowledge extraction tasks even under limited data availability. As shown in Figure 1, we leverage such capa-bilities to build a Knowledge Extractor module as the core of our proposed framework. The activities performed by the Knowledge Extractor consist of the following four tasks: i)
+
+Argument Tagging, ii ) Entity Extraction, iii ) QBAF Extrac-tion, and iv ) FABox Builder. We next discuss the four tasks. 
+
+4.1 Argument Tagging 
+
+This task consists of identifying in the input text the argu-ments of the debate and separating them from the rest of the text, which defines the informative context. However, the standard Argument Segmentation problem (AS) described in Section 2.3 is not sufficient for this purpose, as it does not account for non-argumentative textual spans. For this reason, we resort to the double-tag approach of [11], which explicitly separates argumentative from non-argumentative content, enabling the subsequent phases of our framework. The approach makes use of a task-specific LLM M, which has been fine-tuned for solving AS, and extensively validated against human annotations. M acts as a mapping function that applied to Ptag ⟨D⟩, where let 
+
+Ptag being a specific prompt template, Ptag ⟨D⟩ denotes the prompt filled with D, gives as output a new document D∗
+
+derived from D by adding pairs of tags ( ⟨AC i⟩, ⟨/AC i⟩), with 
+
+i ∈ { 1, 2, .., k } delimiting (textual) arguments. An example is presented next. 
+
+Example 7. Consider the debate D of Example 1. The tagged version D∗ = M(Ptag ⟨D⟩) is as follows.                     
+
+> Representatives of the greens · · · argued that
+> ⟨AC 1⟩Introducing a carbon tax reduces CO 2emissions ⟨/AC 1⟩· · · In response, conservatives expressed · · · that ⟨AC 2⟩Acarbon tax increases costs for households and firms ⟨/AC 2⟩,· · ·
+> Further, the greens stated that ⟨AC 3⟩Revenues from a carbon tax can be invested in renewable energy ⟨/AC 3⟩.□
+
+Hence, document D∗ is given as input to the Entity and QBAF Extractor tasks, which are presented next. 4.2 Entity Extractor 
+
+This two-phase task extracts, in the form of a knowledge graph, explicit information from the tagged document, such as the entities appearing in the debate, the subjects they refer to, and the relationships that hold among them. The first phase, referred to as entity extraction , aims at identifying specific entities (e.g., distinct people and politi-cal parties such as John and Greens ) present in the tagged document, i.e., the portion of text that is not part of the textual arguments identified in the tagging phase. Through a prompt Pner , we use an LLM M as a mapping func-tion that applied to Pner ⟨D∗⟩: (i) determines a set of en-tities extracted from D∗, (ii ) classifies the previously ob-tained set of entities into general classes or concepts (e.g., 
+
+John and Greens are respectively classified as Politician and 
+
+LeftParty ), and (ii ) then generates concept instances (e.g., 
+
+Politician(John) and LeftParty(Greens) ). The second phase, called role extraction , detects the con-textual and interpersonal links connecting such entities, ex-tracted analogously to the entity and concept names. After having identified a set of binary relation names among en-tities (e.g. memberOf ), we follow a few-shot approach, as found promising in [37], to ask the LLM to identify, through a prompt Pkb , a set of semantic relations connecting entities to entities (e.g. memberOf(John, Greens) ) or textual argu-ments to entities. In the latter case (e.g. John authored TA i), a role instance connecting the corresponding argument iden-tifier to the entity is generated (e.g. author( ai,John) ). 
+
+4.3 QBAF Extractor 
+
+This task takes as input a tagged text and gives as output a QBAF-based KB, where each argument (identifier) is asso-ciated with the related textual argument. We use TA ∗ 
+
+> i
+
+= ⟨AC i⟩TA i⟨/AC i⟩ to denote the (i-th) textual argument in D∗. The task starts by associating a unique ar-gument (identifier) ai ∈ NA to textual arguments TA i ∈ D∗,following the sequential ordering of arguments in D∗ (re-call that a1 < a 2 < a 3 < · · · ). Thus, for each textual ar-gument TA i, it introduces the concept instances TArg (TA i)
+
+and Arg (ai) and the role instance textOf (ai, TA i). For in-stance, on the tagged document D∗ in Example 7, it yields 
+
+Arg (ai) and textOf (ai, TA i) with i ∈ [1 .. 3] , where e.g. 
+
+TA 1 = “Introducing a carbon tax reduces CO 2 emissions” .
+
+Argument Strength. Unlike existing approaches where the initial argument strength is obtained by simply prompting LLMs [19], we also consider the argument plausibility , ex-pressed as the probability that the textual argument will be generated by the transformer, based on the text of the debate preceding the current argument. Specifically, the intrinsic plausibility of each argument 
+
+TA i = [ wbi , . . . , w ei ] is obtained by looking at ‘how much’ the LLM itself considers coherent the generation of TA i w.r.t. the text in the document that precedes TA i. As words in the arguments are generated sequentially, for each word wj in 
+
+TA i, the text in D that precedes wj (i.e., [w1, . . . , w j−1])has to be considered. Formally: 
+
+μi = 11 + ( ei−bi)
+
+> ei
+
+X
+
+> j=bi
+
+ℓ(wj | [w1, . . . , w j−1]) . (3) Intuitively, the higher μi, the more the text TA i (and thus the argument ai) is considered plausible —simply put, TA i
+
+contains words that the model considers expected w.r.t. the preceding text in D.The reason to operate on log-probabilities ℓ(·) is to pre-serve the original model preferences, making μ values suit-able for relative comparison across arguments. As they range in the interval (−∞ , 0] , they are normalized in the 
+
+[0 , 1] -interval as follows: 
+
+μi = μi − min( μ)max( μ) − min( μ) , (4) where μ = {μi | i ∈ [1 , k ]} and μ = {μi | i ∈ [1 , k ]}.Then, let τ pai (or simply τ pi ) be the initial strength of ai
+
+obtained by prompting an LLM M, the following initial strength is assigned to ai:
+
+τi = max  0, min(1 , τ pi ·  1 + μi − μavg 
+
+ ) (5) where μavg is the average of elements in ¯μ. Intuitively, when μi = μavg , the plausibility of ai is aligned with the mean across all arguments, and thus we neither penalize nor reward the prompted value, i.e. τi = τ pi . Differently, 
+
+μi > μavg (resp. μi < μavg ) states that ai is more (resp. less) plausible than the average and, thus, we increment or decrement τ pi with a value equal to τ pi · (μi − μavg ). As the updated values can exceed the [0 , 1] interval, a clamping function max(0 , min(1 , ·)) is applied. As discussed in Section 5, our approach achieves a more meaningful strength distribution than existing methods. We next present the procedure to extract argumentative relations from the previously identified arguments. 
+
+Attack/Support Extraction. Since we are also interested in associating strengths to relations, we extend the promising LLM-based strategy proposed in [20]. That is, similarly to the initial argument strength extraction, we propose to obtain argumentative relations and their strength by looking at the LLM’s internals. Before explaining our approach, we introduce some nota-tion. Let TA ∗ 
+
+> i
+
+be a tagged textual argument from D∗, we use 
+
+Aut ai to denote the author of argument ai, received from the Entity Extraction. Moreover, we use D∗≤i to denote the por-tion of D∗ from the beginning to argument TA ∗ 
+
+> i
+
+(included). For each pair (TA i, TA j ) of textual arguments with i > j ,we leverage an LLM M as a classification tool that applied to 
+
+Prel ⟨D∗≤i, Aut ai , TA i, Aut aj , TA j ⟩ gives as output a proba-bility distribution considering the relation types in the re-stricted vocabulary V′ = {Attack , Support , Unrelated }.Note that, relation strengths are determined dynamically based only on the information available at the moment the argument ai is introduced (i.e., based on D∗≤i). Note that, as we are referring to argumentative de-bates, the motivation for choosing i > j is that arguments may attack or support previous arguments only. To ensure a proper probability distribution over relation types, we first extract the log-probabilities 
+
+ℓ(r | Prel ⟨D∗≤ i, Aut ai , TA i, Aut aj , TA j ⟩) and then apply the softmax function to them, obtaining pri,j .Intuitively, pri,j represents the model’s confidence, con-sidering the tagged document D∗, that the relation from aito aj is of type r. The final decision on the correspond-ing relation is hence identified by the following process. Given a threshold ϑ ∈ [0 , 1] , and let {x, y, z } = V′ with 
+
+x ∈ { Attack , Support }, we assign to the relation from ai to 
+
+aj the type x whenever the following inequality holds 
+
+pxi,j − (pyi,j + pzi,j ) > ϑ (6) and, in such a case, we associate the strength value φi,j =
+
+pxi,j −(pyi,j +pzi,j ) to it. Intuitively, a relation type x from ai
+
+to aj exists if the model’s confidence in x exceeds the com-bined confidence in the other two types by at least ϑ.We observe that this procedure should not be regarded as an ultimate solution for identifying argumentative relations. Rather, it represents a simple and effective heuristic based on the next-token probabilities produced by the LLM. 
+
+4.4 FABox Builder 
+
+The aim of this task is to integrate, in a structured way, the output of the QBAF Extractor (i.e., the QBAF-based knowledge graph) with that of the Entity Extrac-tor (i.e., the knowledge graph representing concepts and roles). To this end, it starts by populating a source FABox As with fuzzy assertions of the form ⟨Arg (ai), τ ai ⟩,
+
+⟨TArg (TA i), 1⟩, ⟨textOf (ai, TA i), 1⟩, ⟨att (ai, a j ), φ i,j ⟩,and ⟨sup (ai, a j ), φ i,j ⟩, received from the QBAF-Extractor. Then, any other concept C(a) and role r(a, b ) extracted by the Entity Extractor is stored in As under the form of fuzzy element ⟨C(a), 1⟩ and ⟨r(a, b ), 1⟩.As in assigning the initial argument strength the attacks and supports weight has not yet been taken into account; updated argument strengths are computed by calling some gradual semantics on the QBAF ΛAs underlying the FABox 
+
+As. That is, any fuzzy argument assertion ⟨Arg (a), τ a⟩ is replaced with ⟨Arg (a), ρ (a)⟩, where ρ is the update func-tion under the chosen gradual semantics. The result is an (updated) FABox A, an example of which, derived from a more complex version of our running example, is shown in the form of a knowledge graph in Figure 2. It is worth noting that, although the exploration of gradual semantics lies beyond the scope of this work, our results are orthogonal to the choice of gradual semantics. 
+
+Proposition 2. Let D be a document, and Mθ an LLM. Then, the updated FABox corresponding to D and Mθ can be com-puted in polynomial time w.r.t. the number of words in D.
+
+# 5 Validation 
+
+We next validate one of the novelties of our proposal, namely the computation of the initial strengths for argu-ments, attacks, and supports, obtained by also considering the log-probabilities (cf. Equations (3)-(6)), and compare them with pure prompt-based counterparts. Since the de-bate D of Example 1 is too simplistic, we created a set 
+
+D = {D1, . . . D 10 } of ten distinct debates on different top-ics, each consisting of at least 289 words (323.5 on aver-age). During Argument Tagging, we obtained an average of 9.9 distinct arguments using the SoTA LLM-based model of (Caputo et al. 2026) —which achieves 94% correlation with 
+
+Figure 2: An example of updated FAbox, visualized in the form of a knowledge graph, and extracted from an extended version of debate D of Example 1. Nodes are color-coded by type: blue for entities, red for argument identifiers, and yellow for concepts. Sim-ilarly, edges represent specific relations: green/red denotes sup-port/attacks, while dark blue, light blue, and yellow represent au-thorship, role instances, and concept instances, respectively. Up-per/lower numbers within each argument denote its initial/updated strength. For optimal visualization, the arguments’ text has been omitted, yet they can be found in Section 5. A full-screen visual-ization also including additional entities and full texts is provided in the Appendix. 
+
+human annotators and an F1 score of 0.92 . For all remain-ing tasks, we employed the pretrained LLM Qwen2 .5 7B . A more extensive parametric analysis regarding the choice of LLM is deferred to future work. Moreover, the Entity Ex-tractor led to the creation of 14.8 entities, 6.1 concept in-stances, and 13 (non-argumentative) relations among enti-ties, averaged on all debates in D.
+
+Argument Strength. We compare the proposed argu-ment strength estimation (cf. Equation 5) and its prompt-based counterpart. The latter, as in [19], assigns the initial strengths τi by prompting an LLM without looking at its in-ternals and specifically asking a value in [0 , 1] .The following table reports the identifier, the text, and the initial strength of the arguments extracted from D1, which is an extended version of D consisting of 327 words (instead of 
+
+80 in D). For clarity, argument identifiers are superscripted by author: either (A)rthur or (J)ohn.                            
+
+> aA/JiTextual Argument ( TA i) in D1Our Prompted
+> aJ
+> 1‘introducing a carbon tax reduces CO2 emissions’ .70 .9
+> aA
+> 2
+> ‘we cannot ignore the immediate economic reality for .40 .9
+> the people of Birmingham and beyond’
+> aA
+> 3‘a carbon tax increases costs for households and firms’ .92 .8
+> aA
+> 4
+> ‘at a time when inflation is high, adding this financial .62 .8
+> burden motivates our rejection of the proposed measures
+> aJ
+> 5‘this isn’t money lost;it’s money repurposed for our future’ .77 .8
+> aJ
+> 6
+> ‘We have clearly stated that revenues from a carbon tax 1..8
+> can be invested in renewable energy’
+> aJ
+> 7
+> ‘This creates a cycle where the tax funds the very solution 1..8
+> that will lower energy costs in the long run’
+> Avg. ±Std. Dev. on all args in D1.77 ±.2.83 ±.05
+
+In the prompt-based approach, plausibility is treated as an independent variable for each argument—a trend evi-denced by the consistently high scores and low variance. In-deed, it can be observed that the prompt-based approach as-signs a more flattened score to almost all textual arguments (ai↓,aj →) aJ                                                              
+
+> 1aA
+> 2aA
+> 3aA
+> 4aJ
+> 5aJ
+> 6
+> aA
+> 2.59 .20 -----
+> aA
+> 3.96 .20 .45 .60 ----
+> aA
+> 4.91 .20 .94 .20 .06 .60 ---
+> aJ
+> 50.98 1. .49 N.91 .20 NN--
+> aJ
+> 6.98 1.0 NN.77 NNN.95 .34 -
+> aJ
+> 7.97 1. N.20 .83 1. 0.35 .60 .93 .60 .96 .60
+
+Table 1: Comparison between our approach (left) vs Prompt-based (right) for relation strength estimation on argument pairs (ai, a j ) in 
+
+D1, with i > j . Red-/Green-colored cells refer to attacks/supports, while grey-shaded cells marked with ‘N’ indicate the absence of a relation. Numeric values denote the relation strength. Solid (resp., dashed) borders refer to pairs of arguments stated by the same au-thor (resp., different authors). 
+
+(≈ 0.83 ± 0.05 ), thus preventing any meaningful differen-tiation among arguments and demonstrating less sensitiv-ity to plausibility. In contrast, our approach yields a dif-ferentiated and more semantically interpretable distribution of plausibility values ( ≈ 0.77 ± 0.20 ), with arguments that are more (resp., less) central or contextually coherent receiv-ing higher (resp., lower) scores. This qualitative analysis is also confirmed across all datasets in D. Indeed, on aver-age, our approach yields a distribution of 0.74 ± 0.25 , con-trasting the flatter behavior of the prompt-based one (i.e., 
+
+0.76 ± 0.11 ), thus indicating a limited ability to differentiate between strong and weak arguments. 
+
+Relation Strength. We compare the proposed relationship strength estimation (cf. Equation 6) and its prompt-based counterpart. Their difference stands in the approach for computing pri,j : the latter just prompts an LLM, whereas our approach also takes into account log-probabilities. In our experiments, the threshold ϑ has been set to 0, intu-itively stating that a relation type x from ai to aj exists iff the model’s confidence in x exceeds the combined confi-dence in the other two types. Table 1 compares the two ap-proaches over arguments in D1. Qualitatively, the prompt-based approach tends to rely on surface-level lexical cues, often misclassifying argumentative relations. Clear exam-ples are the attacks (aA 
+
+> 3
+
+, a A 
+
+> 2
+
+), (aA 
+
+> 4
+
+, a A 
+
+> 2
+
+), and (aA 
+
+> 4
+
+, a A 
+
+> 3
+
+) be-tween arguments by the same author (i.e. Arthur); and the support (aA 
+
+> 2
+
+, a J 
+
+> 1
+
+). Quantitatively, considering all debates in 
+
+D and all possible relations, our approach led to the ex-traction of 45 .60% attack (resp., 34 .72% support) relations, 
+
+7.17% (resp., 1.08% ) of which represent attacks on argu-ments by the same author (resp., supports on arguments by different authors. Conversely, the prompt-based approach led to the extraction of 32 .64% attack (resp., 45 .60% sup-port) relations, 17 .75% (resp., 14 .93% ) of which represent attacks on arguments by the same author (resp., supports on arguments by different authors. 
+
+# 6 Reasoning in FAKB 
+
+The semantics of an FAKB is based on the concept of fuzzy interpretations . A fuzzy interpretation I = (∆ I , ·I ) pro-vides a membership degree for objects belonging to the dif-ferent concept and role names, that are interpreted as fuzzy unary and binary relations over ∆I , respectively. Differ-ently from classical KB (cf. Section 2), (i) names are taken from N+ 
+
+> A
+
+, N+ 
+
+> C
+
+, and N+ 
+
+> R
+
+, and (ii ) the codomain of ·I is a num-ber in [0 , 1] (instead of {0, 1}). The function ·I is extended to general concepts and roles as follows: (i) ( ∃Q(a)) I =
+
+sup b∈∆(Q(a, b )) I ; (ii ) ( ¬A(a)) I = 1 − (A(a)) I ; (iii )(Q−(a, b )) I = ( Q(b, a )) I ; (iv ) ( ¬Q(a, b )) I = 1 −(Q(a, b )) I .
+
+Consistency Checking. As in DL-Lite , inconsistency in FAKB (i.e., FAKB admitting no models) may only arise from negative inclusions (NIs), also called disjointness as-sertions. An example of NI is A ⊑ ¬ B, stating that, for ev-ery individual a and interpretation I, (A(a)) I + ( B(a)) I ≤
+
+1 must hold. A consistency checking algorithm for KBs with fuzzy ABox has been proposed in [28]. It adapts the 
+
+Consistent algorithm in DL-Lite [10], and consists of the following main steps: 1. (Collect negative inclusions.) Compute the closure of NIs to find all implied contradictions. For instance, A ⊑ B
+
+and B ⊑ ¬ C imply A ⊑ ¬ C. All such pairs (X, Y )
+
+where X ⊑ ¬ Y are collected. 2. (Fire Boolean Queries.) For every NI, e.g. B1 ⊑ ¬ B2,assuming that any fuzzy fact ⟨f (a), v ⟩ is stored as f (a, v ),if the result of the query ∃x, v 1, v 2.B 1(x, v 1)∧B2(x, v 2)∧
+
+v1 > 1 − v2 is empty, the knowledge base is consistent. Clearly, one can employ any linear programming solver to handle this system of linear inequalities, guaranteeing that consistency checking in FAKB can be performed efficiently. 
+
+Querying (consistent) FABKs. Given a consistent FAKB in hand, an interesting problem is that of query answering. While in classical QBAF this would correspond to checking the acceptance status associated with a specific (goal) argu-ment, in FAKB more general queries can be posed. Given a FAKB K = ⟨T , A⟩ , a fuzzy conjunctive query 
+
+(FCQ) on K is an expression of the form: q(⃗x) =
+
+∃⃗y. φ (⃗x,⃗ y), where φ(⃗x,⃗ y) is a conjunction of atoms of the forms A(a) or r(a, b ), where A ∈ N+ 
+
+> C
+
+, r ∈ N+ 
+
+> R
+
+, a, b are variables or individuals from N+ 
+
+> I
+
+,⃗x denotes the set of free variables, and ⃗y denotes the set of existentially quantified variables. From the syntactic viewpoint, the difference between FCQs and CQs stands in the language used, that is FCQs make use of the augmented sets N+ 
+
+> I
+
+, N+ 
+
+> C
+
+, and N+ 
+
+> R
+
+, thus al-lowing to express argumentative concepts and roles (e.g., 
+
+Arg , att , and sup ). A union of FCQs (UFCQ) is an ex-pression of the form q(⃗x) = q 1(⃗x) ∨ · · · ∨ q n(⃗x), where each qi(⃗x) is a FCQ. An (U)FCQ q(⃗x) is Boolean if all its variables are existentially quantified (thus ⃗x is empty). As FCQ associates degrees to tuples in the answers, to compute degrees, we refer here to Zadeh’s fuzzy logics [50]. That is, operators ∧, ∨, and ¬, are respectively interpreted as: (i) ( φ1 ∧ φ2)I = min (φI 
+
+> 1
+
+, φ I 
+
+> 2
+
+), (ii ) ( φ1 ∨ φ2)I =
+
+max (φI 
+
+> 1
+
+, φ I 
+
+> 2
+
+), and (iii ) ( ¬φ)I = 1 − φI .It is well known that the key property of DL-Lite is that any CQ can be rewritten into an equivalent UCQ using only the ABox. Consider a DL-Lite KB ⟨T , A⟩ , and let 
+
+IA = (∆ IA , ·IA ) be the interpretation where ∆IA con-tains all constants in A, and the codomain of ·IA denotes the corresponding (boolean) value w.r.t. A. Moreover, let ans (q(⃗x), A) = {⃗ t | (q(⃗ t )) IA > 0} denote the set of answers to the query q(⃗x) over the ‘database’ A, 1 and 
+
+cert (q(⃗x), ⟨T , A⟩ ) denote the set of certain answers to the query q(⃗x) over the DL-Lite KB ⟨T , A⟩ , i.e. the set of tu-ples contained in all models of ⟨T , A⟩ . For DL-Lite there exists an algorithm ref that, given a CQ q(⃗x), gives as out-put an UCQ ref (q(⃗x), T ) such that cert (q(⃗x), ⟨T , A⟩ ) = 
+
+ans (ref (q(⃗x), T ), A). That is, instead of computing the models of the KB ⟨T , A⟩ to answer a query q(⃗x), the query is rewritten into an equivalent one ref (q(⃗x), T ) which can be directly executed over A.The answer to an FCQ q(⃗x) on a FAKB K = ⟨T , A⟩ is a set of fuzzy tuples ⟨tuple , degree ⟩, called “ fuzzy certain answers ” and defined as follows: 
+
+fcert (q(⃗x), K) = {⟨ ⃗ t, α ⟩ | α = inf 
+
+> I| =K
+
+(q(⃗t )) I ∧ α > 0}
+
+that is, α is the infimum of the degrees assigned to tuple ⃗ t in all fuzzy models of FAKB. Analogously, the fuzzy answer to an FCQ q(⃗x) over a FABox A is: 
+
+fans (q(⃗x),A) = {⟨ ⃗ t, α ⟩ | ⃗ t ∈ ans (q(⃗x),A) ∧ α = ( q(⃗ t )) IA }.
+
+As stated next, also (U)FCQ are FO rewritable in FAKB. 
+
+Proposition 3. Let K=⟨T , A⟩ be a FAKB and q(⃗x) be an (U)FCQ. Then, it holds that: 
+
+fcert (q(⃗x), K) = fans (ref (q(⃗x), T ), A).
+
+We note that this result is in line with existing literature on fuzzy DL-Lite , where the FO rewriting algorithm ref for standard DL-Lite KBs has been adapted to cope with fuzzy KBs [28, 35]. As the answer to an FCQ may contain fuzzy tuples 
+
+⟨⃗t, (q(⃗t )) IA ⟩ having a very low answer degree (q(⃗t )) IA , we assume that any FCQ is either of the form q(⃗x) ≥ k, with 
+
+k ∈ (0 , 1] or of the form q(⃗x) > k , with k ∈ [0 , 1) , where k
+
+is a user defined value, whose aim is to filter out those tuples where (q(⃗ t )) IA < k and (q(⃗t )) IA ≤ k, respectively. We assume that q(x) stands for q(x) > 0.
+
+Example 8. Let K be the FAKB of Example 6. We next re-port two possible FCQs qi(⃗x) (with i ∈ [1 , 2] ), their relative meaning and (fuzzy, certain) answers fcert (qi(⃗x), K).• Arguments with acceptance strength greater than 0.75 :
+
+fcert  (Arg (x) > 0.75) , K = {⟨ a3, 0.8⟩} ;• The text of climate arguments from left-wing parties attacked by arguments from right-wing ones: 
+
+q2(x) = ∃y, z, w. topic (y, climate ) ∧ textOf (y, x ) ∧
+
+Left (z) ∧ att (w, y ) ∧ Right (w)
+
+fcert (q2(x) > 0, K) = {⟨ TA 1, 0.703 ⟩} . □
+
+As stated next, the (data) complexity suggests that fuzzy cer-tain answers in FAKB can be efficiently computed. 
+
+Proposition 4. Let K = ⟨T , A⟩ be a consistent FAKB and 
+
+q(⃗x) an UFCQ on K. Then, fcert (q(⃗x), K) can be computed in PTIME w.r.t. |T | and in LOGSPACE w.r.t. |A| .              
+
+> 1For standard DL-Lite , it is equivalent to {⃗t|(q(⃗t)) IA= 1 }.The motivation for adopting >0stands, as stated next, that we make use of ans (q(⃗x),A)also when Ais an FABox.
+
+# 7 Related Work 
+
+Early work in Argument Mining (AM) relied on tradi-tional NLP pipelines and supervised machine learning tech-niques [33, 42, 43]. Advances in Transformer-based ar-chitectures such as BERT [30], and T5 [24], have signif-icantly improved AM performance, due to the greater con-textual awareness and ability to catch the argumentative flow in texts. Recently, the advent of generative LLMs demon-strated remarkable capabilities in AM tasks framed as text-generation [14]. Empirical studies have shown that LLMs outperform previous approaches in identifying argumenta-tive components, classifying their roles [18], and detecting attack and support relations [20], even in low-resource set-tings [23]. Moreover, LLMs exhibit a remarkable ability to perform zero-shot or few-shot argumentation mining [7], significantly reducing the need for costly manual annota-tions. Other similar works explored neuro-symbolic ap-proaches that use LLMs for constructing (QB)AFs [19, 20, 8, 30]. Fuzzy logic has been successfully applied in several en-gineering fields [29, 41]. Beyond engineering, it has been adopted in decision support and expert systems to facili-tate approximate, human-like reasoning in complex environ-ments [16, 51]. In fuzzy logic programming [17] such as the fuzzy variant of answer set programming (FASP), proposi-tions are allowed to be graded [27, 45, 22]. Although fuzzi-ness in FAKB could alternatively be modeled via FASP, we adopt DLs since they offer a standardized formal foundation consistent with Semantic Web technologies and OWL stan-dards, while ensuring interoperability with existing fuzzy ontologies. 
+
+# 8 Conclusion and Future Work 
+
+We presented FAKB, a framework integrating learning-based extraction with quantitative reasoning and ontology-mediated query answering. Unlike systems reliant on black-box prompting, our implementation derives initial argument and relation strengths directly from the transformer’s out-put log-probabilities to capture internal model confidence. By embedding this data into an ontological structure, FAKB enables both consistency checking and graded conjunctive query answering. This approach broadens the scope of ar-gumentative reasoning from simple acceptability checks to complex queries on the entire extracted knowledge, allowing for more appropriate explainability of decisions and conclu-sions. Although we have referred to UFCQ as a query lan-guage, narrow SQL can be used to express practical queries operating on texts. Future work will focus on investigating incremental techniques for the construction of FAKBs, so that debates can be efficiently analyzed in real time. 
+
+# Acknowledgements 
+
+We acknowledge financial support from PNRR MUR projects FAIR (PE0000013) and SERICS (PE00000014), project Tech4You (ECS0000009), and (MUR) PRIN 2022 project S-PIC4CHU (2022XERWK9). References 
+
+[1] L. Amgoud and D. Doder. Gradual semantics for weighted graphs: An unifying approach. In KR , pages 613–614, 2018. [2] A. Artale, D. Calvanese, R. Kontchakov, and M. Za-kharyaschev. The dl-lite family and relations. J. Artif. Intell. Res. , 36:1–69, 2009. [3] P. Baroni, A. Rago, and F. Toni. From fine-grained properties to broad principles for gradual argumenta-tion: A principled spectrum. International Journal of Approximate Reasoning , 105:252–286, 2019. [4] M. Bienvenu. Ontology-mediated query answering: Harnessing knowledge to get more from data. In Proc. of IJCAI , pages 4058–4061, 2016. [5] M. Bienvenu and M. Ortiz. Ontology-mediated query answering with data-tractable description logics. In 
+
+Proc. of RW , volume 9203 of Lecture Notes in Com-puter Science , pages 218–307. Springer, 2015. [6] M. Blondeel, S. Schockaert, D. Vermeir, and M. D. Cock. Fuzzy answer set programming: An introduc-tion. In Soft Computing: State of the Art Theory and Novel Applications , volume 291 of Studies in Fuzzi-ness and Soft Computing , pages 209–222. Springer, 2013. [7] J. Cabessa, H. Hernault, and U. Mushtaq. In-context learning and fine-tuning gpt for argument mining. 2024. [8] J. Cabessa, H. Hernault, and U. Mushtaq. Argument mining with fine-tuned large language models. In Pro-ceedings of the 31st International Conference on Com-putational Linguistics , pages 6624–6635, Abu Dhabi, UAE, Jan. 2025. Association for Computational Lin-guistics. [9] E. Cabrio and S. Villata. Five years of argument min-ing: a data-driven analysis. In Proceedings of the 27th International Joint Conference on Artificial In-telligence , IJCAI’18, page 5427–5433. AAAI Press, 2018. [10] D. Calvanese, G. D. Giacomo, D. Lembo, M. Lenz-erini, and R. Rosati. Tractable reasoning and efficient query answering in description logics: The DL-Lite 
+
+family. J. Autom. Reason. , 39(3):385–429, 2007. [11] E. Caputo, S. Greco, and L. La Cava. Argument com-ponent segmentation with fine-tuned large language models. In Findings of the Association for Computa-tional Linguistics: EACL 2026 . Association for Com-putational Linguistics, 2026. [12] C. Cayrol and M.-C. Lagasquie-Schiex. Graduality in argumentation. Journal of Artificial Intelligence Re-search , 23:245–297, 2005. [13] G. Chen. Fuzzy logic in data modeling: semantics, constraints, and database design , volume 15. Springer Science & Business Media, 2012. [14] G. Chen, L. Cheng, A. T. Luu, and L. Bing. Explor-ing the potential of large language models in compu-tational argumentation. In Proc. of the 62nd Annual Meeting of the Association for Computational Linguis-tics , pages 2309–2330, Bangkok, Thailand, Aug. 2024. [15] G. Cima, M. Lenzerini, and A. Poggi. Answering con-junctive queries with inequalities in DL-Lite . In Proc. of AAAI , pages 2782–2789, 2020. [16] D. Dubois and H. Prade. Fuzzy Sets and Systems: The-ory and Applications . Academic Press, 1980. [17] D. Dubois and H. Prade. Fuzzy sets in approximate reasoning, part 1: Inference with possibility distribu-tions. Fuzzy sets and systems , 40(1):143–202, 1991. [18] L. Favero, J. A. Pérez-Ortiz, T. Käser, and N. Oliver. Leveraging small llms for argument mining in educa-tion: Argument component identification, classifica-tion, and assessment. 2025. [19] G. Freedman, A. Dejl, D. Gorur, X. Yin, A. Rago, and F. Toni. Argumentative large language models for ex-plainable and contestable claim verification. In Proc. of the AAAI Conference , pages 14930–14939, 2025. [20] D. Gorur, A. Rago, and F. Toni. Can large language models perform relation-based argument mining? In 
+
+Proc. of the 31st Int. Conf. on Computational Linguis-tics , pages 8518–8534, 2025. [21] I. Habernal and I. Gurevych. Argumentation mining in user-generated web discourse. Computational Lin-guistics , 43(1):125–179, Apr. 2017. [22] J. Janssen. Foundations of fuzzy answer set program-ming . PhD thesis, Ghent University, 2011. [23] O. Kashefi, S. Chan, and S. Somasundaran. Argument detection in student essays under resource constraints. In Proc. of the 10th Workshop on Argument Mining ,pages 64–75, 2023. [24] M. Kawarada, T. Hirao, W. Uchida, and M. Nagata. Argument mining as a text-to-text generation task. In 
+
+Proc. of the 18th EACL Conf. , pages 2002–2014, 2024. [25] J. Lawrence and C. Reed. Argument mining: A survey. 
+
+Computational Linguistics , 45(4):765–818, Dec. 2019. [26] T. Lukasiewicz. Fuzzy description logic programs un-der the answer set semantics for the semantic web. 
+
+Fundam. Informaticae , 82(3):289–310, 2008. [27] T. Lukasiewicz. Fuzzy description logic programs un-der the answer set semantics for the semantic web. 
+
+Fundamenta Informaticae , 82(3):289–310, 2008. [28] T. P. Mailis and A. Turhan. Employing dl-liteR -reasoners for fuzzy query answering. In Semantic Technology - 4th Joint Int. Conf., JIST , volume 8943 of LNCS , pages 63–78, 2014. [29] E. H. Mamdani. Application of fuzzy algorithms for control of a simple dynamic plant. Proceedings of the IEE , 121(12):1585–1588, 1974. [30] T. Mayer, E. Cabrio, and S. Villata. Transformer-based argument mining for healthcare applications. In Proc. of ECAI , pages 2108–2115, 2020. [31] T. Mossakowski and F. Neuhaus. Modular semantics and characteristics for bipolar weighted argumentation graphs. CoRR , abs/1807.06685, 2018. [32] D. V. Nieuwenborgh, M. D. Cock, and D. Vermeir. An introduction to fuzzy answer set programming. Ann. Math. Artif. Intell. , 50(3-4):363–388, 2007. [33] R. M. Palau and M. Moens. Argumentation mining. 
+
+Artif. Intell. Law , 19(1):1–22, 2011. [34] R. M. Palau and M.-F. Moens. Argumentation mining: the detection, classification and structure of arguments in text. In Proc. of the 12th Int. Conf. on Artificial Intelligence and Law , page 98–107, 2009. [35] G. Pasi and R. Peñaloza. Answering fuzzy queries over fuzzy dl-lite ontologies. Theory Pract. Log. Program. ,23(3):594–623, 2023. [36] F. E. Petry. Fuzzy databases: principles and applica-tions , volume 5. Springer Science & Business Media, 2012. [37] F. Polat, I. Tiddi, and P. Groth. Testing prompt engi-neering methods for knowledge extraction from text. 
+
+Semantic Web , 16(2), 2025. [38] N. Potyka. Continuous dynamical systems for weighted bipolar argumentation. In Proc. of the Int. Conf. on Principles of Knowledge Representation and Reasoning (KR) , pages 148–157, 2018. [39] N. Potyka. Extending modular semantics for bipolar weighted argumentation. In Proce. of AAMAS , pages 1722–1730, 2019. [40] N. Potyka. Interpreting neural networks as quantitative argumentation frameworks. In Thirty-Fifth AAAI Con-ference on Artificial Intelligence, AAAI1 , pages 6463– 6470. AAAI Press, 2021. [41] T. J. Ross. Fuzzy Logic with Engineering Applications .Wiley, 2916. [42] C. Stab and I. Gurevych. Identifying argumentative discourse structures in persuasive essays. In Proceed-ings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP) , pages 46–56, 2014. [43] C. Stab and I. Gurevych. Parsing argumentation struc-tures in persuasive essays. Computational Linguistics ,43(3):619–659, 09 2017. [44] P. Sukpanichnant, A. Rapberger, and F. Toni. Peerarg: Argumentative peer review with llms. arXiv preprint arXiv:2409.16813 , 2024. [45] D. Van Nieuwenborgh, M. De Cock, and D. Ver-meir. An introduction to fuzzy answer set program-ming. Annals of Mathematics and Artificial Intelli-gence , 50(3):363–388, 2007. [46] W3C. OWL 2 Web Ontology Language Profiles (sec-ond edition). https://www.w3.org/TR/owl2-profiles/, 2012. [47] J. Wu, H. Li, N. Oren, and T. J. Norman. Gödel fuzzy argumentation frameworks. In Computational Models of Argument , pages 447–458. 2016. [48] A. Yazici and R. George. Fuzzy database modeling ,volume 26. Physica, 2013. [49] A. Yazici, R. George, B. Buckles, and F. Petry. A sur-vey of conceptual and logical data models for uncer-tainty management. In Fuzzy logic for the management of uncertainty , pages 607–643. 1992. [50] L. H. Zadeh. Fuzzy sets. Information and Control ,8(3):338–353, 1965. [51] H.-J. Zimmermann. Fuzzy Set Theory—and Its Appli-cations . Springer, 2001. Appendix 
+
+Debate D∗ 
+
+> 1
+
+on climate change. 
+
+Figure 3: An example of updated FAbox, visualized in the form of a knowledge graph, and extracted from an extended version of debate 
+
+D of Example 1. Nodes are color-coded by type: violet for text of arguments, blue for entities, red for argument identifiers, and yellow for concepts. Similarly, edges represent specific relations: green/red denotes support/attacks, while dark blue, light blue, and yellow represent authorship, role instances, and concept instances, respectively. Upper/lower numbers within each argument denote its initial/updated strength.

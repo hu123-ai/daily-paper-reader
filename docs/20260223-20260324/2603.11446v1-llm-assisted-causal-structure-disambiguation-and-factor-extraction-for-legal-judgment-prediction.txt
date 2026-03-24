@@ -1,0 +1,598 @@
+Title: LLM-Assisted Causal Structure Disambiguation and Factor Extraction for Legal Judgment Prediction
+
+URL Source: https://arxiv.org/pdf/2603.11446v1
+
+Published Time: Fri, 13 Mar 2026 00:22:36 GMT
+
+Number of Pages: 20
+
+Markdown Content:
+# LLM-Assisted Causal Structure Disambiguation and Factor Extraction for Legal Judgment Prediction 
+
+Yuzhi Liang ∗†
+
+School of Information Technology Guangdong University of Foreign Studies 
+
+yzliang@gdufs.edu.cn 
+
+Lixiang Ma ∗
+
+School of Information Technology Guangdong University of Foreign Studies 
+
+1978320288@qq.com 
+
+Xinrong Zhu 
+
+School of Information Technology Guangdong University of Foreign Studies 
+
+20221003196@mail.gdufs.edu.cn 
+
+## Abstract 
+
+Mainstream methods for Legal Judgment Prediction (LJP) based on Pre-trained Language Models (PLMs) heavily rely on the statistical correlation between case facts and judgment results. This paradigm lacks explicit modeling of legal con-stituent elements and underlying causal logic, making models prone to learning spurious correlations and suffering from poor robustness. While introducing causal inference can mitigate this issue, existing causal LJP methods face two critical bottlenecks in real-world legal texts: inaccurate legal factor extraction with severe noise, and significant uncertainty in causal structure discovery due to Markov equivalence under sparse features. To address these challenges, we propose an enhanced causal inference framework that integrates Large Language Model (LLM) priors with statistical causal discovery. First, we design a coarse-to-fine hybrid extraction mechanism combining statistical sampling and LLM semantic reasoning to accurately identify and purify standard legal constituent elements. Second, to resolve structural uncertainty, we introduce an LLM-assisted causal structure disambiguation mechanism. By utilizing the LLM as a constrained prior knowl-edge base, we conduct probabilistic evaluation and pruning on ambiguous causal directions to generate legally compliant candidate causal graphs. Finally, a causal-aware judgment prediction model is constructed by explicitly constraining text attention intensity via the generated causal graphs. Extensive experiments on multiple benchmark datasets, including LEVEN , QA, and CAIL, demonstrate that our proposed method significantly outperforms state-of-the-art baselines in both predictive accuracy and robustness, particularly in distinguishing confusing charges. 
+
+## 1 Introduction 
+
+Legal Judgment Prediction (LJP) aims to automatically predict court rulings based on case fact descriptions, representing one of the most representative core tasks in the field of legal artificial intelligence. In recent years, with the rapid advancement of pre-trained language models (PLMs), fine-tuning approaches based on BERT and its variants have become the mainstream paradigm in LJP research. These methods typically model judgment prediction as a text classification problem, 
+
+> ∗
+
+Equal contribution. 
+
+> †
+
+Corresponding author. 39th Conference on Neural Information Processing Systems (NeurIPS 2025). 
+
+> arXiv:2603.11446v1 [cs.CL] 12 Mar 2026
+
+leveraging PLMs’ powerful contextual semantic representation capabilities to automatically learn discriminative features related to judicial outcomes from case facts. They have achieved significant performance improvements across multiple authoritative benchmark datasets. However, from a legal theory perspective, sentencing is not a simple semantic matching or correlation assessment. It is a rigorous reasoning process that strictly follows legal elements and unfolds based on fact-norm causal logic. Existing PLM-based fine-tuning models primarily rely on statistical correlations between case facts and judicial outcomes, lacking explicit modeling of legal elements and their inherent causal structures. Consequently, they are prone to learning spurious correlations unrelated to the adjudicated conclusions. Previous studies have demonstrated that even minor pertur-bations to punctuation within input factual descriptions—without altering underlying semantics—can significantly alter predictions from state-of-the-art models(Chen et al. [2024]). This phenomenon exposes fundamental limitations in correlation-driven approaches regarding robustness and reasoning credibility. To address these shortcomings, integrating causal inference into the LJP task has emerged as a key research direction in recent years. Related work seeks to transcend superficial statistical correlations by uncovering more legally meaningful causal mechanisms linking case facts to judicial outcomes. For instance, Liu et al. [2021] extracted latent causal relationships from case facts and constructed causal graphs to assist in distinguishing easily confused criminal charges; Chen et al. [2024]systematically analyzed bias sources in legal data using Structural Causal Models (SCM) and proposed bias-reduction learning strategies. These studies demonstrate the potential advantages of causal modeling in enhancing model interpretability and robustness. Despite progress, reliably constructing causal structures within authentic legal text remains a critical bottleneck constraining the practical application of LJP causal methods. Specifically, existing ap-proaches face two primary challenges: (1) Difficulty in accurately identifying legal factors. Keyword extraction methods based on statistical features or unsupervised rules (e.g., YAKE) struggle to distin-guish high-frequency narrative components from substantive legal elements, often introducing noise such as names, place names, or template expressions. Methods relying on general open-information extraction tools face severe domain transfer issues, frequently resulting in omissions or errors in extracting key elements within syntactically complex, highly formalized legal texts. (2) Significant uncertainty in causal structures. Traditional causal discovery algorithms rely on observational data. Under the highly sparse conditions of legal text features, statistical independence tests often lack sufficient support. Simultaneously, due to the existence of Markov equivalence, methods like GFCI can only output partial ancestor graphs containing numerous directionally uncertain edges when lacking temporal or intervention information. This forces subsequent models to introduce heuristics or random assumptions, weakening the legal interpretability of causal structures. To address these challenges, this paper proposes an enhanced inference framework that integrates large language model (LLM) prior knowledge with statistical causal discovery. This approach aims to maintain the rigor of causal inference while leveraging the legal common sense and reasoning capabilities inherent in LLMs. It mitigates noise interference and structural disambiguation issues, achieving a complete closed-loop process from unstructured case facts to causally informed judgment prediction. Specifically, at the legal factor level, we propose a “coarse-to-fine” hybrid extraction mechanism. This mechanism generates candidate legal factor sets using statistical methods, enhancing coverage of long-tail critical evidence through uniform sampling in word frequency space. Subsequently, by integrating retrieval-enhanced generation and reasoning chain techniques, we guide the LLM to map candidate factors to standard legal elements while systematically filtering non-element noise, thereby constructing a semantically pure, jurisprudentially consistent causal variable space. Secondly, at the causal structure level, we propose an LLM-assisted probabilistic disambiguation and multi-graph sampling strategy. Addressing ambiguous causal edges in the PAG output by GFCI, this paper avoids deterministic or random assumptions. Instead, it employs the LLM as a constrained “soft legal knowledge base.” Under explicit case details and legal provision prompts, the LLM performs prior probability assessments on uncertain causal directions. Combined with judicial logic constraints and fundamental temporal constraints for pruning and sampling, this generates a set of candidate causal graphs consistent with legal principles, thereby preserving and explicitly modeling causal uncertainty. After generating causal graphs, we constrain text attention weights based on graph information to achieve effective integration between causal inference and pre-trained language models. 2In summary, the main contributions of this paper can be summarized in three points: 1. Proposed a legal factor identification paradigm integrating statistical screening with LLM semantic reasoning, achieving high-precision extraction of legal elements; 2. Designed an LLM-assisted causal structure disambiguation mechanism to mitigate structural uncertainty caused by Markov equivalence in observational causal discovery; 3. Constructs a causality-aware judgment prediction model that guides attention mechanisms through explicit causal effects, significantly enhancing accuracy and robustness in distin-guishing similar criminal charges. Experimental results demonstrate that our proposed method achieves significantly higher prediction accuracy than existing mainstream baseline models across multiple legal datasets, including LEVEN, QA, CAIL, LEDGAR, and Overruling. 
+
+## 2 Related work 
+
+Early research on legal text classification primarily relied on traditional machine learning methods such as Support Vector Machines (SVM) and Random Forests, combined with feature engineering techniques like TF-IDF and Bag-of-Words for text vectorization. Clavié and Alphonsus [2021]em-ployed an SVM classifier for multi-label legal text classification. While emphasizing computational simplicity, this approach captures only superficial information through shallow features, resulting in insufficient generalization for large-scale long documents. Chen et al. [2022] compared concept-feature-based Random Forests with deep learning models in legal text classification, finding traditional models retain certain advantages under specific settings. Bifari et al. [2024]explored the application of machine learning techniques (including random forests and XGBoost) in crime category classification based on open legal databases. With the advancement of deep learning, researchers began applying neural networks to legal text classification to better capture contextual and semantic features. Clavié et al. [2021] proposed a lightweight LSTM language model pre-training + downstream classification approach for short legal text classification, achieving outstanding performance on short legal text classification tasks. Niklaus et al. [2021]introduced the Swiss-Judgment-Prediction benchmark dataset, systematically evaluating multiple BERT models on legal judgment prediction tasks using multilingual judgments from the Swiss Federal Supreme Court. Wang et al. [2022]developed the D2GCLF framework, which converts legal documents into multi-relational graphs using graph neural networks (GNNs). A graph attention network is then constructed on top of these relational graphs to classify legal documents. Alghazzawi et al. [2022]proposed a model combining RFE feature selection with LSTM+CNN for automatic classification of three types of rulings on the U.S. Supreme Court dataset. In recent years, researchers have explored applying pre-trained language models to legal text classifi-cation, such as fine-tuning BERT or RoBERTa. Chalkidis et al. [2020]introduced LEGAL-BERT, which significantly improved performance on legal tasks by further pre-training BERT on large-scale legal corpora. Limsopatham [2021]proposed a hierarchical BERT strategy, segmenting documents and aggregating attention to process lengthy legal texts. Mamakas et al. [2022] extended LegalBERT by integrating Longformer to expand attention windows and fuse TF-IDF information, enhancing classification performance on long documents.Paul et al. [2023]retrained LegalBERT on Indian legal data, creating InlegalBERT—a model tailored to Indian legal vocabulary that improved performance not only in the new domain (Indian texts) but also in the original domains (European and UK texts). Geng et al. [2021]released LegalRoBERTa, a RoBERTa model further pre-trained on legal corpora. Building upon this, Garcia et al. [2024] and Saketos et al. [2024] introduced RoBERTaLexPT for Portuguese and GreekLegalRoBERTa for Greek, respectively. With the rapid advancement of large language models (LLMs), researchers have begun transforming legal text classification tasks into generative problems, leveraging prompt engineering and instruction tuning to enhance model generalization. Parizi et al. [2023] conducted a comparative study on prompting strategies for legal text classification, experimenting with multiple LLMs and prompting techniques. Niklaus et al. [2025] developed the LawInstruct resource, employing instruction-tuned Flan-T5 to handle legal multi-task classification including text classification. This approach achieved a 50% improvement on LegalBench but may introduce bias for rare tasks. Jung and Jung [2025] proposed the Courtroom-LLM framework, which simulates courtroom debates using multiple LLMs 3to address ambiguous legal text classification, improving decision accuracy on ambiguous tasks. Liu et al. [2025] designed the SEP-MLDC paradigm, optimizing multi-label legal document classification by extending label semantics and contrastive learning through LLMs, outperforming baselines on EU legislative datasets. Johnson et al. [2025] introduced Legal-LLM, a novel approach leveraging LLM instruction execution capabilities through fine-tuning. It reframes multi-label classification as a structured generation task, instructing LLMs to directly output relevant legal categories for given documents. Chen et al. [2025] introduce a novel legal judgment prediction model based on a debate feedback architecture, integrating an LLM multi-agent debate model with a reliability assessment model. 
+
+## 3 Methods 
+
+To address the issues of causal ambiguity and feature interference in similar charge prediction, this study proposes an enhanced inference framework that integrates Large Language Model (LLM) priors with causal discovery algorithms. As illustrated in Figure 1, the framework operates in three stages: (1) Legal Factor Discovery and Normalization: Extracting legal factors from unstructured case descriptions via a "coarse-to-fine" paradigm that combines statistical filtering with semantic reasoning; (2) Robust Causal Graph Construction: Leveraging the GFCI algorithm to uncover latent causal structures, while incorporating LLMs as domain knowledge bases to resolve structural uncertainties through probabilistic disambiguation; and (3) Causal Strength Estimation and Decision-making: Quantifying causal effects based on multi-graph sampling and Propensity Score Matching (PSM), followed by an ensemble mechanism for final charge prediction. Vector Database                              
+
+> （Similarity Search)
+> Raw Legal
+> Data
+> Y1
+> A
+> C
+> D
+> Y2
+> B
+> LLM Agent
+> Preprocessing
+> (Yake)
+> Legal Factors
+> Step 1: Legal Factor Construction via
+> RAG -Enhanced Prompt Engineering
+> Y1 Y2
+> AB
+> C
+> D
+> Causal Relationship
+> DC
+> LLM -based Edge Identification
+> External Legal
+> Knowledge Base
+> Noise Filtering
+> Y1
+> D
+> C
+> A
+> Y2
+> B
+> . . .
+> Sample Graphs
+> Step 2 : Causal Structure Learning with
+> LLM -based Refinement
+> Y1
+> D
+> C
+> A
+> Y2
+> B
+> . . .
+> Weighted Causal Graph
+> Step 3: Causal Strength Estimation
+> Weighted Score Propagation
+> augmented _
+> prompt ≜ℛ𝒢 𝒞 𝒪
+> 𝑥 𝑢𝑣 =Φ(𝑢 ,𝑣 ,𝒦 )
+> 𝑇 ,𝑌 𝐺 𝑞
+> 𝜓
+> ˆ
+> =𝐸 𝑌 ∣𝑑𝑜 𝑇 =1𝐺 𝑞 −𝐸 𝑌 ∣𝑑𝑜 𝑇 =0𝐺 𝑞
+> RAG -PE
+> Decision Outcome
+> AlBert
+> Attention
+> Constrain
+> Weighted Sum
+> Predictions
+> Strength
+> Step 4: Make Decisions
+> Causal Strength
+> Aggregation
+
+Figure 1: Overall architecture of Ours. For causal diagram nodes, A, B, C, and D represent predicted key nodes, while Y1 and Y2 denote features requiring differentiation. 
+
+3.1 Hybrid Extraction Mechanism for Legal Factors 
+
+Legal factors serve as the semantic bridge connecting factual circumstances to legal rulings. Address-ing the challenge that traditional statistical methods struggle to distinguish core case elements from background noise (e.g., personal names, place names), we designed a hybrid extraction module that combines statistical features with large-model semantic understanding. 
+
+3.1.1 Initial Candidate Set Screening Based on Statistical Features. 
+
+To ensure coverage of long-tail critical evidence, we first employ the unsupervised YAKE algorithm to compute the saliency score s(w) for each lexical item w in the text. YAKE calculates word weights by comprehensively considering multidimensional features including word frequency, position in the text, and contextual relationships. We define the candidate keyword set Kcand as the subset of words with scores below threshold τ :
+
+Kcand = {w ∈ D | sYAKE (w) ≤ τ } (1) 4Considering the sparse distribution of features in legal texts, relying solely on frequency truncation introduces noise from high-frequency generic words. Therefore, we define a uniform sampling process on Kcand to construct the initial set Kinit , ensuring unbiasedness in the frequency dimension of the feature space: 
+
+Kinit ∼ Uniform (Kcand , N s) (2) where Ns denotes the preset sampling scale. 
+
+3.1.2 Semantic Refinement Based on RAG and Prompt Factor Decomposition 
+
+The initial set Kinit still contains substantial non-legal semantic noise. We leverage the semantic reasoning capabilities of large language models for secondary filtering and introduce Retrieval-Augmented Generation (RAG) to align with standard legal terminology. Specifically, we first introduce an external legal lexicon Ω as a knowledge base. For each w ∈ K init , we obtain its semantic vector using a pre-trained encoder E(·) and retrieve the top-K augmenting contexts Dw based on cosine similarity: 
+
+Dw = argmax 
+
+> S⊂ Ω,|S| =K
+
+X
+
+> d∈S
+
+cos( E(w), E (d)) (3) Subsequently, to constrain the LLM’s reasoning process, we construct a prompt framework based on element decomposition. This framework is defined as a quadruple Φ = ( R, G, C, O):
+
+Role Positioning ( R): Designates the model as a “criminal law expert,” activating its latent space in the legal domain. 
+
+Task Goal ( G): Construct a mapping function G : Kinit × Z → { 0, 1} to determine whether keywords constitute key elements of the target offense group Z.
+
+Inference Chain ( C): The inference chain employs a four-step ordered CoT process, where each subsequent step strictly depends on the preceding results. Specifically, it includes: 1. Semantic Parsing: Define the legal interpretation function def : Kinit × Z → L (where L is the legal language space), outputting the unique legal meaning def (k, Z) = l of keyword k
+
+in context Z, addressing legal term polysemy (e.g., differing legal definitions of “robbery” across contexts). 2. Element-Relevance Assessment: Based on legal element theory, define the set of constituent elements Ez for target offense z. The model analyzes the logical relationship between keywords and elements to determine relevance between keywords and offenses. 3. Multi-Dimensional Filtering: Introduce a part-of-speech constraint function pos : Kinitial →P (where P is the part-of-speech space) and an entity type function ner : Kinitial → E (where 
+
+E is the entity type space). The filtering rules are: 
+
+Kfiltered = {k ∈ Krelated | pos (k) ∈ P keep ∧ ner (k) /∈ E exclude } (4) where Pkeep = {NOUN , VERB , PROPN } (nouns carrying core legal concepts, verbs expressing legal actions and procedures, proper nouns containing legal terminology), 
+
+Eexclude = {PERSON , GPE , DATE } (excludes domain-irrelevant entities like personal names, geopolitical entities, and dates to meet privacy protection needs, reduce overfit-ting, and avoid temporal interference). 4. Result Validation and Correction: Introduce a reflection mechanism to simulate the rigor of legal argumentation, validating and correcting screening results to ensure logical soundness. 
+
+Output Constraint ( O): Enforce standardized JSON format output for parsing. See Appendix A for inference chain examples. We populate the structured prompt template Φ( ·) with w, its context Dw, and the target charge group 
+
+Z. Subsequently, the LLM’s reasoning process is modeled as a binary classification task, with its decision function defined as: 
+
+Krefine = {w ∈ K init | I [PLLM (y = True | Φ( w, Dw, Z)) > δ ] = 1 } (5) where PLLM denotes the conditional probability generated by the model, I[·] is the indicator function, and δ is the confidence threshold. The inference chain C enforces the model to follow the logical path “semantic parsing → constituent mapping → entity denoising,” thereby eliminating non-constituent entities such as proper nouns and place names identified by NER. 53.1.3 Semantic Clustering and Node Unification 
+
+The refined set Krefine still contains semantic redundancy (e.g., “steal” and “pilfer”). We encode all words in Krefine and map them to a numerical space. K-means clustering is then applied to unify nodes, with the number of clusters K dynamically adjusted based on the training set size. 
+
+3.2 Causal Structure Learning Incorporating Expert Knowledge 
+
+After establishing the graph nodes V , the core task is to infer the causal structure among nodes. We propose a two-stage strategy combining “algorithmic discovery and knowledge refinement.” 
+
+3.2.1 Initial Structure Discovery 
+
+Given the presence of unobservable confounding factors in legal cases, we employ the GFCI (Greedy Fast Causal Inference) algorithm (Ogarrio et al. [2016]) for structure learning. GFCI outputs a Partial Ancestral Graph (PAG) containing four edge types: (1) deterministic causal edges u → v;(2) unobserved confounding edges u ↔ v; (3) partially deterministic causal edges u◦ → v; (4) fully uncertain edges u ◦ − ◦ v. We define the set of edges to be disambiguated as Eamb = {(u, v ) |
+
+u ◦ − ◦ v ∈ E PAG }.
+
+3.2.2 LLM-Assisted Probabilistic Disambiguation Mechanism 
+
+To resolve ambiguous relationships in Eamb , we treat the LLM as a soft knowledge base. By integrating legal text as external knowledge, we estimate prior probabilities for causal directions. For an edge 
+
+(u, v ), we construct a prompt xuv incorporating node semantics and legal context to guide the LLM in evaluating the plausibility of the relation set R = {u → v, v → u, u ↔ v}, and outputting the optimal relation e∗ 
+
+> uv
+
+.To leverage the LLM’s domain knowledge in resolving edge direction uncertainty, we designed a structured prompt function Φ( u, v, K). This function maps node pairs (u, v ) and relevant legal text 
+
+K to instructions xuv . Specifically, the prompt consists of four modules: • Role Anchoring: We explicitly instruct the LLM to assume the role of a “legal expert” to ensure causal reasoning strictly adheres to judicial logic and legal interpretation. • Knowledge Injection: To mitigate model hallucination, we embed relevant legal provisions and case facts (denoted as Dcontext ) into the prompt, compelling the model to reason based on given evidence. • Decision Constraints: Following the semantic description of input nodes u and v, we restrict the model to choose only among three relationship types: forward causality ( u → v), backward causality ( v → u), or no direct causal link ( u ↔ v). • Format Control: We enforce the model to output specific tags for parsing convenience. The LLM’s output is parsed into the final causal direction e∗ 
+
+> uv
+
+. The complete prompt template is detailed in Appendix B. Here, ϵ ∈ [0 , 1] is a hyperparameter. This mechanism allocates most of the probability mass to the LLM’s expert judgment while reserving ϵ of the probability space to explore other possibilities, thereby balancing the utilization of prior knowledge with maintaining statistical robustness. 
+
+3.2.3 Domain Constraint Filtering 
+
+To further enhance graph validity, we introduce two types of constraints to prune the graph structure: 1. Judicial Logic Constraint: Based on the principle that “facts determine judgments,” edges pointing from charge nodes to fact nodes are prohibited (i.e., Y → X is invalid). 2. Temporal Constraints: Based on the axiom “cause precedes effect,” we compute the relative position expectation ∆pos (u, v ) for any two factors fu, f v using the training corpus. If 
+
+∆pos (u, v ) significantly exceeds the threshold α, the direction fv → fu is prohibited. 63.3 Causal Graph Sampling 
+
+To address the challenges posed by residual uncertainty in causal relationships within PAGs for subsequent quantification and decision modeling, Q deterministic causal graphs are generated through random sampling. The sampling logic and probability settings for different PAG edge types are as follows: For deterministic causal edges u → v, retain the edge; for unobserved confounding edges u ↔ v, delete the edge (indicating no direct causal relationship between them); For partially deterministic causal edges u◦ → v, a binary selection strategy is applied: edges are retained ( u → v)or removed with equal 0.5 probability (no LLM optimization); For fully indeterminate edges u ◦ − ◦ v,a ternary selection strategy is employed, sampling according to the method defined in Section 3.2.2. The quality of each sampled graph Gq (q = 1 , 2, ..., Q ) is evaluated using the Bayesian Information Criterion (BIC): BIC (Gq , D ) = −2 log L(Gq , D ) + k log N (6) where L(Gq , D ) is the likelihood value of graph Gq for dataset D, k is the number of edges in graph Gq , and N is the total number of cases in the dataset. The BIC score serves as the weight for subsequent “causal strength integration,” with better-fitting graphs receiving higher weights. 
+
+3.4 Causal Strength Causal Strength Estimation Since sampled causal graphs inherently contain noise, we optimize the sampled graph by estimating the strength of causal relationships: assigning high weights to edges with strong causal effects, and near-zero weights to edges with no causal relationship or weak effects. We define the Average Treatment Effect (ATE) as the strength of the edge (T → Y ) in the causal graph G, quantified via Propensity Score Matching (PSM): 
+
+ψT,Y Gq = E [Y | do (T = 1) , G q ] − E [Y | do (T = 0) , G q ] (7) where do (T = 1) denotes the intervention operation forcing factor T to be “present.” This value is estimated via Propensity Score Matching (PSM), which pairs samples from the treatment group (T = 1 ) and control group ( T = 0 ) with similar confounding variable distributions to reduce bias. 
+
+Aggregating Overall Causal Strength To synthesize the causal strength across Q graphs, we obtain the overall causal strength between factor nodes and offense nodes by weighting with goodness-of-fit, thereby reducing interference from single-graph noise. For any factor node Tj and charge node 
+
+Yi, their overall causal strength ψTj ,Y i is defined as the weighted sum of corresponding edge causal strengths across sampled graphs, weighted by each graph’s fit (quantified using BIC): 
+
+ψTj ,Y i =
+
+> Q
+
+X
+
+> q=1
+
+ω(Gq ) × ψGq  
+
+> Tj,Y i
+
+(8) where: - ψGq  
+
+> Tj,Y i
+
+denotes the estimated causal strength of the edge Tj → Yi in the qth graph Gq . If this edge does not exist in Gq , then ψGq  
+
+> Tj,Y i
+
+= 0 ; - ω(Gq ) is the weight of Gq , calculated as: 
+
+ω(Gq ) = exp ( −BIC (Gq , D )) 
+
+PQq′=1 exp ( −BIC (Gq′ , D )) (9) 
+
+3.5 Decision Making 
+
+After constructing causal graphs and estimating causal strengths, this paper introduces the pre-trained language model ALBERT during the decision phase. The overall causal strength serves as a prior constraint, guiding the model to perform causally aware charge prediction. For a given case description text, we employ the pre-trained language model ALBERT to encode the text, obtaining token semantic representations (where d denotes the ALBERT dimension): 
+
+H = [ h1, h2, . . . , hn], hi ∈ Rd
+
+Subsequently, the attention layer assigns distinct weights {a1, a 2, ..., a n} to each token. Words are then weighted and summed based on these weights to construct the text embedding vd, ultimately 7yielding the prediction vector rcons .
+
+ai = exp  q⊤hi
+
+Pnk=1 exp ( q⊤hk) (10) 
+
+vd =
+
+> n
+
+X
+
+> i=1
+
+aihi (11) where q ∈ Rd is a learnable query vector. In addition to applying cross-entropy loss Lcross to the prediction vector rcons , this paper introduces an auxiliary loss Lcausal to guide the attention module using causal strength. Given the true label 
+
+Yj , for each token w belonging to legal factor Ti, its corresponding causal strength is the overall causal strength ψTj ,Y i , where gi represents the normalized result of this causal strength across the entire token sequence. Lcausal is designed to align attention weights as closely as possible with this normalized strength gi.
+
+L = Lcross + λLcausal , (12) where 
+
+Lcausal =
+
+> n
+
+X
+
+> i=1
+
+(ai − gi)2 , (13) and λ is the trade-off coefficient. 
+
+## 4 Experimental 
+
+In the experimental section, we aim to address the following research questions: • RQ1: Does LLM-Knowledge-GCI demonstrate a significant advantage in prediction accu-racy compared to existing mainstream legal judgment prediction models? • RQ2: Does LLM-Knowledge-GCI demonstrate stronger data efficiency than baseline models in scenarios with scarce training data (low-resource settings)? • RQ3: What are the specific contributions of each core component within the framework to the final model’s performance? • RQ4: Do the causal structures and estimated causal effects uncovered by LLM-Knowledge-GCI remain robust and reliable when confronted with controlled perturbations? • RQ5: How does the magnitude of performance improvement brought by the causal reasoning module vary with the richness of legal factors (key evidence) in case texts? 
+
+4.1 Experimental Setup 4.1.1 Dataset 
+
+The datasets we utilized comprise three Chinese datasets and two English datasets. Statistical information regarding the datasets is presented in Table 1. • LEVEN (Yao et al. [2022]): LEVEN is currently the largest legal event detection dataset and the largest Chinese event detection dataset. It contains 8,116 legal documents annotated with 108 event types, including 64 accusatory events and 44 general events. • QA: The QA dataset comprises 200,000 legal consultation questions across 47 categories. • CAIL: This dataset comprises five sets of similar criminal charges from the Criminal Law of the People’s Republic of China (National People’s Congress [2017]), which are difficult to distinguish in practical applications (Ouyang et al. [1999]). Corresponding factual descriptions were selected from the Chinese AI and Law Challenge (CAIL2018) (Xiao et al. [2018]). 8• LEDGAR (Tuggener et al. [2020]): This dataset originates from filings with the U.S. Securities and Exchange Commission (SEC), all publicly accessible via EDGAR. Each label represents a single subject within the corresponding contractual clause. • Overruling (Zheng et al. [2021]): This dataset, developed in collaboration with Casetext, is sourced from a corpus of judicial opinions. Each label indicates whether a specific legal sentence explicitly expresses an overruling relationship with prior legal precedent.                   
+
+> Dataset Task Type Text Scale (Entries) Average Length (Characters) LEVEN Legal Event Detection 8,116 502 QA_corpus Legal Consultation Question Classification 203,459 38 CAIL2018 Criminal Charge Prediction 30,183 671 LEDGAR Contract Clause Classification 80,000 113 Overruling Precedent Reversal Detection 2,400 27
+
+Table 1: Dataset Statistics 
+
+Baselines To fully validate the performance advantages of our model, we selected 12 representative baseline models for comparison: BiLSTM (Graves and Schmidhuber [2005]) employs a bidirectional recurrent network architecture to encode text sequences. It aggregates bidirectional hidden states to generate text representations for text classification. BiLSTM+CRF (Huang et al. [2015]) combines BiLSTM’s contextual features with conditional random field (CRF) label transfer modeling, performing sequence classification through structured decoding. BERT (Devlin et al. [2019]) undergoes deep bidirectional pre-training based on the Transformer encoder. It extracts either the vector at the [CLS] position or the overall sequence representation, then connects to a classification layer to achieve semantic understanding and text classification. BERT+CRF (Souza et al. [2019]) combines BERT’s deep semantic representations with CRF’s structured label decoding capability, simultaneously leveraging semantic information and label dependencies to optimize classification results in sequence labeling tasks. XLM-RoBERTa (Conneau et al. [2020]) performs cross-lingual pre-training on multilingual corpora, enabling unified text representation and classification through a shared semantic space. Legal-RoBERTa (Chalkidis et al. [2023]) further pre-trains the RoBERTa model on legal corpora, enhancing text representations with domain knowledge for legal text classification. InLegalBERT (Paul et al. [2023]) achieves semantic representation and classification of legal texts by further pretraining and fine-tuning LegalBERT on Indian multilingual legal corpora. NPC (Jiang et al. [2023]) calculates normalized compressed distances between texts using a lossless compressor and performs classification via k-nearest neighbors without parameter training. LLMEmbed (Liu et al. [2024]) extracts multi-layer semantic embeddings from lightweight LLMs, fuses them into text representations, and employs shallow classifiers for classification. ProtoLens (Wei and Zhu [2025]) centers on prototype learning, generating semantic prototypes and performing prototype-aware matching to achieve interpretable semantic representations and text classification. AC-NLG (Wu et al. [2020]) constructs a counterfactual dual decoder based on causal backdoor adjustment to model different judgment generation distributions. It employs a judgment predictor to select outputs, enabling bias-free court opinion generation. CASAM (Chen et al. [2024]) employs a causally aware self-attention mechanism. It constructs graph-based interventions to modulate attention weights, distinguishing causal from non-causal information through OIE. Combined with law-specific adversarial attacks, it achieves robust and bias-free legal text prediction. 94.2 Main Results (RQ1) 
+
+We compare the performance of our model against baseline methods across four datasets in the table. These results are elaborated by addressing the following research questions.                                                                                                
+
+> Models LEVEN QA CAIL LEDGAR Overruling BiLSTM 2.93 19.75 69.63 76.24 91.78 BiLSTM+CRF 34.91 28.24 63.90 78.38 92.51 BERT 72.37 78.64 88.45 87.01 95.69 BERT+CRF 72.94 79.17 88.81 86.35 95.88 Legal-roberta-base 35.46 76.87 62.93 87.29 96.57 InLegalBERT 11.78 22.97 63.54 86.74 94.12 xlm-roberta-base 53.28 78.49 81.81 84.59 96.48 LLMEmbed 53.63 78.89 85.23 81.47 92.78 npc 33.53 75.66 77.02 78.16 92.18 ProtoLens 46.01 77.98 82.65 80.11 91.45 CASAM 71.08 81.37 86.19 87.21 92.75 AC-NLG 74.11 83.85 88.48 82.28 89.56 zero shot-qwen3:14b 59.81 37.61 68.02 66.54 84.56 zero shot-llama2:13b 14.76 27.89 35.09 41.76 77.89 zero shot-gemma3:12b 44.10 37.68 66.63 56.87 83.46 fine tune-qwen3:1.7b 21.14 73.18 80.11 82.24 91.89 fine tune-gemma3:1b 6.81 71.84 77.97 76.28 88.76 ours 74.26 85.72 89.31 88.31 97.05
+
+Table 2: Comparison of Performance Metrics Across Models 
+
+Q1: How does the improved model compare to others in overall performance? 
+
+Overall experimental results show that the proposed model achieves optimal or second-best overall performance across varying training set proportions, with particularly stable advantages under medium-to-high resource conditions. At 10% or higher training data coverage, traditional sequence models (BiLSTM, BiLSTM+CRF) exhibit low overall performance, with average metrics of 39.54% and 47.26% at 50% training data, respectively. which fails to meet the demands of complex legal text classification tasks. The introduction of pre-trained language models significantly improved overall performance. For instance, BERT+CRF achieved an average metric of 83.02% with 50% training data, while XLM-RoBERTa reached 78.31%. In contrast, the proposed model achieved superior results under equivalent conditions. With 50% training data, the improved model achieved an average accuracy of 85.72% across five datasets, surpassing BERT+CRF and XLM-RoBERTa by 2.70 and 7.41 percentage points respectively. Even with 30% training data, accuracy reached 84.25%, demonstrating robust stability and generalization capabilities across varying data scales. Furthermore, methods based on large model representations or prototype reasoning (e.g., LLMEmbed, ProtoLens, NPC) demonstrate competitive performance in certain scenarios. However, their perfor-mance fluctuates significantly across different datasets and remains overall inferior to our model. This further validates the cross-dataset consistency and robustness advantages of our approach. 
+
+Q2: What advantages does the improved model offer in few-shot scenarios (1%, 5% training sets)? 
+
+In few-shot scenarios, the proposed model demonstrates particularly outstanding advantages, indicat-ing its excellent data efficiency and low-resource adaptability. With only 1% training data, our model achieves an all-task average accuracy of 61.17%, significantly outperforming all baselines. It particularly excels on LEVEN: at 1% data, it achieves 28.89% accuracy—4.77 percentage points higher than the next-best LLMEmbed (24.12%) and over ten times better than Bert (1.79%) and InLegalBERT (1.19%); It also demonstrates robust performance across C3RD Level 1, QA, and CAIL tasks, achieving accuracy rates exceeding 65%, with CAIL reaching 71.95%. When using 5% training data, the model’s average performance further improved to 73.71%, demonstrating significant advantages over LLMEmbed (65.27%), NPC (55.07%), and ProtoLens 10 (51.56%). This represents a 12.54 percentage point increase compared to the 1% data scenario, indicating that the performance gains from additional data significantly outperform other models. This outcome demonstrates that our model can effectively mitigate data scarcity by leveraging stable legal factors and causal relationships for reasoning, even with limited annotated samples. 
+
+Q3: What are the characteristics of performance improvements across different crime category subtasks? 
+
+Based on experimental results across various crime category tasks, the proposed model demonstrates consistent performance advantages in high-similarity crime classification and multi-granularity crime prediction tasks. For LEVEN, which involves multiple crime categories, baseline models exhibit overall low accu-racy. For instance, LLMEmbed achieves 39.58% accuracy with 10% training data. In contrast, our model reaches 60.72% under identical conditions and improves to 74.26% with 50% train-ing data—outperforming the second-best baseline Bert+CRF (70.58%) by 3.68 percentage points, demonstrating stronger discriminative capabilities. For QA and CAIL, our model maintains high and stable accuracy across varying training data scales, achieving 85.72% and 89.31% accuracy respectively with 50% training data. On QA, our model outperforms all comparison methods, being the only one to exceed 80% accuracy. The results demonstrate that our model exhibits strong generalization capabilities across different task formats and semantic complexities. 
+
+4.3 Ablation Experiments 
+
+To further validate the effectiveness of key components within the LLM-Knowledge-GCI framework, we designed three sets of ablation experiments examining: (1) the legal factor hybrid extraction module, (2) the knowledge-enhanced module for LLM fuzzy-edge disambiguation, and (3) the causal constraint mechanism module. Results are presented in Table ?? .
+
+Legal Factor Hybrid Extraction Module: This experiment evaluates the effectiveness of combining “traditional keyword extraction (YAKE)” with “LLM semantic enhancement.” Results indicate that the full model outperforms in all task categories: the full model achieves 85.12% accuracy in the AP&DD (Abuse of Power & Dereliction of Duty) group, while the model without LLM enhancement achieved only 82.22%, a 2.9 percentage point decrease. For the Personal Injury task, the full model reached 90.27% accuracy, an improvement of 1.2 percentage points. In terms of average performance, the complete model (89.31%) outperformed the YAKE-only model (87.31%) by 2 percentage points. This improvement primarily stems from the synergistic advantages of YAKE’s statistical feature-based pre-screening and LLM’s legal semantics-based refinement. Together, they filter out noise from case descriptions, providing more reliable factor inputs for subsequent causal graph construction. 
+
+Knowledge Enhancement Module for LLM Ambiguity Resolution: To validate the necessity of incorporating legal cases and judicial interpretations into prompts for contextual data augmentation, we compared the performance of the full model against a version without the knowledge enhancement module (w/o Knowledge). Results demonstrate that legal knowledge augmentation yields significant gains across multiple crime categories: the full model achieved an average accuracy of 89.31%, while the version without knowledge augmentation achieved only 87.89%, a decrease of approximately 1.42 percentage points. Similar trends emerged across multiple crime categories, such as a 2.34 percentage point drop in the EE&MPF (Embezzlement vs. Misappropriation of Public Funds) task and a 0.76 percentage point decline in the Violent Acquisition task. These findings indicate that legal knowledge provides the model with a clear judicial logic benchmark, preventing potential confusion of legal concepts that might arise from pure textual semantic reasoning. 
+
+Causal Constraint Mechanism: Finally, this paper conducted an ablation analysis on the role of the constraint mechanism. Experimental results show that removing the attention module after causal constraints led to a significant decline in overall model performance: on the F&E (Fraud vs. Extortion) task, accuracy dropped from 93.76% to 90.88%, a decrease of 2.88 percentage points; In the EE&MPF task, the accuracy of the model without the attention mechanism (88.76%) decreased by 3.76 percentage points compared to the complete model (92.52%); the average accuracy also dropped from 89.31% to 86.19%. These results demonstrate that attention mechanisms with causal 11 constraint injection effectively highlight key information relevant to charge determination during the model’s decision-making phase. This provides the necessary alignment foundation for causal constraints to function, thereby enhancing overall performance in distinguishing similar charges. 
+
+4.4 Random Edge Comparison Experiment 
+
+To delve deeper into the mechanism by which the LLM-based uncertain edge semantic disam-biguation strategy enhances model performance, this section designs a rigorous controlled variable experiment. This experiment aims to validate the core hypothesis: the performance gains stem from the high-quality semantic logic injected by the LLM, rather than an increase in the causal graph’s 
+
+topological density . To this end, we constructed a randomized baseline strictly aligned with the experimental group in terms of edge count to isolate the influence of quantity on performance. 
+
+Control Group Design Following the principle of single-variable control, both groups employed the “LLM keyword filtering” method proposed in Section 3.2.1 to construct high-quality legal factor nodes. The sole variable was the selection mechanism for uncertain edges in the PAG graph: • Experimental Group: Employed the “LLM edge selection” strategy. Leveraged LLM legal reasoning capabilities to construct semantically enriched causal graphs. • Control Group: Adopted an equal-quantity random sampling strategy, randomly adding edges to the graph in strict quantity parity with the LLM-selected edges of the experimental group. 
+
+Dataset: The CAIL2018 dataset serves as the experimental framework, encompassing five cate-gories of criminal charges: Personal Injury, Violent Acquisition, F&E, EE&MPF, and AP&DD. 
+
+Figure 2: Accuracy Comparison Between LLM Edge Selection and Random Edge Selection Strategies at Different Training Set Ratios 
+
+Experimental Results and Analysis Figure 2 illustrates the accuracy comparison between the LLM edge selection strategy and the random edge selection strategy across different training set proportions. Experimental results demonstrate that models employing the LLM edge selection strategy consistently achieve superior classification performance across different training set proportions and five criminal charge subtasks. Using 50% training data as an example, the experimental group outperformed the random edge control group in accuracy across all tasks, with the highest reaching 93.76% (F&E) and the lowest at 84.88% (Violent Acquisition). Even under low-resource scenarios with 1% and 12 5% training data, the experimental group maintained a stable advantage across all tasks. This demonstrates that reasonable causal semantic constraints can provide effective structural priors for models when labeled data is limited. As the training data proportion increases, this advantage persists, indicating that the LLM-guided uncertain edge disambiguation strategy exhibits good adaptability across different data scales. These results demonstrate that, under consistent causal graph topology scales, the performance gains primarily stem from the high-quality semantic and logical consistency injected by LLMs rather than mere graph structural complexity. This mechanism-level validation confirms the effectiveness of our proposed approach. 
+
+4.5 Causal Graph Quality Analysis   
+
+> (a) AP&DD (b) E&MPF
+> (c) F&E (d) Personal Injury
+> (e) Violent Acquisition
+
+Figure 3: Causal Quality Graph To validate the robustness of the causal discovery mechanism within this framework, we conducted sensitivity analyses on the generated causal graphs. Specifically, we introduced controlled perturba-tions to the original causal structure to observe fluctuations in causal effects. Following the evaluation paradigm of Kiciman and Sharm (2018), we designed three refutation strategies: 1) Introduction of random confounding factors: Adding randomly generated confounding variables to the graph, where the original causal effects should theoretically remain constant; 2) Placebo treatment: Replacing the treatment variable with random noise, where the estimated causal strength should approach zero; 3) Subset validation: Re-estimating causal strength on randomly sampled subsets of the data, where the results should not exhibit significant deviation. Figure 3 presents experimental results applying these strategies across five crime category tasks. The results indicate that under the random confounding variable and data subset strategies, the causal strength remains largely unchanged; however, after applying the placebo treatment, the causal strength drops to nearly zero. This phenomenon demonstrates that the LLM-Knowledge-GCI framework effectively filters out spurious correlations through knowledge augmentation, enabling the generated causal structure to exhibit superior robustness to perturbations compared to purely statistical methods. 13 4.6 Sensitivity Analysis of Relative Model Performance Improvement with Respect to Factor Count Level 1 Level 2 Level 3 Level 4 Level 5             
+
+> Causal Factor Number Level
+> -0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> Improvement vs Level 1 (%)
+> 0.00% 1.43% 2.75% 2.58% 1.82%
+> Personal Injury
+> Level 1 Level 2 Level 3 Level 4
+> Causal Factor Number Level
+> -0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> Improvement vs Level 1 (%)
+> 0.00% 1.97% 2.85% 2.24%
+> Violent Acquisition
+> Level 1 Level 2 Level 3 Level 4
+> Causal Factor Number Level
+> -0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> 3.5
+> Improvement vs Level 1 (%)
+> 0.00% 2.00% 3.18% 2.87%
+> F&E
+> Level 1 Level 2 Level 3 Level 4
+> Causal Factor Number Level
+> -0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> Improvement vs Level 1 (%)
+> 0.00% 0.91% 1.30% 1.48%
+> EE&MPF
+> Level 1 Level 2 Level 3 Level 4
+> Causal Factor Number Level
+> -0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> Improvement vs Level 1 (%)
+> 0.00% 1.82% 2.59% 2.33%
+> AP&DD
+> Relationship Between Causal Factor Number and Improvement
+
+Figure 4: The Impact of Factor Quality on Outcomes To thoroughly investigate the adaptability of the proposed LLM-Knowledge-GCI framework across cases of varying complexity, this section employs the number of causal factors in a case as a quantita-tive measure of complexity. It systematically analyzes the patterns of relative model performance improvement as the factor count changes, thereby clarifying the framework’s performance boundaries under different complexity scenarios. 
+
+4.6.1 Experimental Setup and Grouping Criteria 
+
+Cases were categorized into distinct levels based on factor count to ensure the analysis focuses on complexity’s impact on model efficacy. Grouping criteria were determined by: factor distribution patterns within the 50% training set, the range of legal requirement variations across charge categories, and statistical validity principles: - Personal Injury: Given case volume, complexity, and requirement variation dimensions, a five-level classification was adopted to precisely segment scenarios from minimal to extreme complexity; Violent Acquisition, F&E, EE&MPF, and AP&DD feature concen-trated differences with focused factor counts. A four-level classification maintains distinction while avoiding statistical redundancy from excessive categorization, with each level spanned by 5 factors. 
+
+1. Grouping Criteria: 
+
+• Five-level classification: Level 1 = [0,4], Level 2 = [5,9], Level 3 = [10,14], Level 4 = [15,19], Level 5 = ≥ 20 
+
+• Four-level division: Level 1 = [0,4], Level 2 = [5,9], Level 3 = [10,14], Level 4 = ≥ 15 
+
+2. Metrics: Relative Accuracy Improvement: 
+
+∆Acc rel = Acc Level i − Acc Level1 
+
+where Acc Level1 denotes the model accuracy at the lowest factor quantity level (Level 1), and Acc Level i
+
+denotes the model accuracy at level i.14 4.6.2 Experimental Results and Analysis 
+
+As shown in Figure 4, the relative performance improvement ( ∆Acc rel ) across datasets exhibits a nonlinear relationship with the number of factors, following these patterns: 
+
+1. Complexity Gains and Diminishing Marginal Returns 
+
+Except for EE&MPF, the remaining four datasets exhibit a “rise-then-level-off” trend. Within the Level1 to Level3 range, model performance gradually improves with increasing factor count. For instance, the Violent Acquisition task achieves a 2.85% relative gain at Level3, indicating that introducing more causal factors helps models better capture critical information structures in cases under moderate complexity scenarios. When the number of factors further increases to Levels 4/5, the performance improvement tends to saturate and even shows a slight decline. This suggests that beyond a certain threshold, excessive factors may introduce redundant information, thereby weakening the model’s ability to focus on key discriminative clues, reflecting a trend of diminishing marginal returns. 
+
+2. Impact of Offense Specificity on Model Sensitivity 
+
+• High Sensitivity (F&E): These offenses involve complex subjective intent and multi-step behavioral chains. Increasing the number of factors effectively supplements critical logical nodes, enhancing the model’s discriminative capability, resulting in the largest relative improvement. • Low Sensitivity and Special Cases (EE&MPF): This dataset shows a relatively small overall improvement (peak of 1.48%), but exhibits a stable, monotonically increasing trend as the number of factors increases. This phenomenon may be related to the complexity of legal definitions and semantic expressions for these offenses. While increasing the number of factors provides supplementary information, the overall performance gain remains limited due to the inherent difficulty of the task. 
+
+## References 
+
+Haotian Chen, Lingwei Zhang, Yiran Liu, and Yang Yu. Rethinking the development of large language models from the causal perspective: a legal text prediction case study. In Proceedings of the AAAI Conference on Artificial Intelligence , volume 38, pages 20958–20966, 2024. Xiao Liu, Da Yin, Yansong Feng, Yuting Wu, and Dongyan Zhao. Everything has a cause: Leveraging causal inference in legal text analysis. In proceedings of the 2021 conference of the North American Chapter of the association for computational linguistics: human language technologies , pages 1928–1941, 2021. Benjamin Clavié and Marc Alphonsus. The Unreasonable Effectiveness of the Baseline: Discussing SVMs in Legal Text Classification . 12 2021. ISBN 9781643682525. doi: 10.3233/FAIA210317. Haihua Chen, Lei Wu, Jiangping Chen, Wei Lu, and Junhua Ding. A comparative study of automated legal text classification using random forests and deep learning. Information Processing & Management , 59(2):102798, 2022. Ezdihar Bifari, Arwa Basbrain, Rsha Mirza, Alaa Bafail, Somayah Albaradei, and Wadee Alhalabi. Text mining and machine learning for crime classification: using unstructured narrative court documents in police academic. Cogent Engineering , 11(1):2359850, 2024. Benjamin Clavié, Akshita Gheewala, Paul Briton, Marc Alphonsus, Rym Laabiyad, and Francesco Piccoli. Legalmfit: Efficient short legal text classification with LSTM language model pre-training. 
+
+CoRR , abs/2109.00993, 2021. Joel Niklaus, Ilias Chalkidis, and Matthias Stürmer. Swiss-judgment-prediction: A multilingual legal judgment prediction benchmark. In Proceedings of the natural legal language processing workshop 2021 , pages 19–35, 2021. 15 Qiqi Wang, Kaiqi Zhao, Robert Amor, Benjamin Liu, and Ruofan Wang. D2gclf: Document-to-graph classifier for legal document classification. In Findings of the Association for Computational Linguistics: NAACL 2022 , pages 2208–2221, 2022. Daniyal Alghazzawi, Omaimah Bamasag, Aiiad Albeshri, Iqra Sana, Hayat Ullah, and Muham-mad Zubair Asghar. Efficient prediction of court judgments using an lstm+ cnn neural network model with an optimal feature set. Mathematics , 10(5):683, 2022. Ilias Chalkidis, Manos Fergadiotis, Prodromos Malakasiotis, Nikolaos Aletras, and Ion Androut-sopoulos. Legal-bert: The muppets straight out of law school. In Findings of the association for computational linguistics: EMNLP 2020 , pages 2898–2904, 2020. Nut Limsopatham. Effectively leveraging bert for legal document classification. In Proceedings of the natural legal language processing workshop 2021 , pages 210–216, 2021. Dimitris Mamakas, Petros Tsotsi, Ion Androutsopoulos, and Ilias Chalkidis. Processing long legal documents with pre-trained transformers: Modding legalbert and longformer. In Proceedings of the Natural Legal Language Processing Workshop 2022 , pages 130–142, 2022. Shounak Paul, Arpan Mandal, Pawan Goyal, and Saptarshi Ghosh. Pre-trained language models for the legal domain: A case study on indian law, 2023. URL https://arxiv.org/abs/2209. 06049 .Saibo Geng, Rémi Lebret, and Karl Aberer. Legal transformer models may not always help, 2021. URL https://arxiv.org/abs/2109.06862 .Eduardo Garcia, Nadia Silva, Felipe Siqueira, Juliana Gomes, Hidelberg O Albuquerque, Ellen Souza, Eliomar Lima, and André de Carvalho. Robertalexpt: A legal roberta model pretrained with deduplication for portuguese. In Proceedings of the 16th International Conference on Computational Processing of Portuguese-Vol. 1 , pages 374–383, 2024. Vasileios Saketos, Despina-Athanasia Pantazi, and Manolis Koubarakis. The large language model greeklegalroberta, 2024. URL https://arxiv.org/abs/2410.12852 .Ali Hakimi Parizi, Yuyang Liu, Prudhvi Nokku, Sina Gholamian, and David Emerson. A comparative study of prompting strategies for legal text classification. In Proceedings of the Natural Legal Language Processing Workshop 2023 , pages 258–265, 2023. Joel Niklaus, Lucia Zheng, Arya D McCarthy, Christopher Hahn, Brian M Rosen, Peter Henderson, Daniel E Ho, Garrett Honke, Percy Liang, and Christopher D Manning. Lawinstruct: A resource for studying language model adaptation to the legal domain. In Findings of the Association for Computational Linguistics: NAACL 2025 , pages 127–152, 2025. Sangkeun Jung and Jeesu Jung. Courtroom-llm: a legal-inspired multi-llm framework for resolving ambiguous text classifications. In Proceedings of the 31st International Conference on Computa-tional Linguistics , pages 7367–7385, 2025. Han Liu, Shuqin Li, Xiaotong Zhang, Yuanyuan Wang, Feng Zhang, Hongyang Chen, and Hong Yu. Sep-mldc: A simple and effective paradigm for multi-label document classification. In Findings of the Association for Computational Linguistics: NAACL 2025 , pages 3849–3859, 2025. Emily Johnson, Xavier Holt, and Noah Wilson. Improving the accuracy and efficiency of legal document tagging with large language models and instruction prompts, 2025. URL https: //arxiv.org/abs/2504.09309 .Xi Chen, Mao Mao, Shuo Li, and Haotian Shangguan. Debate-feedback: A multi-agent framework for efficient legal judgment prediction. In Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 2: Short Papers) , pages 462–470, 2025. Juan Miguel Ogarrio, Peter Spirtes, and Joe Ramsey. A hybrid causal search algorithm for latent variable models. In Conference on probabilistic graphical models , pages 368–379. PMLR, 2016. 16 Feng Yao, Chaojun Xiao, Xiaozhi Wang, Zhiyuan Liu, Lei Hou, Cunchao Tu, Juanzi Li, Yun Liu, Weixing Shen, and Maosong Sun. Leven: A large-scale chinese legal event detection dataset. In 
+
+Findings of the association for computational linguistics: ACL 2022 , pages 183–201, 2022. National People’s Congress. Criminal Law of the People’s Republic of China . China Legal Publishing House, 2017. Tao Ouyang, Kejia Wei, and Renwen Liu. Confusing crimes, noncrime, and boundaries between crimes . Chinese People’s Public Security University Press, 1999. Chaojun Xiao, Haoxi Zhong, Zhipeng Guo, Cunchao Tu, Zhiyuan Liu, Maosong Sun, Yansong Feng, Xianpei Han, Zhen Hu, Heng Wang, and Jianfeng Xu. Cail2018: A large-scale legal dataset for judgment prediction, 2018. URL https://arxiv.org/abs/1807.02478 .Don Tuggener, Pius Von Däniken, Thomas Peetz, and Mark Cieliebak. Ledgar: a large-scale multi-label corpus for text classification of legal provisions in contracts. In Proceedings of the twelfth language resources and evaluation conference , pages 1235–1241, 2020. Lucia Zheng, Neel Guha, Brandon R. Anderson, Peter Henderson, and Daniel E. Ho. When does pretraining help? assessing self-supervised learning for law and the casehold dataset, 2021. URL 
+
+https://arxiv.org/abs/2104.08671 .Alex Graves and Jürgen Schmidhuber. Framewise phoneme classification with bidirectional lstm networks. In Proceedings. 2005 IEEE International Joint Conference on Neural Networks, 2005. ,volume 4, pages 2047–2052. IEEE, 2005. Zhiheng Huang, Wei Xu, and Kai Yu. Bidirectional lstm-crf models for sequence tagging. arXiv preprint arXiv:1508.01991 , 2015. Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. Bert: Pre-training of deep bidirectional transformers for language understanding. In Proceedings of the 2019 conference of the North American chapter of the association for computational linguistics: human language technologies, volume 1 (long and short papers) , pages 4171–4186, 2019. Fábio Souza, Rodrigo Nogueira, and Roberto Lotufo. Portuguese named entity recognition using bert-crf. arXiv preprint arXiv:1909.10649 , 2019. Alexis Conneau, Kartikay Khandelwal, Naman Goyal, Vishrav Chaudhary, Guillaume Wenzek, Fran-cisco Guzmán, Edouard Grave, Myle Ott, Luke Zettlemoyer, and Veselin Stoyanov. Unsupervised cross-lingual representation learning at scale. In Proceedings of the 58th annual meeting of the association for computational linguistics , pages 8440–8451, 2020. Ilias Chalkidis, Nicolas Garneau, C˘ at˘ alina Goan t, ˘a, Daniel Katz, and Anders Søgaard. Lexfiles and legallama: Facilitating english multinational legal language model development. In Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 15513–15535, 2023. Zhiying Jiang, Matthew Yang, Mikhail Tsirlin, Raphael Tang, Yiqin Dai, and Jimmy Lin. “low-resource” text classification: A parameter-free classification method with compressors. In Findings of the Association for Computational Linguistics: ACL 2023 , pages 6810–6828, 2023. Chun Liu, Hongguang Zhang, Kainan Zhao, Xinghai Ju, and Lin Yang. Llmembed: Rethinking lightweight llm’s genuine function in text classification. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 7994–8004, 2024. Bowen Wei and Ziwei Zhu. Protolens: Advancing prototype learning for fine-grained interpretabil-ity in text classification. In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 4503–4523, 2025. Yiquan Wu, Kun Kuang, Yating Zhang, Xiaozhong Liu, Changlong Sun, Jun Xiao, Yueting Zhuang, Luo Si, and Fei Wu. De-biased court’s view generation with causality. In Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP) , pages 763–780, 2020. 17 Appendix 
+
+A Yake+LLM Prompt Template     
+
+> System Prompt Quadruple system_prompt = ( R,G,C,O)
+
+Role Definition ( R): You are a professional legal expert with specialized knowledge in criminal law, required to rigorously screen terms related to target offenses based on legal logic. 
+
+Task Objective ( G): From a given initial keyword set, screen legal terms relevant to the target offense group Z = {intentional injury , intentional homicide }.
+
+Inference Chain ( C): 
+
+1. Analyze the specific meaning of each keyword within the criminal law context (e.g., distinguish between “intentional” and ‘negligent’ harm for “injury”); 2. Determine whether keywords relate to essential elements of criminal charges (e.g., “intentional subjective state,” “harmful act,” “harmful consequence”); 3. Retain nouns, verbs, and proper nouns; exclude personal names, place names, and dates; 4. Verify if the filtered results cover core elements; rescreen if any are omitted. 
+
+Output Constraints ( O): Output only a JSON-formatted list of relevant terms, with a minimum of 15 entries. Example format: [“Term1”, “Term2”, ...]. 
+
+B Legal Node Causality Determination Prompt Template 
+
+18 Legal Node Causality Determination Prompt Template 
+
+System Prompt 
+
+As a legal causation determination expert, you must integrate legal provisions, prece-dents, and judicial interpretations. Based on the legal probability of each relationship type, select the relationship type with the highest probability to ensure results align with judicial logic. 
+
+Task Prompt 
+
+1. Data Augmentation and Legal Basis: To enhance judgment accuracy, please first review the legal text data and consult relevant legal resources; [Legal Data Text] 2. Node Semantics: - Node u denotes ‘forgery’ - Node v denotes ‘acquisition’ 3. Core Task: Select the relationship type with the highest probability of causality between nodes u and v from the following: - ‘ u → v’: Direct causal relationship from u to v
+
+- ‘ v → u’: Direct causal relationship from v to u
+
+- ‘ u ↔ v’: No direct causal relationship 4. Output Requirements: - Output only the selected option without any additional text (e.g., explanations, punctuation) - Must be enclosed within <START> and </START> - Example: <START> u → v</START> 
+
+LLM Output 
+
+<START>u →v</START> 
+
+C Small-Sample Example Set ( Edemo )
+
+> Input-Output Mapping Example Strategy
+
+Input: [“Candidate Word 1”, “Candidate Word 2”, “Candidate Word 3”] Output: [“Candidate Word 1”, “Candidate Word 2”] 
+
+D Causal Diagram Generation Algorithm 
+
+19 Algorithm 1: Causal Graph Generation 
+
+Input :Set of case fact descriptions D = {d1, d 2, . . . , d N } and set of similar charges 
+
+C = {c1, c 2, . . . , c M }
+
+Output : A set of sampled causal graphs {G1, G 2, . . . , G Q} 
+
+> 1
+
+Kraw ← YAKE (D); Ksample ← Sample (Kraw , 150) ; 
+
+> 2
+
+Kclean ← LLM_RAG (Ksample , THUOCL , repeat = 3) ; 
+
+> 3
+
+FactorSet ← Optimize_silhouette (K-means (Kclean , dynamic_k )) ; 
+
+> 4
+
+P AG ← GFCI (FactorSet , D ); 
+
+> 5
+
+for e ∈ P AG. edges do  
+
+> 6
+
+if type (e) = ” ◦ − ◦ ” then  
+
+> 7
+
+Pllm [e] ← Calibrate ϵ(LLM (e, legal_clauses + law_cases )) ; 
+
+> 8
+
+end  
+
+> 9
+
+end  
+
+> 10
+
+P AG ← Filter (P AG, rules = [” No Charge → Factor ”, ”Temporal > α ”]) ; 
+
+> 11
+
+for q = 1 to Q do  
+
+> 12
+
+Gq = ∅; 
+
+> 13
+
+for e ∈ P AG do  
+
+> 14
+
+if each eage e = ” → ” then  
+
+> 15
+
+Gq ← Gq ∪ { e}; 
+
+> 16
+
+else if e = ” ◦ → ” and random < 0.5 then  
+
+> 17
+
+Gq ← Gq ∪ { e}; 
+
+> 18
+
+else if e = ” ◦ − ◦ ” then  
+
+> 19
+
+r = Sample (Pllm [e]) ; 
+
+> 20
+
+if r ∈ { ” → ”, ” ← ”} then  
+
+> 21
+
+Gq ← Gq ∪ { r}; 
+
+> 22
+
+end  
+
+> 23
+
+end  
+
+> 24
+
+end  
+
+> 25
+
+end  
+
+> 26
+
+return {G1, G 2, . . . , G Q};
+
+20

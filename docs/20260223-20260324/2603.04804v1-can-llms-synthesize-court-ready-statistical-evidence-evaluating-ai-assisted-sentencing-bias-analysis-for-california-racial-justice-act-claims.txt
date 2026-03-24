@@ -1,0 +1,377 @@
+Title: Can LLMs Synthesize Court-Ready Statistical Evidence? Evaluating AI-Assisted Sentencing Bias Analysis for California Racial Justice Act Claims
+
+URL Source: https://arxiv.org/pdf/2603.04804v1
+
+Published Time: Fri, 06 Mar 2026 01:30:02 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+# Can LLMs Synthesize Court-Ready Statistical Evidence? Evaluating AI-Assisted Sentencing Bias Analysis for California Racial Justice Act Claims 
+
+# Aparna Komarla ∗
+
+aparna.komarla@gmail.com Redo.io Berkeley, California, USA 
+
+## Abstract 
+
+Resentencing in California remains a complex legal challenge de-spite legislative reforms like the Racial Justice Act (2020), which allows defendants to challenge convictions based on statistical evidence of racial disparities in sentencing and charging. Policy implementation lags behind legislative intent, creating a ’second-chance gap’ where hundreds of resentencing opportunities remain unidentified. We present Redo.io, an open-source platform that pro-cesses 95,000 prison records acquired under the California Public Records Act (CPRA) and generates court-ready statistical evidence of racial bias in sentencing for prima facie and discovery motions. We explore the design of an LLM-powered interpretive layer that synthesizes results from statistical methods like Odds Ratio, Relative Risk, and Chi-Square Tests into cohesive narratives contextualized with confidence intervals, sample sizes, and data limitations. Our evaluations comparing LLM performance to statisticians using the LLM-as-a-Judge framework suggest that AI can serve as a power-ful descriptive assistant for real-time evidence generation when ethically incorporated in the analysis pipeline. 
+
+## CCS Concepts 
+
+• Applied computing → Law ; • Human-centered computing ;
+
+## Keywords 
+
+AI for Access to Justice, Socio-Technical Systems, Law and Human-ities, Fairness and Transparency, Public Interest Technology 
+
+ACM Reference Format: 
+
+Aparna Komarla. 2026. Can LLMs Synthesize Court-Ready Statistical Ev-idence? Evaluating AI-Assisted Sentencing Bias Analysis for California Racial Justice Act Claims. In Extended Abstracts of the 2026 CHI Conference on Human Factors in Computing Systems (CHI EA ’26), April 13–17, 2026, Barcelona, Spain. ACM, New York, NY, USA, 11 pages. https://doi.org/10. 1145/3772363.3799067 
+
+## 1 Introduction 
+
+A growing body of research highlights racial disparities in Cali-fornia’s criminal legal system, particularly impacting individuals 
+
+> ∗
+
+Aparna is the founder of Redo.io (https://redoio.info), a legal AI non-profit company building technology solutions for resentencing implementation in California, US. 
+
+This work is licensed under a Creative Commons Attribution 4.0 International License. 
+
+CHI EA ’26, Barcelona, Spain 
+
+© 2026 Copyright held by the owner/author(s). ACM ISBN 979-8-4007-2281-3/2026/04 https://doi.org/10.1145/3772363.3799067 
+
+convicted of low-level and non-violent offenses [ 33 ]. In 2021, nearly 20,000 individuals were incarcerated for non-violent felonies, with over 40% serving six or more years [ 7]. Black individuals are incar-cerated at a rate approximately 9 times greater than White individu-als, driven in part by racial biases in prosecutorial discretion [ 34 , 47 ]. These disparities have been compounded by policies like the "Three Strikes and You’re Out" law, which imposed life sentences for al-most any crime if the defendant had two prior serious or violent convictions [ 45 ]. While computational models like COMPAS (Cor-rectional Offender Management Profiling for Alternative Sanctions) have been developed for pre-trial risk assessment, few algorithmic tools have been developed to support attorneys, self-represented litigants, and advocates in post-conviction advocacy [ 1, 23 ]. AI-powered systems that democratize access to justice by lowering barriers to complex analyses introduce distinct human-computer interaction challenges: practitioners must be able to interrogate statistical outputs, understand their limitations, and exercise pro-fessional judgment before presenting findings in court [21]. 
+
+## 2 Legislative Reform History 
+
+While California has enacted multiple retroactive sentencing re-forms over the past decade, the Racial Justice Act (2020) marks a con-ceptual shift in resentencing policy. Earlier measures—Propositions 36 (2012), 47 (2014), and 57 (2016)—primarily addressed sentenc-ing for property crimes, drug offenses, and parole eligibility for non-violent offenders in a deterministic fashion [ 8 , 35 , 42 ]. 1 Sub-sequent legislation shifted toward prosecutorial and judicial dis-cretion: AB 2942 (2018) and AB 600 (2023) empower district attor-neys and judges to directly initiate resentencing based on their own criteria [ 41 ]. 2 Unlike prior frameworks, the RJA introduces a novel mechanism: it permits challenges grounded in statistical evidence of systemic racial bias, requiring courts to grapple with empirical demonstrations of discrimination—a discretionary, non-deterministic standard that demands sophisticated integration of quantitative analysis with legal doctrine [24, 44]. 
+
+> 1
+
+Prop 36 revised California’s three-strikes law to permit resentencing for qualifying persons whose third strike was not serious or violent. Prop 47 requires misdemeanor rather than felony sentencing for certain property and drug crimes and permits those previously sentenced for these reclassified crimes to petition for resentencing. Prop 57 allows certain non-violent offenders serving determinate sentences to be considered for parole after serving the full term for their primary offense. 
+
+> 2
+
+AB 600 grants judges the authority to initiate resentencing under laws that have since been changed particularly in the absence of concurrence between district attorneys and defense counsel. AB 2942 grants district attorneys discretion to review past cases and recommend sentence reductions or recalls.  
+
+> arXiv:2603.04804v1 [cs.HC] 5 Mar 2026 CHI EA ’26, April 13–17, 2026, Barcelona, Spain Aparna Komarla
+
+## 3 Use of Statistics in Resentencing Claims 
+
+The U.S. Supreme Court in McCleskey v. Kemp (1987) ruled that racial bias had to be intentional and purposeful at the individual case level, effectively insulating defendants from pursuing sentenc-ing relief when evidence of racial bias occurred at the system level [24 , 44 ]. The RJA, made retroactive by AB 256, disavows this prece-dent and provides two statistics-based channels for defendants to address racial discrimination in charging and sentencing [ 16 ]: 
+
+(A)(3) : The prosecution sought more severe charges against the defendant compared to other similarly situated cases in that county; 
+
+(A)(4) : The court imposed a more severe sentence on the defendant compared to other similarly situated cases in that county. First, at the prima facie stage, a claimant must present facts indicating a "substantial likelihood" that an RJA violation occurred. Then, a discovery motion is filed for prosecutors to turn over data and in-formation related to the claim, followed by an evidentiary hearing to establish the violation and determine eligibility for relief. For retroactive claims, incarcerated individuals may file pro se petitions using a writ of habeas corpus prior to making a prima facie showing about racial discrimination [ 46 ]. 3 Attorneys may also proactively review sentenced cases for racial injustices and pursue retroactive sentence correction for promising cases [ 16 ]. RJA filings demand expertise in both statistics and technology infrastructure to conduct large-scale analyses, the absence of which constrains the volume and pace at which claims can be made and diminishes the likelihood of their success. Since the passage of the RJA, some non-profit and academic research groups like the Paper Prisons Project at UC Berkeley have developed public-facing tools to assist attorneys with statistical analyses in court. 4 The researchers provide two measures on the rate at which a given charging, sentencing, or arrest-related event occurs for a selected race relative to: (a) the group’s total population in the county, and (b) the total population of non-Hispanic White individuals in the county. The tool is limited for several reasons: (1) disproportionate representation in carceral settings does not auto-matically imply a causal relationship between race and sentencing bias; (2) users cannot apply controls on criminal activity outside of the sentencing outcome of focus, such as prior prison sentences that help standardize a group for apples-to-apples comparisons [ 4 , 13 ]. Furthermore, the tool does not provide interpretive guidance for practitioners without statistical training, leaving attorneys to bridge the gap between disparity metrics and legal argumentation on their own. 
+
+## 3.1 RJA Implementation Gaps 
+
+The use of statistical evidence in arguments related to discrimina-tion in criminal law represents a significant departure from existing practice and introduces distinct interpretive challenges for courts and practitioners [ 4, 13 , 44 ]. Analyses of RJA implementation across California suggest that attorneys have limited guidance on con-ducting empirical studies, identifying similarly situated defendants, 
+
+> 3Habeas corpus is a legal proceeding in which an incarcerated person challenges the lawfulness of their detention or the conditions of their confinement before a court. See https://selfhelp.courts.ca.gov/jcc-form/HC-001.
+> 4The Paper Prisons Project uses Criminal Offender Record Information (CORI) data from the California Department of Justice (DOJ). Details about the calculations in the Paper Prisons Project RJA tool are available here: https://rja.paperprisons.org/.
+
+and proving causal relationships between race and sentencing out-comes [ 4, 13 , 44 ]. Because these claims are labor-intensive and the law is still developing, statistics-based RJA claims have moved slowly, taking months or even years of litigation and multiple trips to higher courts [ 13 , 15 ]. The Committee on Revision of the Penal Code (CRPC) found only three cases where a trial court reached the merits of a statistical claim after an evidentiary hearing, suggesting that the RJA remains significantly underutilized [ 15 ]. 5 Tools that democratize legal research and accelerate case evaluation are es-pecially powerful for public defender offices and self-represented litigants with limited resources to hire statisticians and build com-plex databases [ 12 , 13 , 44 ]. Disparities in funding between district attorneys and public defenders, the absence of institutional public defenders in nearly half of the counties in the state, and the emer-gence of private contracting in public defense create a troubling irony: the defendants most harmed by racial bias in sentencing— and thus most likely to benefit from RJA relief—are the least able to access the expertise and infrastructure needed to prove their claims [18, 27, 49]. 
+
+3.1.1 Research Question. Our work aims to answer three primary questions in socio-technical system design: RQ1. How do we design AI systems that effectively translate between legal requirements and statistical reasoning in the RJA? RQ2. How accurately do LLMs synthesize evidence about racial bias in sentencing while consider-ing all contextual factors? RQ3. How should AI-generated evidence reports be presented to support legal argumentation that is both ethical and effective given that flawed LLM outputs can perpetuate deeper systemic racial harms? 
+
+## 4 AI Assistant for Bias Analysis and Court-Ready Evidence 
+
+We address critical limitations in existing tools for RJA implemen-tation by treating race as a treatment effect to identify dispari-ties between White and non-White sentenced individuals, while enabling attorneys to control for prior prison commitments and define similarity thresholds appropriate to their case [ 14 , 17 , 24 ]. Recent benchmarks like QRDATA on LLM performance for statis-tical and causal reasoning tasks show that general-purpose mod-els achieve accuracy of 58% and frequently miscalculate p-values [ 29 , 36 ] (see Appendix F). Statistical problem-solving requires pre-cise numerical computation, deep conceptual understanding, and logical derivation—all of which differ markedly from the pattern-matching strengths of pretrained LLMs [ 5]. Given these limitations of LLMs, we deliberately conduct statistical analysis using tradi-tional programming methods, reserving AI for downstream tasks. LLMs are employed solely for evidence synthesis and narrative construction, serving as an interpretive bridge between technical analysis and legal argumentation. The challenges with using AI to generate such narratives are multifold. For example, it is impera-tive for an attorney to contextualize observed disparities or lack thereof with confidence intervals, sample size, and underlying data limitations in public records disclosure (see Appendix D and E). The system is therefore designed to augment, not replace, attorney  
+
+> 5Two of these three cases were denied because the courts rejected the expert witness’ methodology and faulted the defense for failing to provide examples of people charged differently for similar conduct. Evaluating AI-Assisted Sentencing Bias Analysis for California Racial Justice Act Claims CHI EA ’26, April 13–17, 2026, Barcelona, Spain
+
+judgment. Users retain control over cohort definitions, variable selection, and the decision to submit any generated output to a court. The LLM serves as a drafting assistant whose outputs require professional review before use in legal proceedings. 
+
+## 4.1 System in Action 
+
+To illustrate, consider an attorney seeking to demonstrate that Black individuals in Contra Costa County were oversentenced for firearm enhancements during robberies. Using our platform, the attorney constructs a similarly situated cohort through (1) query-based filters, where current commitments contain PC12022 (firearm enhancement) and PC211 or PC212 (robberies) 6; sentencing county is Contra Costa; or (2) vector-based searches. 7 The attorney specifies a reference ethnic group (non-Hispanic White) and applies statisti-cal methods including Odds Ratios, Relative Risk, and Chi-Square Test—established as valid benchmarks in prior RJA cases such as 
+
+People v. Windom —to measure disparities in sentencing [ 2, 4, 24 ]. Once computations are complete, the platform generates an evi-dence report for this Contra Costa County scenario by prompting GPT-5-mini with the computed results (point estimates, 95% confi-dence intervals, p-values, contingency table cells, and sample sizes), ethnicity labels, the sentencing outcome under comparison, and a reference context of research papers on RJA proceedings. 8 The prompt instructs the model to synthesize findings across methods, flag limitations in the underlying data, attribute observed dispari-ties to systemic factors rather than inherent criminal behavior, and return a cohesive report (see Appendix H). Since the RJA does not explicitly prescribe which confound-ing variables to control for, the platform allows users to define selection criteria (e.g., excluding cases with prior super strike or violent felony commitments) when constructing cohorts. Attorneys can then rapidly iterate on analyses under varying definitions of similarly situated cohorts and thresholds for biased sentences, in-corporating additional controls in response to judicial or opposing counsel feedback. 
+
+4.1.1 Value Added from AI Analysis. Without LLMs, one might employ rule-based templates to synthesize findings into a narra-tive. However, each statistical method introduces multiple binary contextual dimensions (e.g., CI width, inclusion of 1, sample size adequacy, data limitations), and the three methods can align or diverge in 23 = 8 distinct patterns. The resulting combinatorial space requires 214 = 16 ,384 unique templates—a number that grows exponentially with each additional method (see Appendix G). 9 Be-yond scale, rule-based approaches impose rigid cutoff thresholds that fail to capture nuances between statistical methods. LLMs ob-viate explicit template enumeration by synthesizing evidence in a context-sensitive manner, distinguishing between close and clear           
+
+> 6"PC" refers to the California Penal Code.
+> 7Platform tools: similarly situated case search (https://tool.redoio.info/scenario_builder and https://tool.redoio.info/similar_records), bias analysis toolkit (https://tool.redoio. info/bias_analysis). Cases are represented as vectors in an n-dimensional space, where each dimension captures a sentencing-relevant metric such as offense severity or degree of violence. Similarity measures including Cosine, Tanimoto, and Euclidean distance are then used to identify comparable cases.
+> 8Full prompt inputs and reference context are described in Appendix B and C. Source materials are available at https://github.com/redoio/ai_evals.
+> 9For instance, adding logistic regression with four binary dimensions would increase the total to 214 ×24×2=219 =524 ,288 templates.
+
+Table 1: Contingency Table Structure and Formulas for Racial Bias Analysis. 
+
+Event No Event Total 
+
+Non-White A B 𝐴 + 𝐵 
+
+White C D 𝐶 + 𝐷 
+
+Total 𝐴 + 𝐶 𝐵 + 𝐷 𝑁 
+
+Measure Formula 
+
+Relative Risk (RR) 𝐴 /( 𝐴 + 𝐵 )
+
+𝐶 /( 𝐶 + 𝐷 )
+
+Odds Ratio (OR) 𝐴 × 𝐷 𝐵 × 𝐶 
+
+Chi-Square ( 𝜒 2) 𝑁 (𝐴𝐷 − 𝐵𝐶 )2
+
+(𝐴 + 𝐵 ) ( 𝐶 + 𝐷 ) ( 𝐴 + 𝐶 ) ( 𝐵 + 𝐷 )
+
+Measure Value Meaning 
+
+RR / OR 
+
+= 1 No racial disparity 
+
+> 1 Non-White overrepresented 
+
+< 1 White overrepresented 
+
+𝜒 2 𝑝 < 0.05 Significant association 
+
+𝑝 ≥ 0.05 No significant association 
+
+Figure 1: Process of synthesizing statistical findings and gen-erating an evidence report. See Appendix H for a sample report. 
+
+convergence or divergence across methods—distinctions that would require extensive conditional logic under a rules-based framework. By reducing the overhead of preparing a prima facie showing or discovery motion, AI tools can increase both the volume and pace of RJA filings. 
+
+## 5 Implementation and Results 5.1 Evaluation of AI Assistant for Bias Analysis 
+
+We evaluate GPT-5-mini’s ability to accurately interpret statistical results and synthesize observed biases into court-ready evidence re-ports. 10 We generated 30 reports by varying sentencing county, sen-tencing outcome, ethnicity, and controls on prior record with three statistical methods: Odds Ratio, Relative Risk, and Chi-Square Test  
+
+> 10 GPT-5-mini (https://developers.openai.com/api/docs/models/gpt-5-mini), medium reasoning, accessed via direct API calls. Inputs consist of concatenated instruction-context prompts with a maximum output length of 20,000 tokens. CHI EA ’26, April 13–17, 2026, Barcelona, Spain Aparna Komarla
+
+Table 2: RJA Statistical Analysis: Traditional Process vs. Redo.io AI Platform 
+
+Task Traditional Process Redo.io AI Platform 
+
+Data acquisition CPRA request or Data Sharing Agreement with CDCR (weeks to months) Immediate access (pre-obtained from CDCR) Data scientist Contract with vendor ($$$) Not required (free platform) Cohort generation Manual analysis (hours to days) Automated (30 minutes) Bias analysis report Custom development ($$$, days) Automated (30 minutes) 
+
+Total cost Thousands of dollars Free Total time Weeks to months 1 hour 
+
+Figure 2: View of https://tool.redoio.info/bias_analysis to evaluate the strength of the association between demograph-ics and sentencing outcomes (e.g. ’Third Striker’). See Appen-dix G for an example of the bias analysis report. 
+
+(see Appendix G for a sample report). We employ two evaluation approaches: human evaluators with a minimum of upper-division undergraduate training in statistics, and an LLM-as-a-Judge. Both receive the same inputs (evidence reports, raw statistical findings, and evaluation rubric) and score each dimension on a 0–1 scale. 11 
+
+> 11 For LLM-judgment, to avoid reusing cached responses across evaluation runs, each evaluation request is sent with a unique value for both user and prompt_cache_key (e.g. a new UUID per request). That way each request is routed to a different cache bucket and the API does not return a cached result from a previous run. The interpretation text and criteria may be identical; only the routing parameters differ. We run 15 evaluations per report and dimension to compute the mean and standard deviation of each score.
+
+Recent work demonstrates that LLM-based evaluation correlates strongly with human judgments and captures nuanced aspects of reasoning quality that lexical similarity metrics miss, making this approach well-suited for domain-specific tasks such as statistical interpretation [3, 19, 31, 50]. 
+
+5.1.1 Bias Analysis Rubric. We test six primary dimensions of AI-powered evidence reports related to reasoning and accuracy, and assess known limitations of LLM judges such as their sensitivity to perturbations in inputs (see Appendix C for the full evaluation rubric) [6, 9, 22, 29, 31, 32, 40]: (1) Confidence Interval Contextualization: Ability to con-textualize statistical methods with their confidence intervals (CI), including both the width and the inclusion or exclusion of 1. A result with a wide CI that includes 1 is generally con-sidered imprecise and lacking statistical significance, which an evidence report must flag to avoid overstating findings in court. (2) P-Value Contextualization: Ability to contextualize statis-tical methods such as the Chi-Square Test with their p-values. A result with a p-value greater than 0.05 is typically con-sidered lacking statistical significance at 𝛼 = 0.05 , and the report should clearly communicate this threshold to attor-neys. (3) Dataset Limitations: Ability to contextualize statistical results with limitations of the underlying dataset, such as populations or offense categories excluded due to privacy re-strictions in public records law. For instance, CDCR does not report cases of juvenile offenders under the CPRA to prevent re-identification and harms to personal privacy or safety. 12 
+
+Our dataset also excludes charges that did not result in con-viction, misdemeanor convictions, and other cases that did not result in a prison sentence. Observed disparities should therefore be interpreted with the caveat that the record of criminal activity captured in the dataset is incomplete. (4) Sample Size and Balance Ratio: Ability to contextualize re-sults with sample size, balance ratio, and representativeness of both ethnic groups. A well-balanced analysis generally requires at least a 60-40 split between two groups to ensure sufficient cases to speak to sentencing patterns in each.  
+
+> 12 The California Public Records Act (CPRA) grants the public the right to access records held by state and local government agencies, subject to specific exemptions for privacy and law enforcement. See https://firstamendmentcoalition.org/handbook/california-public-records-act/. The California Department of Corrections and Rehabilitation (CDCR) is the state’s system of over 30 prisons. Evaluating AI-Assisted Sentencing Bias Analysis for California Racial Justice Act Claims CHI EA ’26, April 13–17, 2026, Barcelona, Spain
+
+Table 3: Difference (D) between Avg. Machine (L) and Human (H) Evaluation Scores (30 Cases) 
+
+Evaluation Dimension L L* H D†
+
+OR CI Score (OR CI score ) 0.79 0.06 0.80 −0.01 RR CI Score (RR CI score ) 0.76 0.09 0.80 −0.04 OR Sample Size Score (OR Smp score ) 0.49 0.08 0.61 −0.12 RR Sample Size Score (RR Smp score ) 0.49 0.08 0.61 −0.12 Cross-Method Comparison Score (Cmp score ) 0.69 0.11 0.78 −0.09 Chi-square Sample Size Score ( 𝜒 2 Smp score ) 0.50 0.09 0.59 −0.09 p-Value Contextualization Score ( 𝑝 score ) 0.89 0.05 0.84 +0.05 Limitations Score (Lim score ) 0.75 0.01 0.94 −0.19 Attribution Score (Att score ) 1.00 0.00 1.00 0.00 
+
+Overall Score (Ovr score ) 0.71 0.03 0.76 −0.05          
+
+> *Mean standard deviation ( ¯𝜎 ) across 15 LLM evaluation runs per report (see Appendix K for details). †Plus (+) indicates the LLM judge scored higher than human evaluators.
+> OR/RR CI score : Contextualization with CI width and inclusion/exclusion of 1.0 OR/RR Smp score : Contextualization with sample size and group representativeness Cmp score : Reconciliation across methods especially when they diverge
+> 𝜒 2Smp score : Chi-square with sample size considerations
+> 𝑝 score : Significance ( 𝑝 <0.05 or 𝑝 ≥0.05 ) and contingency table Lim score : Dataset limitations and impact on outcomes Att score : Attribution to systemic factors, not inherent criminal behavior Ovr score : Average of all scores
+
+(5) Appropriate Attribution: Observed disparities in sentenc-ing must be attributed to systemic factors, not inherent crimi-nal behavior of any racial group. Evidence reports should not imply that disparities reflect a ground truth about propensity to commit crime. This criterion is especially critical given the sensitivity of RJA proceedings and the known potential for algorithmic systems in criminal justice to encode and amplify racial biases [ 1, 30 , 37 , 38 ]. AI-generated language that fails to maintain this distinction risks reinforcing the very narratives that the RJA was enacted to challenge. (6) Method Comparison: Ability to compare results from dif-ferent statistical methods, especially when they yield diver-gent conclusions, and present a cohesive interpretation. For example, Odds Ratio and Relative Risk answer related but dis-tinct questions: Odds Ratio compares the odds of an outcome between groups, while Relative Risk compares probabilities directly. The two measures converge when the outcome is rare (prevalence below approximately 10% ), but diverge as the outcome becomes more common, with Odds Ratio tend-ing to overestimate the magnitude of association compared to Relative Risk. This divergence is not an error but a known statistical property that an evidence report must explain to avoid misleading a court. 
+
+## 5.2 Results 
+
+Overall, AI-powered evidence generation performs well (LLM: 0.71, human: 0.76) on a 0–1 scale, though with meaningful variation across dimensions that carries practical implications for legal prac-titioners. LLM evidence synthesis is strongest on qualitative safe-guards. The model appears to reliably attribute observed sentenc-ing disparities to systemic factors rather than inherent criminal behavior ( Attribution : 1.00 for LLM and human). The model also performs well on acknowledging data constraints, though this di-mension produces the largest evaluator discrepancy ( Dataset Lim-itations : LLM 0.75, human 0.94), suggesting that human evaluators are more generous in crediting the model’s treatment of these issues. The most consistent weakness lies in Sample Size Contextual-ization , where scores across all statistical methods remain below 0.50 for the LLM judge and below 0.61 for human evaluators. The model frequently reports group counts but fails to contextualize findings with respect to balance ratios, group representativeness, or what small samples imply for the reliability of point estimates. Evidence synthesis also struggles with Cross-Method Compar-ison (LLM: 0.69, human: 0.78), and the high variability in LLM evaluations of the same report ( ¯𝜎 = 0.11) indicates that the model’s ability to reconcile divergent statistical findings is both limited and inconsistent. 13 Odds Ratio and Relative Risk, for instance, con-verge when outcomes are rare but diverge substantially otherwise, and explaining this divergence requires statistical reasoning that current LLMs appear to handle unreliably. These results suggest that AI-generated evidence reports can accelerate the initial stages of RJA case preparation, particularly prima facie showings, but necessitate attorney review before court submission—especially regarding sample size adequacy and cross-method reconciliation. 
+
+## 6 Limitations 6.1 Observational Study Constraints 
+
+As with many observational studies on discrimination, our analysis faces well-documented methodological challenges [ 17 ]. Defining causal estimands when the treatment variable is an immutable char-acteristic such as race remains conceptually unresolved. Estimates may also suffer from omitted-variable bias if users do not adjust for all relevant covariates, including those absent from our dataset, or from post-treatment bias when adjusting for covariates deter-mined downstream of the treatment variable (in our case, ethnicity). These issues are compounded by the multi-stage nature of the crim-inal legal system. Sentencing disparities reflect accumulated biases across stops, arrests, and charging decisions, which are difficult to disentangle from one another [ 20 ]. This sequential structure also introduces selection bias: treatment and control groups may ex-clude individuals who could have received the sentencing outcome after charging but were never charged, or who were diverted from charging itself at earlier stages of the justice system [ 17 ]. Long criminal histories further complicate analysis, as prior convictions simultaneously reflect past systemic biases and influence current sentencing decisions, making it difficult to isolate the effect of race at any single stage [25, 26]. 
+
+## 6.2 Evaluation Constraints 
+
+Both human and LLM judges exhibit known biases and are sen-sitive to perturbations in framing and rubric design [ 10 ]. These concerns are compounded when assessment rubrics may them-selves be influenced by the model outputs [ 39 ]. Moreover, prior work has shown that LLM judges tend to favor their own outputs, a phenomenon known as self-preference bias [ 11 , 43 , 48 ]. Because        
+
+> 13 For each report, we compute 𝜎 across 15 independent LLM evaluations of the Cross-Method Comparison dimension. ¯𝜎 is the average of these standard deviations across all 30 reports. See Appendix J and K for details. CHI EA ’26, April 13–17, 2026, Barcelona, Spain Aparna Komarla
+
+Table 4: LLM-as-a-Judge Evaluation Results (Selected Reports and Metrics; Eth. 1 = White)                                  
+
+> Eth. 2 Outcome OR (95% CI) raw 𝜒 2
+> raw 𝑝 raw OR CI score Lim score OR Smp score Att score Cmp score 𝑝 score Ovr score
+> Black Drug Crimes 0.48 (0.09, 2.38) 0.32 0.5733 110.75 0.75 110.81 Mexican Property Crimes 1.89 (0.78, 4.55) 1.52 0.2172 110.75 10.75 10.89
+
+we use GPT-5-mini for both report generation and evaluation, this bias is a potential concern. However, our results do not show a clear pattern of self-leniency: the LLM judge scores lower than human evaluators across most dimensions (overall gap of −0.05), with p-Value Contextualization as the sole exception (LLM: 0.89, human: 0.84). Conversely, the large gap on Dataset Limitations 
+
+(LLM: 0.75, human: 0.94) suggests the LLM judge may be stricter than human evaluators on certain qualitative dimensions. In future work, we plan to expand our evaluations to other general-purpose LLMs, with and without fine-tuning on statistical reasoning tasks, to reduce dependence on a single model for both report generation and evaluation. 
+
+## 7 Discussion 7.1 Statistical Significance and Legal Standards 
+
+This work highlights a fundamental tension between statistical inference and legal argumentation. The RJA’s "significant differ-ence" standard invites an interpretation that may not align with how statisticians understand significance. In 2016, the American Statistical Association issued a statement cautioning that scien-tific conclusions and high-stakes decisions should not be based on whether a p-value passes a specific threshold alone [ 13 ]. Court judgments of whether a disparity’s magnitude qualifies as mean-ingful difference under the RJA are still evolving, and clear prece-dents remain scarce. Courts will also have to decide how to weigh magnitude against uncertainty: is a small but precisely estimated disparity more concerning than a larger but noisier one? As these legal standards develop, AI tools must evolve accordingly, adapting not only to new statistical benchmarks but also to emerging judicial interpretations of what constitutes actionable evidence [13]. 
+
+## 7.2 Design Implications for AI in High-Stakes Professional Workflows 
+
+Our experience highlights several design tensions relevant to AI tools in professional settings beyond law. The interpretive layer must be transparent about the boundaries of its reasoning: practi-tioners need to understand not just what the model concluded, but why it weighed evidence in a particular way (e.g., current LLMs struggle to present conflicting signals without resolving them pre-maturely). The same model properties that make LLMs effective drafting assistants (fluency, confidence, coherence) can also make their errors harder to detect, reinforcing the need for evaluation frameworks that go beyond surface-level quality. 
+
+## 8 Future Work 
+
+While prior research underscores the importance of AI augmenting rather than replacing legal practice, effectively bridging statistical analysis and courtroom presentation remains an open challenge [21 , 28 , 51 – 53 ]. We identify three priorities for future work. First, we plan to investigate deployment safeguards: what human over-sight is necessary before AI-generated evidence reports are used in court, and how can practitioners validate outputs and identify errors prior to submission? Second, we aim to conduct a user study examining how attorneys interact with evidence reports, including whether the current report presentation format supports effective legal reasoning or introduces new risks of misinterpretation. Third, we intend to expand our evaluation framework to assess model performance on edge cases, such as small sample sizes, highly im-balanced cohorts, and scenarios where multiple statistical methods yield contradictory conclusions. 
+
+## 9 Conclusion 
+
+This work demonstrates that AI-powered tools can meaningfully accelerate the initial stages of case preparation under the RJA. Our platform enables attorneys to construct similarly situated cohorts, detect racial disparities through multiple statistical methods, and generate court-ready evidence reports—capabilities that accelerate preparation for prima facie and discovery motions. Our evaluation of GPT-5-mini’s evidence synthesis shows that the model performs reliably on qualitative safeguards such as attribution and dataset limitation awareness, while revealing room for improvement in rec-onciling divergent outputs from different statistical methods. These findings contribute to a growing body of work on LLM reasoning in high-stakes domains, suggesting that LLMs are better suited as interpretive bridges between statistical analysis and legal argumen-tation than as autonomous statistical reasoners. More broadly, this work highlights a fundamental tension that will shape the future of AI in legal proceedings: the complex interplay between statistical inference and legal standards of evidence. As courts develop prece-dents for what constitutes a "significant difference" under the RJA, the tools that support this litigation must evolve in parallel—not only improving in technical accuracy, but also adapting to the judi-cial and evidentiary standards that ultimately determine whether statistical findings translate into injustices that warrant relief. 
+
+## Acknowledgments 
+
+We thank Susan Champion (Deputy Director, Three Strikes Project at Stanford Law) and Caneel Fraser (Director, Indigent Defense Improvement Division at the Office of the State Public Defender) for their guidance. We acknowledge Beyond AI Cloud for their contribution to developing Redo.io’s data platform. We also thank Walter Campbell (Principal Research Associate at the Urban Insti-tute) for his contributions to our research and tool design. Lastly, we acknowledge Responsible AI in Legal Services (RAILS) at Duke University’s School of Law for their legal research support. This work is partly funded by Microsoft and the Urban Institute through the Catalyst Grant program. Evaluating AI-Assisted Sentencing Bias Analysis for California Racial Justice Act Claims CHI EA ’26, April 13–17, 2026, Barcelona, Spain 
+
+## References 
+
+[1] Julia Angwin, Jeff Larson, Surya Mattu, and Lauren Kirchner. 2016. Machine Bias: There’s software used across the country to predict future criminals. And it’s biased against Blacks. ProPublica (23 May 2016). https://www.propublica. org/article/machine-bias-risk-assessments-in-criminal-sentencing [2] W. David Ball. 2025. Modeling Meaning: Causal Inference Under the California Racial Justice Act. Santa Clara Law Review 65, 1 (2025). https://digitalcommons. law.scu.edu/lawreview/vol65/iss1/1 [3] Anna Bavaresco, Raffaella Bernardi, Leonardo Bertolazzi, and Desmond Elliott. 2025. LLMs instead of Human Judges? A Large Scale Empirical Study across 20 NLP Evaluation Tasks. In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 2: Short Papers) . Association for Computa-tional Linguistics, Vienna, Austria, 238–255. doi:10.18653/v1/2025.acl-short.20 [4] L. Bazelon, B. Redbird, and B. Yan. 2025. Ground Rules: Giving Meaning and Effect to Key Contested Terms in the California Racial Justice Act. Santa Clara Law Review 65, 1 (2025). https://digitalcommons.law.scu.edu/cgi/viewcontent. cgi?article=2970&context=lawreview [5] Rishi Bommasani, Drew A. Hudson, Ehsan Adeli, Russ Altman, Simran Arora, and Sydney von Arx. 2021. On the Opportunities and Risks of Foundation Models. 
+
+ArXiv (2021). https://crfm.stanford.edu/assets/report.pdf [6] Sebastian Bordt, Ben Lengerich, Harsha Nori, and Rich Caruana. 2024. Data Science with LLMs and Interpretable Models. arXiv:2402.14474 [cs.LG] https: //arxiv.org/abs/2402.14474 [7] California Department of Corrections and Rehabilitation. 2021. Data regarding determinately sentenced individuals. https://www.cdcr.ca.gov/bph/2021/08/26/ data-regarding-determinately-sentenced-persons/ [8] California Department of Corrections and Rehabilitation. 2025. Three judge court update. https://www.cdcr.ca.gov/3-judge-court-update [9] Joaquin Carbonara and Ernest Fokoue. 2025. Augmenting Intelligence: The Convergence of ML/LLMs and Statistics. Stat 14, 1 (2025), e70043. arXiv:https://onlinelibrary.wiley.com/doi/pdf/10.1002/sta4.70043 doi:10.1002/sta4. 70043 e70043 sta4.70043. [10] Guiming Hardy Chen, Shunian Chen, Ziche Liu, Feng Jiang, and Benyou Wang. 2024. Humans or LLMs as the Judge? A Study on Judgement Bias. In Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing ,Yaser Al-Onaizan, Mohit Bansal, and Yun-Nung Chen (Eds.). Association for Computational Linguistics, Miami, Florida, USA, 8301–8327. doi:10.18653/v1/ 2024.emnlp-main.474 [11] Zhi-Yuan Chen, Hao Wang, Xinyu Zhang, Enrui Hu, and Yankai Lin. 2025. Beyond the Surface: Measuring Self-Preference in LLM Judgments. In Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing . Association for Computational Linguistics, 1653–1672. [12] C. V. Chien. 2020. America’s paper prisons: The second chance gap. Michigan Law Review 119, 3 (2020), 519–611. https://repository.law.umich.edu/mlr/vol119/ iss3/3/ [13] Colleen V. Chien, W. David Ball, and William A. Sundstrom. 2023. Proving Actionable Racial Disparity Under the California Racial Justice Act. UC Law SF Law Journal 75, 1 (2023), 1. https://repository.uclawsf.edu/hastings_law_journal/ vol75/iss1/2 [14] M. Clair and J. S. Winter. 2016. How Judges Think About Racial Dispari-ties. https://scholar.harvard.edu/files/matthewclair/files/clair_winter_how_ judges_think_about_racial_disparities.pdf [15] Committee on Revision of the Penal Code. 2025. Memorandum 2025-08: California Racial Justice Act, California Law Revision Commission. https://clrc.ca.gov/ CRPC/Pub/Memos/CRPC25-08.pdf [16] Ella Baker Center for Human Rights. 2023. Information About the Racial Justice Act (AB 256): Implementation Guide . Technical Report. Ella Baker Center for Hu-man Rights. https://ellabakercenter.org/wp-content/uploads/2023/05/RJA4All-Implementation-Guide-FINAL-2023.pdf [17] Johann D. Gaebler, William Cai, Guillaume Basse, Ravi Shroff, Sharad Goel, and Jennifer Hill. 2022. A Causal Framework for Observational Studies of Discrimi-nation. Statistics and Public Policy 9, 1 (2022), 26–48. [18] R. Greene. 2025. Money, location shape California’s criminal defense system to an unconstitutional level. https://calmatters.org/commentary/2025/03/public-criminal-defense-unconstitutional-contracts/ [19] Jiawei Gu and Xuhui Jiang. 2024. A Survey on LLM-as-a-Judge. arXiv preprint 
+
+(2024). https://arxiv.org/abs/2411.15594 [20] Lucy A. Guarnera, Jennifer T. Perillo, and Kyle C. Scherr. 2024. Bias in the Justice and Legal Systems: Cumulative Disadvantage as a Framework for Understanding. 
+
+Law and Human Behavior 48, 5-6 (2024), 329–337. doi:10.1037/lhb0000608 [21] Ido Hefetz. 2025. Integrating AI Systems in Criminal Justice: The Forensic Expert as a Corridor Between Algorithms and Courtroom Evidence. Forensic Sciences 5, 4 (2025). doi:10.3390/forensicsci5040053 [22] Yunxuan Jiang, Silan Hu, Xiaoning Wang, Yuanyuan Zhang, and Xi-angyu Chang. 2026. VDSAgents: A PCS-Guided Multi-Agent System for Veridical Data Science Automation. Stat 15, 1 (2026), e70126. arXiv:https://onlinelibrary.wiley.com/doi/pdf/10.1002/sta4.70126 doi:10.1002/sta4. 70126 [23] D. Kehl, P. Guo, and S. Kessler. 2017. Algorithms in the Criminal Justice System: Assessing the Use of Risk Assessments in Sentencing . Technical Report. Responsive Communities Initiative, Berkman Klein Center for Internet and Society, Harvard Law School. https://dash.harvard.edu/server/api/core/bitstreams/7312037e-362a-6bd4-e053-0100007fdf3b/content [24] Evan Kuluk. 2024. Disparate Racial Impact of Discretionary Prosecutorial Charg-ing Decisions in Gang-Related Murder Cases: Litigating the Racial Justice Act in People v. Windom. Berkeley Journal of Criminal Law 29, 1 (2024), 71–80. doi:10.15779/Z38K649V0X [25] Megan C. Kurlychek and Brian D. Johnson. 2019. Cumulative Disadvantage in the American Criminal Justice System. Annual Review of Criminology 2 (2019), 291–319. doi:10.1146/annurev-criminol-011518-024815 [26] Besiki L. Kutateladze, Nancy R. Andiloro, Brian D. Johnson, and Cassia Spohn. 2014. Cumulative Disadvantage: Examining Racial and Ethnic Disparity in Prosecution and Sentencing. Criminology 52, 3 (2014), 514–551. doi:10.1111/1745-9125.12047 [27] Legislative Analyst’s Office. 2022. Assessing the Provision of Criminal Indigent Defense . Technical Report. State of California. https://lao.ca.gov/Publications/ Report/4623 [28] Dawei Li, Bohan Jiang, Liangjie Huang, Alimohammad Beigi, Chengshuai Zhao, Zhen Tan, Amrita Bhattacharjee, Yuxuan Jiang, Canyu Chen, Tianhao Wu, Kai Shu, Lu Cheng, and Huan Liu. 2024. From Generation to Judgment: Opportunities and Challenges of LLM-as-a-judge. arXiv preprint arXiv:2411.16594 (November 2024). arXiv:2411.16594 [cs.CL] https://arxiv.org/abs/2411.16594 Submitted to arXiv. [29] Xiao Liu, Zirui Wu, Xueqing Wu, Pan Lu, Kai-Wei Chang, and Yansong Feng. 2024. Are LLMs Capable of Data-based Statistical and Causal Reasoning? Benchmarking Advanced Quantitative Reasoning with Data. arXiv:2402.17644 [cs.CL] https: //arxiv.org/abs/2402.17644 [30] M. Miron, S. Tolan, E. Gomez, and C. Castillo. 2020. Evaluating causes of algo-rithmic bias in juvenile criminal recidivism. Artificial Intelligence and Law (2020), 111–147. doi:10.1007/s10506-020-09268-y [31] Crish Nagarkar, Hannu Toivonen, and Serge Sharoff. 2025. Can LLM Reasoning Be Trusted? A Comparative Study: Using Human Benchmarking on Statistical Tasks. arXiv preprint arXiv:2601.14479 (2025). https://arxiv.org/abs/2601.14479 [32] Mose Park, Yunjin Choi, and Jong-June Jeon. 2025. Does a Large Language Model Really Speak in Human-Like Language? Stat 14, 2 (2025), e70060. arXiv:https://onlinelibrary.wiley.com/doi/pdf/10.1002/sta4.70060 doi:10.1002/sta4. 70060 e70060 sta4.70060. [33] N. Peterson. 2016. Examining the sources of racial bias in potentially capital cases: A case study of police and prosecutorial discretion. Race and Justice 7, 2 (2016), 1–25. doi:10.1177/2153368716645842 [34] Prison Policy Initiative. 2024. California profile. https://www.prisonpolicy.org/ profiles/CA.html [35] RAND Corporation. 2025. Evaluation of California’s Prosecutor-Initiated Re-sentencing Program: Implementation and Early Outcomes . Technical Report. https://www.rand.org/pubs/research_reports/RRA2116-3.html [36] Yasaman Razeghi, Robert L Logan IV, Matt Gardner, and Sameer Singh. 2022. Impact of Pretraining Term Frequencies on Few-Shot Numerical Reasoning. In 
+
+Findings of the Association for Computational Linguistics: EMNLP 2022 . Association for Computational Linguistics, Abu Dhabi, United Arab Emirates, 840–854. doi:10. 18653/v1/2022.findings-emnlp.59 [37] Cynthia Rudin. 2019. Stop Explaining Black Box Machine Learning Models for High Stakes Decisions and Use Interpretable Models Instead. Nature Machine Intelligence 1, 5 (2019), 206–215. doi:10.1038/s42256-019-0048-x [38] Cynthia Rudin. 2020. The Age of Secrecy and Unfairness in Recidivism Prediction. 
+
+Harvard Data Science Review 2, 1 (2020). doi:10.1162/99608f92.8cab1f3e [39] Shreya Shankar, J.D. Zamfirescu-Pereira, Bjoern Hartmann, Aditya Parameswaran, and Ian Arawjo. 2024. Who Validates the Validators? Aligning LLM-Assisted Evaluation of LLM Outputs with Human Preferences. In 
+
+Proceedings of the 37th Annual ACM Symposium on User Interface Software and Technology (Pittsburgh, PA, USA) (UIST ’24) . Association for Computing Machin-ery, New York, NY, USA, Article 131, 14 pages. doi:10.1145/3654777.3676450 [40] Xinyu Shi, Wenjing Zhao, Tianyi Chen, et al . 2025. Evidence triangulator: using large language models to extract and synthesize causal evidence across study designs. Nature Communications 16 (January 2025). doi:10.1038/s41467-025-62783-x Published: 23 January 2025. [41] Alissa Skog and Johanna Lacoe. 2025. The Role of Second Look Policies in Reforming California’s Approach to Incarceration: Overview Report . Policy Report. Califor-nia Policy Lab. https://capolicylab.org/wp-content/uploads/2025/09/Overview-Report-on-Second-Look-Policies-in-California.pdf [42] Alissa Skog and Johanna Lacoe. 2025. Three Strikes Resentencing under Proposition 36 (2012) . Policy Brief. California Policy Lab. https://capolicylab.org/wp-content/ uploads/2025/09/Three-Strikes-Resentencing-under-Prop-36-2012.pdf [43] Evangelia Spiliopoulou, Riccardo Fogliato, Hanna Burnsky, Tamer Soliman, Jie Ma, Graham Horwood, and Miguel Ballesteros. 2025. Play Favorites: A Statistical Method to Measure Self-Bias in LLM-as-a-Judge. arXiv:2508.06709 [cs.CL] https: CHI EA ’26, April 13–17, 2026, Barcelona, Spain Aparna Komarla                    
+
+> //arxiv.org/abs/2508.06709 [44] D. Sutton. 2025. Data, disparities, and discrimination: How california’s racial justice act creates new pathways to challenge and evaluate racial bias. https://www.law.stanford.edu/2025/04/15/data-disparities-and-discrimination-how-californias-racial-justice-act-creates-new-pathways-to-challenge-and-evaluate-racial-bias [45] Three Strikes Project. 2014. Three strikes law basics. https://law.stanford.edu/ three-strikes-project/three-strikes-basics/ [46] UC Berkeley - Drop LWOP Coalition. 2025. Guide to Resentencing and Petitions under Penal Code 1172.6. https://www.law.berkeley.edu/wp-content/uploads/ 2025/09/Drop-LWOP-Guide-to-Resentencing-Version-1-September-2025.pdf [47] Vera Institute of Justice. 2024. The State of Incarceration in California. https: //www.vera.org/california-state-of-incarceration [48] Koki Wataoka, Tsubasa Takahashi, and Ryokan Ri. 2025. Self-Preference Bias in LLM-as-a-Judge. arXiv:2410.21819 [cs.CL] https://arxiv.org/abs/2410.21819 [49] R. F. Wright and K. L. Levine. 2024. Legislatures and localized resentencing. https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4930072 Available at SSRN. [50] Kevin P. Yancey, Geoffrey Laflair, Anthony Verardi, and Jill Burstein. 2023. Rat-ing Short L2 Essays on the CEFR Scale with GPT-4. In Proceedings of the 18th Workshop on Innovative Use of NLP for Building Educational Applications (BEA 2023) . Association for Computational Linguistics, Toronto, Canada, 576–584. doi:10.18653/v1/2023.bea-1.49 [51] Zhuohao Yu, Chang Gao, Wenjin Yao, Yidong Wang, Wei Ye, Jindong Wang, Xing Xie, Yue Zhang, and Shikun Zhang. 2024. KIEval: A Knowledge-grounded Interactive Evaluation Framework for Large Language Models. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) . Association for Computational Linguistics, Bangkok, Thailand, 5967–5985. doi:10.18653/v1/2024.acl-long.325 [52] Weizhe Yuan, Graham Neubig, and Pengfei Liu. 2021. BARTScore: Evaluating Generated Text as Text Generation. In Advances in Neural Information Processing Systems , Vol. 34. 27263–27277. arXiv:2106.11520 [cs.CL] https://arxiv.org/abs/ 2106.11520 [53] Chen Zhang, Luis Fernando D’Haro, Yiming Chen, Malu Zhang, and Haizhou Li. 2024. A Comprehensive Analysis of the Effectiveness of Large Language Models as Automatic Dialogue Evaluators. In Proceedings of the 38th AAAI Conference on Artificial Intelligence , Vol. 38. AAAI Press, 19418–19426. doi:10.1609/aaai.v38i17. 29923
+
+## A GenAI Use Disclosure 
+
+Authors leveraged Claude and GPT to assist with generating LaTeX code for tables, and grammar and cohesion checks. 
+
+## B Useful Links 
+
+General information about Redo.io: https://redoio.info Catalyst Grant program funding: https://www.urban.org/projects/ catalyst-grant-program/redoio GitHub: https://www.github.com/redoio AI platform: https://tool.redoio.info Bias analysis toolkit: https://tool.redoio.info/bias_analysis Vector similarity search: https://tool.redoio.info/similar_records Simple data analysis: https://tool.redoio.info/data_analysis 
+
+## B.1 Data Sources 
+
+Open datasets: https://www.github.com/redoio/offenses_data and https://data.world/redoio Data dictionary: https://tool.redoio.info/data_dictionary Frequently Asked Questions (FAQs): https://tool.redoio.info/faqs 
+
+## C Evaluation Rubrics & Results 
+
+Rubric for evaluating AI-powered evidence analysis: https://www. github.com/redoio/ai_evals/blob/main/evaluation_rubric.md LLM-as-a-Judge evaluation results: https://www.github.com/redoio/ ai_evals/blob/main/evaluation_results.xlsx Human evaluators’ results: https://www.github.com/redoio/ai_evals/ blob/main/evaluation_results_human.xlsx 
+
+## D Dataset Architecture 
+
+Our publicly accessible database comprises approximately 95,000 individuals incarcerated in CDCR, obtained through CPRA requests sent to CDCR every 6-8 months (current versions are as of December 2023 and March 2025). The database consists of three relational tables with 75 variables joined by de-identified CDCR IDs: 
+
+• Demographics: Ethnicity, controlling offense, offense dates, parole eligibility, institution, sentence length, sentencing county, and sentence type (third-striker, second-striker, life with/without parole, determinate). 
+
+• Current Commitments: Offense code, enhancements, sen-tence type, court-determined length, and sentencing county for each active commitment. 
+
+• Prior Commitments: Same structure as current commit-ments plus release dates for completed terms. All CDCR IDs are de-identified using MD5 hashing with a pro-tected seed value to prevent external identification while maintain-ing cross-table linkage. 
+
+## E Dataset Constraints 
+
+By leveraging the CPRA, we access prison sentencing data without establishing formal Data Sharing Agreements (DSAs) with govern-ment agencies. 14 Since the CPRA permits the dissemination of data and analyses derived from public records, this approach facilitates smoother integration with public-facing tools and mitigates privacy concerns when interfacing with LLM APIs. Data accessed under a DSA is typically more detailed and may include personally iden-tifiable information, but DSAs impose stricter constraints on how the data can be used, shared, and stored, limiting the development of public-facing applications. Establishing such agreements may also be infeasible in counties without institutional public defense offices. Conversely, the CPRA’s privacy restrictions exclude juve-nile identification and health information, making it challenging to examine cases for mitigating factors and exceptional conduct in prison. Our prison sentencing data obtained under the CPRA represent a subset of the records that CDCR typically provides under a formal Data Sharing Agreement (DSA) between a county agency and the state. DSAs for prison sentencing data commonly include variables such as sex registration status, mental health level of care, California Static Risk Assessment (CSRA) scores, COMPAS scores, milestones achieved, education credits, and gender. Although our CPRA re-quests to CDCR enumerate all of these variables and others, CDCR has stated that it cannot disclose them under the CPRA due to pri-vacy restrictions in existing law. For example, CDCR has indicated that providing gender and sex registration status would violate the Prison Rape Elimination Act (PREA). Separately, CDCR has stated that it is unable to provide records pertaining to specific milestone and rehabilitation credits, citing Penal Code sections 11075, 11076, and 13102, as well as Government Code section 7927.705, on the grounds that these data are classified as Criminal Offender Record Information (CORI). This classification is notable because milestone  
+
+> 14 A Data Sharing Agreement is a legally binding contract between a public agency such as CDCR and another institution, such as a public defender’s office, district attorney’s office, or academic law clinic, that governs the terms of data transfer, storage, permissible use, and retention. Evaluating AI-Assisted Sentencing Bias Analysis for California Racial Justice Act Claims CHI EA ’26, April 13–17, 2026, Barcelona, Spain
+
+and rehabilitation credit data do not compromise individual pri-vacy, HIPAA protections, or personal safety, yet their designation as CORI effectively shields them from public disclosure and limits the ability of researchers and advocates to assess rehabilitation outcomes alongside sentencing patterns. Charging data, which is essential for examining racial disparities under RJA A(3) motions, presents a separate challenge: it is not held by CDCR but rather distributed across individual county agencies, including police departments and district attorneys’ offices, making systematic collection difficult due to the decentralized nature of these records. 
+
+## F Sample Query in QRDATA Benchmark 
+
+Liu et al. constructed a benchmark QRDATA with 411 questions along with 195 data sheets from open-source textbooks, online learning resources, and academic papers that are accompanied by data. The statistical reasoning questions in QRDATA are precisely the kind of outcomes that we seek to offer attorneys. Example of a 
+
+Scenario-Question-Answer triad in the dataset: 
+
+Scenario: A migraine is a particularly painful type of headache, which patients sometimes wish to treat with acupuncture. To determine whether acupuncture relieves migraine pain, researchers conducted a ran-domized controlled study where 89 females diagnosed with migraine headaches were randomly assigned to one of two groups: treatment or control. 43 patients in the treatment group received acupuncture that is specifically designed to treat migraines. 46 patients in the control group received placebo acupuncture. 24 hours after patients received acupuncture, they were asked if they were pain free. The research data is in the file migraine.csv. 
+
+Question: "In which group did a higher percentage of patients become pain free 24 hours after receiving acupuncture?" Please answer with "treatment group" or "control group." 
+
+Answer: "Treatment group" 
+
+## G Rules-Based Template Calculation 
+
+Step 1: Individual Method Templates. Each method has binary dimensions that produce independent outcomes:        
+
+> Method Dimensions Calc. Templates
+> Odds Ratio CI width, CI inclusion of 1, Sample size, Data limitations
+> 2416 Relative Risk CI width, CI inclusion of 1, Sample size, Data limitations
+> 2416 Chi-Square p-value, Sample size, Data limitations 238
+
+Table 5: Individual method templates based on binary dimen-sions. Step 2: Combined Method Templates All possible combinations across three methods: 
+
+24 × 24 × 23 = 211 = 2048 (1) 
+
+Step 3: Alignment Patterns. Each method produces a directional result: Bias (B) or No Bias (N). With 3 methods, each having 2 possible outcomes: Patterns = 23 = 8 (2)                            
+
+> OR RR Chi Description
+> BBBAll aligned (bias) NNNAll aligned (no bias) BBNOR & RR aligned NNBOR & RR aligned BNBOR & Chi aligned NBNOR & Chi aligned NBBRR & Chi aligned BNNRR & Chi aligned
+
+Table 6: Alignment patterns for three methods. Step 4: Total Templates. 
+
+Total = 211 × 23 = 214 = 16 , 384 (3) 
+
+## H Example of AI-Powered Evidence Report 
+
+Example of a report generated using https://tool.redoio.info/bias_ analysis: 
+
+Executive Summary The sentencing outcome an-alyzed is sentence type "DSL" and the comparison is between White and Hispanic individuals. There is evidence of a sentencing disparity that disproportion-ately results in Hispanic individuals receiving DSL; the disparity is moderate in magnitude and warrants further scrutiny of systemic sentencing processes. 
+
+Findings 
+
+What statistical methods were used? 
+
+The odds ratio was used to compare the odds that White individuals receive DSL relative to Hispanic individuals; it expresses the ratio of odds of the out-come across the two groups. The relative risk was used to compare the probability (risk) of receiving DSL for White individuals relative to Hispanic indi-viduals; it provides an intuitive measure of how much more or less likely the outcome is in one group ver-sus the other. The chi-square test of independence was used to evaluate whether an association exists between ethnic group and sentencing outcome, test-ing whether the observed distribution of cases across groups departs from what would be expected under independence. 
+
+What meaning and trends did we find? 
+
+The odds ratio of 0.521 with 95% confidence inter-val (0.364, 0.745) indicates that the odds of White individuals receiving DSL are lower than the odds for Hispanic individuals, and the confidence inter-val excludes 1.0, indicating statistical significance at the conventional 0.05 level. The relative risk of 0.69 with 95% confidence interval (0.566, 0.857) indicates that the risk of receiving DSL is lower for White in-dividuals compared to Hispanic individuals, and the CHI EA ’26, April 13–17, 2026, Barcelona, Spain Aparna Komarla 
+
+confidence interval excludes 1.0, indicating statistical significance. The chi-square test produced a statistic of 12.26 with p-value 0.0005, providing strong evi-dence of an association between ethnic group and the DSL sentencing outcome that is unlikely to be due to chance. Taken together, the three methods are concor-dant: they show a statistically significant disparity in DSL sentencing that disfavors Hispanic individuals; the odds ratio shows a larger numerical contrast than the relative risk (a pattern expected when the out-come is relatively common), and all measures point to a consistent direction and statistically significant magnitude of disparity in sentencing outcomes. 
+
+What ethical considerations are necessary when inter-preting this result? 
+
+Observed disparities in sentencing outcomes should be interpreted as evidence of differences in how sen-tences are imposed rather than as evidence of inher-ent differences in criminal propensity among ethnic groups. Explanations for disparities should empha-size systemic factors, such as prosecutorial discretion, implicit bias, differential charging practices, and struc-tural inequalities, rather than characteristics of the groups themselves. Care must be taken to avoid at-tributing causation to race without further case-level analysis and to ensure that interpretations focus on sentencing disparities alone. 
+
+Analytical Constraints and Considerations 
+
+What is the input dataset unable to tell us and why? The input dataset does not by itself explain case-level dri-vers of sentencing decisions such as offense severity, plea bargaining details, prosecution charging ratio-nales, judge-level discretion, or validated measures of prior criminal history; absence of these covariates lim-its ability to isolate whether observed disparities are attributable to race or to other case-specific factors. The data are anonymized and may lack certain vari-ables excluded under disclosure rules, which prevents follow-up verification of individual case contexts and constrains the ability to control for potentially con-founding factors. Statistical association observed in this aggregated data cannot establish causal attribu-tion and may be influenced by measurement error, missing information, or systemic processes earlier in the criminal legal pipeline. 
+
+Key Terms and Methodology 
+
+The odds ratio is a ratio comparing the odds of an event occurring in one group to the odds in another group; it is commonly used to quantify relative dif-ferences in odds between two groups. Relative risk is the ratio of the probability of an event in one group to the probability in another group and conveys how much more or less likely the event is in one group com-pared with the other. The chi-square test is a statistical test that assesses whether two categorical variables are associated by comparing observed cell counts to expected counts under independence. A confidence interval is a range of values, derived from the data, that is believed to contain the true population param-eter with a specified level of confidence. A p-value is the probability of observing data as extreme as those observed, or more so, if the null hypothesis of no as-sociation were true. The balance ratio is a descriptive measure indicating the relative sample sizes or pro-portions between comparison groups and is used to assess whether groups are similar in size for compar-ative analysis. Read the full report here: https://github.com/redoio/ ai_evals/tree/main/report_001 
+
+## I Example Evaluation Outputs I.1 OR CI Contextualization 
+
+I.1.1 LLM Judge (Score: 0.75/1). The explanation correctly inter-prets that the odds ratio is not statistically significant because its 95% confidence interval spans values below and above 1.0, and it discusses uncertainty/precision in general (noting limited power and wide confidence intervals can reduce ability to detect effects) and explains the implications of a CI that includes 1.0. However, it fails the essential requirement of explicitly stating the odds ratio CI numeric values (0.663, 2.308). 
+
+I.1.2 Human Judge (Score: 0.75/1). The report clearly mention the odds ratio and its confidence interval, It clearly states the confidence interval includes 1 and its corresponding explanation of it being non significant. It also mention wide intervals and imprecision. It further connects uncertainty to weak evidence. 
+
+## I.2 Sample Size Contextualization 
+
+I.2.1 LLM Judge (Score: 0.5/1). The explanation only minimally addresses sample-size issues. It generically notes that "event counts are small" and that "statistical power and precision are constrained when event counts are small," which acknowledges how small counts affect precision. However, it does not explicitly state the sample size or contingency-table counts, does not assess whether the available sample is adequate for reliable analysis, and fails to mention the required minimum count of cases for evaluation. 
+
+I.2.2 Human Judge (Score: 0.5/1). Although the report acknowl-edged the small event number and imprecision, it does not explicitly mention the sample size and does not mention whether it’s ade-quate for reliable analysis (15 cases). It does not clearly distinguish between overall sample size and event counts. 
+
+## I.3 Cross-Method Comparison 
+
+I.3.1 LLM Judge (Score: 0.5/1). The explanation covers several im-portant elements: it defines odds ratio and relative risk conceptually, states that the OR and RR point estimates point in the same direc-tion, and explicitly notes that both confidence intervals include 1.0 and that the chi-square p-value is not significant, tying the chi-square result to the lack of significance in the OR/RR CIs. However, it fails to explicitly report or compare the numeric OR and RR. 
+
+I.3.2 Human Judge (Score: 0.5/1). The report compares the odds ratio, relative risk, and chi square test, and mention that they align Evaluating AI-Assisted Sentencing Bias Analysis for California Racial Justice Act Claims CHI EA ’26, April 13–17, 2026, Barcelona, Spain 
+
+Table 7: LLM-as-a-Judge Evaluation Summary Across 30 Re-ports (15 Runs per Report) 
+
+Evaluation Dimension Mean Std Min Max 
+
+OR CI Score (OR CI score ) 0.79 0.06 0.33 1.00 RR CI Score (RR CI score ) 0.76 0.09 0.37 1.00 OR Sample Size Score (OR Smp score ) 0.49 0.08 0.00 0.75 RR Sample Size Score (RR Smp score ) 0.49 0.08 0.00 0.75 Cross-Method Comparison Score (Cmp score ) 0.69 0.11 0.58 0.75 Chi-square Sample Size Score ( 𝜒 2 Smp score ) 0.50 0.09 0.00 0.75 p-Value Contextualization Score ( 𝑝 score ) 0.89 0.05 0.63 1.00 Limitations Score (Lim score ) 0.75 0.01 0.72 0.75 Attribution Score (Att score ) 1.00 0.00 0.98 1.00 
+
+Overall Score (Ovr score ) 0.71 0.03 0.42 0.84  
+
+> Note: Mean and standard deviation are computed across 30 reports, each evaluated 15 times. All scores range from 0.00 to 1.00.
+
+in direction and are statistically significant. But it fails to mention the conceptual differences and the magnitude quantification beyond general descriptions. 
+
+## J LLM-as-a-Judge Evaluation Summary Across 30 Reports (15 Runs per Report) 
+
+Figure 3: Standard deviation of LLM-as-a-Judge scores across 15 evaluation runs per report. Higher values (darker cells) indicate greater scoring variability. Cross-Method Compari-son (Cmp) exhibits the highest variability, while Limitations (Lim) and Attribution (Att) are nearly constant.
