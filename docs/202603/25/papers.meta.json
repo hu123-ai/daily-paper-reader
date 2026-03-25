@@ -1,0 +1,93 @@
+{
+  "label": "2026-03-25",
+  "date": "2026-03-25",
+  "generated_at": "2026-03-25T19:37:01",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202603/25/2603.22716v1-beyond-explanation-evidentiary-rights-for-algorithmic-accountability",
+      "section": "quick",
+      "title_en": "Beyond Explanation: Evidentiary Rights for Algorithmic Accountability",
+      "authors": "Matthew Stewart",
+      "date": "2026-03-24",
+      "pdf": "https://arxiv.org/pdf/2603.22716v1",
+      "score": "7.0",
+      "evidence": "分析了168个涉及算法决策背景的法律案例",
+      "tldr": "本研究指出算法问责制过度关注“解释”而忽视了“证据获取”，导致受影响者无法有效质疑决策。通过分析168起法律案例，研究发现证据获取是胜诉的关键门槛。文章提出“证据权”概念，特别是“反事实询问权”，允许用户通过修改输入观察结果变化来验证系统，将算法问责从透明度问题转向程序权利问题。",
+      "tags": "query:q4",
+      "abstract_en": "Algorithmic accountability scholarship has focused heavily on explanation, helping affected parties understand why decisions were made. We argue this focus is insufficient. Explanation without evidentiary access does not enable meaningful contestation. A person told \"your risk score was 0.73\" understands the decision but cannot verify the score, test alternatives, or produce counter-evidence. We introduce a taxonomy of contestation failures, showing that most accountability interventions address only one failure mode (opacity) while leaving four others unaddressed. Drawing on analysis of 168 legal cases spanning algorithmic decision-making contexts, we find that contestation faces a two-gate structure: a procedural gate (evidentiary access) and a doctrinal gate (substantive liability rules). Among litigated cases, those without evidence access almost never succeed (9%); those with access succeed at rates approaching 97% in domains without liability shields. Where doctrinal immunities apply (e.g., Section 230), even full evidentiary scrutiny produces no liability. This association almost certainly reflects selection effects; our empirical contribution is diagnostic rather than causal. The data identify where contestation fails among observable cases, not whether providing access would change outcomes for currently-excluded cases. We propose evidentiary rights as the missing procedural component, and develop counterfactual interrogation rights that allow affected parties to probe decision systems with modified inputs and observe whether outcomes change, without requiring disclosure of model internals. This reframes algorithmic accountability from a transparency problem to a procedural rights problem.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/25/2603.22765v1-daldall-data-augmentation-for-lexical-and-semantic-diverse-in-legal-domain-by-leveraging-llm-persona",
+      "section": "quick",
+      "title_en": "DALDALL: Data Augmentation for Lexical and Semantic Diverse in Legal Domain by leveraging LLM-Persona",
+      "authors": "Janghyeok Choi, Jaewon Lee, Sungzoon Cho",
+      "date": "2026-03-24",
+      "pdf": "https://arxiv.org/pdf/2603.22765v1",
+      "score": "7.0",
+      "evidence": "基于角色的法律信息检索数据增强",
+      "tldr": "针对法律领域数据稀缺及现有增强方法缺乏领域针对性的问题，本文提出DALDALL框架。该框架利用大语言模型的角色扮演能力（如律师、法官等），生成具有高度词汇和语义多样性的合成查询。实验证明，该方法在保持语义忠实度的同时显著提升了检索性能，为低资源专业领域的数据增强提供了有效策略。",
+      "tags": "query:q2",
+      "abstract_en": "Data scarcity remains a persistent challenge in low-resource domains. While existing data augmentation methods leverage the generative capabilities of large language models (LLMs) to produce large volumes of synthetic data, these approaches often prioritize quantity over quality and lack domain-specific strategies. In this work, we introduce DALDALL, a persona-based data augmentation framework tailored for legal information retrieval (IR). Our method employs domain-specific professional personas--such as attorneys, prosecutors, and judges--to generate synthetic queries that exhibit substantially greater lexical and semantic diversity than vanilla prompting approaches. Experiments on the CLERC and COLIEE benchmarks demonstrate that persona-based augmentation achieves improvement in lexical diversity as measured by Self-BLEU scores, while preserving semantic fidelity to the original queries. Furthermore, dense retrievers fine-tuned on persona-augmented data consistently achieve competitive or superior recall performance compared to those trained on original data or generic augmentations. These findings establish persona-based prompting as an effective strategy for generating high-quality training data in specialized, low-resource domains.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/25/2603.22973v1-where-experts-disagree-models-fail-detecting-implicit-legal-citations-in-french-court-decisions",
+      "section": "quick",
+      "title_en": "Where Experts Disagree, Models Fail: Detecting Implicit Legal Citations in French Court Decisions",
+      "authors": "Avrile Floro, Tamara Dhorasoo, Soline Pellez, Nils Holzenberger",
+      "date": "2026-03-24",
+      "pdf": "https://arxiv.org/pdf/2603.22973v1",
+      "score": "7.0",
+      "evidence": "检测法院判决中的隐性法律引用和法律推理",
+      "tldr": "本研究探讨了如何自动检测法国法院判决中对《民法典》的隐性引用，旨在区分法律推理与语义相似性。作者构建了一个包含1015个由三位专家标注的样本基准，发现专家间的一致性较低（κ=0.33），且这种分歧是导致模型预测失败的主要原因。研究表明，虽然监督集成模型的F1值为0.70，但通过多模型共识的无监督排名方法在Top-200中达到了76%的准确率，且误报往往揭示了法律应用中的模糊性。",
+      "tags": "query:q6",
+      "abstract_en": "Computational methods applied to legal scholarship hold the promise of analyzing law at scale. We start from a simple question: how often do courts implicitly apply statutory rules? This requires distinguishing legal reasoning from semantic similarity. We focus on implicit citation of the French Civil Code in first-instance court decisions and introduce a benchmark of 1,015 passage-article pairs annotated by three legal experts. We show that expert disagreement predicts model failures. Inter-annotator agreement is moderate ($κ$ = 0.33) with 43% of disagreements involving the boundary between factual description and legal reasoning. Our supervised ensemble achieves F1 = 0.70 (77% accuracy), but this figure conceals an asymmetry: 68% of false positives fall on the 33% of cases where the annotators disagreed. Despite these limits, reframing the task as top-k ranking and leveraging multi-model consensus yields 76% precision at k = 200 in an unsupervised setting. Moreover, the remaining false positives tend to surface legally ambiguous applications rather than obvious errors.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/25/2603.18557v1-cross-lingual-llm-judge-transfer-via-evaluation-decomposition",
+      "section": "quick",
+      "title_en": "Cross-Lingual LLM-Judge Transfer via Evaluation Decomposition",
+      "authors": "Ivaxi Sheth, Zeno Jonke, Amin Mantrach, Saab Mansour",
+      "date": "2026-03-19",
+      "pdf": "https://arxiv.org/pdf/2603.18557v1",
+      "score": "6.0",
+      "evidence": "大语言模型裁判迁移与判决的自动评估",
+      "tldr": "随着大语言模型在全球范围的应用，非英语自动评估面临标注数据稀缺的挑战。本文提出一种基于评估分解的框架，核心是“通用准则集（UCS）”。该准则集包含一组跨语言共享的评估维度，通过生成可解释的中间表示，实现了在极少监督下的跨语言迁移。实验证明，该方法在多种语言的忠实度任务中均优于强基线模型，且无需目标语言的标注数据，显著提升了跨语言评估的效率和准确性。",
+      "tags": "query:q7",
+      "abstract_en": "As large language models are increasingly deployed across diverse real-world applications, extending automated evaluation beyond English has become a critical challenge. Existing evaluation approaches are predominantly English-focused, and adapting them to other languages is hindered by the scarcity and cost of human-annotated judgments in most languages. We introduce a decomposition-based evaluation framework built around a Universal Criteria Set (UCS). UCS consists of a shared, language-agnostic set of evaluation dimensions, producing an interpretable intermediate representation that supports cross-lingual transfer with minimal supervision. Experiments on multiple faithfulness tasks across languages and model backbones demonstrate consistent improvements over strong baselines without requiring target-language annotations.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/25/2603.19008v1-hypothesis-conditioned-query-rewriting-for-decision-useful-retrieval",
+      "section": "quick",
+      "title_en": "Hypothesis-Conditioned Query Rewriting for Decision-Useful Retrieval",
+      "authors": "Hangeol Chang, Changsun Lee, Seungjoon Rho, Junho Yeo, Jong Chul Ye",
+      "date": "2026-03-19",
+      "pdf": "https://arxiv.org/pdf/2603.19008v1",
+      "score": "6.0",
+      "evidence": "用于在竞争选项中做出选择并驱动最终决策的检索框架",
+      "tldr": "针对RAG在决策任务中侧重主题相关性而缺乏区分性证据的问题，本文提出HCQR框架。该方法通过提取假设并重写为支持、区分和验证三类查询，将检索转向证据导向。在MedQA等数据集上的实验证明，HCQR显著提升了答案选择的准确率，优于多种基准方法。",
+      "tags": "query:q3",
+      "abstract_en": "Retrieval-Augmented Generation (RAG) improves Large Language Models (LLMs) by grounding generation in external, non-parametric knowledge. However, when a task requires choosing among competing options, simply grounding generation in broadly relevant context is often insufficient to drive the final decision. Existing RAG methods typically rely on a single initial query, which often favors topical relevance over decision-relevant evidence, and therefore retrieves background information that can fail to discriminate among answer options. To address this issue, here we propose Hypothesis-Conditioned Query Rewriting (HCQR), a training-free pre-retrieval framework that reorients RAG from topic-oriented retrieval to evidence-oriented retrieval. HCQR first derives a lightweight working hypothesis from the input question and candidate options, and then rewrites retrieval into three targeted queries that seek evidence to: (1) support the hypothesis, (2) distinguish it from competing alternatives, and (3) verify salient clues in the question. This approach enables context retrieval that is more directly aligned with answer selection, allowing the generator to confirm or overturn the initial hypothesis based on the retrieved evidence. Experiments on MedQA and MMLU-Med show that HCQR consistently outperforms single-query RAG and re-rank/filter baselines, improving average accuracy over Simple RAG by 5.9 and 3.6 points, respectively. Code is available at https://anonymous.4open.science/r/HCQR-1C2E.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/25/2603.20637v1-aegis-from-clues-to-verdicts----graph-guided-deep-vulnerability-reasoning-via-dialectics-and-meta-auditing",
+      "section": "quick",
+      "title_en": "AEGIS: From Clues to Verdicts -- Graph-Guided Deep Vulnerability Reasoning via Dialectics and Meta-Auditing",
+      "authors": "Sen Fang, Weiyuan Ding, Zhezhen Cao, Zhou Yang, Bowen Xu",
+      "date": "2026-03-21",
+      "pdf": "https://arxiv.org/pdf/2603.20637v1",
+      "score": "6.0",
+      "evidence": "通过推理从线索转向裁决的多智能体框架",
+      "tldr": "AEGIS 针对大语言模型在漏洞检测中推理不严谨、易产生幻觉的问题，提出了一种基于图引导的深度推理框架。该框架遵循“从线索到定论”的理念，利用代码属性图（CPG）提取确定性的依赖链作为封闭证据，并结合辩证推理与元审计机制。实验表明，AEGIS 在 PrimeVul 数据集上刷新了 SOTA 记录，显著降低了误报率，实现了高效且可验证的漏洞分析。",
+      "tags": "query:profile-1",
+      "abstract_en": "Large Language Models (LLMs) are increasingly adopted for vulnerability detection, yet their reasoning remains fundamentally unsound. We identify a root cause shared by both major mitigation paradigms (agent-based debate and retrieval augmentation): reasoning in an ungrounded deliberative space that lacks a bounded, hypothesis-specific evidence base. Without such grounding, agents fabricate cross-function dependencies, and retrieval heuristics supply generic knowledge decoupled from the repository's data-flow topology. Consequently, the resulting conclusions are driven by rhetorical persuasiveness rather than verifiable facts. To ground this deliberation, we present AEGIS, a novel multi-agent framework that shifts detection from ungrounded speculation to forensic verification over a closed factual substrate. Guided by a \"From Clue to Verdict\" philosophy, AEGIS first identifies suspicious code anomalies (clues), then dynamically reconstructs per-variable dependency chains for each clue via on-demand slicing over a repository-level Code Property Graph. Within this closed evidence boundary, a Verifier Agent constructs competing dialectical arguments for and against exploitability, while an independent Audit Agent scrutinizes every claim against the trace, exercising veto power to prevent hallucinated verdicts. Evaluation on the rigorous PrimeVul dataset demonstrates that AEGIS establishes a new state-of-the-art, achieving 122 Pair-wise Correct Predictions. To our knowledge, this is the first approach to surpass 100 on this benchmark. It reduces the false positive rate by up to 54.40% compared to leading baselines, at an average cost of $0.09 per sample without any task-specific training.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

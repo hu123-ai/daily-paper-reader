@@ -1,0 +1,243 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-25T19:36:12.405291+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 6,
+    "quick_skim_target": 11,
+    "quick_selected": 6
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.22716v1",
+      "title": "Beyond Explanation: Evidentiary Rights for Algorithmic Accountability",
+      "abstract": "Algorithmic accountability scholarship has focused heavily on explanation, helping affected parties understand why decisions were made. We argue this focus is insufficient. Explanation without evidentiary access does not enable meaningful contestation. A person told \"your risk score was 0.73\" understands the decision but cannot verify the score, test alternatives, or produce counter-evidence. We introduce a taxonomy of contestation failures, showing that most accountability interventions address only one failure mode (opacity) while leaving four others unaddressed. Drawing on analysis of 168 legal cases spanning algorithmic decision-making contexts, we find that contestation faces a two-gate structure: a procedural gate (evidentiary access) and a doctrinal gate (substantive liability rules). Among litigated cases, those without evidence access almost never succeed (9%); those with access succeed at rates approaching 97% in domains without liability shields. Where doctrinal immunities apply (e.g., Section 230), even full evidentiary scrutiny produces no liability. This association almost certainly reflects selection effects; our empirical contribution is diagnostic rather than causal. The data identify where contestation fails among observable cases, not whether providing access would change outcomes for currently-excluded cases. We propose evidentiary rights as the missing procedural component, and develop counterfactual interrogation rights that allow affected parties to probe decision systems with modified inputs and observe whether outcomes change, without requiring disclosure of model internals. This reframes algorithmic accountability from a transparency problem to a procedural rights problem.",
+      "authors": [
+        "Matthew Stewart"
+      ],
+      "primary_category": "cs.CY",
+      "categories": [
+        "cs.CY"
+      ],
+      "published": "2026-03-24T02:12:20+00:00",
+      "link": "https://arxiv.org/pdf/2603.22716v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "analysis of 168 legal cases spanning algorithmic decision-making contexts",
+      "llm_evidence_cn": "分析了168个涉及算法决策背景的法律案例",
+      "llm_evidence": "分析了168个涉及算法决策背景的法律案例",
+      "canonical_evidence": "分析了168个涉及算法决策背景的法律案例",
+      "llm_tldr_en": "Explores evidentiary rights and accountability in algorithmic decision-making through legal case analysis.",
+      "llm_tldr_cn": "通过法律案例分析探讨算法决策中的证据权利与问责机制。",
+      "llm_tldr": "通过法律案例分析探讨算法决策中的证据权利与问责机制。",
+      "llm_tags": [
+        "query:q4"
+      ],
+      "matched_query_tag": "query:q4",
+      "matched_query_text": "judicial decision-making and artificial intelligence",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.18557v1",
+      "title": "Cross-Lingual LLM-Judge Transfer via Evaluation Decomposition",
+      "abstract": "As large language models are increasingly deployed across diverse real-world applications, extending automated evaluation beyond English has become a critical challenge. Existing evaluation approaches are predominantly English-focused, and adapting them to other languages is hindered by the scarcity and cost of human-annotated judgments in most languages. We introduce a decomposition-based evaluation framework built around a Universal Criteria Set (UCS). UCS consists of a shared, language-agnostic set of evaluation dimensions, producing an interpretable intermediate representation that supports cross-lingual transfer with minimal supervision. Experiments on multiple faithfulness tasks across languages and model backbones demonstrate consistent improvements over strong baselines without requiring target-language annotations.",
+      "authors": [
+        "Ivaxi Sheth",
+        "Zeno Jonke",
+        "Amin Mantrach",
+        "Saab Mansour"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-03-19T07:11:31+00:00",
+      "link": "https://arxiv.org/pdf/2603.18557v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "LLM-Judge transfer and automated evaluation of judgments",
+      "llm_evidence_cn": "大语言模型裁判迁移与判决的自动评估",
+      "llm_evidence": "大语言模型裁判迁移与判决的自动评估",
+      "canonical_evidence": "大语言模型裁判迁移与判决的自动评估",
+      "llm_tldr_en": "Introduces a cross-lingual framework for LLMs to act as judges in evaluating model outputs.",
+      "llm_tldr_cn": "引入了一种跨语言框架，使大语言模型能够作为裁判评估模型输出。",
+      "llm_tldr": "引入了一种跨语言框架，使大语言模型能够作为裁判评估模型输出。",
+      "llm_tags": [
+        "query:q7"
+      ],
+      "matched_query_tag": "query:q7",
+      "matched_query_text": "large language models for predicting legal judgments",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.22765v1",
+      "title": "DALDALL: Data Augmentation for Lexical and Semantic Diverse in Legal Domain by leveraging LLM-Persona",
+      "abstract": "Data scarcity remains a persistent challenge in low-resource domains. While existing data augmentation methods leverage the generative capabilities of large language models (LLMs) to produce large volumes of synthetic data, these approaches often prioritize quantity over quality and lack domain-specific strategies. In this work, we introduce DALDALL, a persona-based data augmentation framework tailored for legal information retrieval (IR). Our method employs domain-specific professional personas--such as attorneys, prosecutors, and judges--to generate synthetic queries that exhibit substantially greater lexical and semantic diversity than vanilla prompting approaches. Experiments on the CLERC and COLIEE benchmarks demonstrate that persona-based augmentation achieves improvement in lexical diversity as measured by Self-BLEU scores, while preserving semantic fidelity to the original queries. Furthermore, dense retrievers fine-tuned on persona-augmented data consistently achieve competitive or superior recall performance compared to those trained on original data or generic augmentations. These findings establish persona-based prompting as an effective strategy for generating high-quality training data in specialized, low-resource domains.",
+      "authors": [
+        "Janghyeok Choi",
+        "Jaewon Lee",
+        "Sungzoon Cho"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.IR"
+      ],
+      "published": "2026-03-24T03:49:09+00:00",
+      "link": "https://arxiv.org/pdf/2603.22765v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "persona-based data augmentation for legal information retrieval",
+      "llm_evidence_cn": "基于角色的法律信息检索数据增强",
+      "llm_evidence": "基于角色的法律信息检索数据增强",
+      "canonical_evidence": "基于角色的法律信息检索数据增强",
+      "llm_tldr_en": "Uses LLM personas like judges and attorneys to improve data augmentation for legal information retrieval.",
+      "llm_tldr_cn": "利用法官和律师等大模型角色来改进法律信息检索的数据增强。",
+      "llm_tldr": "利用法官和律师等大模型角色来改进法律信息检索的数据增强。",
+      "llm_tags": [
+        "query:q2"
+      ],
+      "matched_query_tag": "query:q2",
+      "matched_query_text": "large language models in legal applications",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.19008v1",
+      "title": "Hypothesis-Conditioned Query Rewriting for Decision-Useful Retrieval",
+      "abstract": "Retrieval-Augmented Generation (RAG) improves Large Language Models (LLMs) by grounding generation in external, non-parametric knowledge. However, when a task requires choosing among competing options, simply grounding generation in broadly relevant context is often insufficient to drive the final decision. Existing RAG methods typically rely on a single initial query, which often favors topical relevance over decision-relevant evidence, and therefore retrieves background information that can fail to discriminate among answer options. To address this issue, here we propose Hypothesis-Conditioned Query Rewriting (HCQR), a training-free pre-retrieval framework that reorients RAG from topic-oriented retrieval to evidence-oriented retrieval. HCQR first derives a lightweight working hypothesis from the input question and candidate options, and then rewrites retrieval into three targeted queries that seek evidence to: (1) support the hypothesis, (2) distinguish it from competing alternatives, and (3) verify salient clues in the question. This approach enables context retrieval that is more directly aligned with answer selection, allowing the generator to confirm or overturn the initial hypothesis based on the retrieved evidence. Experiments on MedQA and MMLU-Med show that HCQR consistently outperforms single-query RAG and re-rank/filter baselines, improving average accuracy over Simple RAG by 5.9 and 3.6 points, respectively. Code is available at https://anonymous.4open.science/r/HCQR-1C2E.",
+      "authors": [
+        "Hangeol Chang",
+        "Changsun Lee",
+        "Seungjoon Rho",
+        "Junho Yeo",
+        "Jong Chul Ye"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-03-19T15:15:58+00:00",
+      "link": "https://arxiv.org/pdf/2603.19008v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Retrieval framework for choosing among competing options and driving final decisions",
+      "llm_evidence_cn": "用于在竞争选项中做出选择并驱动最终决策的检索框架",
+      "llm_evidence": "用于在竞争选项中做出选择并驱动最终决策的检索框架",
+      "canonical_evidence": "用于在竞争选项中做出选择并驱动最终决策的检索框架",
+      "llm_tldr_en": "Proposes a query rewriting framework to improve decision-useful evidence retrieval for RAG systems.",
+      "llm_tldr_cn": "提出了一种查询重写框架，以改进RAG系统中对决策有用的证据检索。",
+      "llm_tldr": "提出了一种查询重写框架，以改进RAG系统中对决策有用的证据检索。",
+      "llm_tags": [
+        "query:q3"
+      ],
+      "matched_query_tag": "query:q3",
+      "matched_query_text": "predicting case outcomes with AI",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.22973v1",
+      "title": "Where Experts Disagree, Models Fail: Detecting Implicit Legal Citations in French Court Decisions",
+      "abstract": "Computational methods applied to legal scholarship hold the promise of analyzing law at scale. We start from a simple question: how often do courts implicitly apply statutory rules? This requires distinguishing legal reasoning from semantic similarity. We focus on implicit citation of the French Civil Code in first-instance court decisions and introduce a benchmark of 1,015 passage-article pairs annotated by three legal experts. We show that expert disagreement predicts model failures. Inter-annotator agreement is moderate ($κ$ = 0.33) with 43% of disagreements involving the boundary between factual description and legal reasoning. Our supervised ensemble achieves F1 = 0.70 (77% accuracy), but this figure conceals an asymmetry: 68% of false positives fall on the 33% of cases where the annotators disagreed. Despite these limits, reframing the task as top-k ranking and leveraging multi-model consensus yields 76% precision at k = 200 in an unsupervised setting. Moreover, the remaining false positives tend to surface legally ambiguous applications rather than obvious errors.",
+      "authors": [
+        "Avrile Floro",
+        "Tamara Dhorasoo",
+        "Soline Pellez",
+        "Nils Holzenberger"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-03-24T09:10:57+00:00",
+      "link": "https://arxiv.org/pdf/2603.22973v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "detecting implicit legal citations and legal reasoning in court decisions",
+      "llm_evidence_cn": "检测法院判决中的隐性法律引用和法律推理",
+      "llm_evidence": "检测法院判决中的隐性法律引用和法律推理",
+      "canonical_evidence": "检测法院判决中的隐性法律引用和法律推理",
+      "llm_tldr_en": "Analyzes the boundary between factual description and legal reasoning in French court decisions using AI.",
+      "llm_tldr_cn": "利用人工智能分析法国法院判决中事实描述与法律推理之间的界限。",
+      "llm_tldr": "利用人工智能分析法国法院判决中事实描述与法律推理之间的界限。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "computational models of legal reasoning",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.20637v1",
+      "title": "AEGIS: From Clues to Verdicts -- Graph-Guided Deep Vulnerability Reasoning via Dialectics and Meta-Auditing",
+      "abstract": "Large Language Models (LLMs) are increasingly adopted for vulnerability detection, yet their reasoning remains fundamentally unsound. We identify a root cause shared by both major mitigation paradigms (agent-based debate and retrieval augmentation): reasoning in an ungrounded deliberative space that lacks a bounded, hypothesis-specific evidence base. Without such grounding, agents fabricate cross-function dependencies, and retrieval heuristics supply generic knowledge decoupled from the repository's data-flow topology. Consequently, the resulting conclusions are driven by rhetorical persuasiveness rather than verifiable facts. To ground this deliberation, we present AEGIS, a novel multi-agent framework that shifts detection from ungrounded speculation to forensic verification over a closed factual substrate. Guided by a \"From Clue to Verdict\" philosophy, AEGIS first identifies suspicious code anomalies (clues), then dynamically reconstructs per-variable dependency chains for each clue via on-demand slicing over a repository-level Code Property Graph. Within this closed evidence boundary, a Verifier Agent constructs competing dialectical arguments for and against exploitability, while an independent Audit Agent scrutinizes every claim against the trace, exercising veto power to prevent hallucinated verdicts. Evaluation on the rigorous PrimeVul dataset demonstrates that AEGIS establishes a new state-of-the-art, achieving 122 Pair-wise Correct Predictions. To our knowledge, this is the first approach to surpass 100 on this benchmark. It reduces the false positive rate by up to 54.40% compared to leading baselines, at an average cost of $0.09 per sample without any task-specific training.",
+      "authors": [
+        "Sen Fang",
+        "Weiyuan Ding",
+        "Zhezhen Cao",
+        "Zhou Yang",
+        "Bowen Xu"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI",
+        "cs.CR"
+      ],
+      "published": "2026-03-21T04:12:04+00:00",
+      "link": "https://arxiv.org/pdf/2603.20637v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "multi-agent framework shifting from clues to verdicts via reasoning",
+      "llm_evidence_cn": "通过推理从线索转向裁决的多智能体框架",
+      "llm_evidence": "通过推理从线索转向裁决的多智能体框架",
+      "canonical_evidence": "通过推理从线索转向裁决的多智能体框架",
+      "llm_tldr_en": "Uses a dialectic multi-agent framework to reach verdicts in vulnerability detection via grounded reasoning.",
+      "llm_tldr_cn": "采用辩证多智能体框架，通过有根据的推理在漏洞检测中得出裁决。",
+      "llm_tldr": "采用辩证多智能体框架，通过有根据的推理在漏洞检测中得出裁决。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
