@@ -1,0 +1,93 @@
+{
+  "label": "2026-03-26",
+  "date": "2026-03-26",
+  "generated_at": "2026-03-26T20:19:09",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202603/26/2603.24012v1-cvpd-at-qias-2026-rag-guided-llm-reasoning-for-al-mawarith-share-computation-and-heir-allocation",
+      "section": "deep",
+      "title_en": "CVPD at QIAS 2026: RAG-Guided LLM Reasoning for Al-Mawarith Share Computation and Heir Allocation",
+      "authors": "Wassim Swaileh, Mohammed-En-Nadhir Zighem, Hichem Telli, Salah Eddine Bekhouche, Abdellah Zakaria Sellam, Fadi Dornaika, Dimitrios Kotzinos",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.24012v1",
+      "score": "10.0",
+      "evidence": "RAG引导的大模型推理用于伊斯兰继承法计算",
+      "tldr": "本研究针对复杂的伊斯兰继承法（Al-Mawarith）计算任务，提出了一种基于检索增强生成（RAG）的LLM推理框架。该方法结合了符号计算器生成的合成数据、混合检索重排机制以及模式约束验证，有效解决了法律规则复杂、数值计算精确度要求高等难题。在QIAS 2026竞赛中，该系统以0.935的MIR-E得分荣获第一名，证明了RAG在阿拉伯语高精度法律推理中的卓越性能。",
+      "tags": "query:profile-1",
+      "abstract_en": "Islamic inheritance (Ilm al-Mawarith) is a multi-stage legal reasoning task requiring the identification of eligible heirs, resolution of blocking rules (hajb), assignment of fixed and residual shares, handling of adjustments such as awl and radd, and generation of a consistent final distribution. The task is further complicated by variations across legal schools and civil-law codifications, requiring models to operate under explicit legal configurations.   We present a retrieval-augmented generation (RAG) pipeline for this setting, combining rule-grounded synthetic data generation, hybrid retrieval (dense and BM25) with cross-encoder reranking, and schema-constrained output validation. A symbolic inheritance calculator is used to generate a large high-quality synthetic corpus with full intermediate reasoning traces, ensuring legal and numerical consistency.   The proposed system achieves a MIR-E score of 0.935 and ranks first on the official QIAS 2026 blind-test leaderboard. Results demonstrate that retrieval-grounded, schema-aware generation significantly improves reliability in high-precision Arabic legal reasoning tasks.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/26/2603.23646v1-swiss-bench-sbp-002-a-frontier-model-comparison-on-swiss-legal-and-regulatory-tasks",
+      "section": "deep",
+      "title_en": "Swiss-Bench SBP-002: A Frontier Model Comparison on Swiss Legal and Regulatory Tasks",
+      "authors": "Fatih Uenal",
+      "date": "2026-03-24",
+      "pdf": "https://arxiv.org/pdf/2603.23646v1",
+      "score": "9.0",
+      "evidence": "瑞士法律和监管任务的基准测试",
+      "tldr": "本研究针对瑞士法律监管合规任务的评估空白，推出了Swiss-Bench SBP-002基准。该基准包含395个专家设计的跨领域、多语言任务，涵盖FINMA等三大领域。通过对10个前沿模型进行盲审评估，发现当前模型在复杂监管任务上表现欠佳，最高准确率仅为38.2%，且开源模型表现亮眼，为瑞士法律AI应用提供了重要参考。",
+      "tags": "query:q5",
+      "abstract_en": "While recent work has benchmarked large language models on Swiss legal translation (Niklaus et al., 2025) and academic legal reasoning from university exams (Fan et al., 2025), no existing benchmark evaluates frontier model performance on applied Swiss regulatory compliance tasks. I introduce Swiss-Bench SBP-002, a trilingual benchmark of 395 expert-crafted items spanning three Swiss regulatory domains (FINMA, Legal-CH, EFK), seven task types, and three languages (German, French, Italian), and evaluate ten frontier models from March 2026 using a structured three-dimension scoring framework assessed via a blind three-judge LLM panel (GPT-4o, Claude Sonnet 4, Qwen3-235B) with majority-vote aggregation and weighted kappa = 0.605, with reference answers validated by an independent human legal expert on a 100-item subset (73% rated Correct, 0% Incorrect, perfect Legal Accuracy). Results reveal three descriptive performance clusters: Tier A (35-38% correct), Tier B (26-29%), and Tier C (13-21%). The benchmark proves difficult: even the top-ranked model (Qwen 3.5 Plus) achieves only 38.2% correct, with 47.3% incorrect and 14.4% partially correct. Task type difficulty varies widely: legal translation and case analysis yield 69-72% correct rates, while regulatory Q&A, hallucination detection, and gap analysis remain below 9%. Within this roster (seven open-weight, three closed-source), an open-weight model leads the ranking, and several open-weight models match or outperform their closed-source counterparts. These findings provide an initial empirical reference point for assessing frontier model capability on Swiss regulatory tasks under zero-retrieval conditions.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/26/2603.23857v1-when-ai-output-tips-to-bad-but-nobody-notices-legal-implications-of-ais-mistakes",
+      "section": "quick",
+      "title_en": "When AI output tips to bad but nobody notices: Legal implications of AI's mistakes",
+      "authors": "Dylan J. Restrepo, Nicholas J. Restrepo, Frank Y. Huo, Neil F. Johnson",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.23857v1",
+      "score": "7.0",
+      "evidence": "AI错误及虚假判例对法律行业的影响",
+      "tldr": "本研究探讨了生成式AI在法律领域产生虚假案例（幻觉）的风险及其法律后果。通过对Transformer核心机制的物理分析，研究揭示了AI从可靠推理转向权威式虚构并非随机，而是内部状态跨越确定性阈值的可预见结果。文章通过模拟文书起草场景，强调了法律专业人士更新技术胜任义务的必要性，并提议建立基于系统失效原理的验证协议，以维护司法公正。",
+      "tags": "query:q2",
+      "abstract_en": "The adoption of generative AI across commercial and legal professions offers dramatic efficiency gains -- yet for law in particular, it introduces a perilous failure mode in which the AI fabricates fictitious case law, statutes, and judicial holdings that appear entirely authentic. Attorneys who unknowingly file such fabrications face professional sanctions, malpractice exposure, and reputational harm, while courts confront a novel threat to the integrity of the adversarial process. This failure mode is commonly dismissed as random `hallucination', but recent physics-based analysis of the Transformer's core mechanism reveals a deterministic component: the AI's internal state can cross a calculable threshold, causing its output to flip from reliable legal reasoning to authoritative-sounding fabrication. Here we present this science in a legal-industry setting, walking through a simulated brief-drafting scenario. Our analysis suggests that fabrication risk is not an anomalous glitch but a foreseeable consequence of the technology's design, with direct implications for the evolving duty of technological competence. We propose that legal professionals, courts, and regulators replace the outdated `black box' mental model with verification protocols based on how these systems actually fail.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/26/2603.24580v1-retrieval-improvements-do-not-guarantee-better-answers-a-study-of-rag-for-ai-policy-qa",
+      "section": "quick",
+      "title_en": "Retrieval Improvements Do Not Guarantee Better Answers: A Study of RAG for AI Policy QA",
+      "authors": "Saahil Mathur, Ryan David Rittner, Vedant Ajit Thakur, Daniel Stuart Schiff, Tunazzina Islam",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.24580v1",
+      "score": "7.0",
+      "evidence": "用于分析复杂政策和法律文件的检索增强生成",
+      "tldr": "本研究探讨了检索增强生成（RAG）在AI政策分析中的应用，利用包含947份文档的AGORA语料库，结合微调的ColBERT检索器和DPO对齐的生成器。研究发现，尽管领域特定的微调提升了检索指标，但端到端问答性能并未同步提高，甚至在缺失相关文档时会导致更自信的幻觉。这揭示了RAG系统组件优化与整体可靠性之间的非线性关系，为构建动态监管语料库下的问答系统提供了实践见解。",
+      "tags": "query:q5",
+      "abstract_en": "Retrieval-augmented generation (RAG) systems are increasingly used to analyze complex policy documents, but achieving sufficient reliability for expert usage remains challenging in domains characterized by dense legal language and evolving, overlapping regulatory frameworks. We study the application of RAG to AI governance and policy analysis using the AI Governance and Regulatory Archive (AGORA) corpus, a curated collection of 947 AI policy documents. Our system combines a ColBERT-based retriever fine-tuned with contrastive learning and a generator aligned to human preferences using Direct Preference Optimization (DPO). We construct synthetic queries and collect pairwise preferences to adapt the system to the policy domain. Through experiments evaluating retrieval quality, answer relevance, and faithfulness, we find that domain-specific fine-tuning improves retrieval metrics but does not consistently improve end-to-end question answering performance. In some cases, stronger retrieval counterintuitively leads to more confident hallucinations when relevant documents are absent from the corpus. These results highlight a key concern for those building policy-focused RAG systems: improvements to individual components do not necessarily translate to more reliable answers. Our findings provide practical insights for designing grounded question-answering systems over dynamic regulatory corpora.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/26/2603.18470v1-cyberjustice-tutor-an-agentic-ai-framework-for-cybersecurity-learning-via-think-plan-act-reasoning-and-pedagogical-scaffolding",
+      "section": "quick",
+      "title_en": "CyberJustice Tutor: An Agentic AI Framework for Cybersecurity Learning via Think-Plan-Act Reasoning and Pedagogical Scaffolding",
+      "authors": "Baiqiang Wang, Yan Bai, Juan Li",
+      "date": "2026-03-19",
+      "pdf": "https://arxiv.org/pdf/2603.18470v1",
+      "score": "6.0",
+      "evidence": "面向刑事司法专业人员的大语言模型",
+      "tldr": "本研究针对刑事司法专业人员的网络安全教育，提出了CyberJustice Tutor框架。该系统采用“思考-计划-行动”认知循环，克服了传统聊天机器人的无状态和幻觉问题。通过结合维果茨基的最邻近发展区（ZPD）教学支架和自适应检索增强生成（RAG）技术，系统能根据学习者进度动态调整支持并确保内容准确。对123名参与者的研究验证了其在响应速度、易用性和准确性方面的高效性，证明了智能体AI在专业教育中的应用潜力。",
+      "tags": "query:q2",
+      "abstract_en": "The integration of Large Language Models (LLMs) into cybersecurity education for criminal justice professionals is currently hindered by the \"statelessness\" of reactive chatbots and the risk of hallucinations in high-stakes legal contexts. To address these limitations, we propose the CyberJustice Tutor, an educational dialogue system powered by an Agentic AI framework. Unlike reactive chatbots, our system employs a \"Think-Plan-Act\" cognitive cycle, enabling autonomous goal decomposition, longitudinal planning, and dynamic context maintenance. We integrate a Pedagogical Scaffolding Layer grounded in Vygotsky's Zone of Proximal Development (ZPD), which dynamically adapts instructional support based on the learner's real-time progress. Furthermore, an Adaptive Retrieval Augmented Generation (RAG) core anchors the agent's reasoning in verified curriculum materials to ensure legal and technical accuracy. A comprehensive user study with 123 participants, including students, educators, and active law enforcement officers, validated the system's efficacy. Quantitative results demonstrate high user acceptance for Response Speed (4.7/5), Ease of Use (4.4/5), and Accuracy (4.3/5). Qualitative feedback indicates that the agentic architecture is perceived as highly effective in guiding learners through personalized paths, demonstrating the feasibility and usability of agentic AI for specialized professional education.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/26/2603.23949v1-argument-mining-as-a-text-to-text-generation-task",
+      "section": "quick",
+      "title_en": "Argument Mining as a Text-to-Text Generation Task",
+      "authors": "Masayuki Kawarada, Tsutomu Hirao, Wataru Uchida, Masaaki Nagata",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.23949v1",
+      "score": "6.0",
+      "evidence": "利用语言模型揭示论证结构",
+      "tldr": "本研究针对论辩挖掘（AM）中传统多子任务流水线（如跨度识别、组件与关系分类）过于复杂且依赖规则后处理的问题，提出了一种基于预训练编码器-解码器模型的文本到文本生成方法。该方法通过直接生成带有论辩结构标注的文本，实现了跨度、组件和关系的同步识别，无需特定任务的后处理。实验证明，该方法在AAEC、AbstRCT和CDCP三个主流数据集上均取得了SOTA性能，展现了极高的简洁性和跨领域适应能力。",
+      "tags": "query:q6",
+      "abstract_en": "Argument Mining(AM) aims to uncover the argumentative structures within a text. Previous methods require several subtasks, such as span identification, component classification, and relation classification. Consequently, these methods need rule-based postprocessing to derive argumentative structures from the output of each subtask. This approach adds to the complexity of the model and expands the search space of the hyperparameters. To address this difficulty, we propose a simple yet strong method based on a text-to-text generation approach using a pretrained encoder-decoder language model. Our method simultaneously generates argumentatively annotated text for spans, components, and relations, eliminating the need for task-specific postprocessing and hyperparameter tuning. Furthermore, because it is a straightforward text-to-text generation method, we can easily adapt our approach to various types of argumentative structures. Experimental results demonstrate the effectiveness of our method, as it achieves state-of-the-art performance on three different types of benchmark datasets: the Argument-annotated Essays Corpus(AAEC), AbstRCT, and the Cornell eRulemaking Corpus(CDCP)",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

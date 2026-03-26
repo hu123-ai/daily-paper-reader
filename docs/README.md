@@ -6,41 +6,39 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-25
-- 运行时间：2026-03-25 19:36:52 UTC
+- 最新运行日期：2026-03-26
+- 运行时间：2026-03-26 20:18:57 UTC
 - 运行状态：成功
 - 本次总论文数：6
-- 精读区：0
-- 速读区：6
+- 精读区：2
+- 速读区：4
 
 ### 今日简报（AI）
-今日聚焦法律与AI的深度融合，重点探讨了算法问责制、法律数据增强及隐性引用检测等前沿议题。
-研究揭示了利用大模型人格化（LLM-Persona）提升法律文本多样性的潜力，并指出模型在专家意见分歧处识别隐性引用的局限性。
-建议关注“证据权”对算法治理的新定义，以及如何通过高质量合成数据突破法律垂直领域的语料瓶颈。
-- 详情：[/202603/25/README](/202603/25/README)
+今日聚焦 AI 在复杂法律推理与遗产分配中的实战表现，深度解析了 RAG 引导的精密计算与瑞士法律基准评测。
+研究证实 RAG 能显著提升特定领域的逻辑推理能力，但也揭示了检索优化并不总能
+- 详情：[/202603/26/README](/202603/26/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [CVPD at QIAS 2026: RAG-Guided LLM Reasoning for Al-Mawarith Share Computation and Heir Allocation](/202603/26/2603.24012v1-cvpd-at-qias-2026-rag-guided-llm-reasoning-for-al-mawarith-share-computation-and-heir-allocation)  
+   标签：评分：10.0/10、query:profile-1
+   evidence：RAG引导的大模型推理用于伊斯兰继承法计算
+2. [Swiss-Bench SBP-002: A Frontier Model Comparison on Swiss Legal and Regulatory Tasks](/202603/26/2603.23646v1-swiss-bench-sbp-002-a-frontier-model-comparison-on-swiss-legal-and-regulatory-tasks)  
+   标签：评分：9.0/10、query:q5
+   evidence：瑞士法律和监管任务的基准测试
 
 ### 速读区论文标签
-1. [Beyond Explanation: Evidentiary Rights for Algorithmic Accountability](/202603/25/2603.22716v1-beyond-explanation-evidentiary-rights-for-algorithmic-accountability)  
-   标签：评分：7.0/10、query:q4
-   evidence：分析了168个涉及算法决策背景的法律案例
-2. [DALDALL: Data Augmentation for Lexical and Semantic Diverse in Legal Domain by leveraging LLM-Persona](/202603/25/2603.22765v1-daldall-data-augmentation-for-lexical-and-semantic-diverse-in-legal-domain-by-leveraging-llm-persona)  
+1. [When AI output tips to bad but nobody notices: Legal implications of AI's mistakes](/202603/26/2603.23857v1-when-ai-output-tips-to-bad-but-nobody-notices-legal-implications-of-ais-mistakes)  
    标签：评分：7.0/10、query:q2
-   evidence：基于角色的法律信息检索数据增强
-3. [Where Experts Disagree, Models Fail: Detecting Implicit Legal Citations in French Court Decisions](/202603/25/2603.22973v1-where-experts-disagree-models-fail-detecting-implicit-legal-citations-in-french-court-decisions)  
-   标签：评分：7.0/10、query:q6
-   evidence：检测法院判决中的隐性法律引用和法律推理
-4. [Cross-Lingual LLM-Judge Transfer via Evaluation Decomposition](/202603/25/2603.18557v1-cross-lingual-llm-judge-transfer-via-evaluation-decomposition)  
-   标签：评分：6.0/10、query:q7
-   evidence：大语言模型裁判迁移与判决的自动评估
-5. [Hypothesis-Conditioned Query Rewriting for Decision-Useful Retrieval](/202603/25/2603.19008v1-hypothesis-conditioned-query-rewriting-for-decision-useful-retrieval)  
-   标签：评分：6.0/10、query:q3
-   evidence：用于在竞争选项中做出选择并驱动最终决策的检索框架
-6. [AEGIS: From Clues to Verdicts -- Graph-Guided Deep Vulnerability Reasoning via Dialectics and Meta-Auditing](/202603/25/2603.20637v1-aegis-from-clues-to-verdicts----graph-guided-deep-vulnerability-reasoning-via-dialectics-and-meta-auditing)  
-   标签：评分：6.0/10、query:profile-1
-   evidence：通过推理从线索转向裁决的多智能体框架
+   evidence：AI错误及虚假判例对法律行业的影响
+2. [Retrieval Improvements Do Not Guarantee Better Answers: A Study of RAG for AI Policy QA](/202603/26/2603.24580v1-retrieval-improvements-do-not-guarantee-better-answers-a-study-of-rag-for-ai-policy-qa)  
+   标签：评分：7.0/10、query:q5
+   evidence：用于分析复杂政策和法律文件的检索增强生成
+3. [CyberJustice Tutor: An Agentic AI Framework for Cybersecurity Learning via Think-Plan-Act Reasoning and Pedagogical Scaffolding](/202603/26/2603.18470v1-cyberjustice-tutor-an-agentic-ai-framework-for-cybersecurity-learning-via-think-plan-act-reasoning-and-pedagogical-scaffolding)  
+   标签：评分：6.0/10、query:q2
+   evidence：面向刑事司法专业人员的大语言模型
+4. [Argument Mining as a Text-to-Text Generation Task](/202603/26/2603.23949v1-argument-mining-as-a-text-to-text-generation-task)  
+   标签：评分：6.0/10、query:q6
+   evidence：利用语言模型揭示论证结构
 
 
 <div class="dpr-home-promo-card">
