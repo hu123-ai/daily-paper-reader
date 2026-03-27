@@ -1,0 +1,3895 @@
+Title: 2603.19042v2.pdf
+
+URL Source: https://arxiv.org/pdf/2603.19042v2
+
+Published Time: Fri, 27 Mar 2026 00:53:06 GMT
+
+Number of Pages: 22
+
+Markdown Content:
+Man and Machine: Artificial Intelligence and 
+
+# Judicial Decision Making 
+
+Abstract 
+
+The integration of artificial intelligence (AI) technologies into judicial decision -
+
+makin g – particularly in pretrial, sentencing, and parole contexts  – has generated 
+
+substantial concerns about transparency, reliability, and accountability. At the 
+
+same time, these developments have brought the limitations of human judgment 
+
+into sharper relief and underscored the importance of understanding how judges 
+
+inter act with AI -based decision aids. Using criminal justice risk assessment as a 
+
+focal case,  we  conduct a  synthetic  review  connecting three intertwine d aspects 
+
+of AI’s role in judicial decision -making: the performance and fairness of AI tools, 
+
+the strengths an d biases of human judges, and the nature of AI -plus -Human 
+
+interactions.  Across the fields of computer science, economics, law,  criminology 
+
+and psychology, researchers have made significant progress in evaluating the 
+
+predictive validity of automated risk assessment instruments, documenting 
+
+biases  in judicial decision -making, and , to a more limited extent , examining how 
+
+judges use algorithmic recommendations.  While  the existing  empirical evidence 
+
+indicat es that the impact of AI decision aid tool s on pretrial and sentencing 
+
+decisions is modest or  nonexistent , o ur review  also  reveals important gaps in the 
+
+existing literature.  Further research is needed  to  evaluate the performance of AI 
+
+risk assessment instruments , understand how judges navigate noisy decision 
+
+making environments and how individual characteristics influence judges’ 
+
+responses to AI advice . We argue that  AI -ver sus-Human comparisons have the 
+
+potential to yield new insights into both algorithmic tools and human decision -
+
+makers . We  advocate  greater interdisciplinary integration  to foster  cross -
+
+fertilization in future  research .
+
+Arthur Dyevre  (corresponding author) 
+
+Leuven Centre for Empirical Jurisprudence 
+
+artdyevre@gmail.com 
+
+Ahmad Shahvaroughi 
+
+Leuven Centre for Empirical Jurisprudence 
+
+Leuven Labor atory  for Experimental Social Psychology 
+
+ahmad.shahvaroughi@kuleuven.be 1.  Introduction 
+
+In recent years, artificial intelligence (AI) 
+
+technologies have been introduced into 
+
+criminal  and civil  justice to assist with 
+
+decisions such as pretrial release, 
+
+sentencing, and parole. Predictive tools 
+
+(e.g. risk assessment algorithms) and 
+
+sentencing support systems are being 
+
+used , piloted  or debated  in various 
+
+jurisdictions  with the promise of 
+
+improving consistency and reducing 
+
+human error or bias  (Niblett, 2024; Salo 
+
+et al., 2019; Stephen Wormith & Bonta, 
+
+2018; Fazel et al., 2022) . In the United 
+
+States,  risk assessment  instruments  like 
+
+the COMPAS algorithm or the Public 
+
+Safety Assessment (PSA) are designed to 
+
+predict a defendant’s likelihood of 
+
+reoffending or skipping court, informing 
+
+judges’ bail  and  sentencing decisions .
+
+While the core premise  is  that  AI 
+
+technologies  might augment or 
+
+outperform human judgment , it is 
+
+established that  AI  decision support 
+
+systems  can  be inaccurate , and 
+
+reproduce  or  even amplify biases 
+
+present in the data or design . Critics  of 
+
+“algorithmic justice” frequently  take 
+
+COMPAS as  a case in point,  after  studies 
+
+alleg ed  discriminat ion  towards  black 
+
+defendants  (Engel et al., 2025; Gursoy & 
+
+Kakadiaris, 2022) .
+
+As a rguments in support of AI hinge, 
+
+implicitly  or explicitly , on comparisons 
+
+between  AI and  decision making  by 
+
+humans alone, the discussion inevitabl y
+
+brings questions about the strengths and 
+
+limitations of  human judges into sharper 
+
+focus.  While human judges possess the 
+
+ability to process case -specific, 
+
+unexpected information  in way s that  are 
+
+hard to match for any automated 
+
+system, a substantial empirical 
+
+literature  shows that  even professional, 
+
+experienced judges  are  susceptible  to 
+
+cognitive biases , inconsistencies  and 
+
+extraneous influences that can  cause 
+
+significant departures from the 
+
+normative ideal of rational, impartial and 
+
+independent decision making 
+
+(Rachlinski & Wistrich, 2017) . Th ough 
+
+both are constrained, value -laden, and 
+
+difficult to align with plural legal norms ,
+
+algorithmic systems can sometimes be 
+
+adjusted more transparently and 
+
+iteratively than human decision 
+
+processes  – machine learning models 
+
+can be retrained, tweaked and 
+
+redesigned  indefinitely .
+
+Discussions about the deployment of AI 
+
+technologies in the judicial context often 
+
+conjure the dream or nightmare of  “robot 
+
+judges”  (Niblett, 2024) . In practice, 
+
+however, AI technologies are not 
+
+deployed to replace human judges but to 
+
+assist them.  Their  actual  impact, 
+
+therefore, depends on human -machine 
+
+interaction s. Along with the limitations 
+
+of AI systems and the biases of human 
+
+judges, t his makes u nderstanding  how 
+
+and when  human judges  selectively  trust 
+
+or ignore AI  recommendations  a new  and 
+
+crucial  area of research. 
+
+This paper addresses these issues 
+
+through a synthetic  review  of the 
+
+interdisciplinary literatures on AI in 
+
+judicial decision -making, with a
+
+particular focus on predictive, data -
+
+driven risk assessment tools in criminal 
+
+justice.  We  connect and  synthesize 
+
+research  across law, computer science, 
+
+economics,  criminology  and psychology 
+
+to illuminate three closely related 
+
+dimensions of AI’s role in judicial 
+
+decision -making: (i) the performance 
+
+and fairness of AI -based risk assessment 
+
+instruments, (ii) the strengths and 
+
+limitations of human judges, and (iii) the 
+
+nature of AI –human interactions in 
+
+practice.  While  tak ing  stock of existing 
+
+research,  we  flag gaps in the research and provide guidance for futu re 
+
+empirical work. 
+
+Our discussion centres on  predictive ,
+
+data -driven  risk assessment  in criminal 
+
+justice , which we use  as a  focal case .
+
+Not  all AI  applications  with the potential 
+
+to serve as decision aid  are  powered by 
+
+data -driven methods . Bayesian 
+
+networks,  a method  proposed  for the 
+
+evaluation of complex evidence , for 
+
+example, is  a purely  sym bolic, logic -
+
+based approach  (Vlek et al., 2016) .
+
+However, c ontroversies have focused on 
+
+data -driven  applications  as these 
+
+capture  broader  concerns  about AI use 
+
+in public decision making . AI methods 
+
+have been deployed or are actively being 
+
+developed to support or automate other 
+
+judicial tasks such as case triage, 
+
+information retrieval, legal document 
+
+summarization, transcription of hearings 
+
+and document assembly. 1 Yet  predictive 
+
+risk assessment in criminal justice 
+
+counts among  the best testing ground s
+
+to compare AI and human  judgment .
+
+Spe lling out p recise c riteria  to evaluate 
+
+the quality  of  judicial opinions  or the 
+
+correctness of damage awards  is 
+
+difficult . Crime and  incar ceration rates ,
+
+by contrast , provide clear outcomes by 
+
+wh ich to assess  decisions .
+
+Our choice of a  sy nthetic  review  over  a
+
+systematic review or  a meta -analysis  is 
+
+motivated by  the  broa d scope  of our 
+
+tripartite analysis  of algorithmic 
+
+performance,  human  judgment, and  AI -
+
+plus -Human  interaction  covering 
+
+literatures in mul tiple disciplines . The 
+
+strands of  literature  we canvass differ 
+
+considerably in their research 
+
+objectives , theoretical assumptions and 
+
+empirical methodolog ie s.  Such breadth      
+
+> 1CEPEJ’s Resource Center on Cyberjustice and
+> AI reports AI deployment tools across Council of
+> Europe countries along with the United States,
+> Brazil, China and Columbia:
+
+and  meth odological  hetero geneity  make 
+
+quantit ative meta -analysis  impossible or 
+
+meaningless . We hope , however, that 
+
+our  efforts  will facilitate  future  review 
+
+work  on specific aspects  of the 
+
+discussion  while  foster ing  more 
+
+integrated  perspectives  reflect ing 
+
+advances with regard to the 
+
+technological , methodological  and 
+
+behavioural dimensions  of the problem .
+
+Across the fields of computer science, 
+
+economics, law, criminology and 
+
+psychology, researchers have made 
+
+significant progress in evaluating the 
+
+predictive validity of automated risk 
+
+assessment instruments,  documenting 
+
+systematic patterns in judicial decision -
+
+making, and , to a more limited extent ,
+
+examining how judges use algorithmic 
+
+recommendations.  The available 
+
+evidence indicates that risk assessment 
+
+instruments vary in accuracy and, 
+
+overall, have little impact on actual 
+
+decision outcomes. But our review 
+
+reveals important gaps in existing  bodies 
+
+of  literature . Further research is needed 
+
+to evaluate the performance  of  risk 
+
+assessment tools  and compare  them  to 
+
+human decision making . More  work  is 
+
+needed  to understand how  judges 
+
+navigate noisy decision making 
+
+environments  and  how  individual 
+
+characteristics  influence  judges’ 
+
+responses to AI advice.  As research on 
+
+AI -versus -Human  comparisons  and  AI -
+
+plus -Human  interactions shows, a
+
+broader and more integrated 
+
+perspective, connecting 
+
+interdisciplinary  subfields operating 
+
+under  di stinct  goals and methodological 
+
+assumptions, promises  to yield new   
+
+> https://www.coe.int/en/web/cepej/resource -
+> centre -on -cyberjustice -and -
+> ai#{%22202452374%22:[4]} .(Accessed 2
+> January 2026).
+
+insights into both algorithmic tools and 
+
+human  judges. 
+
+The paper is organised as follows.  We 
+
+first clarify the kinds of AI systems at 
+
+stake . W e then examine the evidence on 
+
+their predictive performance and 
+
+fairness . N ext we review evidence on 
+
+human judicial judgment as the relevant 
+
+comparative baseline . F inally, we assess 
+
+evidence on AI -versu s-human and AI -
+
+plus -Human performance and derive a 
+
+research agenda. 
+
+2.  AI  Risk Assessment  Tools 
+
+This Section  examines  the technology 
+
+underpinning  automated  risk 
+
+assessment instruments . Specifically, 
+
+we con sider  to  performance , accuracy ,
+
+data  and  fairness .
+
+2.1.  Basic  Typology of AI 
+
+Techniques 
+
+AI is an umbrella term for a
+
+heterogeneous set of  techniques  that 
+
+differ markedly in their assumptions, 
+
+representations, and modes of 
+
+inference. These differences matter 
+
+because they  bear  on issues  of 
+
+reliability , performance  and 
+
+transparency .
+
+“Algorithm ” is  a similarly capacious 
+
+term . An algorithm is  simply  a sequential 
+
+set of steps and operations . And, in that 
+
+sense, the  circuitry of  a hand calculator 
+
+is just as much an algorithm  as a deep 
+
+neural network. 
+
+A first family  of  AI  techniques comes 
+
+under the heading  “symbolic AI ” or 
+
+“expert systems ”. These techniques 
+
+predate  the  machine learning  methods 
+
+that have spurred the recent AI boom and 
+
+are  based on explicit representations of 
+
+knowledge, rules, and logical 
+
+relationships. Symbolic systems reason 
+
+by manipulating symbols according to 
+
+formal rules or argumentation 
+
+frameworks  that embody expert 
+
+knowledge . Their key advantage s are 
+
+interpretability  and  reliability . When 
+
+correctly designed and with valid input, 
+
+the y will always generate valid answers  –
+
+very much like the circuitry of a hand 
+
+calculator. All  reasoning steps can, in 
+
+principle, be inspected, explained, and 
+
+challenged.  Symbolic AI  systems  require 
+
+substantial human effort to encode 
+
+expert  knowledge  and  struggle with 
+
+uncertainty, noise, and the variability of 
+
+real -world  input data . These  limitations 
+
+and the associated knowledge 
+
+acquisition bottleneck  have constrained 
+
+their deployment  (Ashley, 2017) .
+
+From image and voice recognition to 
+
+translation and text generation , the most 
+
+salient  AI advances of the last twenty 
+
+years  tied to  machine learning  methods 
+
+which form a second family of AI 
+
+techniques  based on statistical learning 
+
+and optimization.  Here data are the 
+
+starting point.  Machine learning models 
+
+infer patterns  from  their  (preferably) 
+
+large  training data  by adjusting model 
+
+parameters to minimize predictive  or 
+
+classification  error . This is  typically 
+
+accomplished  without explicit 
+
+representations of domain knowledge or 
+
+causal structure.  An important 
+
+distinction  is between supervised ,
+
+unsupervised  and self -supervised 
+
+learning.  Supervised learning relies on 
+
+labelled training data, where each input 
+
+(e.g. characteristics of paroled offender) 
+
+is paired with a known outcome (e.g., 
+
+recidivism/no recidivism), which the 
+
+model learns to predict by first fitting 
+
+many parameter values and  then 
+
+selecting the best performing using 
+
+separate validation data.  Unsupervised 
+
+learning, by contrast, is typically 
+
+exploratory and less directly tied to decision -making outcomes . It  uses 
+
+unlabelled data and seeks to discover 
+
+structure s or patterns  – such as clusters 
+
+or latent dimensions  – based on  data 
+
+without predefined targets. Self -
+
+supervision  – which , among other things, 
+
+is used to train Large Language Models 
+
+(LLMs)  – operates without human -
+
+labelled data but with a clear  predefined 
+
+target (e.g. predict the next word). 
+
+Machine learning methods bear some 
+
+resemblance to classical statistical 
+
+modelling techniques . Statistic al 
+
+modelling  also involve s data and 
+
+empirically adjusted parameters.  But 
+
+aim s and assumptions  diffe r. Statistical 
+
+modelling typically aims to  quantify 
+
+uncertainty , often using mathematically 
+
+explicit assumptions about data -
+
+generating processes  and emphasising 
+
+hypothesis -testin g and causal 
+
+identification.  Machine learning  models ,
+
+by contrast,  do not aim to estimate 
+
+causal effects  but to minimize  the  out -of -
+
+sample  error rate of their predictions  or 
+
+classifications .
+
+2.2.  Risk Assessment 
+
+Instruments  in  the Justice 
+
+System : Actu arial vs 
+
+Machine Learning 
+
+Despite the prominence of COMPAS and 
+
+other risk assessment instruments in 
+
+discussions about  AI and  algorithmic 
+
+fairness  (Hellman, 2025) , most  of the 
+
+decision aid  tools  currently in use  appear 
+
+to be built around techniques  and 
+
+assumptions  developed more than half a 
+
+century ago.  Equivant (formerly 
+
+Northpointe ), the  private, for -profit -
+
+corporation  delivering COMPAS, 
+
+provides limited documentation on its           
+
+> 2See Risk Assessment Fact Sheet on the
+> Stanford Law School website:
+> https://law.stanford.edu/pretrial -risk -
+
+inner workings  (Rudin et al., 2020) . But 
+
+studies attempting to reconstruct its 
+
+methodology indicate a linear structure 
+
+approximating a linear additive 
+
+regression model  (Dressel & Farid, 
+
+2018) . Similarly, the weights assigned to 
+
+the nine factors used to construct the 
+
+PSA risk score appear to have been 
+
+estimated using logistic regression, with 
+
+odds ratio s rounded to the nearest 
+
+integer to ease scoring. 2
+
+Both PSA and COMPAS bear similarities 
+
+to the Level of  Service -Revised  (LSI -R), 
+
+one of the most widely used  risk 
+
+assessment  instrument s worldwide  for 
+
+sentencing and probation  (Stephen 
+
+Wormith & Bonta, 2018) . Introduced in 
+
+the 1990s, LSI -R builds on decades of 
+
+research in psychology and criminology .
+
+Impo rtantly, it was developed outside 
+
+machine learning or symbolic AI 
+
+paradigms and, instead, presented as  a
+
+systematic, actuarial alternative to 
+
+clinical assessment  (Kehl & Kessler, 
+
+2017) .
+
+Based on random forest  (Breiman, 2001) ,
+
+a decision aid system  used by the 
+
+Pennsylvania Board of Probation and 
+
+Parole  to inform parole decisions  and 
+
+described in  Berk  (2017)  represents a 
+
+rare real -world application of  advanced ,
+
+supervised  machine learnin g in the field 
+
+of crime risk assessment .
+
+Because m achine learning  techniques 
+
+have been developed  with out -of -sample 
+
+prediction as the ir  primary goal, they are 
+
+generally presumed  to outperf orm 
+
+simple linear model s. Some studies do 
+
+support this expectation.  Trained on a 
+
+dataset compiling hundreds of 
+
+thousands of bail decisions , the  gradient 
+
+> assessment -tools -factsheet -project/ . (Accessed
+> 18 December 2025.)
+
+boosted trees  showcased by  Kleinberg et 
+
+al.  (2018)  predict failure to appear 
+
+considerably better  than a linear model 
+
+using the same features (characteristics 
+
+of the current case, prior criminal record, 
+
+age) . Of the 1% of arrestees predicted to 
+
+be most at risk of  jumping bail  before 
+
+court by this complex model, 56% do fail 
+
+to show up as mandated. By contrast, 
+
+those predicted to be in the top 1% of the 
+
+risk distribution by a standard, linear 
+
+additive logistic regression model, only 
+
+fail to appear in 46% of cases. Gradient 
+
+boost ed trees outperform standard 
+
+linear regression over the re st of the 
+
+predicted risk distribution , although by 
+
+smaller margins  (Kleinberg et al., 2018) .
+
+Gains  from machine learning method s,
+
+however,  depend on the presence of 
+
+non linear patterns  in  the  data . Unlike 
+
+audio, video or  textual data , the dat a
+
+used to  develop and train risk 
+
+assessment models  are  typically low 
+
+dimensional , limited to a small set of 
+
+predictive features (age, crime history, 
+
+pending charges) . They are also  far less 
+
+likely to contain non -linear relationships. 
+
+Extant  comparative  studies reveal a
+
+mixed record, with machine learning 
+
+methods often barely improving on 
+
+additive  logistic  regression  models 
+
+(Duwe & Kim, 2017; Ghasemi et al., 2021; 
+
+Jung et al., 2017; Rudin et al., 2020) .
+
+Moreover,  gains  from machine learning ,
+
+large or small,  ordinarily  come at the 
+
+expense of interpretability . Kleinberg et. 
+
+al. (2018)’s  gradient boosted trees 
+
+algorithm builds multiple decision trees 
+
+sequentially , where each new tree 
+
+focuses on correcting the errors made by 
+
+the previous trees , resulting in a complex 
+
+model where the final prediction is 
+
+essentially the  average of its multiple 
+
+trees.  The  aforementioned  random 
+
+forest  algorithm used by the 
+
+Pennsylvania Board of Probation and 
+
+Parole operates  on similar principles. 
+
+Like  neural networks  and other 
+
+ensemble methods  combi ni ng multiple 
+
+machine learning techniques , such 
+
+highly complex , non -linear  model s are 
+
+effectively black box es .
+
+Where the  predictive gains  from more 
+
+complex machine learning models over 
+
+simpler, more interpretable  models are 
+
+small, operators may prefer to trade 
+
+these  for better interpretability  and 
+
+simplicity  (Stevenson & Doleac, 2024) .
+
+Rigorous  empirical  assessments  are rare 
+
+and  more research is needed  to 
+
+systematically compare  machine 
+
+learning and actuarial  techniques across 
+
+data types and contexts to  determine 
+
+where, when and to what extent the 
+
+choice of methods may affect predictive 
+
+performance .
+
+2.3.  Accuracy  and Performance 
+
+Metrics 
+
+Even with good data,  prediction systems 
+
+are never error -free . They produce 
+
+misclassifications  – false positives and 
+
+false negatives  – at rates that reflect their 
+
+predictive accuracy. 
+
+Simply defined as the proportion of 
+
+correct predictions, accuracy is a coarse 
+
+and often misleading performance 
+
+metric. For example, if less than 5% of 
+
+arrestees do actually re cidivate, a model 
+
+that would never predict reoffence would 
+
+actually be accurate more than 95% of 
+
+the time. Moreover, the raw output of a 
+
+predictive model is a probability  – e.g. a 
+
+65% probability that a given arrestee will 
+
+reoffend. But for deployment and 
+
+evaluation purposes, this  numerical 
+
+value  must be converted into  categories: 
+
+predicted positive /negative  (will reoffend /not reoffend ) or high/low risk .3
+
+Determining  the  threshold for 
+
+assignment  to a category  is not an 
+
+innocuous question . Should a 45% 
+
+chance of recidivism be considered a 
+
+predicted positive?  A 20 % risk ? Should a 
+
+35% risk of re cidivism be cla ssified as 
+
+high risk? Should the same  threshold 
+
+apply for all  categories of crimes  or 
+
+should a  lower threshold  apply  for violent 
+
+crimes ?
+
+The choice of threshold  directly impact s
+
+true and false positive rates.  A lower 
+
+threshold will result in a higher false 
+
+positive rate. A higher threshold will 
+
+result in fewer false positive s but will 
+
+likely  miss more  true positives.  For  real -
+
+world applications, t he selection of a 
+
+specific  threshold is a normative rather 
+
+than an empirical matter (see  discussion 
+
+of the  leniency/incarceration trade -off in 
+
+Section 3.1.) .
+
+For that reason, a  widely used metric to 
+
+assess  and compare the performance of 
+
+predictive  models is the area under the 
+
+curve (AUC) . Unlike confusion matrices 
+
+and many other performance metrics, 
+
+such as precision  and  specificity, it does 
+
+not assume a given threshold, but, 
+
+instead,  measures how well a model can 
+
+di stinguish between true and false 
+
+positives across all possible thresholds. 
+
+An AUC score of 0.5 indicates 
+
+performance no better than a random 
+
+guess whereas an AUC score of 1
+
+reflects perfect predicti on across all 
+
+thresholds. 
+
+For their gradient boosted trees train ed 
+
+to predict failure to appear before court ,
+
+Kleinberg et al. (2018) report AUC = 0.71. 
+
+A systematic review of  research articles 
+
+assessing the predictive validity of  six     
+
+> 3For an accessible , thorough discussion of this
+> issue see Lagioia et al. (2023) .
+
+pretrial risk assessment tools , including 
+
+PSA and COMPAS,  found AUC values 
+
+ran ging from 0.64 to 0.73  (Desmarais et 
+
+al., 2021) . Ano ther  systematic review 
+
+looking at  nine  distinct  risk assessment 
+
+instruments  used in sentencing  report ed 
+
+AUC scores  ranging from  AUC = 0.42 to 
+
+AUC = 0. 82, and  AUC = 0.57 to  AUC= 0.75 
+
+for studies with sample size N > 500 
+
+(Fazel et al.  2022) .
+
+Another important, threshold -
+
+independent  performance  metric is 
+
+calibration, which measures how well 
+
+expected probabilities compare to  true 
+
+outcome  frequencies. If a model is well -
+
+calibrated, released convicts for which 
+
+the model predict s a 10% probability of 
+
+recidivism should recidivate , on average ,
+
+close to 10% of the time.  Kleinberg et al. 
+
+(2018) ’s machine learning algorithm 
+
+performs well on that metric. 
+
+Defendants predicted to have 40% 
+
+probability of failing to appear, fail to 
+
+appear  appro ximately  40% of the time. 
+
+Unfortunately, very few predictive 
+
+validation studies report calibration 
+
+metrics such as Expected Calibration 
+
+Error  (Fazel et al., 2022) . Reporting Brier 
+
+and log loss scores, which capture both 
+
+calibration and the sharpness of 
+
+predictions, would  also  facilitate 
+
+comparisons with human predictions 
+
+and normative expectations  (Hernández -
+
+Orallo et al., 2012; Himmelstein et al., 
+
+2021; Lin et al., 2020) .
+
+2.4.  Fairness 
+
+As with human decision makers, 
+
+misclassifications, mispredictions ,
+
+alone,  do not make a n AI  system per se 
+
+“biased”.  Instead, it  is  when 
+
+misclassifications  vary  significantly 
+
+across categories , e.g.  men and women, white and black defendants , that  a
+
+system can  in some  meaningful  sense  be 
+
+characterized as  bias ed  or unfair .4
+
+As is well documented,  biases  in data -
+
+driven AI systems  may  stem from  biases 
+
+embedded in the historic training data, 
+
+measurement error  or data with 
+
+underrepresented groups or categories. 
+
+Historical criminal justice data reflect 
+
+pre -existing societal and  institutional 
+
+biases.  Remedying these sources of bias 
+
+is rendered difficult by correlations 
+
+between seemingly innocuous 
+
+characteristics  – e.g. ZIP code, age  – and 
+
+sensitive, protected  traits such as 
+
+ethnicity,  gender  or sexual orientation .
+
+Risk assessment  instruments  do not use 
+
+race , gender  or sexual orientation  as 
+
+predictor. However,  they typically use 
+
+age , which  has been shown to correlate 
+
+with race in US criminal data, as black 
+
+defendants tend to be younger than 
+
+white defendants  (Engel et al., 2025; 
+
+Rudin et al., 2020) . Conversely,  it has 
+
+been shown that ignoring gender can be 
+
+detrimental to  women, as treating 
+
+female conv icts like male convicts  may 
+
+result  in overprediction of  women’s 
+
+likelihood of recidivism  (Skeem et al., 
+
+2016) 
+
+There exist v arious  strategies to address 
+
+biases in  data -driven  AI applications. 
+
+One is via data curation and 
+
+preprocessing  to remove correlations 
+
+with sensitive characteristics  (Kamiran & 
+
+Calders, 2012) . Another is by adding 
+
+constraints to the optimization objective 
+
+at the training stage  (Kleinberg et al., 
+
+2018; Zafar et al., 2017) . Yet another is to 
+
+correct results at the postprocessing 
+
+stage  (Hardt et al., 2016) .           
+
+> 4The notion of bias relates to comparative
+> conceptions of algorithmic fairness .Some
+> conceptions of algorithmic fairness, though, go
+
+The controversy surrounding COMPAS 
+
+has sparked the development of formal 
+
+measures of fairness against which 
+
+models can be trained and 
+
+benchmarked.  These efforts  have  shown 
+
+that, except  in highly unusual 
+
+circumstances  where groups exhibit the 
+
+base rate (e.g. for recidivism) , a  model 
+
+cannot  simultaneously satis fy every 
+
+measure of fairness  (Hellman,  2025; 
+
+Lagioia et al., 2023) . For example , it is 
+
+mathematically impossible for  a model 
+
+sim ultaneously to  satisfy  predictive 
+
+parity  (those predicted to recidivate 
+
+recidivate  with the same frequency 
+
+across groups ) and  equalized odds 
+
+(same true positive and  false positive 
+
+rates across groups). 
+
+A systematic review of 11 studies found 
+
+the predictive validity of pretrial 
+
+assessment tools to be generally 
+
+comparable  across racial and ethnic 
+
+subgroups , but with  three  studies 
+
+reporting  lower predictive validity for 
+
+defendants of colour  (Desmarais et al., 
+
+2021) .
+
+2.5.  Summary 
+
+Existing or proposed risk  assessment 
+
+instruments do possess predictive 
+
+power. B eyond demonstrating this fact, 
+
+though, the existing literature in this area 
+
+reveals significant limitations.  There is 
+
+limited evidence to establish which 
+
+instruments and data -driven techniques 
+
+offer the  most reliable  predictions  (Fazel 
+
+et al., 2022) . Studies rarely discuss 
+
+potential distortions arising from the 
+
+data generation process, such as 
+
+sampling bias  (Goel et al., 2021) . Aside 
+
+from affecting model training, 
+
+measurement error  may  impact 
+
+evaluation and  comparability . As with       
+
+> beyond comparative treatment and even
+> misclassification, see Hellman, (2025) .
+
+training, e valuating the accuracy of a risk 
+
+assessment  instrument  presupposes 
+
+data providing a valid ground truth , in 
+
+particular  a valid measure of the 
+
+outcome  variable . In predictive validity 
+
+studies, recidivism,  for instance , is 
+
+typically measured as re -arrest or as new 
+
+conviction  (Fazel et al., 2022) . Yet  even 
+
+with  full access to court and police 
+
+records,  many  crimes  may remain 
+
+un reported.  Local and/or time and -
+
+varying factors  (e.g. resources allocated 
+
+to law enforcement) may also impact the 
+
+discrepancy between recorded crimes 
+
+and the real crime rate.  To overcome this 
+
+label bias, future research might focus 
+
+on crim inal offenses  that  are  more likely 
+
+to be accurately reported , such as 
+
+failure -to -appear or failure to comply 
+
+with parole conditions. 
+
+This said , it bears emphasis that 
+
+demonstrating pre dictive power and 
+
+reasonable fairness , al though essent ial, 
+
+does  not  in itself  constitute  evidence 
+
+that decision aid tools compare , let 
+
+alone, outperform human decision 
+
+makers , as the following sections will 
+
+make clear. 
+
+3.  Strengths and Limitations of 
+
+Human Judges 
+
+A vast body of  research in psychology ,
+
+economics, law and political science 
+
+offers broad evidence  that  jurors and 
+
+professional judges  are susceptible to 
+
+extraneous influences as well as to 
+
+cognitive  and racial  biases . This 
+
+evidence  provides a n essential, albeit 
+
+incomplete,  human  baseline  to 
+
+understand  how  AI tools might  impact 
+
+judicial decisions. 
+
+3.1.  Cognitive Biases 
+
+Controlled vignette experiments with 
+
+professional magistrates  and lay jurors 
+
+have reported evidence of the following 
+
+cognitive biases:  
+
+> •
+
+Confirmation bias : giving more 
+
+weight to information that 
+
+confirms preconceived notions 
+
+while  discounting disconfirming 
+
+evidence  (Kukucka & Kassin, 
+
+2014; O’Brien, 2009; Wistrich & 
+
+Rachlinski, 2012) . 
+
+> •
+
+Anchoring bias  and contrast 
+
+effect : being influenced by 
+
+irrelevant or  initial numerical 
+
+values or recommendations  such 
+
+as irrationally high damage 
+
+claims, sentence 
+
+recommendation by a probation 
+
+officer or the sentence imposed in 
+
+the preceding case 
+
+(Bystranowski et al., 2021; 
+
+Englich et al., 2006; Rachlinski et 
+
+al., 2012, 2015) . 
+
+> •
+
+Framing effect s: responding 
+
+differently to the same choice 
+
+(e.g. settlement offer)  when 
+
+presented as loss  rather than  gain 
+
+(Guthrie et al., 2000; Rachlinski & 
+
+Wistrich, 2017) . 
+
+> •
+
+Hindsight bias:  perceiving  an 
+
+event as more likely in retrospect 
+
+than it was prior to  its  occurrence ,
+
+notably when establishing 
+
+negligence  (Casper et al., 1989; 
+
+Fessel & Roese, 2011; Guthrie et 
+
+al., 2000; Harley, 2007) . 
+
+> •
+
+Gender bias: benevolent sexism 
+
+in  child custody and criminal 
+
+cases  (Rachlinski & Wistrich, 
+
+2021) . 
+
+> •
+
+Base -rate fallacy:  ignoring the 
+
+general prevalence of an event  in 
+
+favour of individuating evidence 
+
+(Guthrie et al., 2000) . 
+
+> •
+
+Out -group  bias : treating 
+
+members of other racial, religious 
+
+or ethnic groups less favourably 
+
+than members of one’s own group (Levinson et al., 2017; Rachlinski 
+
+et al., 2008, 2015) .
+
+Observational , archival  studies 
+
+exploiting random or quasi -random 
+
+case /juror  assignment , complement 
+
+these findings. The y report  evidence 
+
+consistent with the existence of  out -
+
+group bias  (Choi et al., 2022; Ash et al., 
+
+2025; Abrams et al., 2012) , benevolent 
+
+sexism  (Bontrager et al., 2013; Philippe, 
+
+2020; Starr, 2015)  and anchoring effects 
+
+(Bushway et al., 2012) . Studies of asylum 
+
+and immigration cases have revealed 
+
+extreme variations  among judges 
+
+despite  random case  assignment 
+
+(Hangartner et al., 2025; Ramji -Nogales 
+
+et al., 2007) , while  sequential negative 
+
+auto -correlation  in decision patterns 
+
+suggest s that  judges  occasionally 
+
+commit the gambler’s fallacy  (Chen et 
+
+al., 2016) .
+
+3.2.  Simplified Judgment 
+
+Heuristics 
+
+A more limited body of studies indicate 
+
+that , when required to assess multiple 
+
+factors or sources of information,  judges 
+
+often  adopt simplified cognitive 
+
+strategies.  Although judges claim to 
+
+consider a wide array of factors 
+
+(including pending charges, criminal 
+
+history, employment, local ties)  when 
+
+setting bail, they appear  to rely almost 
+
+exclusively on prosecutorial 
+
+recommendations  (Ebbesen & Konecni, 
+
+1975) . Dhami & Ayton (2001)  show that 
+
+the bail decisions of judges  in their 
+
+experimental setup  are  best predicted by 
+
+a simple, noncompensatory  heuristic 
+
+rule . A heuristic  rule  using only two 
+
+factors provided the best fit for 75.5% of 
+
+participants.  Dhami (2003)  replicated 
+
+this finding using observational data 
+
+from two British courts.  Outside criminal 
+
+law , Beebe (2006)  finds that  although US 
+
+federal courts claim to apply  multifactor 
+
+tests  incorporating  up to thirteen  factors 
+
+when assessing consumer confusion in 
+
+trademark  infringement  cases judges 
+
+appear to use only two  (similarity of the 
+
+marks and proximity of the goods). 
+
+Similar patterns have been found in US 
+
+copyright fair use disputes  (Beebe, 2007, 
+
+2020)  and regarding awards of attorney’s 
+
+fees  in class actions  (Eisenberg & Miller, 
+
+2004) , where judges claim to weigh 
+
+multiple factors, most of which do not 
+
+have any effects on  outcomes. 
+
+3.3.  Ideological Attitudes 
+
+Empirical research has demonstrated 
+
+that human judges can be  heavily 
+
+influenced  by their ideological attitudes 
+
+(Bonica & Sen, 2021; Cohen & Yang, 
+
+2019; Dyevre & Rodilla Lazaro, 2025; 
+
+Epstein et al., 2013; Hangartner et al., 
+
+2025; Pinello, 1999; Ramji -Nogales et 
+
+al., 2007; Sunstein et al., 2007) . When 
+
+induced by judicial ideology, v ariations in 
+
+sentencing severity , bail or parole 
+
+decisions , are not necessarily 
+
+synonymous with bias in the sense of 
+
+departure from rationality . Indeed, such 
+
+decisions present judges with an 
+
+unavoidable trade -off.  Jailing defendants 
+
+tends to  reduce crime ; r eleasing more 
+
+defendants  to  increase crime .
+
+Ideological differences over leniency and 
+
+severity can thus be interpreted as 
+
+preference for one type of error over 
+
+an other:  less lenient , typically 
+
+conservative judges prioritize a low  false 
+
+negative  rate (ensuring they don’t 
+
+release people who might commit 
+
+crimes)  at the co st of  a higher false 
+
+positive rate  (jailing  people who won’t 
+
+commit crimes ); more lenient, 
+
+progressive judges pr ioritise a lower 
+
+false positive rate at the cost of a higher 
+
+false negative rate.  Both experimental 
+
+and observational  evidence, though, show s that ideology can trigger 
+
+motivated reason ing , distorting  the 
+
+evaluation of evidence or  assessments 
+
+regarding the scope and relevance of 
+
+precedents  (Braman & Nelson, 2007; Lu 
+
+& Chen, 2025) .
+
+3.4.  External Pressures 
+
+Whereas some external constraints , e.g. 
+
+the pressure to anticipate appeals,  can 
+
+be  viewed  as part of a legitimate process 
+
+of judicial accountability, other sources 
+
+of external pressure are more 
+
+problematic.  Observational studies 
+
+suggest that workload pressures can 
+
+have a non -trivial effect on judicial 
+
+decision making  and, besides delays, 
+
+affect decision quality  (Ash & MacLeod, 
+
+2015; Huang, 2010; Shumway & Wilson, 
+
+2022) . There is a robust association 
+
+between workload shocks caused by 
+
+reduction in judicial personnel or 
+
+dramatic shifts in litigation volume and 
+
+case dispositions that require less time 
+
+and resources, such as affirming lower 
+
+court decisions  (Huang, 2010) . Similarly, 
+
+facing a contested election or 
+
+institutional reforms affecting caseload 
+
+and time pressure, e.g. the introduction 
+
+of intermediate appellate courts, appear 
+
+to affect the quality of judicial opinions, 
+
+as measured by word length, discussed 
+
+and dis tinguishing citations  (Ash &
+
+MacLeod, 2015) .
+
+3.5.  Summary 
+
+The picture of human judicial decision 
+
+making that has emerged from decades 
+
+of empirical research  on judicial 
+
+behaviour is useful to get a  preliminary 
+
+sense  of how AI tools might potentially 
+
+ameliorate or deteriorate  the quality of 
+
+judicial decisions. 
+
+Human judges  largely rely  on intuitive 
+
+reasoning.  Facing factor overload, 
+
+research suggests,  they adopt simplified 
+
+decision rules.  Rules of thumb  do  not 
+
+automatically result in bad decisions. 
+
+“Fast and frugal heuristics ” often prove 
+
+impressively  and surprisingly  accurate 
+
+(Gigerenzer et al., 2000) . But  biases are 
+
+the  flipside  of heuristics. When 
+
+important information is ignored, 
+
+heuristics  turn into  biases,  resulting in 
+
+erroneous judgments  (Kahneman, 2011; 
+
+Rachlinski & Wistrich, 2017) . Moreover, 
+
+under conditions of time pressure, 
+
+human decision makers are more 
+
+inclined to rely on heuristics  which 
+
+requir e less  information search and 
+
+cognitive processing  (Rieskamp &
+
+Hoffrage, 1999) . Accordingly, w e should 
+
+expect  higher  workload and other 
+
+sources of stressful pressure to  increase 
+
+reliance  on  intuitive thinking  in human 
+
+judges , raising the likelihood  of judicial 
+
+error .
+
+It is important to be clear about the 
+
+current limitations of research on human 
+
+judges.  Judges operate  in a noisy 
+
+informational environment . They receive 
+
+a mult itude  of  signal s and cues  whether 
+
+from  briefs, pleadings , reports  or  the 
+
+appearance, looks, verbal and non -
+
+verbal demeanour of defendants, 
+
+prosecutors and attorneys.  How and 
+
+what  cues  judges pick from this 
+
+mountain of information,  whether these 
+
+cues constitute informative signals or 
+
+noise and  how individual judges differ in 
+
+the  cues  they pick, though, is still 
+
+imperfectly understood.  This literature  is 
+
+also a long way from  provi ding  a reliable 
+
+basis to estimate  the incidence of 
+
+erroneous decisions. Even  judges’  actual 
+
+forecasting skills  with regard to 
+
+recidivism has attract ed litt le research. 
+
+As we shall see,  AI -versus -Human  and 
+
+AI -plus -Human  research  are  spur ring 
+
+renewed efforts  to investigate these aspects of human judicial decision 
+
+making. 
+
+4.  Human  vs  Machine 
+
+Comparisons 
+
+Rigorous  AI -versus -Human  comparisons 
+
+are necessary to determine whether AI 
+
+tools have  real practical potential. But 
+
+simulations  – comparing human 
+
+decisions to what an AI system would 
+
+have  decided  – can also  serve to 
+
+illuminate  human judicial  behaviour .
+
+4.1.  Methodological Approaches 
+
+Much of the research comparing 
+
+automated risk assessment tools to 
+
+human decision makers consists of lab 
+
+experiments with  lay human participants 
+
+recruited via crowdsourcing platforms 
+
+(Biswas et al., 2020; Dressel & Farid, 
+
+2018; Lin et al., 2020) . Human 
+
+participants are presented with a
+
+vignette including the same information 
+
+(age, criminal history ) fed to the 
+
+algorithm and receive a monetary reward 
+
+reflecting the quality of their predictions 
+
+(based on Brier scores). 
+
+Observational studies promise to 
+
+compare algorithms to professional 
+
+judges  operating in real -world 
+
+conditions . However, making valid 
+
+comparisons  using observational data 
+
+poses serious methodological 
+
+challenges.  First,  besides future criminal 
+
+behaviour , a decision may require other 
+
+considerations. Sentencing decisions 
+
+typically consider  other factors, such as 
+
+retribution , deterrence or remorse .
+
+Without accounting for these 
+
+unobserved factors, simply juxtaposing 
+
+recidivism rates to what they would have 
+
+been had the AI -generated 
+
+recommendation been followed, 
+
+therefore, would not  result in  a valid  AI -
+
+versus -Human  comparison.  This 
+
+problem is  known as the  omitted payoff 
+
+problem. 
+
+Another challenge is the  selective label 
+
+problem . Crime outcomes can only be 
+
+observed for released convicts and 
+
+defendants. Whether jailed defendants 
+
+would have committed a crime had they 
+
+been released , by definition,  cannot be 
+
+observed . Released defendants and 
+
+convicts do not represent a random 
+
+sample of the defendant population 
+
+(Lakkaraju et al., 2017) . To simulate 
+
+recidivism  under the  diversion 
+
+recommendations  of a risk  assessment 
+
+instrument  for sentencing  introduced in 
+
+Virginia in 2003,  Stevenson & Doleac 
+
+(2024)  impute detainees the post -
+
+release  recidivism  rate of individuals 
+
+with the same risk score, which , as  the 
+
+authors admit , ignores systematic 
+
+differences between jailed and released 
+
+convicts .
+
+To  mitigate th ese problems , Kleinberg et 
+
+al.  (2018)  exploit  the fact that cases in 
+
+their data are randomly assigned to 
+
+judges who differ in leniency  along with 
+
+the narrow scope of pretrial bail 
+
+decisions, where the law  dictates to 
+
+consider  only the risk of flight or rearrest. 
+
+Ben -Michael et al.  (2025)  consider a 
+
+setting where pretrial judges can only 
+
+impose a s ignature bond  (release on own 
+
+recognizance) , a small cash bond  or a 
+
+large cash bond .
+
+4.2.  Empirical Findings 
+
+Lab  studies report mixed finding s. W ith 
+
+regard to  both  predictive accuracy 
+
+(Dressel & Farid, 2018; Lin et al., 2020) 
+
+and fairness  (Biswas et al., 2020; Dressel 
+
+& Farid, 2018)  human predictions 
+
+sometimes match, sometimes 
+
+underperform algorithmic predictions 
+
+(with COMPAS  or an additive, logistic 
+
+regression model  usually  offered  as AI 
+
+benchmark) . The relatively good performance of  lay  human forecasters  in 
+
+Dressel & Farid  (2018)  is  likely an  artefact 
+
+of study design.  Participants  received 
+
+immediate  feedback on the accuracy of 
+
+their predictions . Studies that did not 
+
+provide immediate feedback reported 
+
+considerably poorer human  accuracy 
+
+(Biswas et al., 2020; Lin et al., 2020) .
+
+Another  limitation  of  existing  lab studies 
+
+is  that  human participants are only 
+
+treated  with  informational inputs that are 
+
+consistent across cases  and relevant to 
+
+risk assessment. As  Goel et al.  (2021) 
+
+point out, such “boosted” human 
+
+predictions are far removed  from 
+
+unaided human judgment  in real -world 
+
+conditions,  wh ere judges are  typically 
+
+presented with  a much noisier set of 
+
+inputs, including police reports, victim 
+
+impact statements and non -structured 
+
+clinical assessments. 
+
+Observational studies , too,  reveal mixed 
+
+findings  but  al so help shed light on how 
+
+human judges struggle to process 
+
+information in  their  complex and 
+
+information -imperfect decision setting .
+
+Relat ing  the judges’  releas e rates to the 
+
+AI -predicted crime rate,  Kleinberg et al. 
+
+(2018)  find an interesting pattern.  The 
+
+curve relating the two rates is non -linear .
+
+It flattens out as predicted risk 
+
+increases. Judges release defendants 
+
+with a 75% crime risk at nearly the same 
+
+rate as defendants with a 48% crime risk. 
+
+Stricter judges do not prioritize high risk 
+
+defendants. Nor do they follow a
+
+consistent risk threshol d. Instead, 
+
+stricter judges jail additional defendants 
+
+drawn from throughout the predicted 
+
+crime risk distribution.  This suggests that 
+
+automated risk assessment tools may 
+
+improve  on human decisions through 
+
+greater consistency. Simulating 
+
+outcomes under the release 
+
+recommendations of their machine 
+
+learning algorithm, the authors 
+
+demonstrate potential  of up to 24.7% 
+
+reduction in the crime rate,  and  up to 
+
+41.9 % in the incarceration rate. 
+
+Moreover, the algorithm can achieve 
+
+these simulated gains while 
+
+simultaneously reducing racial 
+
+disparities.  These gains are also robust 
+
+to accounting for potential omitted pay -
+
+off bias  associated with the employment 
+
+or marital status of defendants. 
+
+Interestingly, a model trained to predict 
+
+the judges’ decisions rather than flight 
+
+risk or recidivism still does better at 
+
+reducing crime than the judges 
+
+themselves, suggesting that judges give 
+
+excessive  weight to highly salient 
+
+interpersonal cues over more 
+
+info rmative factors such as past 
+
+behaviour  (Kleinberg et al., 2018, p. 287) .
+
+Using the same dataset  but relaxing 
+
+assumptions about the judges’ 
+
+unobserved  utility function , Rambachan 
+
+(2024)  find s that replacing judges where 
+
+systematic mistakes occur with the 
+
+decision rule of an  ensemble model 
+
+(averaging an elastic net model and a 
+
+random forest model)  dominates 
+
+decision making by humans alone. 
+
+Results , however,  are more ambiguous 
+
+(i.e. depend on assumptions about 
+
+policy preferences)  when  all human 
+
+decisions are replaced by the 
+
+algorithm’s recommendations.  Using a 
+
+structural model, it is estimated that  at 
+
+least 20% of judges make systematic 
+
+predictive mistakes about misconduct 
+
+risk. 
+
+Ben -Michael et al.  (2025)  compare 
+
+human -alone to PSA  recommendations 
+
+and find  the latter to have  higher 
+
+misclassification  and false positive rates 
+
+for  recidivism than human judges ,
+
+suggest ing  that the algorithm is 
+
+unnecessarily harsher in impos ing cash 
+
+bails .
+
+From  their  more  tentative  simulation ,
+
+Stevenson & Doleac  (2024)  suggest  that systematically  following the diversion 
+
+recommendations  of the algorithm 
+
+introduced in Virginia  would ha ve  led to 
+
+shorter sentence length and lower 
+
+incarceration rates  at the price of  slightly 
+
+higher recidivism  – an outcome  in line 
+
+with  the main  obje ctive  (namely, 
+
+reducing incarceration rates for low risk 
+
+individuals)  of the legislature when 
+
+introducing automated risk assessment .
+
+4.3.  Summary 
+
+Comparing  human judges to AI 
+
+algorithms is no easy feat.  Experimental 
+
+studies seek to hold prediction tasks 
+
+(and prediction inputs) constant across 
+
+AI and human decision makers, but, in 
+
+doing so, fail to make the comparison 
+
+realistic. Observational studies compare 
+
+AI to realistic conditions, but struggle to 
+
+isol ate the quantity of interest  for valid 
+
+comparison . Moreover, where 
+
+researchers credibly address these 
+
+challenges, e mpirical results may  reflect 
+
+the intrinsic performance of the 
+
+particular  risk assessment instr ument 
+
+tool being evaluated  (PSA, advanced 
+
+machine learning model) .
+
+While  more research would help 
+
+compare  and evaluate  a broader array of 
+
+existing tools , th e studies discussed in 
+
+this Section  nonetheless contribute new 
+
+insights  and suggestive evidence  into 
+
+how human judges  grapple with noisy 
+
+informatio n and  struggle to maintain 
+
+consistency  across case s.
+
+5.  Human -Machine Interactions 
+
+Does the availability of AI tools 
+
+measurably impact judicial decisions? 
+
+Ideally, man and machine ought to 
+
+complement each other, leveraging their 
+
+respective strengths while mutually 
+
+correcting their blind spots. However, 
+
+optimal use cannot be guaranteed. 
+
+Judges may systematically distrust AI 
+
+recommendations. Or, on the contrary, 
+
+judges may  be susceptible to the 
+
+automation bias , overly relying on 
+
+automated advice and igno ring  other 
+
+relevant sources of information 
+
+(Goddard et al., 2012; Parasuraman & 
+
+Manzey, 2010) .
+
+5.1.  Methodologies 
+
+Similar to  AI -versus -Human  research, 
+
+studies investigating  AI -plus -Human 
+
+interactions are a mixture of lab 
+
+experiments  and observational 
+
+analyses . Lab studies compare  the 
+
+recidivism predictions of  a grou p
+
+provided  with  AI risk assessment  to 
+
+those of  a control  (Green & Chen, 2019; 
+
+Grgić -Hlača et al., 2019) . Observational 
+
+studies  typically examine  pre - and post -
+
+implementation  outcomes, some  using 
+
+propensity score matching , regression 
+
+discontinuity or event study designs 
+
+(Lawson et al.,  2024; Lowder et al., 2021; 
+
+Stevenson & Doleac, 2024; Viljoen et al., 
+
+2019) . Drawing on  Kleinberg et al.  (2018) ,
+
+Angelova et al.  (2025)  investigate 
+
+instances of human override  by 
+
+exploit ing  random  case assignment  and 
+
+train ing  machine learning model s to 
+
+predict the judges’ own decisions. 
+
+Meanwhile,  Ben -Michael et al.  (2025) 
+
+and  (Imai et al., 2023)  report the results 
+
+of  what is, to date,  the  first  field 
+
+randomized controlled  trial  (RCT)  testing 
+
+the impact of  AI risk assessments on 
+
+judicial decisions .
+
+5.2.  Empirical Findings 
+
+Lab studies  have  found  a modest effect 
+
+of algorithmic recommendations  on  the 
+
+predictions of  human participants. 
+
+Grgić -Hlača et al.  (2019)  report that 
+
+participant s change d their predicti ons 
+
+when presented with  algorithmic advice 
+
+in 7% of  cases . Green & Chen  (2019)  find 
+
+that  participants provided with 
+
+algorithmic  recommendation  make more accurate predictions than the 
+
+control group  while  still  significantly 
+
+under perform ing  the  algorithm . The 
+
+same study found that , while reducing 
+
+false positive  rates for both black and 
+
+white defendants , exposure to 
+
+algorithmic advice  had  disparate racial 
+
+impact for high risk defendants. 
+
+In a systematic review and meta -analysis 
+
+of  observational  22  studies,  Viljoen et al. 
+
+(2019)  report  small reductions in 
+
+incarcerations  (aggregated odd s ratio 
+
+[OR ] = 0.63,  p < 0 .001 ) and recidivism 
+
+rates ( OR  = 0.85,  p < 0.02) . But w ith more 
+
+than half of studies presenting  serious 
+
+risk of bias, the  overall strength of this 
+
+evidence  must be regarded as  low. 
+
+Likewise,  Lawson et al.  (2024)  find little 
+
+evidence of disparate impact  on race 
+
+and ethnicity  in  their systematic  review 
+
+of 21 articles but deplore the  scarcity of 
+
+high quality studies. 
+
+Based on a proven and rigorous research 
+
+design , analyses of the  first RCT  report a 
+
+null result  (Ben -Michael et al., 2025; Imai 
+
+et al., 2023) . J udg es  in the treatment 
+
+group  follow  PSA recommendations 70% 
+
+of the time . But  false negative and false 
+
+positive rates  for  reoffence  show no 
+
+significant difference  with  the  control 
+
+group.  These r esults  hold across  gender 
+
+and  race. 
+
+Ben -Michael et al. (2025) , Stevenson & 
+
+Doleac (2024) and Angelova et al.  (2025) 
+
+all report  high incidence of human 
+
+override of AI recommendations .
+
+Isolating the reasons  that  spur judges to 
+
+do so  is a question  attracting increasing 
+
+attention  in recent research . In the 
+
+sentencing context,  Stevenson & Doleac 
+
+(2024)  find  age,  marital status, 
+
+employment and  race  to be all robust 
+
+predictors of  deviations from  algorithmic 
+
+advice.  Unlike  the  other  predictors , all 
+
+correlate d with  more lenient sentencing, 
+
+race correlates wi th longer sentences  for 
+
+black convicts , which suggests that 
+
+deviations may be induced by  human 
+
+bias.  Angelova et al.  (2025)  find that  a
+
+subset of  judges  outperform algorithmic 
+
+recommendations . To  isolate what  could 
+
+explain the performance differential, the 
+
+researchers collect additional data from 
+
+the case reports , includ ing  information 
+
+on  race, residence  (homelessness , out -
+
+of -state address) , aggravating 
+
+cir cumstances and  recommendation 
+
+from a pretrial officer.  A machine 
+
+learning model trained with  this 
+
+additional  information  better predict the 
+
+decisions of the  outperforming judges 
+
+but  results in worse predictive 
+
+performance for the decisions of the 
+
+underperforming judges . Outperforming 
+
+judges are  significantly  less likely to 
+
+release  defendants with aggravating 
+
+conditions  and  violent charge against an 
+
+adult . Under performing judges are 
+
+significantly  more likely to jail 
+
+defendants with an out -of -state address, 
+
+despite th is factor not being particularly 
+
+predictive of pretrial misconduct.  While 
+
+the sample of judges  included in the 
+
+study  is small  (62) , this provide s
+
+suggestive evidence that  outperforming 
+
+judges might be systematically better at 
+
+picking relevant signals from additional 
+
+information. 
+
+5.3.  Summary 
+
+Research  investigating  the impact of 
+
+decision aid systems in the legal field is 
+
+still in its infancy . For supporters and 
+
+critics of algorithmic risk assessment, 
+
+existing  human -in -the -loop studies  offer 
+
+both  comforting and disappointing 
+
+takeaways. First,  the impact of  risk 
+
+assessment instruments appear  to be, at 
+
+most, very modest . The fact that the first 
+
+field  RCT , reasonably  powered  (sample 
+
+size  N = 18 91 , incidence close to 30% for 
+
+the main outcome variables ), produced 
+
+a null result  implies that the te chnology is far from having a transformative 
+
+impact on criminal justice.  Second, 
+
+available  empirical evidence  does not 
+
+suggest over -reliance , or judges  treat ing 
+
+automated systems as cognitive 
+
+shortcuts.  More  longitudinal studies are 
+
+certainly needed to assess  temporal 
+
+shifts in human override behaviour. But 
+
+Stevenson & Doleac  (2024)  report 
+
+evidence of  a decrease rather than an 
+
+increase in  the impact of automated 
+
+recommendations over time. This should 
+
+assuage fears , notably in legal circles, 
+
+that the technology  is causing 
+
+automation bias  (Romeo & Conti, 2025; 
+
+Ruschemeier & Hondrich, 2024) .
+
+As high -quality studies  have only 
+
+considered  the impact of  a few risk 
+
+assessment tools  in  a small set of 
+
+(overwhelmingly  US)  settings , there is 
+
+certainly room  for future research  to 
+
+refine , if not revise, these  general 
+
+findings. 
+
+Tentative attempts to isolate the effects 
+
+of  individual characteristics  and  relevant 
+
+or irrelevant informational cues  on 
+
+overrides  point  to  important  areas for 
+
+future research  across the fields of 
+
+judicial behaviour and  AI -plus -Human 
+
+interactions.  According to r esearch on 
+
+the automation bias  (Goddard et al., 
+
+2012) , human responses to decision aid 
+
+systems are  moderated by workload as 
+
+well as individual cognitive styles . Th ere 
+
+are potentially  important connections 
+
+between this research programme and 
+
+older work on  heuristics review ed  in 
+
+Section 3 .2.  Cross -individual variations 
+
+may  reflect differences  in  the  heuristics 
+
+judges employ to simpl ify their decision 
+
+making  environment . Given the 
+
+respective limitations of  lab and real -
+
+world settings, s ignificant a dvance s will 
+
+necessitate  a combination of lab 
+
+experiments, survey work (to measure 
+
+cognitive  styles ), simulations, 
+
+observational  analysis  and,  when 
+
+possible , field RCTs. 
+
+6.  Conclusion 
+
+Using  criminal justice risk assessment 
+
+as a focal point, we  have tried to  connect 
+
+three questions  central  to the 
+
+introduction of AI technolog ies in the 
+
+judiciary , canvass ing  their respective 
+
+literatures , evaluating the state of  the art 
+
+and suggesting  avenues for  future 
+
+investigation.  AI impact cannot be 
+
+assessed without consider ing  and 
+
+comparing  the technology it self, the 
+
+weaknesses of human judges , an d the 
+
+interaction of the two .
+
+As our  review  shows , t he disciplines of 
+
+economics, psychology, criminology, 
+
+law and computer science have made 
+
+substantial  progress  in investigating 
+
+these questions, at least when 
+
+considered separately.  However, 
+
+important gaps  remain. 
+
+While the impact o f AI decision aid tools 
+
+on pretrial and sentencing outcomes 
+
+currently  appears less impressive than 
+
+some  may have hoped and less 
+
+damaging  th an some may have feared, 
+
+limitations of  existing work  mean that 
+
+future  research may add refinements ,
+
+nuances  or even produce outright 
+
+revision s of  this conclusion . Many 
+
+aspects of the three connected 
+
+questions  remain poorly or imperfectly 
+
+understood.  Are  existing risk 
+
+assessment  aid system s insufficiently 
+
+calibrated or accurate  to improve on 
+
+humans?  Could  tweaked versions of 
+
+these systems (e.g. using advanced 
+
+machine learning)  ameliorate the 
+
+outcome of automation?  What 
+
+comparative advantage do human 
+
+judges retain  over automated risk 
+
+assessment systems?  How do individual 
+
+judges differ in their ability  to use 
+
+decision aid  systems efficiently? As  our review underlines, some  of these 
+
+aspects  are  difficult to investigate. 
+
+Comparing judges and algorithms  has 
+
+proved methodologically challenging . So 
+
+has  investigation of the role of individual 
+
+characteristics in moderating the impact 
+
+of AI technology.  Going forward, 
+
+progress, we argued, might  require a 
+
+more integra ted methodological 
+
+approach. 
+
+References 
+
+Abrams, D. S., Bertrand, M., & Mullainathan, 
+
+S. (2012). Do Judges Vary in Their 
+
+Treatment of Race?  The Journal of 
+
+Legal Studies , 41 (2), 347 –383. 
+
+https://doi.org/10.1086/666006 
+
+Angelova, V., Dobbie, W., & Yang, C. S. 
+
+(2025). Algorithmic 
+
+Recommendations and Human 
+
+Discretion.  The Review of Economic 
+
+Studies , rdaf084. 
+
+https://doi.org/10.1093/restud/rdaf 
+
+084 
+
+Ash, E., Asher, S., Bhowmick, A., 
+
+Bhupatiraju, S., Chen, D., Devi, T., 
+
+Goessmann, C., Novosad, P., &
+
+Siddiqi, B. (2025). In -group bias in the 
+
+Indian judiciary: Evidence from 5
+
+million criminal cases.  Review of 
+
+Economics and Statistics , 1 –45. 
+
+Ash, E., & MacLeod, W. B. (2015). Intrinsic 
+
+motivation in public service: Theory 
+
+and evidence from state supreme 
+
+courts.  The Journal of Law and 
+
+Economics , 58 (4), Article 4. 
+
+Ashley, K. D. (2017).  Artificial Intelligence 
+
+and Legal Analytics: New Tools for 
+
+Law Practice in the Digital Age .
+
+Cambridge University Press. 
+
+Beebe, B. (2006). An empirical study of the 
+
+multifactor tests for trademark 
+
+infringement.  Calif. L. Rev. , 94 , 1581. 
+
+Beebe, B. (2007). An empirical study of US 
+
+copyright fair use opinions, 1978 -
+
+2005.  U. Pa. L. Rev. , 156 , 549. 
+
+Beebe, B. (2020). An Empirical Study of U.S. 
+
+Copyright Fair Use Opinions 
+
+Updated, 1978 -2019.  New York 
+
+University Journal of Intellectual 
+
+Property & Entertainment Law 
+
+(JIPEL) , 10 (1), 1 –39. 
+
+Ben -Michael, E., Greiner, D. J., Huang, M., 
+
+Imai, K., Jiang, Z., & Shin, S. (2025). 
+
+Does AI help humans make better 
+
+decisions? A statistical evaluation 
+
+framework for experimental and 
+
+observational studies.  Proceedings 
+
+of the National Academy of 
+
+Sciences , 122 (38), e2505106122. 
+
+https://doi.org/10.1073/pnas.25051 
+
+06122 
+
+Berk, R. (2017). An impact assessment of 
+
+machine learning risk forecasts on 
+
+parole board decisions and 
+
+recidivism.  Journal of Experimental 
+
+Criminology , 13 (2), 193 –216. 
+
+https://doi.org/10.1007/s11292 -
+
+017 -9286 -2
+
+Biswas, A., Kolczynska, M., Rantanen, S., & 
+
+Rozenshtein, P. (2020). The Role of 
+
+In -Group Bias and Balanced Data: A 
+
+Comparison of Human and Machine 
+
+Recidivism Risk Predictions. 
+
+Proceedings of the 3rd ACM SIGCAS 
+
+Conference on Computing and 
+
+Sustainable Societies, COMPASS 
+
+’20 , 97 –104. 
+
+https://doi.org/10.1145/3378393.34 
+
+02507 
+
+Bonica, A., & Sen, M. (2021). Estimating 
+
+Judicial Ideology.  Journal of 
+
+Economic Perspectives , 35 (1), 97 –
+
+118. 
+
+https://doi.org/10.1257/jep.35.1.97 
+
+Bontrager, S., Barrick, K., & Stupi, E. (2013). 
+
+Gender and sentencing: A meta -
+
+analysis of contemporary research. 
+
+J. Gender Race & Just. , 16 , 349. 
+
+Braman, E., & Nelson, T. E. (2007). 
+
+Mechanism of Motivated Reasoning? 
+
+Analogical Perception in 
+
+Discrimination Disputes.  American 
+
+Journal of Political Science , 51 (4), 
+
+Article 4. https://doi.org/https://doi.org/10.11 
+
+11/j.1540 -5907.2007.00290.x 
+
+Breiman, L. (2001). Random Forests. 
+
+Machine Learning , 45 (1), 5–32. 
+
+https://doi.org/10.1023/A:10109334 
+
+04324 
+
+Bushway, S. D., Owens, E. G., & Piehl, A. M. 
+
+(2012). Sentencing Guidelines and 
+
+Judicial Discretion: Quasi -
+
+Experimental Evidence from Human 
+
+Calculation Errors.  Journal of 
+
+Empirical Legal Studies , 9(2), 291 –
+
+319. https://doi.org/10.1111/j.1740 -
+
+1461.2012.01254.x 
+
+Bystranowski, P., Janik, B., Próchnicki, M., & 
+
+Skórska, P. (2021). Anchoring effect 
+
+in legal decision -making: A meta -
+
+analysis.  Law and Human Behavior ,
+
+45 (1), Article 1. 
+
+Casper, J. D., Benedict, K., & Perry, J. L. 
+
+(1989). Juror decision making, 
+
+attitudes, and the hindsight bias. 
+
+Law and Human Behavior , 13 (3), 
+
+291 –310. 
+
+https://doi.org/10.1007/BF0106703 
+
+1
+
+Chen, D., Moskowitz, T. J., & Shue, K. (2016). 
+
+Decision -Making Under the 
+
+Gambler’s Fallacy: Evidence from 
+
+Asylum Judges, Loan Officers, and 
+
+Baseball Umpires.  The Quarterly 
+
+Journal of Economics , qjw017. 
+
+Choi, D. D., Harris, J. A., & Shen -Bayh, F. 
+
+(2022). Ethnic Bias in Judicial 
+
+Decision Making: Evidence from 
+
+Criminal Appeals in Kenya.  American 
+
+Political Science Review , 116 (3), 
+
+1067 –1080. 
+
+https://doi.org/10.1017/S00030554 
+
+2100143X 
+
+Cohen, A., & Yang, C. S. (2019). Judicial 
+
+Politics and Sentencing Decisions. 
+
+American Economic Journal: 
+
+Economic Policy , 11 (1), 160 –191. 
+
+https://doi.org/10.1257/pol.201703 
+
+29 
+
+Desmarais, S. L., Zottola, S. A., Duhart 
+
+Clarke, S. E., & Lowder, E. M. (2021). 
+
+Predictive Validity of Pretrial Risk 
+
+Assessments: A Systematic Review 
+
+of the Literature.  Criminal Justice 
+
+and Behavior , 48 (4), 398 –420. 
+
+https://doi.org/10.1177/0093854820 
+
+932959 
+
+Dhami, M. K. (2003). Psychological Models 
+
+of Professional Decision Making. 
+
+Psychological Science , 14 (2), 175 –
+
+180. https://doi.org/10.1111/1467 -
+
+9280.01438 
+
+Dhami, M. K., & Ayton, P. (2001).  Bailing and 
+
+jailing the fast and frugal way.  Journal 
+
+of Behavioral Decision Making , 14 (2), 
+
+141 –168. 
+
+https://doi.org/10.1002/bdm.371 
+
+Dressel, J., & Farid, H. (2018). The accuracy, 
+
+fairness, and limits of predicting 
+
+recidivism.  Science Advances , 4(1), 
+
+eaao5580. 
+
+https://doi.org/10.1126/sciadv.aao5 
+
+580 
+
+Duwe, G., & Kim, K. (2017). Out With the Old 
+
+and in With the New? An Empirical 
+
+Comparison of Supervised Learning 
+
+Algorithms to Predict Recidivism. 
+
+Criminal Justice Policy Review , 28 (6), 
+
+570 –600. 
+
+https://doi.org/10.1177/0887403415 
+
+604899 
+
+Dyevre, A., & Rodilla Lazaro, A. (2025). 
+
+Ideological Polarization on 
+
+Constitutional Courts: Evidence 
+
+from Spain.  Available at SSRN 
+
+5124478 .
+
+https://papers.ssrn.com/sol3/paper 
+
+s.cfm?abstract_id=5124478 
+
+Ebbesen, E. B., & Konecni, V. J. (1975). 
+
+Decision making and information 
+
+integration in the courts: The setting 
+
+of bail.  Journal of Personality and 
+
+Social Psychology , 32 (5), 805. 
+
+Eisenberg, T., & Miller, G. P. (2004). Attorney 
+
+Fees in Class Action Settlements: An 
+
+Empirical Study.  Journal of Empirical 
+
+Legal Studies , 1(1), 27 –78. 
+
+https://doi.org/10.1111/j.1740 -
+
+1461.2004.00002.x 
+
+Engel, C., Linhardt, L., & Schubert, M. (2025). 
+
+Code is law: How COMPAS affects 
+
+the way the judiciary handles the risk 
+
+of recidivism.  Artificial Intelligence 
+
+and Law , 33 (2), 383 –404. 
+
+https://doi.org/10.1007/s10506 -
+
+024 -09389 -8Englich, B., Mussweiler, T., & Strack, F. 
+
+(2006). Playing Dice With Criminal 
+
+Sentences: The Influence of 
+
+Irrelevant Anchors on Experts’ 
+
+Judicial Decision Making.  Personality 
+
+and Social Psychology Bulletin ,
+
+32 (2), 188 –200. 
+
+https://doi.org/10.1177/0146167205 
+
+282152 
+
+Epstein, L., Landes, W. M., & Posner, R. A. 
+
+(2013).  The Behavior of Federal 
+
+Judges: A Theoretical and Empirical 
+
+Study of Rational Choice . Harvard 
+
+University Press. 
+
+Fazel, S., Burghart, M., Fanshawe, T., Gil, S. 
+
+D., Monahan, J., & Yu, R. (2022). The 
+
+predictive performance of criminal 
+
+risk assessment tools used at 
+
+sentencing: Systematic review of 
+
+validation studies.  Journal of 
+
+Criminal Justice , 81 , 101902. 
+
+https://doi.org/10.1016/j.jcrimjus.2 
+
+022.101902 
+
+Fessel, F., & Roese, N. J. (2011). Hindsight 
+
+Bias, Visual Aids, and Legal Decision 
+
+Making: Timing is Everything.  Social 
+
+and Personality Psychology 
+
+Compass , 5(4), Article 4. 
+
+https://doi.org/10.1111/j.1751 -
+
+9004.2011.00343.x 
+
+Ghasemi, M., Anvari, D., Atapour, M., 
+
+Stephen wormith, J., Stockdale, K. 
+
+C., & Spiteri, R. J. (2021). The 
+
+Application of Machine Learning to a 
+
+General Risk –Need Assessment 
+
+Instrument in the Prediction of 
+
+Criminal Recidivism.  Criminal 
+
+Justice and Behavior , 48 (4), 518 –538. 
+
+https://doi.org/10.1177/0093854820 
+
+969753 
+
+Gigerenzer, G., Todd, P. M., & Group, A. R. 
+
+(2000).  Simple Heuristics that Make 
+
+Us Smart . Oxford University Press. 
+
+Goddard, K., Roudsari, A., & Wyatt, J. C. 
+
+(2012). Automation bias: A
+
+systematic review of frequency, 
+
+effect mediators, and mitigators. 
+
+Journal of the American Medical 
+
+Informatics Association , 19 (1), 121 –
+
+127. 
+
+https://doi.org/10.1136/amiajnl -
+
+2011 -000089 
+
+Goel, S., Shroff, R., Skeem, J., & Slobogin, C. 
+
+(2021).  The accuracy, equity, and 
+
+jurisprudence of criminal risk 
+
+assessment. In  Research handbook 
+
+on big data law  (pp. 9 –28). Edward 
+
+Elgar Publishing. 
+
+https://www.elgaronline.com/abstr 
+
+act/edcoll/9781788972819/978178 
+
+8972819.00007.xml 
+
+Green, B., & Chen, Y. (2019). Disparate 
+
+Interactions: An Algorithm -in -the -
+
+Loop Analysis of Fairness in Risk 
+
+Assessments.  Proceedings of the 
+
+Conference on Fairness, 
+
+Accountability, and Transparency, 
+
+FAT* ’19 , 90 –99. 
+
+https://doi.org/10.1145/3287560.32 
+
+87563 
+
+Grgić -Hlača, N., Engel, C., & Gummadi, K. P. 
+
+(2019). Human Decision Making with 
+
+Machine Assistance: An Experiment 
+
+on Bailing and Jailing.  Proceedings of 
+
+the ACM on Human -Computer 
+
+Interaction , 3(CSCW), 1–25. 
+
+https://doi.org/10.1145/3359280 
+
+Gursoy, F., & Kakadiaris, I. A. (2022). Equal 
+
+confusion fairness: Measuring 
+
+group -based disparities in 
+
+automated decision systems.  2022 
+
+IEEE International Conference on 
+
+Data Mining Workshops (ICDMW) ,
+
+137 –146. 
+
+https://ieeexplore.ieee.org/abstract 
+
+/document/10029385/?casa_token 
+
+=NtHLg1nhFTwAAAAA:vYxUoW_woo 
+
+VMz8yFOfdYoV75ooU -
+
+iVpZFqz4HjgLdjn5JUn51ej0i_C9Rsn 
+
+ZzEWdN9lKYVtyUwU 
+
+Guthrie, C., Rachlinski, J. J., & Wistrich, A. J. 
+
+(2000).  Inside the judicial mind. 
+
+Cornell L. Rev. , 86 , 777. 
+
+Hangartner, D., Lauderdale, B. E., & Spirig, J. 
+
+(2025). Inferring individual 
+
+preferences from group decisions: 
+
+Judicial preference variation and 
+
+aggregation on collegial courts. 
+
+British Journal of Political Science ,
+
+55 , e163. 
+
+Hardt, M., Price, E., & Srebro, N. (2016). 
+
+Equality of Opportunity in Supervised 
+
+Learning  (arXiv:1610.02413). arXiv. https://doi.org/10.48550/arXiv.1610 
+
+.02413 
+
+Harley, E. M. (2007). Hindsight Bias In Legal 
+
+Decision Making.  Social Cognition ,
+
+25 (1), 48 –63. 
+
+https://doi.org/10.1521/soco.2007. 
+
+25.1.48 
+
+Hellman, D. (2025). Algorithmic Fairness. In 
+
+E. N. Zalta & U. Nodelman (Eds.),  The 
+
+Stanford Encyclopedia of Philosophy 
+
+(Fall 2025). Metaphysics Research 
+
+Lab, Stanford University. 
+
+https://plato.stanford.edu/archives/ 
+
+fall2025/entries/algorithmic -
+
+fairness/ 
+
+Hernández -Orallo, J., Flach, P., & Ferri, C. 
+
+(2012). A unified view of performance 
+
+metrics: Translating threshold 
+
+choice into expected classification 
+
+loss.  J. Mach. Learn. Res. , 13 (1), 
+
+2813 –2869. 
+
+Himmelstein, M., Atanasov, P., & Budescu, 
+
+D. V. (2021). Forecasting forecaster 
+
+accuracy: Contributions of past 
+
+performance and individual 
+
+differences.  Judgment and Decision 
+
+Making , 16 (2), 323 –362. 
+
+https://doi.org/10.1017/S19302975 
+
+00008597 
+
+Huang, B. I. (2010). Lightened Scrutiny. 
+
+Harvard Law Review , 124 , 1109 –
+
+1152. 
+
+Imai, K., Jiang, Z., Greiner, D. J., Halen, R., & 
+
+Shin, S. (2023).  Experimental 
+
+evaluation of algorithm -assisted 
+
+human decision -making: Application 
+
+to pretrial public safety 
+
+assessment*.  Journal of the Royal 
+
+Statistical Society Series A: Statistics 
+
+in Society , 186 (2), 167 –189. 
+
+https://doi.org/10.1093/jrsssa/qnad 
+
+010 
+
+Jung, J., Concannon, C., Shroff, R., Goel, S., 
+
+& Goldstein, D. G. (2017).  Simple 
+
+rules for complex decisions 
+
+(arXiv:1702.04690). arXiv. 
+
+https://doi.org/10.48550/arXiv.1702 
+
+.04690 
+
+Kahneman, D. (2011).  Thinking, Fast and 
+
+Slow . Penguin UK. 
+
+Kamiran, F., & Calders, T. (2012).  Data 
+
+preprocessing techniques for 
+
+classification without 
+
+discrimination.  Knowledge and 
+
+Information Systems , 33 (1), 1–33. 
+
+https://doi.org/10.1007/s10115 -
+
+011 -0463 -8
+
+Kehl, D., & Kessler, S. (2017).  Algorithms in 
+
+the criminal justice system: 
+
+Assessing the use of risk 
+
+assessments in sentencing .
+
+https://dash.harvard.edu/entities/p 
+
+ublication/73120379 -010a -6bd4 -
+
+e053 -0100007fdf3b 
+
+Kleinberg, J., Lakkaraju, H., Leskovec, J., 
+
+Ludwig, J., & Mullainathan, S. (2018). 
+
+Human decisions and machine 
+
+predictions.  The Quarterly Journal of 
+
+Economics , 133 (1), Article 1. 
+
+Kukucka, J., & Kassin, S. M. (2014). Do 
+
+confessions taint perceptions of 
+
+handwriting evidence? An empirical 
+
+test of the forensic confirmation 
+
+bias.  Law and Human Behavior ,
+
+38 (3), Article 3. 
+
+https://doi.org/10.1037/lhb0000066 
+
+Lagioia, F., Rovatti, R., & Sartor, G. (2023). 
+
+Algorithmic fairness through group 
+
+parities? The case of COMPAS -
+
+SAPMOC.  AI & SOCIETY , 38 (2), 459 –
+
+478. 
+
+https://doi.org/10.1007/s00146 -
+
+022 -01441 -y
+
+Lakkaraju, H., Kleinberg, J., Leskovec, J., 
+
+Ludwig, J., & Mullainathan, S. (2017). 
+
+The Selective Labels Problem: 
+
+Evaluating Algorithmic Predictions in 
+
+the Presence of Unobservables. 
+
+Proceedings of the 23rd ACM 
+
+SIGKDD International Conference on 
+
+Knowledge Discovery and Data 
+
+Mining, KDD ’17 , 275 –284. 
+
+https://doi.org/10.1145/3097983.30 
+
+98066 
+
+Lawson, S. G., Narkewicz, E. L., & Vincent, G. 
+
+M. (2024). Disparate impact of risk 
+
+assessment instruments: A
+
+systematic review.  Law and Human 
+
+Behavior , 48 (5 –6), 427 –440. 
+
+https://doi.org/10.1037/lhb0000582 
+
+Levinson, J. D., Bennett, M. W., & Hioki, K. 
+
+(2017). Judging Implicit Bias: A
+
+National Empirical Study of Judicial Sterotypes.  Florida Law Review ,
+
+69 (1), 63 –114. 
+
+Lin, Z. “Jerry,” Jung, J., Goel, S., & Skeem, J. 
+
+(2020). The limits of human 
+
+predictions of recidivism.  Science 
+
+Advances , 6(7), eaaz0652. 
+
+https://doi.org/10.1126/sciadv.aaz0 
+
+652 
+
+Lowder, E. M., Diaz, C. L., Grommon, E., & 
+
+Ray, B. R. (2021). Effects of pretrial 
+
+risk assessments on release 
+
+decisions and misconduct 
+
+outcomes relative to practice as 
+
+usual.  Journal of Criminal Justice , 73 ,
+
+101754. 
+
+https://doi.org/10.1016/j.jcrimjus.2 
+
+020.101754 
+
+Lu, W., & Chen, D. L. (2025). Motivated 
+
+reasoning in the field: Polarization of 
+
+prose, precedent, and policy in US 
+
+Circuit Courts, 1891 –2013.  Plos 
+
+One , 20 (3), e0318790. 
+
+Niblett, A. (2024). Artificial Intelligence and 
+
+Judging. In L. Epstein, G. Grendstad, 
+
+U. Šadl, & K. Weinshall (Eds.),  The 
+
+Oxford Handbook of Comparative 
+
+Judicial Behaviour  (p. 0). Oxford 
+
+University Press. 
+
+https://doi.org/10.1093/oxfordhb/97 
+
+80192898579.013.46 
+
+O’Brien, B. (2009). Prime suspect: An 
+
+examination of factors that 
+
+aggravate and counteract 
+
+confirmation bias in criminal 
+
+investigations.  Psychology, Public 
+
+Policy, and Law , 15 (4), Article 4. 
+
+https://doi.org/10.1037/a0017881 
+
+Parasuraman, R., & Manzey, D. (2010). 
+
+Complacency and Bias in Human 
+
+Use of Automation: An Attentional 
+
+Integration.  Human Factors , 52 ,
+
+381 –410. 
+
+https://doi.org/10.1177/0018720810 
+
+376055 
+
+Philippe, A. (2020). Gender Disparities in 
+
+Sentencing.  Economica , 87 (348), 
+
+1037 –1077. 
+
+https://doi.org/10.1111/ecca.12333 
+
+Pinello, D. R. (1999). Linking Party to Judicial 
+
+Ideology in American Courts: A Meta -
+
+analysis.  The Justice System Journal ,
+
+20 (3), 219 –254. 
+
+Rachlinski, J. J., Johnson, S. L., Wistrich, A. J., 
+
+& Guthrie, C. (2008). Does 
+
+Unconscious Racial Bias Affect Trial 
+
+Judges.  Notre Dame Law Review ,
+
+84 (3), 1195 –1246. 
+
+Rachlinski, J. J., & Wistrich, A. J. (2017). 
+
+Judging the Judiciary by the 
+
+Numbers: Empirical Research on 
+
+Judges.  Annual Review of Law and 
+
+Social Science , 13 (1), 203 –229. 
+
+https://doi.org/10.1146/annurev -
+
+lawsocsci -110615 -085032 
+
+Rachlinski, J. J., & Wistrich, A. J. (2021). 
+
+Benevolent sexism in judges.  San 
+
+Diego L. Rev. , 58 , 101. 
+
+Rachlinski, J. J., Wistrich, A. J., & Guthrie, C. 
+
+(2012).  Altering attention in 
+
+adjudication.  UCLA L. Rev. , 60 , 1586. 
+
+Rachlinski, J. J., Wistrich, A. J., & Guthrie, C. 
+
+(2015).  Can judges make reliable 
+
+numeric judgments: Distorted 
+
+damages and skewed sentences. 
+
+Ind. LJ , 90 , 695. 
+
+Rambachan, A. (2024). Identifying Prediction 
+
+Mistakes in Observational Data*.  The 
+
+Quarterly Journal of Economics ,
+
+139 (3), 1665 –1711. 
+
+https://doi.org/10.1093/qje/qjae013 
+
+Ramji -Nogales, J., Schoenholtz, A. I., &
+
+Schrag, P. G. (2007).  Refugee 
+
+roulette: Disparities in asylum 
+
+adjudication.  Stan. L. Rev. , 60 , 295. 
+
+Rieskamp, J., & Hoffrage, U. (1999).  When do 
+
+people use simple heuristics, and 
+
+how can we tell.  Simple Heuristics 
+
+That Make Us Smart , 141 –167. 
+
+Romeo, G., & Conti, D. (2025). Exploring 
+
+automation bias in human –AI 
+
+collaboration: A review and 
+
+implications for explainable AI.  AI & 
+
+SOCIETY .
+
+https://doi.org/10.1007/s00146 -
+
+025 -02422 -7
+
+Rudin, C., Wang, C., & Coker, B. (2020). The 
+
+Age of Secrecy and Unfairness in 
+
+Recidivism Prediction.  Harvard Data 
+
+Science Review , 2(1). 
+
+http://hdsr.mitpress.mit.edu/pub/7z 
+
+10o269/release/3 
+
+Ruschemeier, H., & Hondrich, L. J. (2024). 
+
+Automation bias in public 
+
+administration  – an interdisciplinary perspective from law and 
+
+psychology.  Government 
+
+Information Quarterly , 41 (3), 
+
+101953. 
+
+https://doi.org/10.1016/j.giq.2024.1 
+
+01953 
+
+Salo, B., Laaksonen, T., & Santtila, P. (2019). 
+
+Predictive Power of Dynamic (vs. 
+
+Static) Risk Factors in the Finnish 
+
+Risk and Needs Assessment Form. 
+
+Criminal Justice and Behavior , 46 (7), 
+
+939 –960. 
+
+https://doi.org/10.1177/0093854819 
+
+848793 
+
+Shumway, C., & Wilson, R. (2022). 
+
+Workplace disruptions, judge 
+
+caseloads, and judge decisions: 
+
+Evidence from SSA judicial corps 
+
+retirements.  Journal of Public 
+
+Economics , 205 , 104573. 
+
+https://doi.org/10.1016/j.jpubeco.2 
+
+021.104573 
+
+Skeem, J., Monahan, J., & Lowenkamp, C. 
+
+(2016). Gender, risk assessment, 
+
+and sanctioning: The cost of treating 
+
+women like men.  Law and Human 
+
+Behavior , 40 (5), 580. 
+
+Starr, S. B. (2015). Estimating Gender 
+
+Disparities in Federal Criminal 
+
+Cases.  American Law and 
+
+Economics Review , 17 (1), 127 –159. 
+
+https://doi.org/10.1093/aler/ahu010 
+
+Stephen Wormith, J., & Bonta, J. (2018). The 
+
+Level of Service (LS) Instruments. In 
+
+Handbook of Recidivism Risk/Needs 
+
+Assessment Tools  (pp. 117 –145). 
+
+John Wiley & Sons, Ltd. 
+
+https://doi.org/10.1002/9781119184 
+
+256.ch6 
+
+Stevenson, M. T., & Doleac, J. L. (2024). 
+
+Algorithmic Risk Assessment in the 
+
+Hands of Humans.  American 
+
+Economic Journal: Economic Policy ,
+
+16 (4), 382 –414. 
+
+https://doi.org/10.1257/pol.202206 
+
+20 
+
+Sunstein, C. R., Schkade, D., Ellman, L. M., & 
+
+Sawicki, A. (2007).  Are judges 
+
+political? An empirical analysis of the 
+
+federal judiciary . Rowman &
+
+Littlefield. 
+
+Viljoen, J. L., Jonnson, M. R., Cochrane, D. 
+
+M., Vargen, L. M., & Vincent, G. M. 
+
+(2019).  Impact of risk assessment 
+
+instruments on rates of pretrial 
+
+detention, postconviction 
+
+placements, and release: A
+
+systematic review and meta -
+
+analysis.  Law and Human Behavior ,
+
+43 (5), 397. 
+
+Vlek, C. S., Prakken, H., Renooij, S., &
+
+Verheij, B. (2016). A method for 
+
+explaining Bayesian networks for 
+
+legal evidence with scenarios. 
+
+Artificial Intelligence and Law , 24 (3), 
+
+285 –324. 
+
+https://doi.org/10.1007/s10506 -
+
+016 -9183 -4
+
+Wistrich, A. J., & Rachlinski, J. J. (2012). How 
+
+Lawyers’ Intuitions Prolong Litigation 
+
+Modeling Human Decisionmaking in 
+
+the Law Symposium.  Southern 
+
+California Law Review , 86 (3), 571 –
+
+636. 
+
+Zafar, M. B., Valera, I., Gomez Rodriguez, M., 
+
+& Gummadi, K. P. (2017). Fairness 
+
+Beyond Disparate Treatment &
+
+Disparate Impact: Learning 
+
+Classification without Disparate 
+
+Mistreatment.  Proceedings of the 
+
+26th International Conference on 
+
+World Wide Web , 1171 –1180. 
+
+https://doi.org/10.1145/3038912.30 
+
+52660

@@ -1,0 +1,65 @@
+{
+  "label": "2026-03-27",
+  "date": "2026-03-27",
+  "generated_at": "2026-03-27T19:53:06",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202603/27/2603.19042v2-man-and-machine-artificial-intelligence-and-judicial-decision-making",
+      "section": "deep",
+      "title_en": "Man and machine: artificial intelligence and judicial decision making",
+      "authors": "Arthur Dyevre, Ahmad Shahvaroughi",
+      "date": "2026-03-19",
+      "pdf": "https://arxiv.org/pdf/2603.19042v2",
+      "score": "9.0",
+      "evidence": "人工智能在司法决策和量刑中的应用",
+      "tldr": "本研究探讨了人工智能在司法决策（如审前、量刑和假释）中的应用，重点关注其透明度、可靠性与问责制。通过对计算机科学、法律和心理学等多领域的综合综述，分析了AI工具的性能、人类法官的偏见以及人机交互的本质。研究发现AI对司法决策的实际影响有限，并指出了现有文献在法官如何处理算法建议方面的空白，强调了跨学科研究对优化司法公正的重要性。",
+      "tags": "query:q4",
+      "abstract_en": "The integration of artificial intelligence (AI) technologies into judicial decision-making, particularly in pretrial, sentencing, and parole contexts, has generated substantial concerns about transparency, reliability, and accountability. At the same time, these developments have brought the limitations of human judgment into sharper relief and underscored the importance of understanding how judges interact with AI-based decision aids. Using criminal justice risk assessment as a focal case, we conduct a synthetic review connecting three intertwined aspects of AI's role in judicial decision-making: the performance and fairness of AI tools, the strengths and biases of human judges, and the nature of AI-plus-human interactions. Across the fields of computer science, economics, law, criminology, and psychology, researchers have made significant progress in evaluating the predictive validity of automated risk assessment instruments, documenting biases in judicial decision-making, and, to a more limited extent, examining how judges use algorithmic recommendations. While the existing empirical evidence indicates that the impact of AI decision-aid tools on pretrial and sentencing decisions is modest or nonexistent, our review also reveals important gaps in the existing literature. Further research is needed to evaluate the performance of AI risk assessment instruments, understand how judges navigate uncertain decision-making environments, and examine how individual characteristics influence judges' responses to AI advice. We argue that AI-versus-human comparisons have the potential to yield new insights into both algorithmic tools and human decision-makers. We advocate greater interdisciplinary integration to foster cross-fertilization in future research.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/27/2603.20562v1-permutation-consensus-listwise-judging-for-robust-factuality-evaluation",
+      "section": "quick",
+      "title_en": "Permutation-Consensus Listwise Judging for Robust Factuality Evaluation",
+      "authors": "Tianyi Huang, Nathan Huang, Justin Tang, Wenqian Chen, Elsa Fan",
+      "date": "2026-03-20",
+      "pdf": "https://arxiv.org/pdf/2603.20562v1",
+      "score": "6.0",
+      "evidence": "大语言模型作为裁判及鲁棒决策方法",
+      "tldr": "针对大语言模型作为事实性评估裁判时存在的候选顺序敏感性问题，本文提出了 PCFJudge。该方法在推理阶段对同一候选集进行多次随机排序并运行列表式评估，随后聚合评分、排名和不确定性信号以达成共识。实验表明，PCFJudge 在 RewardBench 2 Factuality 上显著提升了评估准确性，证明了消除顺序干扰能有效提高 LLM 评估的可靠性。",
+      "tags": "query:profile-1",
+      "abstract_en": "Large language models (LLMs) are now widely used as judges, yet their decisions can change under presentation choices that should be irrelevant. We study one such source of instability: candidate-order sensitivity in listwise factuality evaluation, where several answers can look similarly polished while differing sharply in hallucination risk. We introduce PCFJudge, an inference-time method that reruns the same factuality-first listwise prompt over multiple orderings of the same candidate set and aggregates the resulting scores, ranks, and uncertainty signals into a single consensus decision. On RewardBench 2 Factuality, PCFJudge improves over direct judging by up to 7 absolute points. Development ablations show that the dominant gain comes from permutation consensus itself rather than from heavier arbitration layers. These results suggest that a meaningful share of factuality-judging error arises from order instability, and that averaging over this nuisance variation is a simple and effective way to make LLM evaluation more reliable.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/27/2603.20882v1-rubricrag-towards-interpretable-and-reliable-llm-evaluation-via-domain-knowledge-retrieval-for-rubric-generation",
+      "section": "quick",
+      "title_en": "RubricRAG: Towards Interpretable and Reliable LLM Evaluation via Domain Knowledge Retrieval for Rubric Generation",
+      "authors": "Kaustubh D. Dhole, Eugene Agichtein",
+      "date": "2026-03-21",
+      "pdf": "https://arxiv.org/pdf/2603.20882v1",
+      "score": "6.0",
+      "evidence": "通过领域知识检索进行可解释性评估",
+      "tldr": "针对当前LLM评估（如LLM-as-judge）缺乏可解释性和透明度的问题，本文提出了RubricRAG。该方法通过在推理时检索相关查询的领域知识，自动生成针对特定实例的高质量评分细则。实验表明，RubricRAG生成的细则在与人类编写细则的相似度以及下游评估的有效性上均优于现有LLM生成方法，为可扩展且可解释的自动化评估提供了新思路。",
+      "tags": "query:q5",
+      "abstract_en": "Large language models (LLMs) are increasingly evaluated and sometimes trained using automated graders such as LLM-as-judges that output scalar scores or preferences. While convenient, these approaches are often opaque: a single score rarely explains why an answer is good or bad, which requirements were missed, or how a system should be improved. This lack of interpretability limits their usefulness for model development, dataset curation, and high-stakes deployment. Query-specific rubric-based evaluation offers a more transparent alternative by decomposing quality into explicit, checkable criteria. However, manually designing high-quality, query-specific rubrics is labor-intensive and cognitively demanding and not feasible for deployment. While previous approaches have focused on generating intermediate rubrics for automated downstream evaluation, it is unclear if these rubrics are both interpretable and effective for human users. In this work, we investigate whether LLMs can generate useful, instance-specific rubrics as compared to human-authored rubrics, while also improving effectiveness for identifying good responses. Through our systematic study on two rubric benchmarks, and on multiple few-shot and post-training strategies, we find that off-the-shelf LLMs produce rubrics that are poorly aligned with human-authored ones. We introduce a simple strategy, RubricRAG, which retrieves domain knowledge via rubrics at inference time from related queries. We demonstrate that RubricRAG can generate more interpretable rubrics both for similarity to human-authored rubrics, and for improved downstream evaluation effectiveness. Our results highlight both the challenges and a promising approach of scalable, interpretable evaluation through automated rubric generation.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/27/2603.22714v1-popresume-causal-fairness-evaluation-of-llmvlm-resume-screeners-with-population-representative-dataset",
+      "section": "quick",
+      "title_en": "PopResume: Causal Fairness Evaluation of LLM/VLM Resume Screeners with Population-Representative Dataset",
+      "authors": "Sumin Yu, Juhyeon Park, Taesup Moon",
+      "date": "2026-03-24",
+      "pdf": "https://arxiv.org/pdf/2603.22714v1",
+      "score": "6.0",
+      "evidence": "区分法律允许与不允许的差异",
+      "tldr": "本研究针对大语言模型（LLM）和视觉语言模型（VLM）在简历筛选中的公平性评估问题，提出了PopResume数据集。该数据集基于人口统计学特征，保留了属性间的自然关系。通过路径特定效应（PSE）评估框架，研究者将受保护属性的影响分解为业务必要路径和红线路径，从而区分合法与非法的差异。对8个主流模型的评估揭示了传统指标难以捕捉的五种歧视模式，强调了因果审计在AI招聘中的重要性。",
+      "tags": "query:q5",
+      "abstract_en": "We present PopResume, a population-representative resume dataset for causal fairness auditing of LLM- and VLM-based resume screening systems. Unlike existing benchmarks that rely on manually injected demographic information and outcome-level disparities, PopResume is grounded in population statistics and preserves natural attribute relationships, enabling path-specific effect (PSE)-based fairness evaluation. We decompose the effect of a protected attribute on resume scores into two paths: the business necessity path, mediated by job-relevant qualifications, and the redlining path, mediated by demographic proxies. This distinction allows auditors to separate legally permissible from impermissible sources of disparity. Evaluating four LLMs and four VLMs on PopResume's 60.8K resumes across five occupations, we identify five representative discrimination patterns that aggregate metrics fail to capture. Our results demonstrate that PSE-based evaluation reveals fairness issues masked by outcome-level measures, underscoring the need for causally-grounded auditing frameworks in AI-assisted hiring.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
