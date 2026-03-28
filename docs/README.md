@@ -6,33 +6,22 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-27
-- 运行时间：2026-03-27 19:52:55 UTC
+- 最新运行日期：2026-03-28
+- 运行时间：2026-03-28 19:58:23 UTC
 - 运行状态：成功
-- 本次总论文数：4
-- 精读区：1
-- 速读区：3
+- 本次总论文数：0
+- 精读区：0
+- 速读区：0
 
 ### 今日简报（AI）
-今日聚焦 AI 与人类决策的深度博弈，重点剖析了司法审判中的人机协作与评估公平性。
-9.
-- 详情：[/202603/27/README](/202603/27/README)
+> 今日无新推荐，系统未产出可展示论文。
+- 详情：[/202603/28/README](/202603/28/README)
 
 ### 精读区论文标签
-1. [Man and machine: artificial intelligence and judicial decision making](/202603/27/2603.19042v2-man-and-machine-artificial-intelligence-and-judicial-decision-making)  
-   标签：评分：9.0/10、query:q4
-   evidence：人工智能在司法决策和量刑中的应用
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Permutation-Consensus Listwise Judging for Robust Factuality Evaluation](/202603/27/2603.20562v1-permutation-consensus-listwise-judging-for-robust-factuality-evaluation)  
-   标签：评分：6.0/10、query:profile-1
-   evidence：大语言模型作为裁判及鲁棒决策方法
-2. [RubricRAG: Towards Interpretable and Reliable LLM Evaluation via Domain Knowledge Retrieval for Rubric Generation](/202603/27/2603.20882v1-rubricrag-towards-interpretable-and-reliable-llm-evaluation-via-domain-knowledge-retrieval-for-rubric-generation)  
-   标签：评分：6.0/10、query:q5
-   evidence：通过领域知识检索进行可解释性评估
-3. [PopResume: Causal Fairness Evaluation of LLM/VLM Resume Screeners with Population-Representative Dataset](/202603/27/2603.22714v1-popresume-causal-fairness-evaluation-of-llmvlm-resume-screeners-with-population-representative-dataset)  
-   标签：评分：6.0/10、query:q5
-   evidence：区分法律允许与不允许的差异
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
