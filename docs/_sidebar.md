@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-03-29 <!--dpr-date:20260329-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202603/29/2603.23828v1-bridging-the-interpretation-gap-in-accessibility-testing-empathetic-and-legal-aware-bug-report-generation-via-large-language-models" data-sidebar-item="{&quot;title&quot;: &quot;Bridging the Interpretation Gap in Accessibility Testing: Empathetic and Legal-Aware Bug Report Generation via Large Language Models&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.23828v1-bridging-the-interpretation-gap-in-accessibility-testing-empathetic-and-legal-aware-bug-report-generation-via-large-language-models&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;q2&quot;}], &quot;evidence&quot;: &quot;利用大模型生成具备法律意识的错误报告&quot;}">Bridging the Interpretation Gap in Accessibility Testing: Empathetic and Legal-Aware Bug Report Generation via Large Language Models</a>
   * 2026-03-27 <!--dpr-date:20260327-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202603/27/2603.19042v2-man-and-machine-artificial-intelligence-and-judicial-decision-making" data-sidebar-item="{&quot;title&quot;: &quot;Man and machine: artificial intelligence and judicial decision making&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.19042v2-man-and-machine-artificial-intelligence-and-judicial-decision-making&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;q4&quot;}], &quot;evidence&quot;: &quot;人工智能在司法决策和量刑中的应用&quot;}">Man and machine: artificial intelligence and judicial decision making</a>
