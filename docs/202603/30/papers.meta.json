@@ -1,0 +1,79 @@
+{
+  "label": "2026-03-30",
+  "date": "2026-03-30",
+  "generated_at": "2026-03-30T19:56:57",
+  "count": 5,
+  "papers": [
+    {
+      "paper_id": "202603/30/2603.24012v2-cvpd-at-qias-2026-rag-guided-llm-reasoning-for-al-mawarith-share-computation-and-heir-allocation",
+      "section": "deep",
+      "title_en": "CVPD at QIAS 2026: RAG-Guided LLM Reasoning for Al-Mawarith Share Computation and Heir Allocation",
+      "authors": "Wassim Swaileh, Mohammed-En-Nadhir Zighem, Hichem Telli, Salah Eddine Bekhouche, Abdellah Zakaria Sellam, Fadi Dornaika, Dimitrios Kotzinos",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.24012v2",
+      "score": "9.0",
+      "evidence": "遗产分配的多阶段法律推理",
+      "tldr": "本研究针对复杂的伊斯兰继承法（Al-Mawarith）计算任务，提出了一种基于检索增强生成（RAG）的LLM推理框架。该方法结合了符号计算器生成的合成数据、混合检索与重排序技术，以及模式约束的输出验证，有效解决了法律规则复杂和数值计算一致性问题。在QIAS 2026竞赛中，该系统以0.935的MIR-E得分荣获冠军，证明了RAG在阿拉伯语高精度法律推理中的卓越性能。",
+      "tags": "query:q6",
+      "abstract_en": "Islamic inheritance (Ilm al-Mawarith) is a multi-stage legal reasoning task requiring the identification of eligible heirs, resolution of blocking rules (hajb), assignment of fixed and residual shares, handling of adjustments such as awl and radd, and generation of a consistent final distribution. The task is further complicated by variations across legal schools and civil-law codifications, requiring models to operate under explicit legal configurations.   We present a retrieval-augmented generation (RAG) pipeline for this setting, combining rule-grounded synthetic data generation, hybrid retrieval (dense and BM25) with cross-encoder reranking, and schema-constrained output validation. A symbolic inheritance calculator is used to generate a large high-quality synthetic corpus with full intermediate reasoning traces, ensuring legal and numerical consistency.   The proposed system achieves a MIR-E score of 0.935 and ranks first on the official QIAS 2026 blind-test leaderboard. Results demonstrate that retrieval-grounded, schema-aware generation significantly improves reliability in high-precision Arabic legal reasoning tasks.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/30/2603.25944v1-can-small-models-reason-about-legal-documents-a-comparative-study",
+      "section": "deep",
+      "title_en": "Can Small Models Reason About Legal Documents? A Comparative Study",
+      "authors": "Snehit Vaddi",
+      "date": "2026-03-26",
+      "pdf": "https://arxiv.org/pdf/2603.25944v1",
+      "score": "9.0",
+      "evidence": "在包括ECtHR判决预测在内的法律基准上评估小模型",
+      "tldr": "本研究探讨了参数量小于10B的小型语言模型在法律文档处理中的潜力，以应对大模型的成本和隐私挑战。通过在ContractNLI等三个法律基准上测试九种模型及五种提示策略，发现仅激活3B参数的MoE模型在性能上可媲美GPT-4o-mini，证明了模型架构和训练质量优于单纯的参数规模。研究还指出少样本提示是最稳定的策略，为低成本法律AI应用提供了实证支持。",
+      "tags": "query:profile-1",
+      "abstract_en": "Large language models show promise for legal applications, but deploying frontier models raises concerns about cost, latency, and data privacy. We evaluate whether sub-10B parameter models can serve as practical alternatives by testing nine models across three legal benchmarks (ContractNLI, CaseHOLD, and ECtHR) using five prompting strategies (direct, chain-of-thought, few-shot, BM25 RAG, and dense RAG). Across 405 experiments with three random seeds per configuration, we find that a Mixture-of-Experts model activating only 3B parameters matches GPT-4o-mini in mean accuracy while surpassing it on legal holding identification, and that architecture and training quality matter more than raw parameter count. Our largest model (9B parameters) performs worst overall. Chain-of-thought prompting proves sharply task-dependent, improving contract entailment but degrading multiple-choice legal reasoning, while few-shot prompting emerges as the most consistently effective strategy. Comparing BM25 and dense retrieval for RAG, we find near-identical results, suggesting the bottleneck lies in the language model's utilization of retrieved context rather than retrieval quality. All experiments were conducted via cloud inference APIs at a total cost of $62, demonstrating that rigorous LLM evaluation is accessible without dedicated GPU infrastructure.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/30/2603.26332v1-calrk-bench-evaluating-context-aware-legal-reasoning-in-korean-law",
+      "section": "deep",
+      "title_en": "CALRK-Bench: Evaluating Context-Aware Legal Reasoning in Korean Law",
+      "authors": "JiHyeok Jung, TaeYoung Yoon, HyunSouk Cho",
+      "date": "2026-03-27",
+      "pdf": "https://arxiv.org/pdf/2603.26332v1",
+      "score": "9.0",
+      "evidence": "上下文感知法律推理和法律判决转变的基准测试",
+      "tldr": "本研究针对现有法律基准测试仅关注固定规则应用而忽视语境感知的局限，提出了CALRK-Bench，一个专注于韩国法律系统的语境感知法律推理基准。该基准涵盖法律规范的时效性、信息充足性及判断转变原因三大任务，数据源自法律先例与咨询记录并经专家验证。研究发现，即使是先进的大语言模型在这些任务上也表现欠佳，证明了该基准作为评估深度法律推理能力的有效压力测试工具。",
+      "tags": "query:profile-1",
+      "abstract_en": "Legal reasoning requires not only the application of legal rules but also an understanding of the context in which those rules operate. However, existing legal benchmarks primarily evaluate rule application under the assumption of fixed norms, and thus fail to capture situations where legal judgments shift or where multiple norms interact. In this work, we propose CALRK-Bench, a context-aware legal reasoning benchmark based on the legal system in Korean. CALRK-Bench evaluates whether models can identify the temporal validity of legal norms, determine whether sufficient legal information is available for a given case, and understand the reasons behind shifts in legal judgments. The dataset is constructed from legal precedents and legal consultation records, and is validated by legal experts. Experimental results show that even recent large language models consistently exhibit low performance on these three tasks. CALRK-Bench provides a new stress test for evaluating context-aware legal reasoning rather than simple memorization of legal knowledge. Our code is available at https://github.com/jhCOR/CALRKBench.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/30/2603.21140v1-oracle-optimizing-reasoning-abilities-of-large-language-models-via-constraint-led-synthetic-data-elicitation",
+      "section": "quick",
+      "title_en": "ORACLE: Optimizing Reasoning Abilities of Large Language Models via Constraint-Led Synthetic Data Elicitation",
+      "authors": "Zhuojie Yang, Wentao Wan, Keze Wang",
+      "date": "2026-03-22",
+      "pdf": "https://arxiv.org/pdf/2603.21140v1",
+      "score": "6.0",
+      "evidence": "通过合成数据优化推理能力",
+      "tldr": "针对大语言模型在合成推理数据中中间步骤验证不足的问题，本文提出ORACLE框架。该框架受三段论启发，将LLM的生成能力与符号推理引擎的监督相结合。通过统一提示模板引导模型生成模块化推理链，并利用符号引擎对每一步进行细粒度验证，从而构建高质量的多步推理数据。实验证明，ORACLE在逻辑、事实和常识推理等多个基准测试中均优于现有基准。",
+      "tags": "query:q6",
+      "abstract_en": "Training large language models (LLMs) with synthetic reasoning data has become a popular approach to enhancing their reasoning capabilities, while a key factor influencing the effectiveness of this paradigm is the quality of the generated multi-step reasoning data. To generate high-quality reasoning data, many recent methods generate synthetic reasoning paths and filter them based on final answer correctness, often overlooking flaws in intermediate reasoning steps. To enhance the verification of intermediate reasoning steps, prior work primarily resorts to code execution or symbolic reasoning engines. However, code-based validation is restricted to code or mathematical tasks, and reasoning engines require a well-structured and complete context. As a result, existing methods fail to function effectively in natural language reasoning tasks that involve ambiguous or incomplete contexts. In these tasks, synthetic data still lack reliable checks for verifying each reasoning step. To address this challenge, we introduce ORACLE, a structured data generation framework inspired by syllogistic reasoning. ORACLE integrates the generative strengths of LLMs with symbolic supervision: the LLM produces step-wise reasoning contexts, while a symbolic reasoning engine verifies the validity of each intermediate step. By employing a unified prompting template to elicit modular reasoning chains, ORACLE enables fine-grained, step-level validation, facilitating the construction of high-quality multi-step reasoning data. Across six logical, factual, and commonsense reasoning benchmarks, our ORACLE consistently outperforms strong baselines on multiple models.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/30/2603.22754v1-prism-a-dual-view-of-llm-reasoning-through-semantic-flow-and-latent-computation",
+      "section": "quick",
+      "title_en": "PRISM: A Dual View of LLM Reasoning through Semantic Flow and Latent Computation",
+      "authors": "Ruidi Chang, Jiawei Zhou, Hanjie Chen",
+      "date": "2026-03-24",
+      "pdf": "https://arxiv.org/pdf/2603.22754v1",
+      "score": "6.0",
+      "evidence": "分析多步推理轨迹",
+      "tldr": "本研究针对大语言模型推理分析中语义序列与内部隐藏状态割裂的问题，提出了PRISM框架。该工具通过整合语义流与潜在计算，实现了对推理过程跨步骤和跨层级的统一监测。研究发现，推理失败通常源于无效的验证循环，并伴随过度思考或过早承诺等特定行为模式。PRISM不仅揭示了提示词对模型内部计算逻辑的深层影响，还为诊断和优化LLM推理轨迹提供了结构化的分析手段，使推理行为变得可观测且可量化。",
+      "tags": "query:q6",
+      "abstract_en": "Large language models (LLMs) solve complex problems by generating multi-step reasoning traces. Yet these traces are typically analyzed from only one of two perspectives: the sequence of tokens across different reasoning steps in the generated text, or the hidden-state vectors across model layers within one step. We introduce PRISM (Probabilistic Reasoning Inspection through Semantic and Implicit Modeling), a framework and diagnostic tool for jointly analyzing both levels, providing a unified view of how reasoning evolves across steps and layers. Across multiple reasoning models and benchmarks, PRISM uncovers systematic patterns in the reasoning process, showing that failed trajectories are more likely to become trapped in unproductive verification loops and further diverge into distinct modes such as overthinking and premature commitment, which behave differently once a candidate answer is reached. It further reveals how prompting reshapes reasoning behavior beyond aggregate accuracy by altering both semantic transitions and internal computational patterns. By modeling reasoning trajectories as structured processes, PRISM makes these behaviors observable and analyzable rather than relying solely on final-task accuracy. Taken together, these insights position PRISM as a practical tool for analyzing and diagnosing reasoning processes in LLMs.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,199 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-30T19:55:51.413647+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2603.24012v2",
+      "title": "CVPD at QIAS 2026: RAG-Guided LLM Reasoning for Al-Mawarith Share Computation and Heir Allocation",
+      "abstract": "Islamic inheritance (Ilm al-Mawarith) is a multi-stage legal reasoning task requiring the identification of eligible heirs, resolution of blocking rules (hajb), assignment of fixed and residual shares, handling of adjustments such as awl and radd, and generation of a consistent final distribution. The task is further complicated by variations across legal schools and civil-law codifications, requiring models to operate under explicit legal configurations.   We present a retrieval-augmented generation (RAG) pipeline for this setting, combining rule-grounded synthetic data generation, hybrid retrieval (dense and BM25) with cross-encoder reranking, and schema-constrained output validation. A symbolic inheritance calculator is used to generate a large high-quality synthetic corpus with full intermediate reasoning traces, ensuring legal and numerical consistency.   The proposed system achieves a MIR-E score of 0.935 and ranks first on the official QIAS 2026 blind-test leaderboard. Results demonstrate that retrieval-grounded, schema-aware generation significantly improves reliability in high-precision Arabic legal reasoning tasks.",
+      "authors": [
+        "Wassim Swaileh",
+        "Mohammed-En-Nadhir Zighem",
+        "Hichem Telli",
+        "Salah Eddine Bekhouche",
+        "Abdellah Zakaria Sellam",
+        "Fadi Dornaika",
+        "Dimitrios Kotzinos"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-03-25T07:19:29+00:00",
+      "link": "https://arxiv.org/pdf/2603.24012v2",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "multi-stage legal reasoning for inheritance allocation",
+      "llm_evidence_cn": "遗产分配的多阶段法律推理",
+      "llm_evidence": "遗产分配的多阶段法律推理",
+      "canonical_evidence": "遗产分配的多阶段法律推理",
+      "llm_tldr_en": "Applies RAG and LLMs to complex Islamic inheritance legal reasoning and share computation.",
+      "llm_tldr_cn": "利用RAG和大语言模型处理复杂的伊斯兰继承法法律推理和份额计算。",
+      "llm_tldr": "利用RAG和大语言模型处理复杂的伊斯兰继承法法律推理和份额计算。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "computational models of legal reasoning",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.25944v1",
+      "title": "Can Small Models Reason About Legal Documents? A Comparative Study",
+      "abstract": "Large language models show promise for legal applications, but deploying frontier models raises concerns about cost, latency, and data privacy. We evaluate whether sub-10B parameter models can serve as practical alternatives by testing nine models across three legal benchmarks (ContractNLI, CaseHOLD, and ECtHR) using five prompting strategies (direct, chain-of-thought, few-shot, BM25 RAG, and dense RAG). Across 405 experiments with three random seeds per configuration, we find that a Mixture-of-Experts model activating only 3B parameters matches GPT-4o-mini in mean accuracy while surpassing it on legal holding identification, and that architecture and training quality matter more than raw parameter count. Our largest model (9B parameters) performs worst overall. Chain-of-thought prompting proves sharply task-dependent, improving contract entailment but degrading multiple-choice legal reasoning, while few-shot prompting emerges as the most consistently effective strategy. Comparing BM25 and dense retrieval for RAG, we find near-identical results, suggesting the bottleneck lies in the language model's utilization of retrieved context rather than retrieval quality. All experiments were conducted via cloud inference APIs at a total cost of $62, demonstrating that rigorous LLM evaluation is accessible without dedicated GPU infrastructure.",
+      "authors": [
+        "Snehit Vaddi"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-03-26T22:28:20+00:00",
+      "link": "https://arxiv.org/pdf/2603.25944v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "evaluating small models on legal benchmarks including ECtHR for judgment prediction",
+      "llm_evidence_cn": "在包括ECtHR判决预测在内的法律基准上评估小模型",
+      "llm_evidence": "在包括ECtHR判决预测在内的法律基准上评估小模型",
+      "canonical_evidence": "在包括ECtHR判决预测在内的法律基准上评估小模型",
+      "llm_tldr_en": "Compares small LLMs against frontier models on legal reasoning and judgment prediction benchmarks.",
+      "llm_tldr_cn": "在法律推理和判决预测基准上比较了小型大模型与前沿模型的表现。",
+      "llm_tldr": "在法律推理和判决预测基准上比较了小型大模型与前沿模型的表现。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2603.26332v1",
+      "title": "CALRK-Bench: Evaluating Context-Aware Legal Reasoning in Korean Law",
+      "abstract": "Legal reasoning requires not only the application of legal rules but also an understanding of the context in which those rules operate. However, existing legal benchmarks primarily evaluate rule application under the assumption of fixed norms, and thus fail to capture situations where legal judgments shift or where multiple norms interact. In this work, we propose CALRK-Bench, a context-aware legal reasoning benchmark based on the legal system in Korean. CALRK-Bench evaluates whether models can identify the temporal validity of legal norms, determine whether sufficient legal information is available for a given case, and understand the reasons behind shifts in legal judgments. The dataset is constructed from legal precedents and legal consultation records, and is validated by legal experts. Experimental results show that even recent large language models consistently exhibit low performance on these three tasks. CALRK-Bench provides a new stress test for evaluating context-aware legal reasoning rather than simple memorization of legal knowledge. Our code is available at https://github.com/jhCOR/CALRKBench.",
+      "authors": [
+        "JiHyeok Jung",
+        "TaeYoung Yoon",
+        "HyunSouk Cho"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-03-27T11:54:23+00:00",
+      "link": "https://arxiv.org/pdf/2603.26332v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "benchmark for context-aware legal reasoning and shifts in legal judgments",
+      "llm_evidence_cn": "上下文感知法律推理和法律判决转变的基准测试",
+      "llm_evidence": "上下文感知法律推理和法律判决转变的基准测试",
+      "canonical_evidence": "上下文感知法律推理和法律判决转变的基准测试",
+      "llm_tldr_en": "Proposes CALRK-Bench to evaluate LLMs on context-aware legal reasoning and judgment shifts in Korean law.",
+      "llm_tldr_cn": "提出CALRK-Bench，用于评估大模型在韩国法律背景下的上下文法律推理和判决预测能力。",
+      "llm_tldr": "提出CALRK-Bench，用于评估大模型在韩国法律背景下的上下文法律推理和判决预测能力。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2603.21140v1",
+      "title": "ORACLE: Optimizing Reasoning Abilities of Large Language Models via Constraint-Led Synthetic Data Elicitation",
+      "abstract": "Training large language models (LLMs) with synthetic reasoning data has become a popular approach to enhancing their reasoning capabilities, while a key factor influencing the effectiveness of this paradigm is the quality of the generated multi-step reasoning data. To generate high-quality reasoning data, many recent methods generate synthetic reasoning paths and filter them based on final answer correctness, often overlooking flaws in intermediate reasoning steps. To enhance the verification of intermediate reasoning steps, prior work primarily resorts to code execution or symbolic reasoning engines. However, code-based validation is restricted to code or mathematical tasks, and reasoning engines require a well-structured and complete context. As a result, existing methods fail to function effectively in natural language reasoning tasks that involve ambiguous or incomplete contexts. In these tasks, synthetic data still lack reliable checks for verifying each reasoning step. To address this challenge, we introduce ORACLE, a structured data generation framework inspired by syllogistic reasoning. ORACLE integrates the generative strengths of LLMs with symbolic supervision: the LLM produces step-wise reasoning contexts, while a symbolic reasoning engine verifies the validity of each intermediate step. By employing a unified prompting template to elicit modular reasoning chains, ORACLE enables fine-grained, step-level validation, facilitating the construction of high-quality multi-step reasoning data. Across six logical, factual, and commonsense reasoning benchmarks, our ORACLE consistently outperforms strong baselines on multiple models.",
+      "authors": [
+        "Zhuojie Yang",
+        "Wentao Wan",
+        "Keze Wang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-03-22T09:30:43+00:00",
+      "link": "https://arxiv.org/pdf/2603.21140v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "optimizing reasoning abilities via synthetic data",
+      "llm_evidence_cn": "通过合成数据优化推理能力",
+      "llm_evidence": "通过合成数据优化推理能力",
+      "canonical_evidence": "通过合成数据优化推理能力",
+      "llm_tldr_en": "Enhances LLM multi-step reasoning quality, which is a core component of computational legal reasoning.",
+      "llm_tldr_cn": "增强大语言模型多步推理质量，这是计算法律推理的核心组件。",
+      "llm_tldr": "增强大语言模型多步推理质量，这是计算法律推理的核心组件。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "computational models of legal reasoning",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.22754v1",
+      "title": "PRISM: A Dual View of LLM Reasoning through Semantic Flow and Latent Computation",
+      "abstract": "Large language models (LLMs) solve complex problems by generating multi-step reasoning traces. Yet these traces are typically analyzed from only one of two perspectives: the sequence of tokens across different reasoning steps in the generated text, or the hidden-state vectors across model layers within one step. We introduce PRISM (Probabilistic Reasoning Inspection through Semantic and Implicit Modeling), a framework and diagnostic tool for jointly analyzing both levels, providing a unified view of how reasoning evolves across steps and layers. Across multiple reasoning models and benchmarks, PRISM uncovers systematic patterns in the reasoning process, showing that failed trajectories are more likely to become trapped in unproductive verification loops and further diverge into distinct modes such as overthinking and premature commitment, which behave differently once a candidate answer is reached. It further reveals how prompting reshapes reasoning behavior beyond aggregate accuracy by altering both semantic transitions and internal computational patterns. By modeling reasoning trajectories as structured processes, PRISM makes these behaviors observable and analyzable rather than relying solely on final-task accuracy. Taken together, these insights position PRISM as a practical tool for analyzing and diagnosing reasoning processes in LLMs.",
+      "authors": [
+        "Ruidi Chang",
+        "Jiawei Zhou",
+        "Hanjie Chen"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-03-24T03:31:53+00:00",
+      "link": "https://arxiv.org/pdf/2603.22754v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "analyzing multi-step reasoning traces",
+      "llm_evidence_cn": "分析多步推理轨迹",
+      "llm_evidence": "分析多步推理轨迹",
+      "canonical_evidence": "分析多步推理轨迹",
+      "llm_tldr_en": "Provides a framework to inspect LLM reasoning processes, applicable to complex legal analysis tasks.",
+      "llm_tldr_cn": "提供了一个检查大语言模型推理过程的框架，适用于复杂的法律分析任务。",
+      "llm_tldr": "提供了一个检查大语言模型推理过程的框架，适用于复杂的法律分析任务。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "computational models of legal reasoning",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
