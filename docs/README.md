@@ -6,37 +6,28 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-30
-- 运行时间：2026-03-30 19:56:46 UTC
+- 最新运行日期：2026-03-31
+- 运行时间：2026-03-31 20:18:34 UTC
 - 运行状态：成功
-- 本次总论文数：5
-- 精读区：3
-- 速读区：2
+- 本次总论文数：2
+- 精读区：1
+- 速读区：1
 
 ### 今日简报（AI）
-今日深度探索大模型在法律推理与遗产分配等复杂逻辑领域的实战表现，重点评估了小模型的专业潜力。
-研究证实 RAG 引导能显著提升遗产份额计算的精准度，且经过优化的小模型在处理法律文档时已展现出极强的逻辑竞争力。
-建议关注如何通过 RAG 与约束性合成数据技术，让轻量化模型在垂直专业场景中实现低成本、高精度的应用落地。
-- 详情：[/202603/30/README](/202603/30/README)
+1. 深度探讨超级智能对法律体系的颠覆性挑战，并引入法庭辩论模式优化争议核查。
+2. 核心结论指出超级智能需重构法律框架，而多智能体角色切换与渐进式RAG能显著提升复杂主张的验证效能。
+3. 推荐关注AI在司法博弈中的逻辑透明度，提前布局人机共存时代的法治新范式。
+- 详情：[/202603/31/README](/202603/31/README)
 
 ### 精读区论文标签
-1. [CVPD at QIAS 2026: RAG-Guided LLM Reasoning for Al-Mawarith Share Computation and Heir Allocation](/202603/30/2603.24012v2-cvpd-at-qias-2026-rag-guided-llm-reasoning-for-al-mawarith-share-computation-and-heir-allocation)  
-   标签：评分：9.0/10、query:q6
-   evidence：遗产分配的多阶段法律推理
-2. [Can Small Models Reason About Legal Documents? A Comparative Study](/202603/30/2603.25944v1-can-small-models-reason-about-legal-documents-a-comparative-study)  
-   标签：评分：9.0/10、query:profile-1
-   evidence：在包括ECtHR判决预测在内的法律基准上评估小模型
-3. [CALRK-Bench: Evaluating Context-Aware Legal Reasoning in Korean Law](/202603/30/2603.26332v1-calrk-bench-evaluating-context-aware-legal-reasoning-in-korean-law)  
-   标签：评分：9.0/10、query:profile-1
-   evidence：上下文感知法律推理和法律判决转变的基准测试
+1. [Superintelligence and Law](/202603/31/2603.28669v1-superintelligence-and-law)  
+   标签：评分：8.0/10、query:q4
+   evidence：AI智能体执行法律编写与解释功能
 
 ### 速读区论文标签
-1. [ORACLE: Optimizing Reasoning Abilities of Large Language Models via Constraint-Led Synthetic Data Elicitation](/202603/30/2603.21140v1-oracle-optimizing-reasoning-abilities-of-large-language-models-via-constraint-led-synthetic-data-elicitation)  
-   标签：评分：6.0/10、query:q6
-   evidence：通过合成数据优化推理能力
-2. [PRISM: A Dual View of LLM Reasoning through Semantic Flow and Latent Computation](/202603/30/2603.22754v1-prism-a-dual-view-of-llm-reasoning-through-semantic-flow-and-latent-computation)  
-   标签：评分：6.0/10、query:q6
-   evidence：分析多步推理轨迹
+1. [Courtroom-Style Multi-Agent Debate with Progressive RAG and Role-Switching for Controversial Claim Verification](/202603/31/2603.28488v1-courtroom-style-multi-agent-debate-with-progressive-rag-and-role-switching-for-controversial-claim-verification)  
+   标签：评分：7.0/10、query:q4
+   evidence：法庭风格的多智能体辩论用于主张验证
 
 
 <div class="dpr-home-promo-card">
