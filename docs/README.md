@@ -6,28 +6,34 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-31
-- 运行时间：2026-03-31 20:18:34 UTC
+- 最新运行日期：2026-04-01
+- 运行时间：2026-04-01 20:08:16 UTC
 - 运行状态：成功
-- 本次总论文数：2
-- 精读区：1
-- 速读区：1
+- 本次总论文数：4
+- 精读区：0
+- 速读区：4
 
 ### 今日简报（AI）
-1. 深度探讨超级智能对法律体系的颠覆性挑战，并引入法庭辩论模式优化争议核查。
-2. 核心结论指出超级智能需重构法律框架，而多智能体角色切换与渐进式RAG能显著提升复杂主张的验证效能。
-3. 推荐关注AI在司法博弈中的逻辑透明度，提前布局人机共存时代的法治新范式。
-- 详情：[/202603/31/README](/202603/31/README)
+今日聚焦 LLM 在自动化裁判安全、议会立法推理及多智能体辩论分类等垂直领域的深度应用与风险评估。
+重点揭示了“LLM 担任裁判”时的安全漏洞，并对比了商业模型
+- 详情：[/202604/01/README](/202604/01/README)
 
 ### 精读区论文标签
-1. [Superintelligence and Law](/202603/31/2603.28669v1-superintelligence-and-law)  
-   标签：评分：8.0/10、query:q4
-   evidence：AI智能体执行法律编写与解释功能
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Courtroom-Style Multi-Agent Debate with Progressive RAG and Role-Switching for Controversial Claim Verification](/202603/31/2603.28488v1-courtroom-style-multi-agent-debate-with-progressive-rag-and-role-switching-for-controversial-claim-verification)  
-   标签：评分：7.0/10、query:q4
-   evidence：法庭风格的多智能体辩论用于主张验证
+1. [Security in LLM-as-a-Judge: A Comprehensive SoK](/202604/01/2603.29403v1-security-in-llm-as-a-judge-a-comprehensive-sok)  
+   标签：评分：7.0/10、query:profile-1
+   evidence：大模型作为评判者系统在评估输出时的安全性和可靠性
+2. [Can Commercial LLMs Be Parliamentary Political Companions? Comparing LLM Reasoning Against Romanian Legislative Expuneri de Motive](/202604/01/2603.30028v1-can-commercial-llms-be-parliamentary-political-companions-comparing-llm-reasoning-against-romanian-legislative-expuneri-de-motive)  
+   标签：评分：7.0/10、query:q2
+   evidence：将大语言模型的推理与官方立法理由进行比较
+3. [Multi-Agent Dialectical Refinement for Enhanced Argument Classification](/202604/01/2603.27451v1-multi-agent-dialectical-refinement-for-enhanced-argument-classification)  
+   标签：评分：6.0/10、query:q6
+   evidence：用于论点组件分类的多智能体辩论框架
+4. [Beyond AI advice -- independent aggregation boosts human-AI accuracy](/202604/01/2603.29866v1-beyond-ai-advice----independent-aggregation-boosts-human-ai-accuracy)  
+   标签：评分：6.0/10、query:q4
+   evidence：独立聚合人类与AI的判断以提高准确性
 
 
 <div class="dpr-home-promo-card">
