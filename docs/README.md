@@ -6,34 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-01
-- 运行时间：2026-04-01 20:08:16 UTC
+- 最新运行日期：2026-04-02
+- 运行时间：2026-04-02 19:57:02 UTC
 - 运行状态：成功
-- 本次总论文数：4
+- 本次总论文数：2
 - 精读区：0
-- 速读区：4
+- 速读区：2
 
 ### 今日简报（AI）
-今日聚焦 LLM 在自动化裁判安全、议会立法推理及多智能体辩论分类等垂直领域的深度应用与风险评估。
-重点揭示了“LLM 担任裁判”时的安全漏洞，并对比了商业模型
-- 详情：[/202604/01/README](/202604/01/README)
+今日聚焦法律科技前沿，深入探讨 AI 赋能司法监管与阿尔及利亚法律检索的最新进展。
+核心关注可解释性 AI 在司法公正中的应用，以及利用半合成数据集优化特定区域法律信息的检索效率。
+建议关注 AI 如何在提升法律检索精准度的同时，通过可解释性技术保障程序正义。
+- 详情：[/202604/02/README](/202604/02/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Security in LLM-as-a-Judge: A Comprehensive SoK](/202604/01/2603.29403v1-security-in-llm-as-a-judge-a-comprehensive-sok)  
-   标签：评分：7.0/10、query:profile-1
-   evidence：大模型作为评判者系统在评估输出时的安全性和可靠性
-2. [Can Commercial LLMs Be Parliamentary Political Companions? Comparing LLM Reasoning Against Romanian Legislative Expuneri de Motive](/202604/01/2603.30028v1-can-commercial-llms-be-parliamentary-political-companions-comparing-llm-reasoning-against-romanian-legislative-expuneri-de-motive)  
-   标签：评分：7.0/10、query:q2
-   evidence：将大语言模型的推理与官方立法理由进行比较
-3. [Multi-Agent Dialectical Refinement for Enhanced Argument Classification](/202604/01/2603.27451v1-multi-agent-dialectical-refinement-for-enhanced-argument-classification)  
-   标签：评分：6.0/10、query:q6
-   evidence：用于论点组件分类的多智能体辩论框架
-4. [Beyond AI advice -- independent aggregation boosts human-AI accuracy](/202604/01/2603.29866v1-beyond-ai-advice----independent-aggregation-boosts-human-ai-accuracy)  
-   标签：评分：6.0/10、query:q4
-   evidence：独立聚合人类与AI的判断以提高准确性
+1. [AI-Mediated Explainable Regulation for Justice](/202604/02/2604.00237v1-ai-mediated-explainable-regulation-for-justice)  
+   标签：评分：7.0/10、query:q5
+   evidence：通过偏好建模实现AI介导的可解释监管与正义
+2. [STCALIR: Semi-Synthetic Test Collection for Algerian Legal Information Retrieval](/202604/02/2604.00731v1-stcalir-semi-synthetic-test-collection-for-algerian-legal-information-retrieval)  
+   标签：评分：7.0/10、query:q5
+   evidence：自动生成法律测试集
 
 
 <div class="dpr-home-promo-card">
