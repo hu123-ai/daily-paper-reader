@@ -1,0 +1,65 @@
+{
+  "label": "2026-04-03",
+  "date": "2026-04-03",
+  "generated_at": "2026-04-03T19:15:00",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202604/03/2604.02276v1-de-jure-iterative-llm-self-refinement-for-structured-extraction-of-regulatory-rules",
+      "section": "quick",
+      "title_en": "De Jure: Iterative LLM Self-Refinement for Structured Extraction of Regulatory Rules",
+      "authors": "Keerat Guliani, Deepkamal Gill, David Landsman, Nima Eshraghi, Krishna Kumar, Lovedeep Gondara",
+      "date": "2026-04-02",
+      "pdf": "https://arxiv.org/pdf/2604.02276v1",
+      "score": "7.0",
+      "evidence": "利用LLM进行监管规则的结构化提取",
+      "tldr": "针对法律法规文档结构复杂、提取成本高的问题，本文提出De Jure框架。这是一个无需人工标注的自动化流水线，通过文档规范化、语义分解、19维度多准则评估及受限迭代修复，将原始文本转化为结构化规则。实验证明该方法在金融、医疗等领域表现优异，显著提升了下游合规问答任务的准确性，为监管合规提供了可扩展的解决方案。",
+      "tags": "query:q5",
+      "abstract_en": "Regulatory documents encode legally binding obligations that LLM-based systems must respect. Yet converting dense, hierarchically structured legal text into machine-readable rules remains a costly, expert-intensive process. We present De Jure, a fully automated, domain-agnostic pipeline for extracting structured regulatory rules from raw documents, requiring no human annotation, domain-specific prompting, or annotated gold data. De Jure operates through four sequential stages: normalization of source documents into structured Markdown; LLM-driven semantic decomposition into structured rule units; multi-criteria LLM-as-a-judge evaluation across 19 dimensions spanning metadata, definitions, and rule semantics; and iterative repair of low-scoring extractions within a bounded regeneration budget, where upstream components are repaired before rule units are evaluated. We evaluate De Jure across four models on three regulatory corpora spanning finance, healthcare, and AI governance. On the finance domain, De Jure yields consistent and monotonic improvement in extraction quality, reaching peak performance within three judge-guided iterations. De Jure generalizes effectively to healthcare and AI governance, maintaining high performance across both open- and closed-source models. In a downstream compliance question-answering evaluation via RAG, responses grounded in De Jure extracted rules are preferred over prior work in 73.8% of cases at single-rule retrieval depth, rising to 84.0% under broader retrieval, confirming that extraction fidelity translates directly into downstream utility. These results demonstrate that explicit, interpretable evaluation criteria can substitute for human annotation in complex regulatory domains, offering a scalable and auditable path toward regulation-grounded LLM alignment.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/03/2603.29866v2-beyond-ai-advice----independent-aggregation-boosts-human-ai-accuracy",
+      "section": "quick",
+      "title_en": "Beyond AI advice -- independent aggregation boosts human-AI accuracy",
+      "authors": "Julian Berger, Pantelis P. Analytis, Ville Satopää, Ralf H. J. M. Kurvers",
+      "date": "2026-03-31",
+      "pdf": "https://arxiv.org/pdf/2603.29866v2",
+      "score": "6.0",
+      "evidence": "用于独立人类与AI判断聚合的混合确认树",
+      "tldr": "本研究针对传统“AI作为建议者”模式中人类难以区分AI建议对错且技能易退化的局限，提出了一种名为“混合确认树（HCT）”的新策略。HCT通过让AI与人类独立决策，在意见一致时直接采纳，不一致时引入第二名人类仲裁，从而保持判断的独立性。在医疗诊断、虚假信息识别等10个数据集上的实验表明，HCT的准确率全面优于传统模式，为提升人机协作效能提供了稳健且透明的新方案。",
+      "tags": "query:q4",
+      "abstract_en": "Artificial intelligence (AI) is broadly deployed as an advisor to human decision-makers: AI recommends a decision and a human accepts or rejects the advice. This approach, however, has several limitations: People frequently ignore accurate advice and rely too much on inaccurate advice, and their decision-making skills may deteriorate over time. Here, we compare the AI-as-advisor approach to the hybrid confirmation tree (HCT), an alternative strategy that preserves the independence of human and AI judgments. The HCT elicits a human judgment and an AI judgment independently of each other. If they agree, that decision is accepted. If not, a second human breaks the tie. For the comparison, we used 10 datasets from various domains, including medical diagnostics and misinformation discernment, and a subset of four datasets in which AI also explained its decision. The HCT outperformed the AI-as-advisor approach in all datasets. The HCT also performed better in almost all cases in which AI offered an explanation of its judgment. Using signal detection theory to interpret these results, we find that the HCT outperforms the AI-as-advisor approach because people cannot discriminate well enough between correct and incorrect AI advice. Overall, the HCT is a robust, accurate, and transparent alternative to the AI-as-advisor approach, offering a simple mechanism to tap into the wisdom of hybrid crowds.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/03/2604.00085v1-one-panel-does-not-fit-all-case-adaptive-multi-agent-deliberation-for-clinical-prediction",
+      "section": "quick",
+      "title_en": "One Panel Does Not Fit All: Case-Adaptive Multi-Agent Deliberation for Clinical Prediction",
+      "authors": "Yuxing Lu, Yushuhong Lin, Jason Zhang",
+      "date": "2026-03-31",
+      "pdf": "https://arxiv.org/pdf/2604.00085v1",
+      "score": "6.0",
+      "evidence": "针对预测的案例自适应多智能体审议",
+      "tldr": "针对临床预测中LLM表现出的病例异质性，本文提出CAMP框架。该框架由主治医生Agent根据病例不确定性动态组建专家小组，专家通过三值投票机制表达意见。通过混合路由机制，在强共识、主治医生判断或基于证据的仲裁间切换，实现了比固定角色多智能体方法更高的准确率和更低的Token消耗，同时提供了透明的决策审计。",
+      "tags": "query:q3",
+      "abstract_en": "Large language models applied to clinical prediction exhibit case-level heterogeneity: simple cases yield consistent outputs, while complex cases produce divergent predictions under minor prompt changes. Existing single-agent strategies sample from one role-conditioned distribution, and multi-agent frameworks use fixed roles with flat majority voting, discarding the diagnostic signal in disagreement. We propose CAMP (Case-Adaptive Multi-agent Panel), where an attending-physician agent dynamically assembles a specialist panel tailored to each case's diagnostic uncertainty. Each specialist evaluates candidates via three-valued voting (KEEP/REFUSE/NEUTRAL), enabling principled abstention outside one's expertise. A hybrid router directs each diagnosis through strong consensus, fallback to the attending physician's judgment, or evidence-based arbitration that weighs argument quality over vote counts. On diagnostic prediction and brief hospital course generation from MIMIC-IV across four LLM backbones, CAMP consistently outperforms strong baselines while consuming fewer tokens than most competing multi-agent methods, with voting records and arbitration traces offering transparent decision audits.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/03/2604.01529v1-a-role-based-llm-framework-for-structured-information-extraction-from-healthy-food-policies",
+      "section": "quick",
+      "title_en": "A Role-Based LLM Framework for Structured Information Extraction from Healthy Food Policies",
+      "authors": "Congjing Zhang, Ruoxuan Bao, Jingyu Li, Yoav Ackerman, Shuai Huang, Yanfang Su",
+      "date": "2026-04-02",
+      "pdf": "https://arxiv.org/pdf/2604.01529v1",
+      "score": "6.0",
+      "evidence": "用于政策分析的LLM法律策略专家",
+      "tldr": "本研究针对健康饮食政策文档结构多样且不一致导致的提取错误（如幻觉、遗漏），提出了一种基于角色的LLM框架。该框架通过分配政策分析师、法律策略专家和食品系统专家等特定角色，模拟专家工作流并融入领域知识。实验表明，在处理608份政策文件时，该方法在复杂推理任务上优于零样本和思维链等基准，显著提升了信息提取的准确性与透明度。",
+      "tags": "query:q5",
+      "abstract_en": "Current Large Language Model (LLM) approaches for information extraction (IE) in the healthy food policy domain are often hindered by various factors, including misinformation, specifically hallucinations, misclassifications, and omissions that result from the structural diversity and inconsistency of policy documents. To address these limitations, this study proposes a role-based LLM framework that automates the IE from unstructured policy data by assigning specialized roles: an LLM policy analyst for metadata and mechanism classification, an LLM legal strategy specialist for identifying complex legal approaches, and an LLM food system expert for categorizing food system stages. This framework mimics expert analysis workflows by incorporating structured domain knowledge, including explicit definitions of legal mechanisms and classification criteria, into role-specific prompts. We evaluate the framework using 608 healthy food policies from the Healthy Food Policy Project (HFPP) database, comparing its performance against zero-shot, few-shot, and chain-of-thought (CoT) baselines using Llama-3.3-70B. Our proposed framework demonstrates superior performance in complex reasoning tasks, offering a reliable and transparent methodology for automating IE from health policies.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
