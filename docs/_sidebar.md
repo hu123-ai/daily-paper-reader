@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-04-05 <!--dpr-date:20260405-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/05/2603.29232v1-long-document-qa-with-chain-of-structured-thought-and-fine-tuned-slms" data-sidebar-item="{&quot;title&quot;: &quot;Long-Document QA with Chain-of-Structured-Thought and Fine-Tuned SLMs&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.29232v1-long-document-qa-with-chain-of-structured-thought-and-fine-tuned-slms&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;q5&quot;}], &quot;evidence&quot;: &quot;对长文档进行结构化推理&quot;}">Long-Document QA with Chain-of-Structured-Thought and Fine-Tuned SLMs</a>
   * 2026-04-03 <!--dpr-date:20260403-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/03/2604.02276v1-de-jure-iterative-llm-self-refinement-for-structured-extraction-of-regulatory-rules" data-sidebar-item="{&quot;title&quot;: &quot;De Jure: Iterative LLM Self-Refinement for Structured Extraction of Regulatory Rules&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.02276v1-de-jure-iterative-llm-self-refinement-for-structured-extraction-of-regulatory-rules&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;q5&quot;}], &quot;evidence&quot;: &quot;利用LLM进行监管规则的结构化提取&quot;}">De Jure: Iterative LLM Self-Refinement for Structured Extraction of Regulatory Rules</a>

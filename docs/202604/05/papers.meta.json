@@ -1,0 +1,23 @@
+{
+  "label": "2026-04-05",
+  "date": "2026-04-05",
+  "generated_at": "2026-04-05T20:05:02",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202604/05/2603.29232v1-long-document-qa-with-chain-of-structured-thought-and-fine-tuned-slms",
+      "section": "quick",
+      "title_en": "Long-Document QA with Chain-of-Structured-Thought and Fine-Tuned SLMs",
+      "authors": "Zhuowen Liang, Xiaotian Lin, Zhengxuan Zhang, Yuyu Luo, Haixun Wang, Nan Tang",
+      "date": "2026-03-31",
+      "pdf": "https://arxiv.org/pdf/2603.29232v1",
+      "score": "6.0",
+      "evidence": "对长文档进行结构化推理",
+      "tldr": "针对长文档问答中LLM推理脆弱且易出错的问题，本文提出LiteCoST框架。该框架通过“结构化思维链”（CoST）引导大模型生成可审计的结构化中间结果，并利用监督微调（SFT）和强化学习（GRPO）将此能力蒸馏至3B/7B的小模型中。实验表明，LiteCoST在保持高准确率的同时，推理延迟比GPT-4o和DeepSeek-R1降低了2-4倍，实现了高效且可验证的长文档分析。",
+      "tags": "query:q5",
+      "abstract_en": "Large language models (LLMs) are widely applied to data analytics over documents, yet direct reasoning over long, noisy documents remains brittle and error-prone. Hence, we study document question answering (QA) that consolidates dispersed evidence into a structured output (e.g., a table, graph, or chunks) to support reliable, verifiable QA. We propose a two-pillar framework, LiteCoST, to achieve both high accuracy and low latency with small language models (SLMs). Pillar 1: Chain-of-Structured-Thought (CoST). We introduce a CoST template, a schema-aware instruction that guides a strong LLM to produce both a step-wise CoST trace and the corresponding structured output. The process induces a minimal structure, normalizes entities/units, aligns records, serializes the output, and verifies/refines it, yielding auditable supervision. Pillar 2: SLM fine-tuning. The compact models are trained on LLM-generated CoST data in two stages: Supervised Fine-Tuning for structural alignment, followed by Group Relative Policy Optimization (GRPO) incorporating triple rewards for answer/format quality and process consistency. By distilling structure-first behavior into SLMs, this approach achieves LLM-comparable quality on multi-domain long-document QA using 3B/7B SLMs, while delivering 2-4x lower latency than GPT-4o and DeepSeek-R1 (671B). The code is available at https://github.com/HKUSTDial/LiteCoST.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
