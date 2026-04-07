@@ -1,0 +1,213 @@
+Title: Compliance-by-Construction Argument Graphs: Using Generative AI to Produce Evidence-Linked Formal Arguments for Certification-Grade Accountability
+
+URL Source: https://arxiv.org/pdf/2604.04103v1
+
+Published Time: Tue, 07 Apr 2026 01:02:39 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# Compliance-by-Construction Argument Graphs: Using Generative AI to Produce Evidence-Linked Formal Arguments for Certification-Grade Accountability 
+
+Mahyar Tourchi Moghaddam mtmo@mmmi.sdu.dk 
+
+SDU Software Engineering 
+
+Odense, Denmark 
+
+©2026 IEEE. Personal use of this material is permitted. Permission from IEEE must be obtained for all other uses, in any current or future media, including reprinting/republishing this material for advertising or promotional purposes, creating new collective works, for resale or redistribution to servers or lists, or reuse of any copyrighted component of this work in other works. Accepted for publication in FACCT 2026 Proceedings, Cyber-Physical Systems and Internet-of-Things Week. 
+
+Abstract —High-stakes decision systems increasingly require structured justification, traceability, and auditability to ensure accountability and regulatory compliance. Formal arguments commonly used in the certification of safety-critical systems provide a mechanism for structuring claims, reasoning, and evidence in a verifiable manner. At the same time, generative artificial intelligence systems are increasingly integrated into decision-support workflows, assisting with drafting explanations, summarizing evidence, and generating recommendations. How-ever, current deployments often rely on language models as loosely constrained assistants, which introduces risks such as hal-lucinated reasoning, unsupported claims, and weak traceability. This paper proposes a compliance-by-construction architecture that integrates Generative AI (GenAI) with structured formal argument representations. The approach treats each AI-assisted step as a claim that must be supported by verifiable evidence and validated against explicit reasoning constraints before it becomes part of an official decision record. The architecture combines four components: i) a typed Argument Graph representation inspired by assurance-case methods, ii) retrieval-augmented generation (RAG) to draft argument fragments grounded in authoritative evidence, iii) a reasoning and validation kernel enforcing completeness and admissibility constraints, and iv) aprovenance ledger aligned with the W3C PROV standard to sup-port auditability. We present a system design and an evaluation strategy based on enforceable invariants and worked examples. The analysis suggests that deterministic validation rules can prevent unsupported claims from entering the decision record while allowing GenAI to accelerate argument construction. The approach demonstrates how generative models can assist the production of formal arguments while preserving certification-grade accountability, traceability, and human oversight. 
+
+Index Terms —GenAI, RAG, Compliance. 
+
+I. I NTRODUCTION 
+
+Formal arguments are central to certification in safety- and security-critical cyber-physical systems (CPS): they organize heterogeneous analyses, surface assumptions, and justify that a system meets requirements in context. In parallel, high-risk AI deployments in public and regulated decision-making are increasingly subject to certification-like scrutiny, with hard regulatory obligations, documentation, log retention, and ex-pectations of human oversight, making it natural to treat each AI-assisted decision step as a claim that must be discharged by structured argument and evidence [1]. Yet, many real-world deployments treat language models as “helpful assistants” that draft text, summarize, or suggest deci-sions without enforcing formal completeness, admissibility, or traceability. Current case-management approaches often lack enforceable reasoning and full traceability, thereby amplifying automation bias, leading to procedural errors, and undermin-ing compliance [2], [3]. These socio-technical failures are compounded by known limitations of large language models (LLMs), especially hallucination (plausible but unsupported outputs) and unreliable uncertainty communication, which are particularly harmful in high-stakes domains such as law, healthcare, and government benefits [4]. Existing literature provides key building blocks but leaves a gap at their intersection. Assurance cases and notations such as Goal Structuring Notation (GSN) formalize “claims-arguments-evidence” structures widely used in safety contexts [5]. Computational argumentation (e.g., Toulmin-style layouts and Dung-style abstract/structured argumentation) provides representations for structured reasoning, attacks, and assump-tions [6]. Meanwhile, retrieval-augmented generation (RAG) can ground LLM outputs in retrieved sources, yet grounding alone does not guarantee that outputs meet domain-specific legal/procedural obligations or that every claim is properly dis-charged [7]. Finally, accountability research emphasizes end-to-end auditability and “reviewability” across the full decision pipeline, not only model-level properties [8]. What remains underdeveloped is a compliance-by-construction pipeline in which GenAI accelerates drafting, but formal argument checks and provenance constraints determine what is admissible into the record. We address this gap by proposing a methodology and refer-ence architecture that turns AI interventions into certification-grade argument artifacts. Technically, we combine i) a struc-tured Argument Graph (exportable to GSN-like views), ii) an evidence-gated GenAI drafting workflow (RAG + constrained prompting), iii) a Reasoning/Validation Kernel that enforces argument constraints and procedural completeness, and iv) a
+
+> arXiv:2604.04103v1 [cs.AI] 5 Apr 2026
+
+provenance ledger aligned with W3C PROV and decision-provenance principles [9]. This paper answers the following questions: 
+
+RQ1: How can GenAI be used to draft formal(izable) ar-guments while preventing unsupported claims from entering certification/audit records? 
+
+RQ2: Which machine-checkable argument constraints (e.g., evidence linkage, rule coverage, assumption enumeration) provide the highest leverage for “minimal but meaningful” evaluation [10] in high-stakes workflows? 
+
+RQ3: How should provenance and logging be structured so auditors can reconstruct decision pipelines across tools, models, prompts, data, and human interventions? We contribute i) a compliance-by-construction argument-generation pipeline; ii) a concrete Argument Graph schema with validation constraints that supports easy, automatable evaluations; iii) an integrated provenance model mapping argument steps to W3C PROV; and iv) worked examples demonstrating how GenAI can assist formal argument creation without weakening accountability. 
+
+Terminology clarification. We use compliance-by-construction to denote a design principle in which artifacts are only admitted into a decision record if they satisfy formally specified constraints at construction time, rather than being audited post hoc. Certification-grade refers to artifacts that are sufficiently structured, traceable, and auditable to support external review in regulated or high-assurance contexts. Grounding refers to the requirement that generated claims are explicitly linked to identifiable evidence sources, though grounding alone does not guarantee correctness or completeness. The paper is organized as follows. Section II reviews foundations. Section III presents the methodology. Section IV describes the system architecture. Section V provides guarantees and examples. Section VI discusses implications and limitations, and Section VII concludes. II. B ACKGROUND 
+
+Formal arguments are widely used to justify certification claims. In safety and assurance contexts, an “assurance case” generally structures claims, arguments, and evidence; GSN is an established notation that standardizes these elements and their relationships [5]. In parallel, foundational argumentation models provide templates for representing and evaluating reasoning. Toulmin’s layout [6] emphasizes components such as the claim, grounds (evidence), warrants, backing, qualifiers, and rebuttals, supporting a more realistic analysis of arguments than simple premise-conclusion forms. Dung’s abstract argu-mentation formalizes conflicts (attacks) among arguments and yields semantics for which sets of arguments are acceptable, and structured argumentation frameworks instantiate these ideas with explicit inference trees and defeasible rules [11]. These representations are directly relevant to certification and audit because they make assumptions explicit and allow sys-tematic checks of completeness and defensibility, not merely readability [5]. GenAI introduces a new opportunity: accelerating the au-thoring of argument fragments, summaries, and evidence mappings. Recent work explores LLMs for assurance-case generation and management, including prompting GPT-4 to generate GSN-compliant safety cases and studying LLMs for automatic assurance-case instantiation from patterns [12]. More broadly, LLM-focused surveys show rapid growth in argument mining and argument generation, including the use of LLMs to extract argumentative structure and generate counter-arguments [13]. However, these advances coexist with reliability risks: hallucination remains a central concern in LLM deployments, with surveys documenting a broad taxon-omy of hallucination types and mitigation approaches [4]. In decision settings, automation bias (overreliance on algorithmic recommendations) has been empirically studied in public-sector decision-making, motivating designs that keep humans meaningfully in control [2]. Accountability research suggests that “good explanations” are not sufficient: systems must support review, audit, and con-testation throughout the lifecycle and across the full decision pipeline. Internal algorithmic auditing frameworks emphasize process documentation and traceability across development and deployment [8]. “Reviewable automated decision-making” advocates record-keeping mechanisms that surface the socio-technical process, rather than focusing solely on model-centric explainability [10]. Decision provenance extends this view, advocating provenance methods to expose decision pipelines and support oversight, audit, compliance, risk mitigation, and user empowerment [14]. At a technical standard level, W3C PROV provides a conceptual model for representing prove-nance, supporting interoperable capture of entities, activities, and agents involved in producing artifacts [9]. Regulation further pushes high-stakes AI toward certification-like practices. The EU Artificial Intelligence Act (Regulation (EU) 2024/1689) establishes a risk-based framework and imposes requirements for high-risk systems, including transparency, record-keeping/logging, and human oversight [15]. Annex III identifies high-risk use cases including AI used by public authorities to evaluate eligibility for essential public benefits and services [15]. These provisions, together with public-sector transparency initiatives such as the UK Algorithmic Transparency Recording Standard, suggest that “formal arguments + provenance” can become practical compliance artifacts rather than purely academic constructs [16]. Finally, privacy-preserving learning enables cross-organization training without centralizing raw data. Federated learning (e.g., FedAvg) aggregates local updates [17], while secure aggregation prevents exposure of individual contributions [18]. We treat this as an optional subsystem. III. M ETHODOLOGY 
+
+Our methodology treats each AI-assisted workflow as a sequence of certification claims that must be discharged by a structured argument. The core objective is to ensure that only validated argument artifacts can move the workflow forward Case Context Inputs   
+
+> Evidence Retrieval (RAG)
+> GenAI Drafts Argument Claim – Reason – Evidence
+> Validation Kernel Rules & Constraints
+> Repair Loop Retrieve / Redraft / Edit
+> Persist Argument Graph + Provenance
+> Decision Package Argument View + Audit Log
+> invalid valid
+> Fig. 1. Compliance-by-construction pipeline for AI-assisted argument gen-eration. Generative models propose candidate arguments, which are validated against policy constraints before becoming part of the certified record.
+
+(“gating”), while GenAI is used for drafting and structuring content, not for deciding admissibility. Figure 1 illustrates the compliance-by-construction pipeline in which generative models propose candidate argument fragments while a de-terministic validation kernel determines whether they can be admitted into the certified decision record. We define an Argument Graph (AG) as a typed directed multigraph with node types:  
+
+> •
+
+Claim: a proposition that must be justified (e.g., “Eligibility criterion X is satisfied”).  
+
+> •
+
+Rule: a formalized norm/policy requirement constraining claims (e.g., eligibility, procedural steps).  
+
+> •
+
+Evidence: an admissible source excerpt (documents, records, sensor logs, statutes, policies).  
+
+> •
+
+Assumption: an explicit premise not fully supported by available evidence (must be flagged for review).  
+
+> •
+
+Inference/Strategy: a justification pattern linking subclaims to top-level claims (e.g., GSN strategy nodes).  
+
+> •
+
+Uncertainty: qualifiers or bounds, including confidence and known unknowns (attached to claims, not replacing evi-dence). This design draws inspiration from assurance-case structures (claims–arguments–evidence) and argumentation models that enforce explicit warrants/assumptions. 
+
+Evidence-gated GenAI drafting. We use retrieval-augmented generation to provide the model with authoritative snippets and require that each claim node include at least one evidence pointer. RAG provides a practical grounding mechanism be-yond parametric memory alone, though it does not eliminate all unsupported generations, hence the need for validation. However, grounding alone does not guarantee procedural completeness or policy compliance, which motivates the sub-sequent validation stage. 
+
+Validation kernel (formal checks). The validator is a deter-ministic component that enforces constraints before persis-tence. Conceptually, the system follows the principle “GenAI proposes; the validator disposes”: generative models draft candidate argument fragments while deterministic checks de-termine whether these artifacts satisfy certification constraints. This aligns with “by-construction” compliance: correctness is achieved not by hoping generation behaves well, but by rejecting artifacts that violate rules. We define a predicate Valid(AG, Π), where Π is the active policy/constraint set (rules, procedures, and governance con-straints). Valid holds when all constraints below are satisfied: 1) Evidence completeness: every Claim has ≥ 1 Evidence edge (or is explicitly labeled as an Assumption requiring human approval). 2) Evidence admissibility: every Evidence node comes from an authorized source class and within allowed data-governance scope (e.g., approved statutory corpus, ap-proved record types). 3) Rule coverage: for each top-level claim class, all required subclaims/procedural steps exist (e.g., mandatory checks). 4) Non-contradiction (local): the graph contains no direct conflicts among claims under the chosen consistency rules; conflicts must be represented explicitly as rebuttals/attacks, not silently ignored. 5) Provenance completeness: every AI-generated node must be linked to i) model identifier/version, ii) prompt/template version, iii) retrieval set identifiers, and iv) human editor actions (if any) via PROV relations. Algorithm 1 operationalizes the compliance-by-construction principle underlying our approach. The goal is to transform a case description into a structured argument graph whose claims are explicitly supported by admissible evidence and validated against policy constraints before becoming part of the decision record. The procedure begins by constructing a 
+
+case knowledge graph from the input case C. This repre-sentation organizes relevant entities, events, and relationships extracted from the case data, providing a structured context for downstream reasoning and evidence retrieval. Using this graph and the active policy constraints Π, the system retrieves a set of potentially relevant evidence sources R. Retrieval is imple-mented using a retrieval-augmented generation (RAG) mecha-nism, which identifies authoritative documents or records that may support claims within the argument. Given the knowledge graph and retrieved evidence, a gen-erative model produces a candidate argument fragment. The output is constrained to a predefined schema so that it can be interpreted as a typed argument graph rather than free-form text. The generated structure is then parsed and normalized to ensure consistency with the argument representation used by the reasoning system. The resulting argument graph AG is evaluated by the vali-dation kernel. This component performs deterministic checks Algorithm 1 BuildCertifiedArgument 
+
+1: Input: Case C, policy constraints Π
+
+2: Output: Certified argument graph AG and provenance record P
+
+3: KG ← BuildCaseKnowledgeGraph( C)
+
+4: R ← RetrieveEvidence( KG, Π) ▷ RAG retrieval set 
+
+5: draf t ← GenAI DraftArgument( KG, R, Π, schema = AG )
+
+6: AG ← ParseAndNormalize( draf t )
+
+7: if Valid( AG, Π) then 
+
+8: P ← EmitProvenance( AG, KG, R, model meta, human meta )
+
+9: Persist( AG, P )
+
+10: return (AG, P )
+
+11: else 
+
+12: f eedback ← ExplainViolations( AG, Π)
+
+13: return RepairLoop( C, Π, f eedback )
+
+14: end if 
+
+to verify that the argument satisfies the policy constraints 
+
+Π. These checks ensure, for example, that each claim is linked to admissible evidence, required reasoning steps are present, and structural requirements of the argument schema are respected. If the argument graph satisfies these constraints, the system records provenance metadata describing how the artifact was produced, including the evidence sources, model invocation, and any human interaction involved in the process. The validated argument graph and its provenance record are then persisted as part of the auditable decision package. If validation fails, the system produces a structured explanation of the violated constraints and initiates a repair loop. This loop may involve re-retrieving evidence, regenerating the argument fragment, or incorporating human corrections before re-evaluating the resulting graph. The algorithm thus separates generative proposal from formal acceptance: generative mod-els produce candidate arguments, while the validation kernel determines whether they satisfy the constraints required for inclusion in the certified argument graph. IV. S YSTEM DESIGN 
+
+We describe an implementable reference system with six components, designed for certification authorities and auditors to consume outputs as formal arguments rather than opaque model text. Figure 2 presents the layered architecture imple-menting this workflow, separating data ingestion, knowledge representation, AI-assisted argument drafting, deterministic validation, and governance components. 
+
+Knowledge representation layer (Case Knowledge Graph). 
+
+The system normalizes case context into structured entities (people/orgs/assets), events, and relationships. This design supports “traceability between models and requirements” by enabling stable IDs and links between argument claims and underlying facts. 
+
+Evidence layer (Retriever + admissibility). We store retrieved evidence chunks with immutable identifiers, capturing retrieval parameters and access controls. RAG is the main ground-ing mechanism, based on well-established retrieval-augmented generation formulations. Evidence admissibility rules enforce that only permitted corpora contribute to certification artifacts, mitigating a common failure mode where LLMs cite non-authoritative or fabricated sources. 
+
+GenAI argument drafter (bounded authoring). The model is prompted to output only a typed AG structure, not free-Authoritative Sources 
+
+> Policies, Regulation,
+> Manuals
+> Case Records
+> Forms, Documents,
+> Logs
+> Evidence Store +
+> Retriever
+> Case Knowledge
+> Graph
+> Data Layer
+> Knowledge
+> Representation
+> AI and Retrieval Services
+> GenAI Argument
+> Drafter
+> Reasoning and
+> Validation
+> Validation Kernel
+> Rules, Constraints,
+> Policy Checks
+> Provenance Service
+> W3C PROV Ledger
+> Governance and Audit
+> Oversight Interface
+> Review, Approval, Edits
+
+Fig. 2. Layered architecture for compliance-by-construction argument gener-ation. 
+
+form narrative. To reduce unbounded generation, we constrain outputs via JSON schemas / typed templates and require that each claim references evidence IDs from the retrieval set. This step is inspired by the broader research trend of using LLMs to draft assurance case fragments, while acknowledging that generation must be checked. 
+
+Validation kernel (deterministic). The kernel is the system’s reliability boundary. It checks: evidence coverage, procedu-ral completeness, and provenance completeness. AI is thus embedded as an infrastructure component operating under explicit reasoning and governance constraints rather than as an opaque assistant. It also aligns with EU AI Act expectations for logging and human oversight for high-risk systems. 
+
+Provenance service (W3C PROV + decision provenance). 
+
+Provenance is emitted both for design-time artifacts (prompt templates, validator policies, model cards) and run-time events (retrieval sets, model calls, human edits, acceptance deci-sions). We align on W3C PROV to improve interoperabil-ity while meeting decision-provenance goals for exposing decision pipelines. This design also builds on the broader ecosystem of PROV-compliant ML provenance tooling as evidence that PROV is practical in modern data/ML stacks. 
+
+Oversight UI (argument consumption). Our UI prioritizes 
+
+i) argument navigation (GSN-like view); ii) inspection of evidence snippets and their source metadata; iii) explicit dis-play of assumptions and uncertainty qualifiers; and iv) human override and annotation, addressing risks of automation bias. 
+
+Privacy-preserving learning fabric. Where cross-organization model improvement is desired, the system can incorporate federated learning with secure aggregation so that raw case data never leaves local control. V. A RCHITECTURE GUARANTEES AND REPRESENTATIVE 
+
+EXAMPLES 
+
+Since the architecture enforces reasoning constraints at val-idation time, evaluation focuses on properties that can be ver-ified directly from system design and execution traces rather than predictive performance metrics. The analysis, therefore, examines whether the architecture guarantees key reasoning invariants and whether generated artifacts remain auditable and structurally correct under representative failure scenarios. The results therefore combine i) architectural guarantees that hold by construction and ii) representative examples demonstrating system behavior when generative outputs are incomplete or unsupported. 
+
+A. Evidence completeness as an enforceable invariant 
+
+The validation kernel ensures that every accepted argument graph satisfies a strict evidence completeness constraint. For-mally, if an argument graph AG is accepted under policy constraints Π, then each claim node must either reference at least one admissible evidence node or be explicitly marked as an assumption requiring human approval. This property is not probabilistic but deterministic: unsupported claims cannot enter the persisted argument record because they are rejected during validation. This constraint directly addresses a central reliability risk of generative systems: the production of plausible but un-supported reasoning. While generative models may produce statements that appear coherent, such statements are excluded from the certified argument graph unless they are grounded in retrieved evidence or explicitly identified as assumptions. As a result, hallucinated claims can occur during drafting but cannot propagate into the final decision artifact without review. 
+
+B. Audit reconstruction through provenance mapping 
+
+Each accepted argument graph is associated with a prove-nance record capturing the activities, inputs, and agents in-volved in its creation. The provenance structure follows the W3C PROV model and records relationships between ar-gument artifacts, evidence sources, model invocations, and human interventions. This representation enables reconstruction of the reasoning process that produced a decision artifact. For example, auditors can determine:  
+
+> •
+
+which evidence fragments support a particular claim,     
+
+> Goal Complies with policy Π
+> Claim Substantive criteria
+> Claim Procedural steps
+> Evidence Policy #E1 Record #E2
+> Subclaim Identity verified
+> Subclaim Rationale documented
+> Evidence Document #E7
+> Evidence Refs {E1,E2,E7 }
+> Assumption Evidence set complete
+> Fig. 3. Example argument graph fragment showing hierarchical claims, evidence links, and explicit assumptions.
+> •
+
+which model version produced a draft argument fragment, and  
+
+> •
+
+which human reviewer approved or modified the resulting argument. Such queries can be answered by traversing provenance relations linking entities, activities, and agents. This capability enables full traceability from a final decision back to the intermediate reasoning steps and data sources that produced it. 
+
+C. Procedural completeness and repair loop behavior 
+
+A common failure mode of generative systems occurs when required procedural steps are omitted from a generated explanation or reasoning structure. In workflows governed by policy constraints, certain checks must always be present, for instance verifying identity, evaluating eligibility criteria, or documenting the rationale for a decision. When the generative component produces an argument graph missing one of these required elements, the validation kernel detects the violation and rejects the artifact. The kernel then returns a structured explanation describing the missing constraint. The system uses this feedback to trigger a repair loop in which the argument fragment is regenerated, revised, or manually corrected before revalidation. This mechanism ensures that incomplete reasoning struc-tures cannot advance through the workflow. Instead, the sys-tem iteratively refines the argument until all structural and evidentiary requirements are satisfied. 
+
+D. Example argument structure 
+
+Figure 3 illustrates a simplified fragment of an argument graph generated by the system. The structure follows a hierar-chical pattern similar to assurance-case representations, where a top-level claim is decomposed into subclaims supported by evidence and reasoning strategies. The example illustrates how generative models can assist with drafting the structure and wording of argument elements, while the validation kernel ensures that all claims remain grounded in evidence and that assumptions are explicitly identified. VI. D ISCUSSION 
+
+The results highlight several design implications for inte-grating generative models into systems that require verifiable reasoning and institutional accountability. First, generative models are most effective when used as structured drafting assistants rather than autonomous reasoning agents . Language models are capable of rapidly producing candidate argument fragments, but their outputs remain probabilistic and may omit necessary reasoning steps. Placing a deterministic val-idation layer between generation and persistence ensures that such outputs are treated as proposals rather than authoritative conclusions. Second, evaluating systems of this kind requires shifting focus from predictive accuracy toward structural guar-antees . Instead of attempting to prove that generated reasoning is always correct, the evaluation demonstrates that unsupported claims cannot be accepted into the final artifact. This property is particularly important in contexts where explanations must remain verifiable and defensible. Third, provenance plays a central role in maintaining accountability. By capturing the full sequence of activities involved in producing an argument graph, including evidence retrieval, model invocation, valida-tion, and human edits, the system enables auditors to recon-struct how a decision artifact was produced. This capability goes beyond traditional model explanations by exposing the entire reasoning pipeline rather than only the model output. Finally, the approach illustrates how GenAI can be inte-grated into decision-support workflows without compromis-ing transparency. Instead of replacing structured reasoning processes, generative models accelerate the construction of formal arguments while deterministic validation preserves their integrity. Despite these advantages, several limitations remain. Encoding policies as machine-checkable constraints requires formalization decisions that may not capture all con-textual nuances. In addition, while structural validation ensures evidence linkage and procedural completeness, it does not guarantee that the underlying policy rules themselves are unbi-ased or normatively correct. Addressing these issues requires complementary governance mechanisms, including auditing processes, documentation standards, and oversight practices. Future work should therefore explore richer argumentation models capable of representing conflicting claims, uncertainty propagation, and adversarial reasoning. Such extensions would enable the system to handle contested decisions and complex policy interpretations more effectively. VII. C ONCLUSION 
+
+This paper presented a compliance-by-construction architec-ture for generating evidence-linked argument structures using GenAI and deterministic validation. The approach separates drafting from acceptance: generative models produce can-didate artifacts, while a validation kernel ensures that only those that satisfy formal constraints are added to the certified record. The system combines three core elements: a structured argument graph, a validation kernel enforcing evidence linkage and procedural completeness, and a provenance model en-abling full reconstruction of the reasoning pipeline. Together, these support integration of generative models into high-stakes workflows while maintaining auditability and traceability. The analysis demonstrates enforceable invariants that prevent un-supported claims from propagating into final artifacts. More broadly, the work shows that treating model outputs as candi-date artifacts subject to deterministic verification enables the benefits of generative models while preserving accountability in regulated environments. REFERENCES [1] R. European Union, “Regulation (eu) 2024/2847 of the european par-liament and of the council, act resilience,” Regulation (eu) , 2024. [2] S. Alon-Barkat and M. Busuioc, “Human–ai interactions in public sector decision making:“automation bias” and “selective adherence” to algorithmic advice,” Journal of Public Administration Research and Theory , vol. 33, no. 1, pp. 153–169, 2023. [3] S. S. Kang, “Algorithmic accountability in public administration: The gdpr paradox,” in Proceedings of the 2020 Conference on Fairness, Accountability, and Transparency , 2020, pp. 32–32. [4] L. Huang, W. Yu, W. Ma, W. Zhong, Z. Feng, H. Wang, Q. Chen, W. Peng, X. Feng, B. Qin et al. , “A survey on hallucination in large language models: Principles, taxonomy, challenges, and open questions,”

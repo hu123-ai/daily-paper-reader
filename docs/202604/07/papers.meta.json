@@ -1,0 +1,79 @@
+{
+  "label": "2026-04-07",
+  "date": "2026-04-07",
+  "generated_at": "2026-04-07T20:19:01",
+  "count": 5,
+  "papers": [
+    {
+      "paper_id": "202604/07/2604.04443v1-deonticbench-a-benchmark-for-reasoning-over-rules",
+      "section": "deep",
+      "title_en": "DeonticBench: A Benchmark for Reasoning over Rules",
+      "authors": "Guangyao Dou, Luis Brena, Akhil Deo, William Jurayj, Jingyu Zhang, Nils Holzenberger, Benjamin Van Durme",
+      "date": "2026-04-06",
+      "pdf": "https://arxiv.org/pdf/2604.04443v1",
+      "score": "8.0",
+      "evidence": "针对法律规则和州住房法的推理基准测试",
+      "tldr": "针对大语言模型在处理复杂法律和政策规则（义务、许可、禁止）时推理能力不足的问题，本文推出了DeonticBench基准测试。该基准包含6,232个涵盖美国税务、航空、移民和住房法律的任务，支持自然语言推理和符号计算（Prolog）两种模式。研究发现，即使是顶尖模型在处理这些高风险、长上下文的规则推理时表现依然欠佳，为研究受限规则推理提供了重要资源。",
+      "tags": "query:q6",
+      "abstract_en": "Reasoning with complex, context-specific rules remains challenging for large language models (LLMs). In legal and policy settings, this manifests as deontic reasoning: reasoning about obligations, permissions, and prohibitions under explicit rules. While many recent benchmarks emphasize short-context mathematical reasoning, fewer focus on long-context, high-stakes deontic reasoning. To address this gap, we introduce DEONTICBENCH, a benchmark of 6,232 tasks across U.S. federal taxes, airline baggage policies, U.S. immigration administration, and U.S. state housing law. These tasks can be approached in multiple ways, including direct reasoning in language or with the aid of symbolic computation. Besides free-form chain-of-thought reasoning, DEONTICBENCH enables an optional solver-based workflow in which models translate statutes and case facts into executable Prolog, leading to formal problem interpretations and an explicit program trace. We release reference Prolog programs for all instances. Across frontier LLMs and coding models, best hard-subset performance reaches only 44.4% on SARA Numeric and 46.6 macro-F1 on Housing. We further study training with supervised fine-tuning and reinforcement learning for symbolic program generation. Although training improves Prolog generation quality, current RL methods still fail to solve these tasks reliably. Overall, DEONTICBENCH provides a benchmark for studying context-grounded rule reasoning in real-world domains under both symbolic and non-symbolic settings.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/07/2604.04790v1-hukukbert-domain-specific-language-model-for-turkish-law",
+      "section": "deep",
+      "title_en": "HUKUKBERT: Domain-Specific Language Model for Turkish Law",
+      "authors": "Mehmet Utku Öztürk, Tansu Türkoğlu, Buse Buz-Yalug",
+      "date": "2026-04-06",
+      "pdf": "https://arxiv.org/pdf/2604.04790v1",
+      "score": "8.0",
+      "evidence": "针对土耳其法律和法律科技应用的领域特定语言模型",
+      "tldr": "针对土耳其法律领域缺乏专用大模型的问题，本文推出了HukukBERT。该模型基于18GB法律语料，采用混合领域自适应预训练（DAPT）策略，结合多种掩码技术和48K词表。实验表明，HukukBERT在法律完形填空和法院判决书结构分割任务上均达到SOTA水平，显著优于通用及现有领域模型，为土耳其法律NLP研究提供了强力支持。",
+      "tags": "query:q2",
+      "abstract_en": "Recent advances in natural language processing (NLP) have increasingly enabled LegalTech applications, yet existing studies specific to Turkish law have still been limited due to the scarcity of domain-specific data and models. Although extensive models like LEGAL-BERT have been developed for English legal texts, the Turkish legal domain lacks a domain-specific high-volume counterpart. In this paper, we introduce HukukBERT, the most comprehensive legal language model for Turkish, trained on a 18 GB cleaned legal corpus using a hybrid Domain-Adaptive Pre-Training (DAPT) methodology integrating Whole-Word Masking, Token Span Masking, Word Span Masking, and targeted Keyword Masking. We systematically compared our 48K WordPiece tokenizer and DAPT approach against general-purpose and existing domain-specific Turkish models. Evaluated on a novel Legal Cloze Test benchmark -- a masked legal term prediction task designed for Turkish court decisions -- HukukBERT achieves state-of-the-art performance with 84.40\\% Top-1 accuracy, substantially outperforming existing models. Furthermore, we evaluated HukukBERT in the downstream task of structural segmentation of official Turkish court decisions, where it achieves a 92.8\\% document pass rate, establishing a new state-of-the-art. We release HukukBERT to support future research in Turkish legal NLP tasks, including recognition of named entities, prediction of judgment, and classification of legal documents.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/07/2604.04020v1-unmasking-hallucinations-a-causal-graph-attention-perspective-on-factual-reliability-in-large-language-models",
+      "section": "quick",
+      "title_en": "Unmasking Hallucinations: A Causal Graph-Attention Perspective on Factual Reliability in Large Language Models",
+      "authors": "Sailesh kiran kurra, Shiek Ruksana, Vishal Borusu",
+      "date": "2026-04-05",
+      "pdf": "https://arxiv.org/pdf/2604.04020v1",
+      "score": "7.0",
+      "evidence": "减少法律推理中的幻觉",
+      "tldr": "针对大语言模型在医疗、法律等关键领域存在的幻觉问题，本文提出了一种因果图注意力网络（GCAN）框架。该方法通过构建结合自注意力权重与梯度影响分数的标记级图，利用新指标“因果贡献分数（CCS）”量化标记的事实依赖性，并引入事实锚定图重加权层动态抑制易产生幻觉的节点。实验证明，该方法显著降低了幻觉率并提升了事实准确性，增强了模型的解释性与可靠性。",
+      "tags": "query:q6",
+      "abstract_en": "This paper primarily focuses on the hallucinations caused due to AI language models(LLMs).LLMs have shown extraordinary Language understanding and generation capabilities .Still it has major a disadvantage hallucinations which give outputs which are factually incorrect ,misleading or unsupported by input data . These hallucinations cause serious problems in scenarios like medical diagnosis or legal reasoning.Through this work,we propose causal graph attention network (GCAN) framework that reduces hallucinations through interpretation of internal attention flow within a transformer architecture with the help of constructing token level graphs that combine self attention weights and gradient based influence scores.our method quantifies each tokens factual dependency using a new metric called the Causal Contribution Score (CCS). We further introduce a fact-anchored graph reweighting layer that dynamically reduces the influence of hallucination prone nodes during generation. Experiments on standard benchmarks such as TruthfulQA and HotpotQA show a 27.8 percent reduction in hallucination rate and 16.4 percent improvement in factual accuracy over baseline retrieval-augmented generation (RAG) models. This work contributes to the interpretability,robustness, and factual reliability of future LLM architectures.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/07/2604.04103v1-compliance-by-construction-argument-graphs-using-generative-ai-to-produce-evidence-linked-formal-arguments-for-certification-grade-accountability",
+      "section": "quick",
+      "title_en": "Compliance-by-Construction Argument Graphs: Using Generative AI to Produce Evidence-Linked Formal Arguments for Certification-Grade Accountability",
+      "authors": "Mahyar T. Moghaddam",
+      "date": "2026-04-05",
+      "pdf": "https://arxiv.org/pdf/2604.04103v1",
+      "score": "7.0",
+      "evidence": "生成式人工智能用于证据关联的形式化论证与合规",
+      "tldr": "针对高风险决策系统对可追溯性和合规性的高要求，本文提出一种“构建即合规”架构。该架构将生成式AI与结构化形式化论证相结合，通过检索增强生成（RAG）产生基于证据的论证片段，并利用验证内核强制执行推理约束。该方法在利用AI加速论证构建的同时，通过确定性规则确保了论证的严谨性与可审计性，为认证级问责提供了保障。",
+      "tags": "query:q6",
+      "abstract_en": "High-stakes decision systems increasingly require structured justification, traceability, and auditability to ensure accountability and regulatory compliance. Formal arguments commonly used in the certification of safety-critical systems provide a mechanism for structuring claims, reasoning, and evidence in a verifiable manner. At the same time, generative artificial intelligence systems are increasingly integrated into decision-support workflows, assisting with drafting explanations, summarizing evidence, and generating recommendations. However, current deployments often rely on language models as loosely constrained assistants, which introduces risks such as hallucinated reasoning, unsupported claims, and weak traceability. This paper proposes a compliance-by-construction architecture that integrates Generative AI (GenAI) with structured formal argument representations. The approach treats each AI-assisted step as a claim that must be supported by verifiable evidence and validated against explicit reasoning constraints before it becomes part of an official decision record. The architecture combines four components: i) a typed Argument Graph representation inspired by assurance-case methods, ii) retrieval-augmented generation (RAG) to draft argument fragments grounded in authoritative evidence, iii) a reasoning and validation kernel enforcing completeness and admissibility constraints, and iv) a provenance ledger aligned with the W3C PROV standard to support auditability. We present a system design and an evaluation strategy based on enforceable invariants and worked examples. The analysis suggests that deterministic validation rules can prevent unsupported claims from entering the decision record while allowing GenAI to accelerate argument construction.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/07/2604.04295v1-adaptive-cost-efficient-evaluation-for-reliable-patent-claim-validation",
+      "section": "quick",
+      "title_en": "Adaptive Cost-Efficient Evaluation for Reliable Patent Claim Validation",
+      "authors": "Yongmin Yoo, Qiongkai Xu, Longbing Cao",
+      "date": "2026-04-05",
+      "pdf": "https://arxiv.org/pdf/2604.04295v1",
+      "score": "7.0",
+      "evidence": "大语言模型用于基于法定标准的专利权利要求验证和法律依赖分析",
+      "tldr": "针对专利权利要求验证中轻量级模型精度不足与大语言模型成本过高的问题，本文提出ACE框架。该框架利用预测熵识别高不确定性样本，并将其路由至采用专利思维链（CoPT）协议的专家LLM进行深度验证。实验表明，ACE在保持高精度的同时显著降低了成本，并提供了包含4万条标注的大规模基准数据集ACE-40k。",
+      "tags": "query:q2",
+      "abstract_en": "Automated validation of patent claims demands zero-defect tolerance, as even a single structural flaw can render a claim legally defective. Existing evaluation paradigms suffer from a rigidity-resource dilemma: lightweight encoders struggle with nuanced legal dependencies, while exhaustive verification via Large Language Models (LLMs) is prohibitively costly. To bridge this gap, we propose ACE (Adaptive Cost-efficient Evaluation), a hybrid framework that uses predictive entropy to route only high-uncertainty claims to an expert LLM. The expert then executes a Chain of Patent Thought (CoPT) protocol grounded in 35 U.S.C. statutory standards. This design enables ACE to handle long-range legal dependencies more effectively while preserving efficiency. ACE achieves the best F1 among the evaluated methods at 94.95\\%, while reducing operational costs by 78\\% compared to standalone LLM deployments. We also construct ACE-40k, a 40,000-claim benchmark with MPEP-grounded error annotations, to facilitate further research.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
