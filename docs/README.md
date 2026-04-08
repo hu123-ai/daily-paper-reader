@@ -6,37 +6,33 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-07
-- 运行时间：2026-04-07 20:18:51 UTC
+- 最新运行日期：2026-04-08
+- 运行时间：2026-04-08 20:43:07 UTC
 - 运行状态：成功
-- 本次总论文数：5
-- 精读区：2
+- 本次总论文数：4
+- 精读区：1
 - 速读区：3
 
 ### 今日简报（AI）
-今日聚焦法律 AI 与规则推理，深度解析了 DeonticBench 基准及土耳其语专用模型 HUKUKBERT。
-核心结论指出因果图注意力能有效识别模型幻觉，且生成式 AI 已可用于构建证据链完备的合规性论证。
-建议关注法律合规与专利验证的自动化工具，通过结构化推理提升专业领域的输出可信度。
-- 详情：[/202604/07/README](/202604/07/README)
+今日聚焦 AI 在受监管采购、政务申诉及法律检索等垂直领域的深度应用与技术突破。
+重点关注神经
+- 详情：[/202604/08/README](/202604/08/README)
 
 ### 精读区论文标签
-1. [DeonticBench: A Benchmark for Reasoning over Rules](/202604/07/2604.04443v1-deonticbench-a-benchmark-for-reasoning-over-rules)  
-   标签：评分：8.0/10、query:q6
-   evidence：针对法律规则和州住房法的推理基准测试
-2. [HUKUKBERT: Domain-Specific Language Model for Turkish Law](/202604/07/2604.04790v1-hukukbert-domain-specific-language-model-for-turkish-law)  
-   标签：评分：8.0/10、query:q2
-   evidence：针对土耳其法律和法律科技应用的领域特定语言模型
+1. [From Large Language Model Predicates to Logic Tensor Networks: Neurosymbolic Offer Validation in Regulated Procurement](/202604/08/2604.05539v1-from-large-language-model-predicates-to-logic-tensor-networks-neurosymbolic-offer-validation-in-regulated-procurement)  
+   标签：评分：8.0/10、query:q5
+   evidence：受监管采购中的法律可验证决策
 
 ### 速读区论文标签
-1. [Unmasking Hallucinations: A Causal Graph-Attention Perspective on Factual Reliability in Large Language Models](/202604/07/2604.04020v1-unmasking-hallucinations-a-causal-graph-attention-perspective-on-factual-reliability-in-large-language-models)  
+1. [AI Appeals Processor: A Deep Learning Approach to Automated Classification of Citizen Appeals in Government Services](/202604/08/2604.03672v1-ai-appeals-processor-a-deep-learning-approach-to-automated-classification-of-citizen-appeals-in-government-services)  
+   标签：评分：7.0/10、query:q3
+   evidence：公民申诉的自动分类
+2. [Towards Effective In-context Cross-domain Knowledge Transfer via Domain-invariant-neurons-based Retrieval](/202604/08/2604.05383v1-towards-effective-in-context-cross-domain-knowledge-transfer-via-domain-invariant-neurons-based-retrieval)  
    标签：评分：7.0/10、query:q6
-   evidence：减少法律推理中的幻觉
-2. [Compliance-by-Construction Argument Graphs: Using Generative AI to Produce Evidence-Linked Formal Arguments for Certification-Grade Accountability](/202604/07/2604.04103v1-compliance-by-construction-argument-graphs-using-generative-ai-to-produce-evidence-linked-formal-arguments-for-certification-grade-accountability)  
-   标签：评分：7.0/10、query:q6
-   evidence：生成式人工智能用于证据关联的形式化论证与合规
-3. [Adaptive Cost-Efficient Evaluation for Reliable Patent Claim Validation](/202604/07/2604.04295v1-adaptive-cost-efficient-evaluation-for-reliable-patent-claim-validation)  
-   标签：评分：7.0/10、query:q2
-   evidence：大语言模型用于基于法定标准的专利权利要求验证和法律依赖分析
+   evidence：法律分析推理的跨领域知识迁移
+3. [JUÁ - A Benchmark for Information Retrieval in Brazilian Legal Text Collections](/202604/08/2604.06098v1-ju---a-benchmark-for-information-retrieval-in-brazilian-legal-text-collections)  
+   标签：评分：6.0/10、query:q5
+   evidence：巴西法律文本信息检索基准
 
 
 <div class="dpr-home-promo-card">

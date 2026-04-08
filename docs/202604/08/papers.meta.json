@@ -1,0 +1,65 @@
+{
+  "label": "2026-04-08",
+  "date": "2026-04-08",
+  "generated_at": "2026-04-08T20:43:18",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202604/08/2604.05539v1-from-large-language-model-predicates-to-logic-tensor-networks-neurosymbolic-offer-validation-in-regulated-procurement",
+      "section": "deep",
+      "title_en": "From Large Language Model Predicates to Logic Tensor Networks: Neurosymbolic Offer Validation in Regulated Procurement",
+      "authors": "Cedric Haufe, Frieder Stolzenburg",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.05539v1",
+      "score": "8.0",
+      "evidence": "受监管采购中的法律可验证决策",
+      "tldr": "本研究针对受监管公共采购中的报价文件验证，提出了一种结合大语言模型（LLM）与逻辑张量网络（LTN）的神经符号方法。该方法利用LLM提取信息作为谓词，并通过LTN进行逻辑聚合以做出可审计的决策。其核心贡献在于将领域知识与语义理解相结合，实现了决策过程的可解释性与法律可验证性，为受监管环境下的AI应用提供了新思路。",
+      "tags": "query:q5",
+      "abstract_en": "We present a neurosymbolic approach, i.e., combining symbolic and subsymbolic artificial intelligence, to validating offer documents in regulated public institutions. We employ a language model to extract information and then aggregate with an LTN (Logic Tensor Network) to make an auditable decision. In regulated public institutions, decisions must be made in a manner that is both factually correct and legally verifiable. Our neurosymbolic approach allows existing domain-specific knowledge to be linked to the semantic text understanding of language models. The decisions resulting from our pipeline can be justified by predicate values, rule truth values, and corresponding text passages, which enables rule checking based on a real corpus of offer documents. Our experiments on a real corpus show that the proposed pipeline achieves performance comparable to existing models, while its key advantage lies in its interpretability, modular predicate extraction, and explicit support for XAI (Explainable AI).",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/08/2604.03672v1-ai-appeals-processor-a-deep-learning-approach-to-automated-classification-of-citizen-appeals-in-government-services",
+      "section": "quick",
+      "title_en": "AI Appeals Processor: A Deep Learning Approach to Automated Classification of Citizen Appeals in Government Services",
+      "authors": "Vladimir Beskorovainyi",
+      "date": "2026-04-04",
+      "pdf": "https://arxiv.org/pdf/2604.03672v1",
+      "score": "7.0",
+      "evidence": "公民申诉的自动分类",
+      "tldr": "针对政府机构处理公民诉求时效率低、准确率差的问题，本文开发了“AI Appeals Processor”微服务系统。该系统利用深度学习技术对投诉、申请和建议进行自动分类。通过对比多种模型，研究发现 Word2Vec+LSTM 架构在 10,000 条真实数据上实现了 78% 的准确率，并将处理时间缩短了 54%，在性能与效率间达到了最佳平衡。",
+      "tags": "query:q3",
+      "abstract_en": "Government agencies worldwide face growing volumes of citizen appeals, with electronic submissions increasing significantly over recent years. Traditional manual processing averages 20 minutes per appeal with only 67% classification accuracy, creating significant bottlenecks in public service delivery. This paper presents AI Appeals Processor, a microservice-based system that integrates natural language processing and deep learning techniques for automated classification and routing of citizen appeals. We evaluate multiple approaches -- including Bag-of-Words with SVM, TF-IDF with SVM, fastText, Word2Vec with LSTM, and BERT -- on a representative dataset of 10,000 real citizen appeals across three primary categories (complaints, applications, and proposals) and seven thematic domains. Our experiments demonstrate that a Word2Vec+LSTM architecture achieves 78% classification accuracy while reducing processing time by 54%, offering an optimal balance between accuracy and computational efficiency compared to transformer-based models.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/08/2604.05383v1-towards-effective-in-context-cross-domain-knowledge-transfer-via-domain-invariant-neurons-based-retrieval",
+      "section": "quick",
+      "title_en": "Towards Effective In-context Cross-domain Knowledge Transfer via Domain-invariant-neurons-based Retrieval",
+      "authors": "Jianzhi Yan, Zhiming Li, Le Liu, Zike Yuan, Shiwei Chen, Youcheng Pan, Buzhou Tang, Yang Xiang, Danny Dongning Sun",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.05383v1",
+      "score": "7.0",
+      "evidence": "法律分析推理的跨领域知识迁移",
+      "tldr": "针对大语言模型在专业领域推理能力不足且缺乏领域内示例的问题，本文提出了一种基于领域不变神经元的检索方法（DIN-Retrieval）。该方法通过识别不同领域间共享的隐式逻辑结构，提取通用的隐藏表示，从而在推理阶段检索结构兼容的跨领域示例进行上下文学习。实验证明，该方法在数学和逻辑推理的跨领域迁移任务中显著优于现有技术，为资源匮乏领域的知识迁移提供了新思路。",
+      "tags": "query:q6",
+      "abstract_en": "Large language models (LLMs) have made notable progress in logical reasoning, yet still fall short of human-level performance. Current boosting strategies rely on expert-crafted in-domain demonstrations, limiting their applicability in expertise-scarce domains, such as specialized mathematical reasoning, formal logic, or legal analysis. In this work, we demonstrate the feasibility of leveraging cross-domain demonstrating examples to boost the LLMs' reasoning performance. Despite substantial domain differences, many reusable implicit logical structures are shared across domains. In order to effectively retrieve cross-domain examples for unseen domains under investigation, in this work, we further propose an effective retrieval method, called domain-invariant neurons-based retrieval (\\textbf{DIN-Retrieval}). Concisely, DIN-Retrieval first summarizes a hidden representation that is universal across different domains. Then, during the inference stage, we use the DIN vector to retrieve structurally compatible cross-domain demonstrations for the in-context learning. Experimental results in multiple settings for the transfer of mathematical and logical reasoning demonstrate that our method achieves an average improvement of 1.8 over the state-of-the-art methods \\footnote{Our implementation is available at https://github.com/Leon221220/DIN-Retrieval}.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/08/2604.06098v1-ju---a-benchmark-for-information-retrieval-in-brazilian-legal-text-collections",
+      "section": "quick",
+      "title_en": "JUÁ - A Benchmark for Information Retrieval in Brazilian Legal Text Collections",
+      "authors": "Jayr Pereira, Leandro Fernandes, Erick de Brito, Roberto Lotufo, Luiz Bonifacio",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.06098v1",
+      "score": "6.0",
+      "evidence": "巴西法律文本信息检索基准",
+      "tldr": "JUÁ是一个针对巴西法律文本检索的公开基准测试，旨在解决葡萄牙语法律信息检索评估不一致的问题。它涵盖了判例、法律、法规及问答等多种法律搜索场景，并提供统一的评估协议和排行榜。研究评估了词法、稠密及重排序流水线，发现领域自适应模型在特定子集表现优异，而BM25在具有强词法特征的场景中依然极具竞争力。",
+      "tags": "query:q5",
+      "abstract_en": "Legal information retrieval in Portuguese remains difficult to evaluate systematically because available datasets differ widely in document type, query style, and relevance definition. We present \\textsc{JUÁ}, a public benchmark for Brazilian legal retrieval designed to support more reproducible and comparable evaluation across heterogeneous legal collections. More broadly, \\textsc{JUÁ} is intended not only as a benchmark, but as a continuous evaluation infrastructure for Brazilian legal IR, combining shared protocols, common ranking metrics, fixed splits when applicable, and a public leaderboard. The benchmark covers jurisprudence retrieval as well as broader legislative, regulatory, and question-driven legal search. We evaluate lexical, dense, and BM25-based reranking pipelines, including a domain-adapted Qwen embedding model fine-tuned on \\textsc{JUÁ}-aligned supervision. Results show that the benchmark is sufficiently heterogeneous to distinguish retrieval paradigms and reveal substantial cross-dataset trade-offs. Domain adaptation yields its clearest gains on the supervision-aligned \\textsc{JUÁ-Juris} subset, while BM25 remains highly competitive on other collections, especially in settings with strong lexical and institutional phrasing cues. Overall, \\textsc{JUÁ} provides a practical evaluation framework for studying legal retrieval across multiple Brazilian legal domains under a common benchmark design.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
