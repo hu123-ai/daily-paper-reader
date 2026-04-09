@@ -6,33 +6,30 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-08
-- 运行时间：2026-04-08 20:43:07 UTC
+- 最新运行日期：2026-04-09
+- 运行时间：2026-04-09 20:34:59 UTC
 - 运行状态：成功
-- 本次总论文数：4
-- 精读区：1
-- 速读区：3
+- 本次总论文数：3
+- 精读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-今日聚焦 AI 在受监管采购、政务申诉及法律检索等垂直领域的深度应用与技术突破。
-重点关注神经
-- 详情：[/202604/08/README](/202604/08/README)
+1) 今日深度复盘满分神作《Luwen Technical Report》，并解析多智能体在法律辩论中的策略性应用。
+2) 核心结论指出 Luwen 技术展现了卓越性能，而多智能体系统能通过特质调节显著提升法律
+- 详情：[/202604/09/README](/202604/09/README)
 
 ### 精读区论文标签
-1. [From Large Language Model Predicates to Logic Tensor Networks: Neurosymbolic Offer Validation in Regulated Procurement](/202604/08/2604.05539v1-from-large-language-model-predicates-to-logic-tensor-networks-neurosymbolic-offer-validation-in-regulated-procurement)  
-   标签：评分：8.0/10、query:q5
-   evidence：受监管采购中的法律可验证决策
+1. [Luwen Technical Report](/202604/09/2604.06737v1-luwen-technical-report)  
+   标签：评分：10.0/10、query:q1
+   evidence：评估了使用中文法律语言模型进行法律判决预测的效果
+2. [Strategic Persuasion with Trait-Conditioned Multi-Agent Systems for Iterative Legal Argumentation](/202604/09/2604.07028v1-strategic-persuasion-with-trait-conditioned-multi-agent-systems-for-iterative-legal-argumentation)  
+   标签：评分：8.0/10、query:profile-1
+   evidence：用于法庭法律辩论的多智能体LLM模拟
 
 ### 速读区论文标签
-1. [AI Appeals Processor: A Deep Learning Approach to Automated Classification of Citizen Appeals in Government Services](/202604/08/2604.03672v1-ai-appeals-processor-a-deep-learning-approach-to-automated-classification-of-citizen-appeals-in-government-services)  
-   标签：评分：7.0/10、query:q3
-   evidence：公民申诉的自动分类
-2. [Towards Effective In-context Cross-domain Knowledge Transfer via Domain-invariant-neurons-based Retrieval](/202604/08/2604.05383v1-towards-effective-in-context-cross-domain-knowledge-transfer-via-domain-invariant-neurons-based-retrieval)  
-   标签：评分：7.0/10、query:q6
-   evidence：法律分析推理的跨领域知识迁移
-3. [JUÁ - A Benchmark for Information Retrieval in Brazilian Legal Text Collections](/202604/08/2604.06098v1-ju---a-benchmark-for-information-retrieval-in-brazilian-legal-text-collections)  
+1. [JUÁ -- A Benchmark for Information Retrieval in Brazilian Legal Text Collections](/202604/09/2604.06098v2-ju----a-benchmark-for-information-retrieval-in-brazilian-legal-text-collections)  
    标签：评分：6.0/10、query:q5
-   evidence：巴西法律文本信息检索基准
+   evidence：法律信息检索与判例基准
 
 
 <div class="dpr-home-promo-card">

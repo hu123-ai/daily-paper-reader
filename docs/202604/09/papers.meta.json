@@ -1,0 +1,51 @@
+{
+  "label": "2026-04-09",
+  "date": "2026-04-09",
+  "generated_at": "2026-04-09T20:35:09",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/09/2604.06737v1-luwen-technical-report",
+      "section": "deep",
+      "title_en": "Luwen Technical Report",
+      "authors": "Yiquan Wu, Yuhang Liu, Yifei Liu, Ang Li, Siying Zhou, Kun Kuang",
+      "date": "2026-04-08",
+      "pdf": "https://arxiv.org/pdf/2604.06737v1",
+      "score": "10.0",
+      "evidence": "评估了使用中文法律语言模型进行法律判决预测的效果",
+      "tldr": "针对法律领域术语专业、推理复杂及知识更新快等挑战，本文推出了开源中文法律大模型“律文”（Luwen）。该模型基于百川基座，通过大规模法律语料的增量预训练、精细化的指令微调以及集成法律知识库的检索增强生成技术构建。实验表明，律文在法律判决预测、司法考试等五项关键任务中表现优异，显著提升了通用模型在法律领域的专业适配能力。",
+      "tags": "query:q1",
+      "abstract_en": "Large language models have demonstrated remarkable capabilities across a wide range of natural language processing tasks, yet their application in the legal domain remains challenging due to the specialized terminology, complex reasoning requirements, and rapidly evolving legal knowledge involved. In this paper, we present Luwen, an open-source Chinese legal language model built upon the Baichuan foundation model through three key techniques: continual pre-training on a large-scale legal corpus, supervised fine-tuning with carefully curated legal instruction data, and retrieval-augmented generation integrated with a comprehensive legal knowledge base. We evaluate Luwen on five representative legal tasks spanning both prediction and generation settings, including legal judgment prediction, judicial examination, legal text summarization, law article question answering, and judicial decision reasoning. Experimental results show that Luwen outperforms several strong baselines, demonstrating the effectiveness of our approach in adapting general-purpose language models to the legal domain.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/09/2604.07028v1-strategic-persuasion-with-trait-conditioned-multi-agent-systems-for-iterative-legal-argumentation",
+      "section": "deep",
+      "title_en": "Strategic Persuasion with Trait-Conditioned Multi-Agent Systems for Iterative Legal Argumentation",
+      "authors": "Philipp D. Siedler",
+      "date": "2026-04-08",
+      "pdf": "https://arxiv.org/pdf/2604.07028v1",
+      "score": "8.0",
+      "evidence": "用于法庭法律辩论的多智能体LLM模拟",
+      "tldr": "本研究针对法律辩论等对抗性领域，提出了“战略法庭框架”，利用具有特定性格特质的大语言模型智能体进行多轮迭代辩论。通过对7000多场模拟审判的分析，研究揭示了异质化团队配置和特定特质（如定量分析和魅力）在说服力上的优势，并引入强化学习驱动的特质编排器来动态优化辩论策略，为构建具备自适应说服能力的自主智能体奠定了基础。",
+      "tags": "query:profile-1",
+      "abstract_en": "Strategic interaction in adversarial domains such as law, diplomacy, and negotiation is mediated by language, yet most game-theoretic models abstract away the mechanisms of persuasion that operate through discourse. We present the Strategic Courtroom Framework, a multi-agent simulation environment in which prosecution and defense teams composed of trait-conditioned Large Language Model (LLM) agents engage in iterative, round-based legal argumentation. Agents are instantiated using nine interpretable traits organized into four archetypes, enabling systematic control over rhetorical style and strategic orientation.   We evaluate the framework across 10 synthetic legal cases and 84 three-trait team configurations, totaling over 7{,}000 simulated trials using DeepSeek-R1 and Gemini~2.5~Pro. Our results show that heterogeneous teams with complementary traits consistently outperform homogeneous configurations, that moderate interaction depth yields more stable verdicts, and that certain traits (notably quantitative and charismatic) contribute disproportionately to persuasive success. We further introduce a reinforcement-learning-based Trait Orchestrator that dynamically generates defense traits conditioned on the case and opposing team, discovering strategies that outperform static, human-designed trait combinations.   Together, these findings demonstrate how language can be treated as a first-class strategic action space and provide a foundation for building autonomous agents capable of adaptive persuasion in multi-agent environments.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/09/2604.06098v2-ju----a-benchmark-for-information-retrieval-in-brazilian-legal-text-collections",
+      "section": "quick",
+      "title_en": "JUÁ -- A Benchmark for Information Retrieval in Brazilian Legal Text Collections",
+      "authors": "Jayr Pereira, Leandro Fernandes, Erick de Brito, Roberto Lotufo, Luiz Bonifacio",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.06098v2",
+      "score": "6.0",
+      "evidence": "法律信息检索与判例基准",
+      "tldr": "JUÁ是一个针对巴西法律文本信息检索的公开基准测试，旨在解决葡萄牙语法律检索评估不一致的问题。它涵盖了判例、立法、监管和问答等多种法律领域，并提供统一的评估基础设施。研究评估了词法、稠密检索及重排序流水线，证明了该基准在区分不同检索范式方面的有效性，为巴西法律检索研究提供了标准化框架。",
+      "tags": "query:q5",
+      "abstract_en": "Legal information retrieval in Portuguese remains difficult to evaluate systematically because available datasets differ widely in document type, query style, and relevance definition. We present JUÁ, a public benchmark for Brazilian legal retrieval designed to support more reproducible and comparable evaluation across heterogeneous legal collections. More broadly, JUÁ is intended not only as a benchmark, but as a continuous evaluation infrastructure for Brazilian legal IR, combining shared protocols, common ranking metrics, fixed splits when applicable, and a public leaderboard. The benchmark covers jurisprudence retrieval as well as broader legislative, regulatory, and question-driven legal search. We evaluate lexical, dense, and BM25-based reranking pipelines, including a domain-adapted Qwen embedding model fine-tuned on JUÁ-aligned supervision. Results show that the benchmark is sufficiently heterogeneous to distinguish retrieval paradigms and reveal substantial cross-dataset trade-offs. Domain adaptation yields its clearest gains on the supervision-aligned JUÁ-Juris subset, while BM25 remains highly competitive on other collections, especially in settings with strong lexical and institutional phrasing cues. Overall, JUÁ provides a practical evaluation framework for studying legal retrieval across multiple Brazilian legal domains under a common benchmark design.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
