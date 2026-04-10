@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-04-10 <!--dpr-date:20260410-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/10/2604.07595v1-reasoning-graphs-deterministic-agent-accuracy-through-evidence-centric-chain-of-thought-feedback" data-sidebar-item="{&quot;title&quot;: &quot;Reasoning Graphs: Deterministic Agent Accuracy through Evidence-Centric Chain-of-Thought Feedback&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.07595v1-reasoning-graphs-deterministic-agent-accuracy-through-evidence-centric-chain-of-thought-feedback&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;q6&quot;}], &quot;evidence&quot;: &quot;用于持久化证据中心思维链的结构化推理图&quot;}">Reasoning Graphs: Deterministic Agent Accuracy through Evidence-Centric Chain-of-Thought Feedback</a>
   * 2026-04-09 <!--dpr-date:20260409-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/09/2604.06737v1-luwen-technical-report" data-sidebar-item="{&quot;title&quot;: &quot;Luwen Technical Report&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.06737v1-luwen-technical-report&quot;, &quot;score&quot;: &quot;10.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;q1&quot;}], &quot;evidence&quot;: &quot;评估了使用中文法律语言模型进行法律判决预测的效果&quot;}">Luwen Technical Report</a>
