@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-04-12 <!--dpr-date:20260412-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/12/2604.06756v1-how-long-reasoning-chains-influence-llms-judgment-of-answer-factuality" data-sidebar-item="{&quot;title&quot;: &quot;How Long Reasoning Chains Influence LLMs&#x27; Judgment of Answer Factuality&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.06756v1-how-long-reasoning-chains-influence-llms-judgment-of-answer-factuality&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;profile-1&quot;}], &quot;evidence&quot;: &quot;大语言模型作为裁判以及推理链对判决准确性的影响&quot;}">How Long Reasoning Chains Influence LLMs&#x27; Judgment of Answer Factuality</a>
   * 2026-04-10 <!--dpr-date:20260410-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/10/2604.07595v1-reasoning-graphs-deterministic-agent-accuracy-through-evidence-centric-chain-of-thought-feedback" data-sidebar-item="{&quot;title&quot;: &quot;Reasoning Graphs: Deterministic Agent Accuracy through Evidence-Centric Chain-of-Thought Feedback&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.07595v1-reasoning-graphs-deterministic-agent-accuracy-through-evidence-centric-chain-of-thought-feedback&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;q6&quot;}], &quot;evidence&quot;: &quot;用于持久化证据中心思维链的结构化推理图&quot;}">Reasoning Graphs: Deterministic Agent Accuracy through Evidence-Centric Chain-of-Thought Feedback</a>
