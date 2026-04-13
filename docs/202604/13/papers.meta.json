@@ -1,0 +1,51 @@
+{
+  "label": "2026-04-13",
+  "date": "2026-04-13",
+  "generated_at": "2026-04-13T20:36:39",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/13/2604.09069v1-nyayamind--a-framework-for-transparent-legal-reasoning-and-judgment-prediction-in-the-indian-legal-system",
+      "section": "deep",
+      "title_en": "NyayaMind- A Framework for Transparent Legal Reasoning and Judgment Prediction in the Indian Legal System",
+      "authors": "Parjanya Aditya Shukla, Shubham Kumar Nigam, Debtanu Datta, Balaramamahanthi Deepak Patnaik, Noel Shallum, Pradeep Reddy Vanga, Saptarshi Ghosh, Arnab Bhattacharya",
+      "date": "2026-04-10",
+      "pdf": "https://arxiv.org/pdf/2604.09069v1",
+      "score": "10.0",
+      "evidence": "透明法律推理与判决预测框架",
+      "tldr": "NyayaMind是一个针对印度法律系统的开源框架，旨在实现透明且可扩展的法律推理与判决预测。该框架通过集成检索增强生成（RAG）和微调后的推理大模型，模拟法院的结构化决策过程。它不仅能预测判决结果，还能生成包含法律争议、辩论和理由的结构化解释，显著提升了法律辅助决策的透明度与可信度。",
+      "tags": "query:profile-1",
+      "abstract_en": "Court Judgment Prediction and Explanation (CJPE) aims to predict a judicial decision and provide a legally grounded explanation for a given case based on the facts, legal issues, arguments, cited statutes, and relevant precedents. For such systems to be practically useful in judicial or legal research settings, they must not only achieve high predictive performance but also generate transparent and structured legal reasoning that aligns with established judicial practices. In this work, we present NyayaMind, an open-source framework designed to enable transparent and scalable legal reasoning for the Indian judiciary. The proposed framework integrates retrieval, reasoning, and verification mechanisms to emulate the structured decision-making process typically followed in courts. Specifically, NyayaMind consists of two main components: a Retrieval Module and a Prediction Module. The Retrieval Module employs a RAG pipeline to identify legally relevant statutes and precedent cases from large-scale legal corpora, while the Prediction Module utilizes reasoning-oriented LLMs fine-tuned for the Indian legal domain to generate structured outputs including issues, arguments, rationale, and the final decision. Our extensive results and expert evaluation demonstrate that NyayaMind significantly improves the quality of explanation and evidence alignment compared to existing CJPE approaches, providing a promising step toward trustworthy AI-assisted legal decision support systems.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/13/2604.06737v2-wisdominterrogatory-luwen-an-open-source-legal-large-language-model-technical-report",
+      "section": "deep",
+      "title_en": "WisdomInterrogatory (LuWen): An Open-Source Legal Large Language Model Technical Report",
+      "authors": "Yiquan Wu, Yuhang Liu, Yifei Liu, Ang Li, Siying Zhou, Kun Kuang, Fei Wu",
+      "date": "2026-04-08",
+      "pdf": "https://arxiv.org/pdf/2604.06737v2",
+      "score": "9.0",
+      "evidence": "开源中文法律大模型，在五项代表性法律任务上进行评估",
+      "tldr": "针对法律领域术语专业、推理复杂及知识更新快等挑战，本文推出了开源中文法律大模型“律问”（LuWen）。该模型基于百川基础模型，通过大规模法律语料的增量预训练、精细化的指令微调以及集成法律知识库的检索增强生成（RAG）技术构建而成。在法律判决预测、司法考试等五项典型任务上的评估结果显示，LuWen 显著优于多个强基线模型，有效提升了通用大模型在法律专业领域的适应性与应用能力。",
+      "tags": "query:profile-1",
+      "abstract_en": "Large language models have demonstrated remarkable capabilities across a wide range of natural language processing tasks, yet their application in the legal domain remains challenging due to the specialized terminology, complex reasoning requirements, and rapidly evolving legal knowledge involved. In this paper, we present WisdomInterrogatory (LuWen), an open-source Chinese legal language model built upon the Baichuan foundation model through three key techniques: continual pre-training on a large-scale legal corpus, supervised fine-tuning with carefully curated legal instruction data, and retrieval-augmented generation integrated with a comprehensive legal knowledge base. We evaluate LuWen on five representative legal tasks spanning both prediction and generation settings, including legal judgment prediction, judicial examination, legal text summarization, law article question answering, and judicial decision reasoning. Experimental results show that LuWen outperforms several strong baselines, demonstrating the effectiveness of our approach in adapting general-purpose language models to the legal domain.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/13/2604.08948v1-taxpraben-a-scalable-benchmark-for-structured-evaluation-of-llms-in-chinese-real-world-tax-practice",
+      "section": "quick",
+      "title_en": "TaxPraBen: A Scalable Benchmark for Structured Evaluation of LLMs in Chinese Real-World Tax Practice",
+      "authors": "Gang Hu, Yating Chen, Haiyan Ding, Wang Gao, Jiajia Huang, Min Peng, Qianqian Xie, Kun Yu",
+      "date": "2026-04-10",
+      "pdf": "https://arxiv.org/pdf/2604.08948v1",
+      "score": "7.0",
+      "evidence": "针对受法律监管的税务领域的大模型基准测试",
+      "tldr": "针对大语言模型在专业性强、受法律监管的中国税务领域表现不足的问题，本文提出了首个专注于中国税务实务的基准测试 TaxPraBen。该基准包含10个传统任务和3个真实实务场景，涵盖7.3K个实例，并引入了可扩展的结构化评估范式。通过对19个模型的评估，揭示了闭源大参数模型及国产模型在税务领域的优势，为推动LLM在专业实务中的应用提供了重要资源。",
+      "tags": "query:q2",
+      "abstract_en": "While Large Language Models (LLMs) excel in various general domains, they exhibit notable gaps in the highly specialized, knowledge-intensive, and legally regulated Chinese tax domain. Consequently, while tax-related benchmarks are gaining attention, many focus on isolated NLP tasks, neglecting real-world practical capabilities. To address this issue, we introduce TaxPraBen, the first dedicated benchmark for Chinese taxation practice. It combines 10 traditional application tasks, along with 3 pioneering real-world scenarios: tax risk prevention, tax inspection analysis, and tax strategy planning, sourced from 14 datasets totaling 7.3K instances. TaxPraBen features a scalable structured evaluation paradigm designed through process of \"structured parsing-field alignment extraction-numerical and textual matching\", enabling end-to-end tax practice assessment while being extensible to other domains. We evaluate 19 LLMs based on Bloom's taxonomy. The results indicate significant performance disparities: all closed-source large-parameter LLMs excel, and Chinese LLMs like Qwen2.5 generally exceed multilingual LLMs, while the YaYi2 LLM, fine-tuned with some tax data, shows only limited improvement. TaxPraBen serves as a vital resource for advancing evaluations of LLMs in practical applications.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
