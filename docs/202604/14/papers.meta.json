@@ -1,0 +1,93 @@
+{
+  "label": "2026-04-14",
+  "date": "2026-04-14",
+  "generated_at": "2026-04-14T20:05:18",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202604/14/2604.11699v1-legal2logicicl-improving-generalization-in-transforming-legal-cases-to-logical-formulas-via-diverse-few-shot-learning",
+      "section": "deep",
+      "title_en": "Legal2LogicICL: Improving Generalization in Transforming Legal Cases to Logical Formulas via Diverse Few-Shot Learning",
+      "authors": "Jieying Xue, Phuong Minh Nguyen, Ha Thanh Nguyen, May Myo Zin, Ken Satoh",
+      "date": "2026-04-13",
+      "pdf": "https://arxiv.org/pdf/2604.11699v1",
+      "score": "8.0",
+      "evidence": "利用大语言模型将法律案例转化为逻辑公式进行推理",
+      "tldr": "本研究针对法律逻辑推理中高质量标注数据稀缺的问题，提出了Legal2LogicICL框架。该框架利用大语言模型的上下文学习能力，通过检索增强生成技术，在语义和法律结构层面平衡示例的多样性与相似性，并有效缓解了实体信息带来的检索偏差。此外，研究还构建了Legal2Proleg数据集。实验证明，该方法在无需额外训练的情况下，显著提升了法律案例向逻辑公式转换的准确性、稳定性和泛化能力。",
+      "tags": "query:q6",
+      "abstract_en": "This work aims to improve the generalization of logic-based legal reasoning systems by integrating recent advances in NLP with legal-domain adaptive few-shot learning techniques using LLMs. Existing logic-based legal reasoning pipelines typically rely on fine-tuned models to map natural-language legal cases into logical formulas before forwarding them to a symbolic reasoner. However, such approaches are heavily constrained by the scarcity of high-quality annotated training data. To address this limitation, we propose a novel LLM-based legal reasoning framework that enables effective in-context learning through retrieval-augmented generation. Specifically, we introduce Legal2LogicICL, a few-shot retrieval framework that balances diversity and similarity of exemplars at both the latent semantic representation level and the legal text structure level. In addition, our method explicitly accounts for legal structure by mitigating entity-induced retrieval bias in legal texts, where lengthy and highly specific entity mentions often dominate semantic representations and obscure legally meaningful reasoning patterns. Our Legal2LogicICL constructs informative and robust few-shot demonstrations, leading to accurate and stable logical rule generation without requiring additional training. In addition, we construct a new dataset, named Legal2Proleg, which is annotated with alignments between legal cases and PROLEG logical formulas to support the evaluation of legal semantic parsing. Experimental results on both open-source and proprietary LLMs demonstrate that our approach significantly improves accuracy, stability, and generalization in transforming natural-language legal case descriptions into logical representations, highlighting its effectiveness for interpretable and reliable legal reasoning. Our code is available at https://github.com/yingjie7/Legal2LogicICL.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/14/2604.10034v1-ai-achieves-a-perfect-lsat-score",
+      "section": "quick",
+      "title_en": "AI Achieves a Perfect LSAT Score",
+      "authors": "Bonmu Ku",
+      "date": "2026-04-11",
+      "pdf": "https://arxiv.org/pdf/2604.10034v1",
+      "score": "7.0",
+      "evidence": "大模型在法学院入学考试逻辑推理中的表现",
+      "tldr": "本研究记录了语言模型首次在法学院入学考试（LSAT）中获得满分。通过对八种推理模型进行受控实验，研究发现提示词和选项顺序对性能影响较小，但移除“思考阶段”会导致准确率下降达8个百分点。此外，利用官方解析通过QLoRA微调的过程奖励模型（PRM）能显著提升逻辑推理表现。该研究证明，LSAT所测试的高级认知能力已不再是人类所独有。",
+      "tags": "query:q6",
+      "abstract_en": "This paper reports the first documented instance of a language model achieving a perfect score on an officially disclosed Law School Admission Test (LSAT). Controlled experiments on eight reasoning models show that varying the prompt, shuffling answer choices, and sampling multiple responses have no meaningful effect as drivers of performance. Ablating the thinking phase that models generate before answering, however, lowers frontier accuracy by up to 8 percentage points, predominantly in logical reasoning. Distilled models produce full thinking traces in the same format yet plateau far below frontier performance. A pilot process reward model fine-tuned via QLoRA on official LSAT explanations narrows this gap through Best-of-5 selection, with gains again predominantly in logical reasoning. The gatekeeper of elite legal education since 1948, the LSAT has not merely been passed but answered without a single error by models that reason. The upper bound of the cognitive capacities it has tested is no longer exclusive to human cognition.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/14/2604.10470v1-from-query-to-counsel-structured-reasoning-with-a-multi-agent-framework-and-dataset-for-legal-consultation",
+      "section": "quick",
+      "title_en": "From Query to Counsel: Structured Reasoning with a Multi-Agent Framework and Dataset for Legal Consultation",
+      "authors": "Mingfei Lu, Yi Zhang, Mengjia Wu, Yue Feng",
+      "date": "2026-04-12",
+      "pdf": "https://arxiv.org/pdf/2604.10470v1",
+      "score": "7.0",
+      "evidence": "用于法律咨询和推理的多智能体框架和数据集",
+      "tldr": "针对法律咨询问答（Legal CQA）中数据稀缺和逻辑复杂等挑战，本文推出了包含4.3万余条真实中文法律咨询的JurisCQAD数据集，并提出了JurisMA多智能体框架。该框架通过构建法律要素图实现结构化推理，结合动态路由和法规对齐等模块，显著提升了法律咨询的准确性与专业性，在LawBench等评测中表现优于现有大模型。",
+      "tags": "query:q5",
+      "abstract_en": "Legal consultation question answering (Legal CQA) presents unique challenges compared to traditional legal QA tasks, including the scarcity of high-quality training data, complex task composition, and strong contextual dependencies. To address these, we construct JurisCQAD, a large-scale dataset of over 43,000 real-world Chinese legal queries annotated with expert-validated positive and negative responses, and design a structured task decomposition that converts each query into a legal element graph integrating entities, events, intents, and legal issues. We further propose JurisMA, a modular multi-agent framework supporting dynamic routing, statutory grounding, and stylistic optimization. Combined with the element graph, the framework enables strong context-aware reasoning, effectively capturing dependencies across legal facts, norms, and procedural logic. Trained on JurisCQAD and evaluated on a refined LawBench, our system significantly outperforms both general-purpose and legal-domain LLMs across multiple lexical and semantic metrics, demonstrating the benefits of interpretable decomposition and modular collaboration in Legal CQA.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/14/2604.10740v1-rcbsf-a-multi-agent-framework-for-automated-contract-revision-via-stackelberg-game",
+      "section": "quick",
+      "title_en": "RCBSF: A Multi-Agent Framework for Automated Contract Revision via Stackelberg Game",
+      "authors": "Shijia Xu, Yu Wang, Xiaolong Jia, Zhou Wu, Kai Liu, April Xiaowen Dong",
+      "date": "2026-04-12",
+      "pdf": "https://arxiv.org/pdf/2604.10740v1",
+      "score": "7.0",
+      "evidence": "使用大语言模型进行自动合同修订的多智能体框架",
+      "tldr": "针对大语言模型在合同修订中存在的幻觉安全和缺乏严谨约束的问题，本文提出了RCBSF框架。该框架将修订过程建模为Stackelberg博弈，通过全局指令代理（GPA）设定风险预算，引导修订代理（CRA）和验证代理（LVA）进行迭代优化。理论证明该博弈能收敛至最优均衡，实验显示其在风险解决率（RRR）上达到84.21%，显著优于现有基准并提升了Token效率。",
+      "tags": "query:q2",
+      "abstract_en": "Despite the widespread adoption of Large Language Models (LLMs) in Legal AI, their utility for automated contract revision remains impeded by hallucinated safety and a lack of rigorous behavioral constraints. To address these limitations, we propose the Risk-Constrained Bilevel Stackelberg Framework (RCBSF), which formulates revision as a non-cooperative Stackelberg game. RCBSF establishes a hierarchical Leader Follower structure where a Global Prescriptive Agent (GPA) imposes risk budgets upon a follower system constituted by a Constrained Revision Agent (CRA) and a Local Verification Agent (LVA) to iteratively optimize output. We provide theoretical guarantees that this bilevel formulation converges to an equilibrium yielding strictly superior utility over unguided configurations. Empirical validation on a unified benchmark demonstrates that RCBSF achieves state-of-the-art performance, surpassing iterative baselines with an average Risk Resolution Rate (RRR) of 84.21\\% while enhancing token efficiency. Our code is available at https://github.com/xjiacs/RCBSF .",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/14/2604.10658v1-governed-reasoning-for-institutional-ai",
+      "section": "quick",
+      "title_en": "Governed Reasoning for Institutional AI",
+      "authors": "Mamadou Seck",
+      "date": "2026-04-12",
+      "pdf": "https://arxiv.org/pdf/2604.10658v1",
+      "score": "6.0",
+      "evidence": "针对监管合规等机构决策的受控决策基座",
+      "tldr": "针对监管合规、临床分诊等制度化决策场景，现有AI智能体存在问责难和“静默错误”等问题。本文提出Cognitive Core架构，通过九种认知原语、四层治理模型及内生审计账本，将人工审核嵌入执行流程而非事后检查。实验显示，该系统在预授权申诉任务中准确率达91%，且实现了零静默错误，显著提升了制度化AI的可治理性与透明度。",
+      "tags": "query:q4",
+      "abstract_en": "Institutional decisions -- regulatory compliance, clinical triage, prior authorization appeal -- require a different AI architecture than general-purpose agents provide. Agent frameworks infer authority conversationally, reconstruct accountability from logs, and produce silent errors: incorrect determinations that execute without any human review signal. We propose Cognitive Core: a governed decision substrate built from nine typed cognitive primitives (retrieve, classify, investigate, verify, challenge, reflect, deliberate, govern, generate), a four-tier governance model where human review is a condition of execution rather than a post-hoc check, a tamper-evident SHA-256 hash-chain audit ledger endogenous to computation, and a demand-driven delegation architecture supporting both declared and autonomously reasoned epistemic sequences.   We benchmark three systems on an 11-case balanced prior authorization appeal evaluation set. Cognitive Core achieves 91% accuracy against 55% (ReAct) and 45% (Plan-and-Solve). The governance result is more significant: CC produced zero silent errors while both baselines produced 5-6. We introduce governability -- how reliably a system knows when it should not act autonomously -- as a primary evaluation axis for institutional AI alongside accuracy. The baselines are implemented as prompts, representing the realistic deployment alternative to a governed framework. A configuration-driven domain model means deploying a new institutional decision domain requires YAML configuration, not engineering capacity.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/14/2604.11141v1-reducing-hallucination-in-enterprise-ai-workflows-via-hybrid-utility-minimum-bayes-risk-humbr",
+      "section": "quick",
+      "title_en": "Reducing Hallucination in Enterprise AI Workflows via Hybrid Utility Minimum Bayes Risk (HUMBR)",
+      "authors": "Chenhao Fang, Jordi Mola, Mark Harman, Jason Nawrocki, Vaibhav Shrivastava, Yue Cheng, Jay Minesh Shah, Katayoun Zand, Mansi Tripathi, Arya Pudota, Matthew Becker, Hervé Robert, Abhishek Gulati",
+      "date": "2026-04-13",
+      "pdf": "https://arxiv.org/pdf/2604.11141v1",
+      "score": "6.0",
+      "evidence": "减少法律企业AI工作流中的幻觉",
+      "tldr": "针对法律、风险管理等高风险企业工作流中大模型的幻觉问题，本文提出了一种混合效用最小贝叶斯风险（HUMBR）框架。该方法通过结合语义嵌入相似度和词汇精确度，在无需参考答案的情况下识别模型输出的共识，从而显著降低幻觉风险。在TruthfulQA、LegalBench及Meta生产数据上的实验证明，HUMBR显著优于自一致性方法，且81%的系统建议优于人工编写的答案。",
+      "tags": "query:q2",
+      "abstract_en": "Although LLMs drive automation, it is critical to ensure immense consideration for high-stakes enterprise workflows such as those involving legal matters, risk management, and privacy compliance. For Meta, and other organizations like ours, a single hallucinated clause in such high stakes workflows risks material consequences. We show that by framing hallucination mitigation as a Minimum Bayes Risk (MBR) problem, we can dramatically reduce this risk. Specifically, we introduce a Hybrid Utility MBR (HUMBR) framework that synthesizes semantic embedding similarity with lexical precision to identify consensus without ground-truth references, for which we derive rigorous error bounds. We complement this theoretical analysis with a comprehensive empirical evaluation on widely-used public benchmark suites (TruthfulQA and LegalBench) and also real world data from Meta production deployment. The results from our empirical study show that MBR significantly outperforms standard Universal Self-Consistency. Notably, 81% of the pipeline's suggestions were preferred over human-crafted ground truth, and critical recall failures were virtually eliminated.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
