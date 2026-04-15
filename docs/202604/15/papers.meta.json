@@ -1,0 +1,65 @@
+{
+  "label": "2026-04-15",
+  "date": "2026-04-15",
+  "generated_at": "2026-04-15T20:42:35",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202604/15/2604.12308v1-contextlens-modeling-imperfect-privacy-and-safety-context-for-legal-compliance",
+      "section": "quick",
+      "title_en": "ContextLens: Modeling Imperfect Privacy and Safety Context for Legal Compliance",
+      "authors": "Haoran Li, Yulin Chen, Huihao Jing, Wenbin Hu, Tsz Ho Li, Chanhou Lou, Hong Ting Tsang, Sirui Han, Yangqiu Song",
+      "date": "2026-04-14",
+      "pdf": "https://arxiv.org/pdf/2604.12308v1",
+      "score": "7.0",
+      "evidence": "利用大语言模型进行法律合规性分析和法律领域上下文建模",
+      "tldr": "针对现实中隐私与安全合规评估面临的上下文模糊和不完整问题，本文提出 ContextLens 框架。该框架利用大语言模型将输入背景与法律领域对齐，通过回答涵盖适用性、原则和条款的精心设计问题，显式识别已知和未知合规因素。在 GDPR 和欧盟 AI 法案基准上的实验表明，ContextLens 在无需训练的情况下显著提升了合规评估准确性，并能有效识别缺失信息。",
+      "tags": "query:q5",
+      "abstract_en": "Individuals' concerns about data privacy and AI safety are highly contextualized and extend beyond sensitive patterns. Addressing these issues requires reasoning about the context to identify and mitigate potential risks. Though researchers have widely explored using large language models (LLMs) as evaluators for contextualized safety and privacy assessments, these efforts typically assume the availability of complete and clear context, whereas real-world contexts tend to be ambiguous and incomplete. In this paper, we propose ContextLens, a semi-rule-based framework that leverages LLMs to ground the input context in the legal domain and explicitly identify both known and unknown factors for legal compliance. Instead of directly assessing safety outcomes, our ContextLens instructs LLMs to answer a set of crafted questions that span over applicability, general principles and detailed provisions to assess compliance with pre-defined priorities and rules. We conduct extensive experiments on existing compliance benchmarks that cover the General Data Protection Regulation (GDPR) and the EU AI Act. The results suggest that our ContextLens can significantly improve LLMs' compliance assessment and surpass existing baselines without any training. Additionally, our ContextLens can further identify the ambiguous and missing factors.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/15/2604.12573v1-idea-an-interpretable-and-editable-decision-making-framework-for-llms-via-verbal-to-numeric-calibration",
+      "section": "quick",
+      "title_en": "IDEA: An Interpretable and Editable Decision-Making Framework for LLMs via Verbal-to-Numeric Calibration",
+      "authors": "Yanji He, Yuxin Jiang, Yiwen Wu, Bo Huang, Jiaheng Wei, Wei Wang",
+      "date": "2026-04-14",
+      "pdf": "https://arxiv.org/pdf/2604.12573v1",
+      "score": "7.0",
+      "evidence": "高风险领域的可解释决策框架",
+      "tldr": "针对大语言模型在决策中存在的概率失准、解释不忠实及专家知识难以精确整合等问题，本文提出IDEA框架。该框架通过EM算法将LLM的决策知识转化为基于语义因子的可解释参数模型，实现了语言到数值的校准。IDEA支持通过直接编辑参数进行人机协作，并在多个数据集上超越了DeepSeek R1和GPT-5.2，实现了极高的校准精度和可解释性。",
+      "tags": "query:profile-1",
+      "abstract_en": "Large Language Models are increasingly deployed for decision-making, yet their adoption in high-stakes domains remains limited by miscalibrated probabilities, unfaithful explanations, and inability to incorporate expert knowledge precisely. We propose IDEA, a framework that extracts LLM decision knowledge into an interpretable parametric model over semantically meaningful factors. Through joint learning of verbal-to-numerical mappings and decision parameters via EM, correlated sampling that preserves factor dependencies, and direct parameter editing with mathematical guarantees, IDEA produces calibrated probabilities while enabling quantitative human-AI collaboration. Experiments across five datasets show IDEA with Qwen-3-32B (78.6%) outperforms DeepSeek R1 (68.1%) and GPT-5.2 (77.9%), achieving perfect factor exclusion and exact calibration -- precision unattainable through prompting alone. The implementation is publicly available at https://github.com/leonbig/IDEA.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/15/2604.11065v1-ai-integrity-a-new-paradigm-for-verifiable-ai-governance",
+      "section": "quick",
+      "title_en": "AI Integrity: A New Paradigm for Verifiable AI Governance",
+      "authors": "Seulki Lee",
+      "date": "2026-04-13",
+      "pdf": "https://arxiv.org/pdf/2604.11065v1",
+      "score": "6.0",
+      "evidence": "法律等高风险决策的可验证人工智能治理",
+      "tldr": "针对现有AI治理范式（伦理、安全、对齐）仅关注结果而忽视推理过程的问题，本文提出“AI诚信”（AI Integrity）新范式。该范式通过定义由规范、认识、来源和数据组成的四层“权威栈”，确保AI推理路径免受污染与操纵。研究引入了PRISM评估框架和六项核心指标，旨在实现AI决策过程的可验证性与透明度，为高风险领域的AI治理提供程序化保障。",
+      "tags": "query:q4",
+      "abstract_en": "AI systems increasingly shape high-stakes decisions in healthcare, law, defense, and education, yet existing governance paradigms -- AI Ethics, AI Safety, and AI Alignment -- share a common limitation: they evaluate outcomes rather than verifying the reasoning process itself. This paper introduces AI Integrity, a concept defined as a state in which the Authority Stack of an AI system -- its layered hierarchy of values, epistemological standards, source preferences, and data selection criteria -- is protected from corruption, contamination, manipulation, and bias, and maintained in a verifiable manner. We distinguish AI Integrity from the three existing paradigms, define the Authority Stack as a 4-layer cascade model (Normative, Epistemic, Source, and Data Authority) grounded in established academic frameworks -- Schwartz Basic Human Values for normative authority, Walton argumentation schemes with GRADE/CEBM hierarchies for epistemic authority, and Source Credibility Theory for source authority -- characterize the distinction between legitimate cascading and Authority Pollution, and identify Integrity Hallucination as the central measurable threat to value consistency. We further specify the PRISM (Profile-based Reasoning Integrity Stack Measurement) framework as the operational methodology, defining six core metrics and a phased research roadmap. Unlike normative frameworks that prescribe which values are correct, AI Integrity is a procedural concept: it requires that the path from evidence to conclusion be transparent and auditable, regardless of which values a system holds.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/15/2604.12312v1-complibench-benchmarking-llm-judges-for-compliance-violation-detection-in-dialogue-systems",
+      "section": "quick",
+      "title_en": "CompliBench: Benchmarking LLM Judges for Compliance Violation Detection in Dialogue Systems",
+      "authors": "Jingbo Yang, Guanyu Yao, Bairu Hou, Xinghan Yang, Nikolai Glushnev, Iwona Bialynicka-Birula, Duo Ding, Shiyu Chang",
+      "date": "2026-04-14",
+      "pdf": "https://arxiv.org/pdf/2604.12312v1",
+      "score": "6.0",
+      "evidence": "评估大模型法官在合规违规检测中的表现",
+      "tldr": "随着LLM在企业对话系统中的广泛应用，确保其遵循合规准则至关重要。本文提出CompliBench，一个评估LLM裁判检测和定位多轮对话中违规行为能力的基准。针对数据稀缺问题，研究者开发了自动化生成管线，通过可控缺陷注入和对抗搜索生成高质量标注数据。实验显示，现有顶级模型在该任务上表现欠佳，而基于合成数据微调的小模型表现更优且泛化性强，为构建鲁棒的生成式奖励模型提供了新路径。",
+      "tags": "query:q5",
+      "abstract_en": "As Large Language Models (LLMs) are increasingly deployed as task-oriented agents in enterprise environments, ensuring their strict adherence to complex, domain-specific operational guidelines is critical. While utilizing an LLM-as-a-Judge is a promising solution for scalable evaluation, the reliability of these judges in detecting specific policy violations remains largely unexplored. This gap is primarily due to the lack of a systematic data generation method, which has been hindered by the extensive cost of fine-grained human annotation and the difficulty of synthesizing realistic agent violations. In this paper, we introduce CompliBench, a novel benchmark designed to evaluate the ability of LLM judges to detect and localize guideline violations in multi-turn dialogues. To overcome data scarcity, we develop a scalable, automated data generation pipeline that simulates user-agent interactions. Our controllable flaw injection process automatically yields precise ground-truth labels for the violated guideline and the exact conversation turn, while an adversarial search method ensures these introduced perturbations are highly challenging. Our comprehensive evaluation reveals that current state-of-the-art proprietary LLMs struggle significantly with this task. In addition, we demonstrate that a small-scale judge model fine-tuned on our synthesized data outperforms leading LLMs and generalizes well to unseen business domains, highlighting our pipeline as an effective foundation for training robust generative reward models.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
