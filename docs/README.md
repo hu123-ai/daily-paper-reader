@@ -6,35 +6,39 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-15
-- 运行时间：2026-04-15 20:42:26 UTC
+- 最新运行日期：2026-04-16
+- 运行时间：2026-04-16 19:59:08 UTC
 - 运行状态：成功
-- 本次总论文数：4
-- 精读区：0
-- 速读区：4
+- 本次总论文数：6
+- 精读区：1
+- 速读区：5
 
 ### 今日简报（AI）
-今日聚焦 AI 治理与决策优化，速读 4 篇涵盖法律合规、可解释性及可验证治理的前沿论文。
-重点推荐 IDEA 框架的决策校准技术与 ContextLens 的隐私建模，助力大模型在复杂法律环境下更透明、更安全。
-建议关注“可验证治理”新范式，探索如何将模糊的 AI 决策转化为可量化、可审计的合规流程。
-- 详情：[/202604/15/README](/202604/15/README)
+今日聚焦法律 AI 评测与智能体进化，深度解读德语法律任务协作平台 BenGER。
+重点关注司法证明中概率论
+- 详情：[/202604/16/README](/202604/16/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [BenGER: A Collaborative Web Platform for End-to-End Benchmarking of German Legal Tasks](/202604/16/2604.13583v1-benger-a-collaborative-web-platform-for-end-to-end-benchmarking-of-german-legal-tasks)  
+   标签：评分：8.0/10、query:q2
+   evidence：使用大语言模型对德国法律任务进行基准测试
 
 ### 速读区论文标签
-1. [ContextLens: Modeling Imperfect Privacy and Safety Context for Legal Compliance](/202604/15/2604.12308v1-contextlens-modeling-imperfect-privacy-and-safety-context-for-legal-compliance)  
-   标签：评分：7.0/10、query:q5
-   evidence：利用大语言模型进行法律合规性分析和法律领域上下文建模
-2. [IDEA: An Interpretable and Editable Decision-Making Framework for LLMs via Verbal-to-Numeric Calibration](/202604/15/2604.12573v1-idea-an-interpretable-and-editable-decision-making-framework-for-llms-via-verbal-to-numeric-calibration)  
-   标签：评分：7.0/10、query:profile-1
-   evidence：高风险领域的可解释决策框架
-3. [AI Integrity: A New Paradigm for Verifiable AI Governance](/202604/15/2604.11065v1-ai-integrity-a-new-paradigm-for-verifiable-ai-governance)  
+1. [Relative plausibility versus probabilism: A level-of-analysis error in juridical proof](/202604/16/2604.13539v1-relative-plausibility-versus-probabilism-a-level-of-analysis-error-in-juridical-proof)  
+   标签：评分：7.0/10、query:q6
+   evidence：司法证明和证据比较的计算层面描述
+2. [YIELD: A Large-Scale Dataset and Evaluation Framework for Information Elicitation Agents](/202604/16/2604.10968v1-yield-a-large-scale-dataset-and-evaluation-framework-for-information-elicitation-agents)  
    标签：评分：6.0/10、query:q4
-   evidence：法律等高风险决策的可验证人工智能治理
-4. [CompliBench: Benchmarking LLM Judges for Compliance Violation Detection in Dialogue Systems](/202604/15/2604.12312v1-complibench-benchmarking-llm-judges-for-compliance-violation-detection-in-dialogue-systems)  
-   标签：评分：6.0/10、query:q5
-   evidence：评估大模型法官在合规违规检测中的表现
+   evidence：司法程序中的信息引导
+3. [Transferable Expertise for Autonomous Agents via Real-World Case-Based Learning](/202604/16/2604.12717v1-transferable-expertise-for-autonomous-agents-via-real-world-case-based-learning)  
+   标签：评分：6.0/10、query:q6
+   evidence：基于案例的学习框架，从真实案例中提取知识进行结构化分析
+4. [Short Version of VERIFAI2026 Paper -- Learning Infused Formal Reasoning: Contract Synthesis, Artefact Reuse and Semantic Foundations](/202604/16/2604.12747v1-short-version-of-verifai2026-paper----learning-infused-formal-reasoning-contract-synthesis-artefact-reuse-and-semantic-foundations)  
+   标签：评分：6.0/10、query:q6
+   evidence：结合机器学习的形式化推理与合同合成
+5. [ReSS: Learning Reasoning Models for Tabular Data Prediction via Symbolic Scaffold](/202604/16/2604.13392v1-ress-learning-reasoning-models-for-tabular-data-prediction-via-symbolic-scaffold)  
+   标签：评分：6.0/10、query:q6
+   evidence：结合符号与神经推理进行特定领域预测
 
 
 <div class="dpr-home-promo-card">
