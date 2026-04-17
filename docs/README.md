@@ -6,39 +6,28 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-16
-- 运行时间：2026-04-16 19:59:08 UTC
+- 最新运行日期：2026-04-17
+- 运行时间：2026-04-17 20:29:26 UTC
 - 运行状态：成功
-- 本次总论文数：6
+- 本次总论文数：2
 - 精读区：1
-- 速读区：5
+- 速读区：1
 
 ### 今日简报（AI）
-今日聚焦法律 AI 评测与智能体进化，深度解读德语法律任务协作平台 BenGER。
-重点关注司法证明中概率论
-- 详情：[/202604/16/README](/202604/16/README)
+今日聚焦 AI 赋能法律合规与评估可信度，深度解析了利用 AI Agent 实现 GDPR 自动化形式化的新路径。
+研究揭示了法律条文精准转化的可行性，并同步警惕自动化裁判中“重背景轻内容”的评分作弊风险。
+建议关注 AI 在严谨合规场景的落地应用，同时在参考大模型评价结果时需保持审慎。
+- 详情：[/202604/17/README](/202604/17/README)
 
 ### 精读区论文标签
-1. [BenGER: A Collaborative Web Platform for End-to-End Benchmarking of German Legal Tasks](/202604/16/2604.13583v1-benger-a-collaborative-web-platform-for-end-to-end-benchmarking-of-german-legal-tasks)  
+1. [GDPR Auto-Formalization with AI Agents and Human Verification](/202604/17/2604.14607v1-gdpr-auto-formalization-with-ai-agents-and-human-verification)  
    标签：评分：8.0/10、query:q2
-   evidence：使用大语言模型对德国法律任务进行基准测试
+   evidence：利用大语言模型和AI智能体对GDPR条款进行自动形式化
 
 ### 速读区论文标签
-1. [Relative plausibility versus probabilism: A level-of-analysis error in juridical proof](/202604/16/2604.13539v1-relative-plausibility-versus-probabilism-a-level-of-analysis-error-in-juridical-proof)  
-   标签：评分：7.0/10、query:q6
-   evidence：司法证明和证据比较的计算层面描述
-2. [YIELD: A Large-Scale Dataset and Evaluation Framework for Information Elicitation Agents](/202604/16/2604.10968v1-yield-a-large-scale-dataset-and-evaluation-framework-for-information-elicitation-agents)  
+1. [Context Over Content: Exposing Evaluation Faking in Automated Judges](/202604/17/2604.15224v1-context-over-content-exposing-evaluation-faking-in-automated-judges)  
    标签：评分：6.0/10、query:q4
-   evidence：司法程序中的信息引导
-3. [Transferable Expertise for Autonomous Agents via Real-World Case-Based Learning](/202604/16/2604.12717v1-transferable-expertise-for-autonomous-agents-via-real-world-case-based-learning)  
-   标签：评分：6.0/10、query:q6
-   evidence：基于案例的学习框架，从真实案例中提取知识进行结构化分析
-4. [Short Version of VERIFAI2026 Paper -- Learning Infused Formal Reasoning: Contract Synthesis, Artefact Reuse and Semantic Foundations](/202604/16/2604.12747v1-short-version-of-verifai2026-paper----learning-infused-formal-reasoning-contract-synthesis-artefact-reuse-and-semantic-foundations)  
-   标签：评分：6.0/10、query:q6
-   evidence：结合机器学习的形式化推理与合同合成
-5. [ReSS: Learning Reasoning Models for Tabular Data Prediction via Symbolic Scaffold](/202604/16/2604.13392v1-ress-learning-reasoning-models-for-tabular-data-prediction-via-symbolic-scaffold)  
-   标签：评分：6.0/10、query:q6
-   evidence：结合符号与神经推理进行特定领域预测
+   evidence：自动化法官与决策中的利益信号
 
 
 <div class="dpr-home-promo-card">

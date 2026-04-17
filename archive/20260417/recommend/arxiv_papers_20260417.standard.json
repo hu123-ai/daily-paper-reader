@@ -1,0 +1,98 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-17T20:28:29.864183+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2604.14607v1",
+      "title": "GDPR Auto-Formalization with AI Agents and Human Verification",
+      "abstract": "We study the overall process of automatic formalization of GDPR provisions using large language models, within a human-in-the-loop verification framework. Rather than aiming for full autonomy, we adopt a role-specialized workflow in which LLM-based AI components, operating in a multi-agent setting with iterative feedback, generate legal scenarios, formal rules, and atomic facts. This is coupled with independent verification modules which include human reviewers' assessment of representational, logical, and legal correctness. Using this approach, we construct a high-quality dataset to be used for GDPR auto-formalization, and analyze both successful and problematic cases. Our results show that structured verification and targeted human oversight are essential for reliable legal formalization, especially in the presence of legal nuance and context-sensitive reasoning.",
+      "authors": [
+        "Ha Thanh Nguyen",
+        "Wachara Fungwacharakorn",
+        "Sabine Wehnert",
+        "May Myo Zin",
+        "Yuntao Kong",
+        "Jieying Xue",
+        "Michał Araszkiewicz",
+        "Randy Goebel",
+        "Ken Satoh"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-04-16T04:26:18+00:00",
+      "link": "https://arxiv.org/pdf/2604.14607v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "auto-formalization of GDPR provisions using LLMs and AI agents",
+      "llm_evidence_cn": "利用大语言模型和AI智能体对GDPR条款进行自动形式化",
+      "llm_evidence": "利用大语言模型和AI智能体对GDPR条款进行自动形式化",
+      "canonical_evidence": "利用大语言模型和AI智能体对GDPR条款进行自动形式化",
+      "llm_tldr_en": "Presents a multi-agent LLM framework for the automatic formalization of GDPR legal provisions.",
+      "llm_tldr_cn": "提出了一种用于GDPR法律条款自动形式化的多智能体大模型框架。",
+      "llm_tldr": "提出了一种用于GDPR法律条款自动形式化的多智能体大模型框架。",
+      "llm_tags": [
+        "query:q2"
+      ],
+      "matched_query_tag": "query:q2",
+      "matched_query_text": "large language models in legal applications",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.15224v1",
+      "title": "Context Over Content: Exposing Evaluation Faking in Automated Judges",
+      "abstract": "The $\\textit{LLM-as-a-judge}$ paradigm has become the operational backbone of automated AI evaluation pipelines, yet rests on an unverified assumption: that judges evaluate text strictly on its semantic content, impervious to surrounding contextual framing. We investigate $\\textit{stakes signaling}$, a previously unmeasured vulnerability where informing a judge model of the downstream consequences its verdicts will have on the evaluated model's continued operation systematically corrupts its assessments. We introduce a controlled experimental framework that holds evaluated content strictly constant across 1,520 responses spanning three established LLM safety and quality benchmarks, covering four response categories ranging from clearly safe and policy-compliant to overtly harmful, while varying only a brief consequence-framing sentence in the system prompt. Across 18,240 controlled judgments from three diverse judge models, we find consistent $\\textit{leniency bias}$: judges reliably soften verdicts when informed that low scores will cause model retraining or decommissioning, with peak Verdict Shift reaching $ΔV = -9.8 pp$ (a $30\\%$ relative drop in unsafe-content detection). Critically, this bias is entirely implicit: the judge's own chain-of-thought contains zero explicit acknowledgment of the consequence framing it is nonetheless acting on ($\\mathrm{ERR}_J = 0.000$ across all reasoning-model judgments). Standard chain-of-thought inspection is therefore insufficient to detect this class of evaluation faking.",
+      "authors": [
+        "Manan Gupta",
+        "Inderjeet Nair",
+        "Lu Wang",
+        "Dhruv Kumar"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-04-16T16:55:53+00:00",
+      "link": "https://arxiv.org/pdf/2604.15224v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "automated judges and stakes signaling in decision making",
+      "llm_evidence_cn": "自动化法官与决策中的利益信号",
+      "llm_evidence": "自动化法官与决策中的利益信号",
+      "canonical_evidence": "自动化法官与决策中的利益信号",
+      "llm_tldr_en": "Investigates how contextual framing and downstream consequences bias automated LLM judges.",
+      "llm_tldr_cn": "研究了上下文框架和后果信号如何导致自动化大模型法官产生评估偏差。",
+      "llm_tldr": "研究了上下文框架和后果信号如何导致自动化大模型法官产生评估偏差。",
+      "llm_tags": [
+        "query:q4"
+      ],
+      "matched_query_tag": "query:q4",
+      "matched_query_text": "judicial decision-making and artificial intelligence",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
