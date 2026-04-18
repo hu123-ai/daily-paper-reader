@@ -6,28 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-17
-- 运行时间：2026-04-17 20:29:26 UTC
+- 最新运行日期：2026-04-18
+- 运行时间：2026-04-18 19:42:35 UTC
 - 运行状态：成功
 - 本次总论文数：2
-- 精读区：1
-- 速读区：1
+- 精读区：0
+- 速读区：2
 
 ### 今日简报（AI）
-今日聚焦 AI 赋能法律合规与评估可信度，深度解析了利用 AI Agent 实现 GDPR 自动化形式化的新路径。
-研究揭示了法律条文精准转化的可行性，并同步警惕自动化裁判中“重背景轻内容”的评分作弊风险。
-建议关注 AI 在严谨合规场景的落地应用，同时在参考大模型评价结果时需保持审慎。
-- 详情：[/202604/17/README](/202604/17/README)
+今日聚焦检索与提示词优化，探索了面向金融医疗等垂直领域的自适应查询路由及强化学习提示词选择技术。
+重点关注分层检索框架如何提升跨行业文档处理精度，以及通过强化学习动态优化信息获取效率的新方案。
+建议关注 RAG 系统在专业领域落地的路由策略，以提升复杂文档检索的准确性。
+- 详情：[/202604/18/README](/202604/18/README)
 
 ### 精读区论文标签
-1. [GDPR Auto-Formalization with AI Agents and Human Verification](/202604/17/2604.14607v1-gdpr-auto-formalization-with-ai-agents-and-human-verification)  
-   标签：评分：8.0/10、query:q2
-   evidence：利用大语言模型和AI智能体对GDPR条款进行自动形式化
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Context Over Content: Exposing Evaluation Faking in Automated Judges](/202604/17/2604.15224v1-context-over-content-exposing-evaluation-faking-in-automated-judges)  
-   标签：评分：6.0/10、query:q4
-   evidence：自动化法官与决策中的利益信号
+1. [Adaptive Query Routing: A Tier-Based Framework for Hybrid Retrieval Across Financial, Legal, and Medical Documents](/202604/18/2604.14222v1-adaptive-query-routing-a-tier-based-framework-for-hybrid-retrieval-across-financial-legal-and-medical-documents)  
+   标签：评分：7.0/10、query:q2
+   evidence：利用大语言模型在法律文档中进行混合检索
+2. [RPS: Information Elicitation with Reinforcement Prompt Selection](/202604/18/2604.13817v1-rps-information-elicitation-with-reinforcement-prompt-selection)  
+   标签：评分：6.0/10、query:q2
+   evidence：利用强化学习在法律支持中进行信息引导
 
 
 <div class="dpr-home-promo-card">

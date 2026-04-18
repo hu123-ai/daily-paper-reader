@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-18",
+  "date": "2026-04-18",
+  "generated_at": "2026-04-18T19:42:42",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/18/2604.14222v1-adaptive-query-routing-a-tier-based-framework-for-hybrid-retrieval-across-financial-legal-and-medical-documents",
+      "section": "quick",
+      "title_en": "Adaptive Query Routing: A Tier-Based Framework for Hybrid Retrieval Across Financial, Legal, and Medical Documents",
+      "authors": "Afshan Hashmi",
+      "date": "2026-04-14",
+      "pdf": "https://arxiv.org/pdf/2604.14222v1",
+      "score": "7.0",
+      "evidence": "利用大语言模型在法律文档中进行混合检索",
+      "tldr": "本研究针对金融、法律和医疗等专业领域，对比评估了向量RAG、树状推理及新提出的自适应混合检索（AHR）三种架构。通过引入四层查询复杂度基准和GPT-4评估，发现树状推理在整体表现上最优，但在多文档合成和交叉引用等特定任务中，向量检索与AHR各具优势。研究强调了根据查询复杂度和文档结构动态选择检索策略的重要性，为构建高性能自适应检索系统提供了实证支持。",
+      "tags": "query:q2",
+      "abstract_en": "Retrieval-Augmented Generation (RAG) has become the standard paradigm for grounding Large Language Model outputs in external knowledge. Lumer et al. [1] presented the first systematic evaluation comparing vector-based agentic RAG against hierarchical node-based reasoning systems for financial document QA across 1,200 SEC filings, finding vector-based systems achieved a 68% win rate. Concurrently, the PageIndex framework [2] demonstrated 98.7% accuracy on FinanceBench through purely reasoning-based retrieval. This paper extends their work by: (i) implementing and evaluating three retrieval architectures: Vector RAG, Tree Reasoning, and the proposed Adaptive Hybrid Retrieval (AHR) across financial, legal, and medical domains; (ii) introducing a four-tier query complexity benchmark; and (iii) employing GPT-4-powered LLM-as-judge evaluation. Experiments reveal that Tree Reasoning achieves the highest overall score (0.900), but no single paradigm dominates across all tiers: Vector RAG wins on multi-document synthesis (Tier 4, score 0.900), while the Hybrid AHR achieves the best performance on cross-reference (0.850) and multi-section queries (0.929). Cross-reference recall reaches 100% for tree-based and hybrid approaches versus 91.7% for vector search, quantifying a critical capability gap. Validation on FinanceBench (150 expert-annotated questions on real SEC 10-K and 10-Q filings) confirms and strengthens these findings: Tree Reasoning scores 0.938, Hybrid AHR 0.901, and Vector RAG 0.821, with the Tree--Vector quality gap widening to 11.7 percentage points on real-world documents. These findings support the development of adaptive retrieval systems that dynamically select strategies based on query complexity and document structure. All code and data are publicly available.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/18/2604.13817v1-rps-information-elicitation-with-reinforcement-prompt-selection",
+      "section": "quick",
+      "title_en": "RPS: Information Elicitation with Reinforcement Prompt Selection",
+      "authors": "Tao Wang, Jingyao Lu, Xibo Wang, Haonan Huang, Su Yao, Zhiqiang Hu, Xingyan Chen, Enmao Diao",
+      "date": "2026-04-15",
+      "pdf": "https://arxiv.org/pdf/2604.13817v1",
+      "score": "6.0",
+      "evidence": "利用强化学习在法律支持中进行信息引导",
+      "tldr": "针对大语言模型在对话中难以引导用户提供隐藏或不完整信息的问题，本文提出了强化提示选择（RPS）框架。该框架将提示词选择建模为序列决策问题，利用轻量级强化学习策略从提示池中动态选择最有效的引导方式。通过在合成实验和新构建的法律领域基准数据集 IELegal 上的验证，RPS 显著优于静态提示基准，提升了模型在复杂对话中获取关键信息的能力。",
+      "tags": "query:q2",
+      "abstract_en": "Large language models (LLMs) have shown remarkable capabilities in dialogue generation and reasoning, yet their effectiveness in eliciting user-known but concealed information in open-ended conversations remains limited. In many interactive AI applications, such as personal assistants, tutoring systems, and legal or clinical support, users often withhold sensitive or uncertain information due to privacy concerns, ambiguity, or social hesitation. This makes it challenging for LLMs to gather complete and contextually relevant inputs. In this work, we define the problem of information elicitation in open-ended dialogue settings and propose Reinforcement Prompt Selection (RPS), a lightweight reinforcement learning framework that formulates prompt selection as a sequential decision-making problem. To analyze this problem in a controlled setting, we design a synthetic experiment, where a reinforcement learning agent outperforms a random query baseline, illustrating the potential of policy-based approaches for adaptive information elicitation. Building on this insight, RPS learns a policy over a pool of prompts to adaptively elicit concealed or incompletely expressed information from users through dialogue. We also introduce IELegal, a new benchmark dataset constructed from real legal case documents, which simulates dialogue-based information elicitation tasks aimed at uncovering case-relevant facts. In this setting, RPS outperforms static prompt baselines, demonstrating the effectiveness of adaptive prompt selection for eliciting critical information in LLM-driven dialogue systems.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
