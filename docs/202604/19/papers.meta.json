@@ -1,0 +1,23 @@
+{
+  "label": "2026-04-19",
+  "date": "2026-04-19",
+  "generated_at": "2026-04-19T20:12:13",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202604/19/2604.12459v1-operationalising-the-right-to-be-forgotten-in-llms-a-lightweight-sequential-unlearning-framework-for-privacy-aligned-deployment-in-politically-sensitive-environments",
+      "section": "quick",
+      "title_en": "Operationalising the Right to be Forgotten in LLMs: A Lightweight Sequential Unlearning Framework for Privacy-Aligned Deployment in Politically Sensitive Environments",
+      "authors": "Esen Kurt, Haithem Afli",
+      "date": "2026-04-14",
+      "pdf": "https://arxiv.org/pdf/2604.12459v1",
+      "score": "6.0",
+      "evidence": "在大模型中实施GDPR等法律原则",
+      "tldr": "针对大语言模型在政治敏感环境中面临的隐私合规挑战，本文提出一种轻量级顺序遗忘框架以落实GDPR的“被遗忘权”。该框架通过先进行正向微调以稳定通用能力，再实施层受限的负向微调来精准抑制敏感信息。在SemEval-2025基准测试中，该方法证明了其在有效擦除隐私数据的同时，能最大限度保留模型的事实准确性与语言流畅度，为敏感环境下的模型部署提供了实用方案。",
+      "tags": "query:q2",
+      "abstract_en": "Large Language Models (LLMs) are increasingly deployed in politically sensitive environments, where memorisation of personal data or confidential content raises regulatory concerns under frameworks such as the GDPR and its Right to be Forgotten. Translating such legal principles into large-scale generative systems presents significant technical challenges.   We introduce a lightweight sequential unlearning framework that explicitly separates retention and suppression objectives. The method first stabilises benign capabilities through positive fine-tuning, then applies layer-restricted negative fine-tuning to suppress designated sensitive patterns while preserving general language competence.   Experiments on the SemEval-2025 LLM Unlearning benchmark demonstrate effective behavioural suppression with minimal impact on factual accuracy and fluency. GPT-2 exhibits greater robustness than DistilGPT-2, highlighting the role of model capacity in privacy-aligned adaptation. We position sequential unlearning as a practical and reproducible mechanism for operationalising data erasure requirements in politically deployed LLMs.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
