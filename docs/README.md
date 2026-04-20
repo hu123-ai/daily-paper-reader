@@ -6,26 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-19
-- 运行时间：2026-04-19 20:12:05 UTC
+- 最新运行日期：2026-04-20
+- 运行时间：2026-04-20 20:34:20 UTC
 - 运行状态：成功
 - 本次总论文数：1
 - 精读区：0
 - 速读区：1
 
 ### 今日简报（AI）
-今日聚焦大模型隐私合规，探索如何在敏感环境下实现轻量化的“被遗忘权”。
-论文提出一种轻量级顺序遗忘框架，旨在为政治敏感等复杂部署环境提供隐私对齐的技术方案。
-建议关注模型合规性部署的开发者，深入了解这种低成本的隐私信息擦除机制。
-- 详情：[/202604/19/README](/202604/19/README)
+今日聚焦大模型在越南法律文本上的基准测试与推理能力评估。
+该研究通过大规模双维度评估，揭示了 LLM 在处理特定语种法律条文时的理解与逻辑推理表现。
+建议关注法律 AI 落地或小众语种模型优化的读者，深入了解该评估框架的构建思路。
+- 详情：[/202604/20/README](/202604/20/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Operationalising the Right to be Forgotten in LLMs: A Lightweight Sequential Unlearning Framework for Privacy-Aligned Deployment in Politically Sensitive Environments](/202604/19/2604.12459v1-operationalising-the-right-to-be-forgotten-in-llms-a-lightweight-sequential-unlearning-framework-for-privacy-aligned-deployment-in-politically-sensitive-environments)  
-   标签：评分：6.0/10、query:q2
-   evidence：在大模型中实施GDPR等法律原则
+1. [From Benchmarking to Reasoning: A Dual-Aspect, Large-Scale Evaluation of LLMs on Vietnamese Legal Text](/202604/20/2604.16270v1-from-benchmarking-to-reasoning-a-dual-aspect-large-scale-evaluation-of-llms-on-vietnamese-legal-text)  
+   标签：评分：7.0/10、query:q2
+   evidence：LLM在法律文本推理上的评估
 
 
 <div class="dpr-home-promo-card">
