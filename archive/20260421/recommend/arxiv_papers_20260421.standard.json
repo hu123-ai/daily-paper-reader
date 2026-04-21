@@ -1,0 +1,209 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-21T20:01:04.877204+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2604.17543v1",
+      "title": "PoliLegalLM: A Technical Report on a Large Language Model for Political and Legal Affairs",
+      "abstract": "Large language models (LLMs) have achieved remarkable success in general-domain tasks, yet their direct application to the legal domain remains challenging due to hallucinated legal citations, incomplete knowledge coverage, and weak structured reasoning. To address these issues, we propose PoliLegalLM, a domain-specific large language model tailored for political and legal applications. Our approach adopts a unified training framework that integrates continued pretraining, progressive supervised fine-tuning, and preference-based reinforcement learning to jointly enhance legal knowledge grounding, task alignment, and reasoning capability. We construct a large-scale, high-quality legal corpus and design a structured post-training pipeline, enabling the model to effectively learn domain-specific knowledge and adapt to diverse legal tasks. We evaluate PoliLegalLM on three representative benchmarks, including LawBench, LexEval, and a real-world dataset, PoliLegal. Experimental results demonstrate that PoliLegalLM achieves strong and consistent performance, outperforming competitive models of similar scale and remaining highly competitive with significantly larger models, while achieving the best results on real-world legal scenarios. These results highlight the effectiveness of our training paradigm and the practical value of domain-specific LLMs for real-world legal applications.",
+      "authors": [
+        "Yuting Huang",
+        "Yinghao Hu",
+        "Qian Xiao",
+        "Wenlin Zhong",
+        "Yiquan Wu",
+        "Taishi Zhou",
+        "Moke Chen",
+        "Changlong Sun",
+        "Kun Kuang",
+        "Fei Wu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-04-19T17:06:56+00:00",
+      "link": "https://arxiv.org/pdf/2604.17543v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "domain-specific LLM for political and legal applications",
+      "llm_evidence_cn": "针对政治和法律应用的领域特定大语言模型",
+      "llm_evidence": "针对政治和法律应用的领域特定大语言模型",
+      "canonical_evidence": "针对政治和法律应用的领域特定大语言模型",
+      "llm_tldr_en": "PoliLegalLM is a specialized LLM designed to enhance legal knowledge grounding and structured reasoning.",
+      "llm_tldr_cn": "PoliLegalLM是一款专门设计的LLM，旨在增强法律知识基础和结构化推理能力。",
+      "llm_tldr": "PoliLegalLM是一款专门设计的LLM，旨在增强法律知识基础和结构化推理能力。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.18041v1",
+      "title": "JudgeMeNot: Personalizing Large Language Models to Emulate Judicial Reasoning in Hebrew",
+      "abstract": "Despite significant advances in large language models, personalizing them for individual decision-makers remains an open problem. Here, we introduce a synthetic-organic supervision pipeline that transforms raw judicial decisions into instruction-tuning data, enabling parameter-efficient fine-tuning of personalized models for individual judges in low-resource settings. We compare our approach to state-of-the-art personalization techniques across three different tasks and settings. The results show that Causal Language Modeling followed by synthetically generated instruction-tuning significantly outperforms all other baselines, providing significant improvements across lexical, stylistic, and semantic similarity. Notably, our model-generated outputs are indistinguishable from the reasoning of human judges, highlighting the viability of efficient personalization, even in low-resource settings.",
+      "authors": [
+        "Itay Razumenko",
+        "Arnon Sturm",
+        "Nir Grinberg"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.CY"
+      ],
+      "published": "2026-04-20T10:05:19+00:00",
+      "link": "https://arxiv.org/pdf/2604.18041v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "emulating judicial reasoning and predicting decisions",
+      "llm_evidence_cn": "模拟司法推理并预测判决",
+      "llm_evidence": "模拟司法推理并预测判决",
+      "canonical_evidence": "模拟司法推理并预测判决",
+      "llm_tldr_en": "Introduces a pipeline to fine-tune LLMs to emulate individual judicial reasoning and predict court decisions.",
+      "llm_tldr_cn": "引入一种微调流水线，使大语言模型能够模拟个人司法推理并预测法院判决。",
+      "llm_tldr": "引入一种微调流水线，使大语言模型能够模拟个人司法推理并预测法院判决。",
+      "llm_tags": [
+        "query:q7"
+      ],
+      "matched_query_tag": "query:q7",
+      "matched_query_text": "large language models for predicting legal judgments",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.17153v1",
+      "title": "From Legal Text to Executable Decision Models: Evaluating Structured Representations for Legal Decision Model Generation",
+      "abstract": "Transforming legal text into executable decision logic is a longstanding challenge in legal informatics. With the rise of LLMs, this task has gained renewed interest, but remains challenging due to requiring extensive manual coding and evaluation. We use a unique real-world dataset that pairs production-grade decision models with legal text from the Dutch Environment and Planning Act. These models power the Omgevingsloket government platform, where citizens check permit requirements for environmental activities. We study whether intermediate structured representations can improve LLM-based generation of executable decision models from legal text. We compare four input conditions: raw legal text, text enriched with semantic role labels, text enriched with input and output constraints, and text enriched with both. We evaluate along two dimensions: structural evaluation, through similarity to gold decision models with graph kernels and graphs' descriptive statistics, and outcome evaluation, through functional equivalence by executing models on pre-configured test scenarios. Our findings show that I/O constraints provide the dominant improvement (+37-54% similarity over baseline), while semantic role labels show modest improvements. Outcome evaluation shows that generated models match the gold standard on 51-53% of test scenarios, even though generated models are typically smaller and simpler. We find LLMs eliminate redundant pass-through logic that comprises up to 45-55% of nodes. Importantly, structural similarity and outcome equivalence are complementary: structural similarity does not guarantee outcome equivalence, and vice versa. To facilitate reproducibility, we publicly release our dataset of 95 production decision models with associated legal text and all experimental code.",
+      "authors": [
+        "David Graus"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-04-18T21:36:48+00:00",
+      "link": "https://arxiv.org/pdf/2604.17153v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "generating executable decision models from legal text",
+      "llm_evidence_cn": "从法律文本生成可执行的决策模型",
+      "llm_evidence": "从法律文本生成可执行的决策模型",
+      "canonical_evidence": "从法律文本生成可执行的决策模型",
+      "llm_tldr_en": "This paper evaluates using LLMs to transform legal text into structured, executable decision logic models.",
+      "llm_tldr_cn": "本文评估了使用LLM将法律文本转化为结构化、可执行的决策逻辑模型的方法。",
+      "llm_tldr": "本文评估了使用LLM将法律文本转化为结构化、可执行的决策逻辑模型的方法。",
+      "llm_tags": [
+        "query:q4"
+      ],
+      "matched_query_tag": "query:q4",
+      "matched_query_text": "judicial decision-making and artificial intelligence",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.17366v1",
+      "title": "ArgBench: Benchmarking LLMs on Computational Argumentation Tasks",
+      "abstract": "Argumentation skills are an essential toolkit for large language models (LLMs). These skills are crucial in various use cases, including self-reflection, debating collaboratively for diverse answers, and countering hate speech. In this paper, we create the first benchmark for a standardized evaluation of LLM-based approaches to computational argumentation, encompassing 33 datasets from previous work in unified form. Using the benchmark, we evaluate the generalizability of five LLM families across 46 computational argumentation tasks that cover mining arguments, assessing perspectives, assessing argument quality, reasoning about arguments, and generating arguments. On the benchmark, we conduct an extensive systematic analysis of the contribution of few-shot examples, reasoning steps, model size, and training skills to the performance of LLMs on the computational argumentation tasks in the benchmark.",
+      "authors": [
+        "Yamen Ajjour",
+        "Carlotta Quensel",
+        "Nedim Lipka",
+        "Henning Wachsmuth"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-04-19T10:23:41+00:00",
+      "link": "https://arxiv.org/pdf/2604.17366v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "benchmarking LLMs on computational argumentation tasks",
+      "llm_evidence_cn": "大语言模型在计算论辩任务上的基准测试",
+      "llm_evidence": "大语言模型在计算论辩任务上的基准测试",
+      "canonical_evidence": "大语言模型在计算论辩任务上的基准测试",
+      "llm_tldr_en": "Evaluates LLMs on computational argumentation, a core component of legal reasoning and judgment prediction.",
+      "llm_tldr_cn": "评估大语言模型在计算论辩方面的能力，这是法律推理和判决预测的核心组成部分。",
+      "llm_tldr": "评估大语言模型在计算论辩方面的能力，这是法律推理和判决预测的核心组成部分。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "computational models of legal reasoning",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.17674v1",
+      "title": "Towards Intelligent Legal Document Analysis: CNN-Driven Classification of Case Law Texts",
+      "abstract": "Legal practitioners and judicial institutions face an ever-growing volume of case-law documents characterised by formalised language, lengthy sentence structures, and highly specialised terminology, making manual triage both time-consuming and error-prone. This work presents a lightweight yet high-accuracy framework for citation-treatment classification that pairs lemmatisation-based preprocessing with subword-aware FastText embeddings and a multi-kernel one-dimensional Convolutional Neural Network (CNN). Evaluated on a publicly available corpus of 25,000 annotated legal documents with a 75/25 training-test partition, the proposed system achieves 97.26% classification accuracy and a macro F1-score of 96.82%, surpassing established baselines including fine-tuned BERT, Long Short-Term Memory (LSTM) with FastText, CNN with random embeddings, and a Term Frequency-Inverse Document Frequency (TF-IDF) k-Nearest Neighbour (KNN) classifier. The model also attains the highest Area Under the Receiver Operating Characteristic (AUC-ROC) curve of 97.83% among all compared systems while operating with only 5.1 million parameters and an inference latency of 0.31 ms per document - more than 13 times faster than BERT. Ablation experiments confirm the individual contribution of each pipeline component, and the confusion matrix reveals that residual errors are confined to semantically adjacent citation categories. These findings indicate that carefully designed convolutional architectures represent a scalable, resource-efficient alternative to heavyweight transformers for intelligent legal document analysis.",
+      "authors": [
+        "Moinul Hossain",
+        "Sourav Rabi Das",
+        "Zikrul Shariar Ayon",
+        "Sadia Afrin Promi",
+        "Ahnaf Atef Choudhury",
+        "Shakila Rahman",
+        "Jia Uddin"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-04-20T00:14:11+00:00",
+      "link": "https://arxiv.org/pdf/2604.17674v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "intelligent legal document analysis and classification",
+      "llm_evidence_cn": "智能法律文档分析与分类",
+      "llm_evidence": "智能法律文档分析与分类",
+      "canonical_evidence": "智能法律文档分析与分类",
+      "llm_tldr_en": "Develops a CNN-driven framework for high-accuracy classification of case law texts and citations.",
+      "llm_tldr_cn": "开发了一个基于CNN的框架，用于对判例法文本和引用进行高精度分类。",
+      "llm_tldr": "开发了一个基于CNN的框架，用于对判例法文本和引用进行高精度分类。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "artificial intelligence for legal analysis",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
