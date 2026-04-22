@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-22",
+  "date": "2026-04-22",
+  "generated_at": "2026-04-22T20:29:14",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/22/2604.18878v1-legalbench-br-a-benchmark-for-evaluating-large-language-models-on-brazilian-legal-decision-classification",
+      "section": "deep",
+      "title_en": "LegalBench-BR: A Benchmark for Evaluating Large Language Models on Brazilian Legal Decision Classification",
+      "authors": "Pedro Barbosa de Carvalho Neto",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.18878v1",
+      "score": "10.0",
+      "evidence": "评估大模型在巴西法律判决分类上的基准",
+      "tldr": "本研究推出了LegalBench-BR，这是首个针对巴西法律文本分类的公开基准测试集。该数据集包含3,105份来自圣卡塔琳娜州法院的上诉程序记录，涵盖五个法律领域。研究对比了微调后的BERTimbau-LoRA模型与GPT-4o mini等通用大模型，发现通用模型在特定法律类别上表现极差且存在分类偏见。结果表明，通过LoRA进行领域适配微调能显著提升性能，且成本极低，为葡萄牙语法律NLP研究提供了重要资源。",
+      "tags": "query:profile-1",
+      "abstract_en": "We introduce LegalBench-BR, the first public benchmark for evaluating language models on Brazilian legal text classification. The dataset comprises 3,105 appellate proceedings from the Santa Catarina State Court (TJSC), collected via the DataJud API (CNJ) and annotated across five legal areas through LLM-assisted labeling with heuristic validation. On a class-balanced test set, BERTimbau-LoRA, updating only 0.3% of model parameters, achieves 87.6% accuracy and 0.87 macro-F1 (+22pp over Claude 3.5 Haiku, +28pp over GPT-4o mini). The gap is most striking on administrativo (administrative law): GPT-4o mini scores F1 = 0.00 and Claude 3.5 Haiku scores F1 = 0.08 on this class, while the fine-tuned model reaches F1 = 0.91. Both commercial LLMs exhibit a systematic bias toward civel (civil law), absorbing ambiguous classes rather than discriminating them, a failure mode that domain-adapted fine-tuning eliminates. These results demonstrate that general-purpose LLMs cannot substitute for domain-adapted models in Brazilian legal classification, even when the task is a simple 5-class problem, and that LoRA fine-tuning on a consumer GPU closes the gap at zero marginal inference cost. We release the full dataset, model, and pipeline to enable reproducible research in Portuguese legal NLP.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/22/2604.19464v1-leprec-reasoning-as-classification-over-structured-factors-for-assessing-relevance-of-legal-issues",
+      "section": "deep",
+      "title_en": "LePREC: Reasoning as Classification over Structured Factors for Assessing Relevance of Legal Issues",
+      "authors": "Fanyu Wang, Xiaoxi Kang, Paul Burgess, Aashish Srivastava, Chetan Arora, Adnan Trakic, Lay-Ki Soon, Md Khalid Hossain, Lizhen Qu",
+      "date": "2026-04-21",
+      "pdf": "https://arxiv.org/pdf/2604.19464v1",
+      "score": "8.0",
+      "evidence": "利用大模型从法院案例中识别法律问题",
+      "tldr": "针对全球法律资源匮乏及大模型在法律问题识别中准确率不足（如GPT-4o仅62%）的挑战，本文提出LePREC框架。该框架结合神经生成与符号推理，先利用LLM将法律描述转化为结构化问答因子，再通过稀疏线性模型进行统计分类。实验表明，LePREC在马来西亚合同法数据集上比GPT-4o和Claude提升了30-40%，实现了高精度、可解释且数据高效的法律推理。",
+      "tags": "query:q5",
+      "abstract_en": "More than half of the global population struggles to meet their civil justice needs due to limited legal resources. While Large Language Models (LLMs) have demonstrated impressive reasoning capabilities, significant challenges remain even at the foundational step of legal issue identification. To investigate LLMs' capabilities in this task, we constructed a dataset from 769 real-world Malaysian Contract Act court cases, using GPT-4o to extract facts and generate candidate legal issues, annotated by senior legal experts, which reveals a critical limitation: while LLMs generate diverse issue candidates, their precision remains inadequate (GPT-4o achieves only 62%). To address this gap, we propose LePREC (Legal Professional-inspired Reasoning Elicitation and Classification), a neuro-symbolic framework combining neural generation with structured statistical reasoning. LePREC consists of: (1) a neuro component leverages LLMs to transform legal descriptions into question-answer pairs representing diverse analytical factors, and (2) a symbolic component applies sparse linear models over these discrete features, learning explicit algebraic weights that identify the most informative reasoning factors. Unlike end-to-end neural approaches, LePREC achieves interpretability through transparent feature weighting while maintaining data efficiency through correlation-based statistical classification. Experiments show a 30-40% improvement over advanced LLM baselines, including GPT-4o and Claude, confirming that correlation-based factor-issue analysis offers a more data-efficient solution for relevance decisions.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

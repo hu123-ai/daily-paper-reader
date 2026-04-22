@@ -6,35 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-21
-- 运行时间：2026-04-21 20:02:16 UTC
+- 最新运行日期：2026-04-22
+- 运行时间：2026-04-22 20:29:04 UTC
 - 运行状态：成功
-- 本次总论文数：5
-- 精读区：3
-- 速读区：2
+- 本次总论文数：2
+- 精读区：2
+- 速读区：0
 
 ### 今日简报（AI）
-1) 今日聚焦政法大模型前沿，深度解析 PoliLegalLM 技术报告与希伯来语司法推理个性化模拟。
-- 详情：[/202604/21/README](/202604/21/README)
+今日深挖法律 AI 前沿，重点解析了满分力作 LegalBench-BR 巴西法律基准与 LePREC 结构化推理框架。
+研究揭示了 LLM 在巴西司法决策分类中的实战表现，并提出将法律相关性判断转化为结构化因子推理的新路径。
+推荐关注法律垂直领域评测集的构建思路，探索如何通过结构化推理提升模型处理复杂法务逻辑的精度。
+- 详情：[/202604/22/README](/202604/22/README)
 
 ### 精读区论文标签
-1. [PoliLegalLM: A Technical Report on a Large Language Model for Political and Legal Affairs](/202604/21/2604.17543v1-polilegallm-a-technical-report-on-a-large-language-model-for-political-and-legal-affairs)  
+1. [LegalBench-BR: A Benchmark for Evaluating Large Language Models on Brazilian Legal Decision Classification](/202604/22/2604.18878v1-legalbench-br-a-benchmark-for-evaluating-large-language-models-on-brazilian-legal-decision-classification)  
    标签：评分：10.0/10、query:profile-1
-   evidence：针对政治和法律应用的领域特定大语言模型
-2. [JudgeMeNot: Personalizing Large Language Models to Emulate Judicial Reasoning in Hebrew](/202604/21/2604.18041v1-judgemenot-personalizing-large-language-models-to-emulate-judicial-reasoning-in-hebrew)  
-   标签：评分：10.0/10、query:q7
-   evidence：模拟司法推理并预测判决
-3. [From Legal Text to Executable Decision Models: Evaluating Structured Representations for Legal Decision Model Generation](/202604/21/2604.17153v1-from-legal-text-to-executable-decision-models-evaluating-structured-representations-for-legal-decision-model-generation)  
-   标签：评分：9.0/10、query:q4
-   evidence：从法律文本生成可执行的决策模型
+   evidence：评估大模型在巴西法律判决分类上的基准
+2. [LePREC: Reasoning as Classification over Structured Factors for Assessing Relevance of Legal Issues](/202604/22/2604.19464v1-leprec-reasoning-as-classification-over-structured-factors-for-assessing-relevance-of-legal-issues)  
+   标签：评分：8.0/10、query:q5
+   evidence：利用大模型从法院案例中识别法律问题
 
 ### 速读区论文标签
-1. [ArgBench: Benchmarking LLMs on Computational Argumentation Tasks](/202604/21/2604.17366v1-argbench-benchmarking-llms-on-computational-argumentation-tasks)  
-   标签：评分：6.0/10、query:q6
-   evidence：大语言模型在计算论辩任务上的基准测试
-2. [Towards Intelligent Legal Document Analysis: CNN-Driven Classification of Case Law Texts](/202604/21/2604.17674v1-towards-intelligent-legal-document-analysis-cnn-driven-classification-of-case-law-texts)  
-   标签：评分：6.0/10、query:q5
-   evidence：智能法律文档分析与分类
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">

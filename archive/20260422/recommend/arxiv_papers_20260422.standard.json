@@ -1,0 +1,92 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-22T20:28:29.138208+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2604.18878v1",
+      "title": "LegalBench-BR: A Benchmark for Evaluating Large Language Models on Brazilian Legal Decision Classification",
+      "abstract": "We introduce LegalBench-BR, the first public benchmark for evaluating language models on Brazilian legal text classification. The dataset comprises 3,105 appellate proceedings from the Santa Catarina State Court (TJSC), collected via the DataJud API (CNJ) and annotated across five legal areas through LLM-assisted labeling with heuristic validation. On a class-balanced test set, BERTimbau-LoRA, updating only 0.3% of model parameters, achieves 87.6% accuracy and 0.87 macro-F1 (+22pp over Claude 3.5 Haiku, +28pp over GPT-4o mini). The gap is most striking on administrativo (administrative law): GPT-4o mini scores F1 = 0.00 and Claude 3.5 Haiku scores F1 = 0.08 on this class, while the fine-tuned model reaches F1 = 0.91. Both commercial LLMs exhibit a systematic bias toward civel (civil law), absorbing ambiguous classes rather than discriminating them, a failure mode that domain-adapted fine-tuning eliminates. These results demonstrate that general-purpose LLMs cannot substitute for domain-adapted models in Brazilian legal classification, even when the task is a simple 5-class problem, and that LoRA fine-tuning on a consumer GPU closes the gap at zero marginal inference cost. We release the full dataset, model, and pipeline to enable reproducible research in Portuguese legal NLP.",
+      "authors": [
+        "Pedro Barbosa de Carvalho Neto"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-04-20T22:00:02+00:00",
+      "link": "https://arxiv.org/pdf/2604.18878v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "benchmark for evaluating LLMs on Brazilian legal decision classification",
+      "llm_evidence_cn": "评估大模型在巴西法律判决分类上的基准",
+      "llm_evidence": "评估大模型在巴西法律判决分类上的基准",
+      "canonical_evidence": "评估大模型在巴西法律判决分类上的基准",
+      "llm_tldr_en": "Introduces LegalBench-BR for evaluating LLMs on appellate proceeding classification in Brazil.",
+      "llm_tldr_cn": "推出了LegalBench-BR，用于评估大模型在巴西上诉案件分类中的表现。",
+      "llm_tldr": "推出了LegalBench-BR，用于评估大模型在巴西上诉案件分类中的表现。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.19464v1",
+      "title": "LePREC: Reasoning as Classification over Structured Factors for Assessing Relevance of Legal Issues",
+      "abstract": "More than half of the global population struggles to meet their civil justice needs due to limited legal resources. While Large Language Models (LLMs) have demonstrated impressive reasoning capabilities, significant challenges remain even at the foundational step of legal issue identification. To investigate LLMs' capabilities in this task, we constructed a dataset from 769 real-world Malaysian Contract Act court cases, using GPT-4o to extract facts and generate candidate legal issues, annotated by senior legal experts, which reveals a critical limitation: while LLMs generate diverse issue candidates, their precision remains inadequate (GPT-4o achieves only 62%). To address this gap, we propose LePREC (Legal Professional-inspired Reasoning Elicitation and Classification), a neuro-symbolic framework combining neural generation with structured statistical reasoning. LePREC consists of: (1) a neuro component leverages LLMs to transform legal descriptions into question-answer pairs representing diverse analytical factors, and (2) a symbolic component applies sparse linear models over these discrete features, learning explicit algebraic weights that identify the most informative reasoning factors. Unlike end-to-end neural approaches, LePREC achieves interpretability through transparent feature weighting while maintaining data efficiency through correlation-based statistical classification. Experiments show a 30-40% improvement over advanced LLM baselines, including GPT-4o and Claude, confirming that correlation-based factor-issue analysis offers a more data-efficient solution for relevance decisions.",
+      "authors": [
+        "Fanyu Wang",
+        "Xiaoxi Kang",
+        "Paul Burgess",
+        "Aashish Srivastava",
+        "Chetan Arora",
+        "Adnan Trakic",
+        "Lay-Ki Soon",
+        "Md Khalid Hossain",
+        "Lizhen Qu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-04-21T13:42:24+00:00",
+      "link": "https://arxiv.org/pdf/2604.19464v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "legal issue identification from court cases using LLMs",
+      "llm_evidence_cn": "利用大模型从法院案例中识别法律问题",
+      "llm_evidence": "利用大模型从法院案例中识别法律问题",
+      "canonical_evidence": "利用大模型从法院案例中识别法律问题",
+      "llm_tldr_en": "Proposes LePREC to improve LLM precision in identifying legal issues from real-world court cases.",
+      "llm_tldr_cn": "提出LePREC框架，旨在提高大语言模型在识别真实法院案例法律问题时的准确性。",
+      "llm_tldr": "提出LePREC框架，旨在提高大语言模型在识别真实法院案例法律问题时的准确性。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "artificial intelligence for legal analysis",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}
