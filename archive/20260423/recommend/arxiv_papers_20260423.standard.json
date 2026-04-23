@@ -1,0 +1,125 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-23T20:19:49.118168+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2604.19895v1",
+      "title": "Learning When Not to Decide: A Framework for Overcoming Factual Presumptuousness in AI Adjudication",
+      "abstract": "A well-known limitation of AI systems is presumptuousness: the tendency of AI systems to provide confident answers when information may be lacking. This challenge is particularly acute in legal applications, where a core task for attorneys, judges, and administrators is to determine whether evidence is sufficient to reach a conclusion. We study this problem in the important setting of unemployment insurance adjudication, which has seen rapid integration of AI systems and where the question of additional fact-finding poses the most significant bottleneck for a system that affects millions of applicants annually. First, through a collaboration with the Colorado Department of Labor and Employment, we secure rare access to official training materials and guidance to design a novel benchmark that systematically varies in information completeness. Second, we evaluate four leading AI platforms and show that standard RAG-based approaches achieve an average of only 15% accuracy when information is insufficient. Third, advanced prompting methods improve accuracy on inconclusive cases but over-correct, withholding decisions even on clear cases. Fourth, we introduce a structured framework requiring explicit identification of missing information before any determination (SPEC, Structured Prompting for Evidence Checklists). SPEC achieves 89% overall accuracy, while appropriately deferring when evidence is insufficient -- demonstrating that presumptuousness in legal AI is systematic but addressable, and that doing so is a necessary step towards systems that reliably support, rather than supplant, human judgment wherever decisions must await sufficient evidence.",
+      "authors": [
+        "Mohamed Afane",
+        "Emily Robitschek",
+        "Derek Ouyang",
+        "Daniel E. Ho"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-04-21T18:17:08+00:00",
+      "link": "https://arxiv.org/pdf/2604.19895v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "AI adjudication in legal applications and judicial decision-making",
+      "llm_evidence_cn": "法律应用和司法决策中的AI裁决",
+      "llm_evidence": "法律应用和司法决策中的AI裁决",
+      "canonical_evidence": "法律应用和司法决策中的AI裁决",
+      "llm_tldr_en": "Studies factual presumptuousness in AI adjudication for legal settings like unemployment insurance.",
+      "llm_tldr_cn": "研究了法律裁决场景下AI系统的过度自信问题，旨在提高司法决策的准确性。",
+      "llm_tldr": "研究了法律裁决场景下AI系统的过度自信问题，旨在提高司法决策的准确性。",
+      "llm_tags": [
+        "query:q4"
+      ],
+      "matched_query_tag": "query:q4",
+      "matched_query_text": "judicial decision-making and artificial intelligence",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.13583v2",
+      "title": "BenGER: A Collaborative Web Platform for End-to-End Benchmarking of German Legal Tasks",
+      "abstract": "Evaluating large language models (LLMs) for legal reasoning requires workflows that span task design, expert annotation, model execution, and metric-based evaluation. In practice, these steps are split across platforms and scripts, limiting transparency, reproducibility, and participation by non-technical legal experts. We present the BenGER (Benchmark for German Law) framework, an open-source web platform that integrates task creation, collaborative annotation, configurable LLM runs, and evaluation with lexical, semantic, factual, and judge-based metrics. BenGER supports multi-organization projects with tenant isolation and role-based access control, and can optionally provide formative, reference-grounded feedback to annotators. We will demonstrate a live deployment showing end-to-end benchmark creation and analysis.",
+      "authors": [
+        "Sebastian Nagl",
+        "Matthias Grabmair"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-04-15T07:43:01+00:00",
+      "link": "https://arxiv.org/pdf/2604.13583v2",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "benchmarking LLMs for legal reasoning and German legal tasks",
+      "llm_evidence_cn": "针对法律推理和德国法律任务的大语言模型基准测试",
+      "llm_evidence": "针对法律推理和德国法律任务的大语言模型基准测试",
+      "canonical_evidence": "针对法律推理和德国法律任务的大语言模型基准测试",
+      "llm_tldr_en": "A platform for benchmarking LLMs on legal tasks, improving transparency and expert collaboration.",
+      "llm_tldr_cn": "一个用于法律任务LLM基准测试的平台，提高了透明度和专家协作。",
+      "llm_tldr": "一个用于法律任务LLM基准测试的平台，提高了透明度和专家协作。",
+      "llm_tags": [
+        "query:q2"
+      ],
+      "matched_query_tag": "query:q2",
+      "matched_query_text": "large language models in legal applications",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.20726v1",
+      "title": "Exploiting LLM-as-a-Judge Disposition on Free Text Legal QA via Prompt Optimization",
+      "abstract": "This work explores the role of prompt design and judge selection in LLM-as-a-Judge evaluations of free text legal question answering. We examine whether automatic task prompt optimization improves over human-centered design, whether optimization effectiveness varies by judge feedback style, and whether optimized prompts transfer across judges. We systematically address these questions on the LEXam benchmark by optimizing task prompts using the ProTeGi method with feedback from two judges (Qwen3-32B, DeepSeek-V3) across four task models, and then testing cross-judge transfer. Automatic optimization consistently outperforms the baseline, with lenient judge feedback yielding higher and more consistent gains than strict judge feedback. Prompts optimized with lenient feedback transfer better to strict judges than the reverse direction. Analysis reveals that lenient judges provide permissive feedback, yielding prompts with broader applicability, whereas strict judges produce restrictive feedback, leading to judge-specific overfitting. Our findings demonstrate algorithmically optimizing prompts on training data can outperform human-centered prompt design and that judges' dispositions during optimization shape prompt generalizability. Code and optimized prompts are available at https://github.com/TUMLegalTech/icail2026-llm-judge-gaming.",
+      "authors": [
+        "Mohamed Hesham Elganayni",
+        "Runsheng Chen",
+        "Sebastian Nagl",
+        "Matthias Grabmair"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-04-22T16:12:36+00:00",
+      "link": "https://arxiv.org/pdf/2604.20726v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "prompt optimization for LLM-as-a-judge in legal question answering",
+      "llm_evidence_cn": "法律问答中大语言模型作为裁判的提示词优化",
+      "llm_evidence": "法律问答中大语言模型作为裁判的提示词优化",
+      "canonical_evidence": "法律问答中大语言模型作为裁判的提示词优化",
+      "llm_tldr_en": "Explores prompt optimization to improve LLM performance in evaluating free-text legal answers.",
+      "llm_tldr_cn": "探索提示词优化，以提高大语言模型在评估自由文本法律答案时的表现。",
+      "llm_tldr": "探索提示词优化，以提高大语言模型在评估自由文本法律答案时的表现。",
+      "llm_tags": [
+        "query:q2"
+      ],
+      "matched_query_tag": "query:q2",
+      "matched_query_text": "large language models in legal applications",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

@@ -1,0 +1,51 @@
+{
+  "label": "2026-04-23",
+  "date": "2026-04-23",
+  "generated_at": "2026-04-23T20:20:34",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/23/2604.19895v1-learning-when-not-to-decide-a-framework-for-overcoming-factual-presumptuousness-in-ai-adjudication",
+      "section": "deep",
+      "title_en": "Learning When Not to Decide: A Framework for Overcoming Factual Presumptuousness in AI Adjudication",
+      "authors": "Mohamed Afane, Emily Robitschek, Derek Ouyang, Daniel E. Ho",
+      "date": "2026-04-21",
+      "pdf": "https://arxiv.org/pdf/2604.19895v1",
+      "score": "9.0",
+      "evidence": "法律应用和司法决策中的AI裁决",
+      "tldr": "本研究针对AI在法律裁决中因信息不足而过度自信（事实性武断）的问题，以失业保险裁决为背景，与科罗拉多州劳工部合作构建了信息完整度变化的基准测试。研究发现传统RAG方法在信息不足时准确率极低，而提出的SPEC框架通过显式识别缺失信息，将整体准确率提升至89%，有效实现了在证据不足时适时推迟决策，为AI辅助法律决策提供了更可靠的方案。",
+      "tags": "query:q4",
+      "abstract_en": "A well-known limitation of AI systems is presumptuousness: the tendency of AI systems to provide confident answers when information may be lacking. This challenge is particularly acute in legal applications, where a core task for attorneys, judges, and administrators is to determine whether evidence is sufficient to reach a conclusion. We study this problem in the important setting of unemployment insurance adjudication, which has seen rapid integration of AI systems and where the question of additional fact-finding poses the most significant bottleneck for a system that affects millions of applicants annually. First, through a collaboration with the Colorado Department of Labor and Employment, we secure rare access to official training materials and guidance to design a novel benchmark that systematically varies in information completeness. Second, we evaluate four leading AI platforms and show that standard RAG-based approaches achieve an average of only 15% accuracy when information is insufficient. Third, advanced prompting methods improve accuracy on inconclusive cases but over-correct, withholding decisions even on clear cases. Fourth, we introduce a structured framework requiring explicit identification of missing information before any determination (SPEC, Structured Prompting for Evidence Checklists). SPEC achieves 89% overall accuracy, while appropriately deferring when evidence is insufficient -- demonstrating that presumptuousness in legal AI is systematic but addressable, and that doing so is a necessary step towards systems that reliably support, rather than supplant, human judgment wherever decisions must await sufficient evidence.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/23/2604.13583v2-benger-a-collaborative-web-platform-for-end-to-end-benchmarking-of-german-legal-tasks",
+      "section": "deep",
+      "title_en": "BenGER: A Collaborative Web Platform for End-to-End Benchmarking of German Legal Tasks",
+      "authors": "Sebastian Nagl, Matthias Grabmair",
+      "date": "2026-04-15",
+      "pdf": "https://arxiv.org/pdf/2604.13583v2",
+      "score": "8.0",
+      "evidence": "针对法律推理和德国法律任务的大语言模型基准测试",
+      "tldr": "BenGER是一个专为德国法律任务设计的开源协作Web平台，旨在解决大语言模型法律推理评估中流程碎片化的问题。它集成了任务设计、专家协作标注、模型运行及多维度指标评估（词法、语义、事实及裁判评估），通过租户隔离和权限控制支持多机构协作，显著提升了法律基准测试的透明度、可复现性及非技术专家的参与度。",
+      "tags": "query:q2",
+      "abstract_en": "Evaluating large language models (LLMs) for legal reasoning requires workflows that span task design, expert annotation, model execution, and metric-based evaluation. In practice, these steps are split across platforms and scripts, limiting transparency, reproducibility, and participation by non-technical legal experts. We present the BenGER (Benchmark for German Law) framework, an open-source web platform that integrates task creation, collaborative annotation, configurable LLM runs, and evaluation with lexical, semantic, factual, and judge-based metrics. BenGER supports multi-organization projects with tenant isolation and role-based access control, and can optionally provide formative, reference-grounded feedback to annotators. We will demonstrate a live deployment showing end-to-end benchmark creation and analysis.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/23/2604.20726v1-exploiting-llm-as-a-judge-disposition-on-free-text-legal-qa-via-prompt-optimization",
+      "section": "deep",
+      "title_en": "Exploiting LLM-as-a-Judge Disposition on Free Text Legal QA via Prompt Optimization",
+      "authors": "Mohamed Hesham Elganayni, Runsheng Chen, Sebastian Nagl, Matthias Grabmair",
+      "date": "2026-04-22",
+      "pdf": "https://arxiv.org/pdf/2604.20726v1",
+      "score": "8.0",
+      "evidence": "法律问答中大语言模型作为裁判的提示词优化",
+      "tldr": "本研究探讨了在法律问答评估中，LLM作为裁判（LLM-as-a-Judge）时提示词设计与裁判选择的影响。通过在LEXam基准上使用ProTeGi方法，对比了自动优化提示词与人工设计的差异，并分析了宽容型与严厉型裁判反馈对提示词泛化性的影响。研究发现，自动优化显著优于人工设计，且宽容型裁判生成的提示词在跨裁判迁移中表现更佳，有效避免了过拟合。",
+      "tags": "query:q2",
+      "abstract_en": "This work explores the role of prompt design and judge selection in LLM-as-a-Judge evaluations of free text legal question answering. We examine whether automatic task prompt optimization improves over human-centered design, whether optimization effectiveness varies by judge feedback style, and whether optimized prompts transfer across judges. We systematically address these questions on the LEXam benchmark by optimizing task prompts using the ProTeGi method with feedback from two judges (Qwen3-32B, DeepSeek-V3) across four task models, and then testing cross-judge transfer. Automatic optimization consistently outperforms the baseline, with lenient judge feedback yielding higher and more consistent gains than strict judge feedback. Prompts optimized with lenient feedback transfer better to strict judges than the reverse direction. Analysis reveals that lenient judges provide permissive feedback, yielding prompts with broader applicability, whereas strict judges produce restrictive feedback, leading to judge-specific overfitting. Our findings demonstrate algorithmically optimizing prompts on training data can outperform human-centered prompt design and that judges' dispositions during optimization shape prompt generalizability. Code and optimized prompts are available at https://github.com/TUMLegalTech/icail2026-llm-judge-gaming.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
