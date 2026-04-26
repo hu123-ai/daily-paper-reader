@@ -1,0 +1,239 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-26T19:52:23.806251+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [
+    {
+      "id": "2604.20726v2",
+      "title": "Exploiting LLM-as-a-Judge Disposition on Free Text Legal QA via Prompt Optimization",
+      "abstract": "This work explores the role of prompt design and judge selection in LLM-as-a-Judge evaluations of free text legal question answering. We examine whether automatic task prompt optimization improves over human-centered design, whether optimization effectiveness varies by judge feedback style, and whether optimized prompts transfer across judges. We systematically address these questions on the LEXam benchmark by optimizing task prompts using the ProTeGi method with feedback from two judges (Qwen3-32B, DeepSeek-V3) across four task models, and then testing cross-judge transfer. Automatic optimization consistently outperforms the baseline, with lenient judge feedback yielding higher and more consistent gains than strict judge feedback. Prompts optimized with lenient feedback transfer better to strict judges than the reverse direction. Analysis reveals that lenient judges provide permissive feedback, yielding prompts with broader applicability, whereas strict judges produce restrictive feedback, leading to judge-specific overfitting. Our findings demonstrate algorithmically optimizing prompts on training data can outperform human-centered prompt design and that judges' dispositions during optimization shape prompt generalizability.",
+      "authors": [
+        "Mohamed Hesham Elganayni",
+        "Runsheng Chen",
+        "Sebastian Nagl",
+        "Matthias Grabmair"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-04-22T16:12:36+00:00",
+      "link": "https://arxiv.org/pdf/2604.20726v2",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "LLM-as-a-Judge for legal question answering",
+      "llm_evidence_cn": "大模型作为法律问答的评判者",
+      "llm_evidence": "大模型作为法律问答的评判者",
+      "canonical_evidence": "大模型作为法律问答的评判者",
+      "llm_tldr_en": "Explores prompt optimization for using LLMs to evaluate free-text legal question answering.",
+      "llm_tldr_cn": "探讨了利用大模型评估自由文本法律问答时的提示词优化方法。",
+      "llm_tldr": "探讨了利用大模型评估自由文本法律问答时的提示词优化方法。",
+      "llm_tags": [
+        "query:q2"
+      ],
+      "matched_query_tag": "query:q2",
+      "matched_query_text": "large language models in legal applications",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.21070v1",
+      "title": "DWTSumm: Discrete Wavelet Transform for Document Summarization",
+      "abstract": "Summarizing long, domain-specific documents with large language models (LLMs) remains challenging due to context limitations, information loss, and hallucinations, particularly in clinical and legal settings. We propose a Discrete Wavelet Transform (DWT)-based multi-resolution framework that treats text as a semantic signal and decomposes it into global (approximation) and local (detail) components. Applied to sentence- or word-level embeddings, DWT yields compact representations that preserve overall structure and critical domain-specific details, which are used directly as summaries or to guide LLM generation. Experiments on clinical and legal benchmarks demonstrate comparable ROUGE-L scores. Compared to a GPT-4o baseline, the DWT based summarization consistently improve semantic similarity and grounding, achieving gains of over 2% in BERTScore, more than 4\\% in Semantic Fidelity, factual consistency in legal tasks, and large METEOR improvements indicative of preserved domain-specific semantics. Across multiple embedding models, Fidelity reaches up to 97%, suggesting that DWT acts as a semantic denoising mechanism that reduces hallucinations and strengthens factual grounding. Overall, DWT provides a lightweight, generalizable method for reliable long-document and domain-specific summarization with LLMs.",
+      "authors": [
+        "Rana Salama",
+        "Abdou Youssef",
+        "Mona Diab"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-04-22T20:30:52+00:00",
+      "link": "https://arxiv.org/pdf/2604.21070v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "summarizing legal documents using LLMs",
+      "llm_evidence_cn": "利用大模型进行法律文档摘要",
+      "llm_evidence": "利用大模型进行法律文档摘要",
+      "canonical_evidence": "利用大模型进行法律文档摘要",
+      "llm_tldr_en": "A wavelet-based framework to improve LLM summarization of long, domain-specific legal documents.",
+      "llm_tldr_cn": "一种基于小波变换的框架，旨在改进大模型对长篇法律专业文档的摘要效果。",
+      "llm_tldr": "一种基于小波变换的框架，旨在改进大模型对长篇法律专业文档的摘要效果。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "artificial intelligence for legal analysis",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.19488v1",
+      "title": "CoDA: Towards Effective Cross-domain Knowledge Transfer via CoT-guided Domain Adaptation",
+      "abstract": "Large language models (LLMs) have achieved substantial advances in logical reasoning, yet they continue to lag behind human-level performance. In-context learning provides a viable solution that boosts the model's performance via prompting its input with expert-curated, in-domain exemplars. However, in many real-world, expertise-scarce domains, such as low-resource scientific disciplines, emerging biomedical subfields, or niche legal jurisdictions, such high-quality in-domain demonstrations are inherently limited or entirely unavailable, thereby constraining the general applicability of these approaches. To mitigate this limitation, recent efforts have explored the retrieval of cross-domain samples as surrogate in-context demonstrations. Nevertheless, the resulting gains remain modest. This is largely attributable to the pronounced domain shift between source and target distributions, which impedes the model's ability to effectively identify and exploit underlying shared structures or latent reasoning patterns. Consequently, when relying solely on raw textual prompting, LLMs struggle to abstract and transfer such cross-domain knowledge in a robust and systematic manner. To address these issues, we propose CoDA, which employs a lightweight adapter to directly intervene in the intermediate hidden states. By combining feature-based distillation of CoT-enriched reference representations with Maximum Mean Discrepancy (MMD) for kernelized distribution matching, our method aligns the latent reasoning representation of the source and target domains. Extensive experimental results on multiple logical reasoning tasks across various model families validate the efficacy of CoDA by significantly outperforming the previous state-of-the-art baselines by a large margin.",
+      "authors": [
+        "Jianzhi Yan",
+        "Le Liu",
+        "Buzhou Tang",
+        "Yang Xiang",
+        "Dongning Sun",
+        "Zhiming Li"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-04-21T14:10:37+00:00",
+      "link": "https://arxiv.org/pdf/2604.19488v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Cross-domain knowledge transfer for niche legal jurisdictions",
+      "llm_evidence_cn": "针对特定法律管辖区的跨领域知识迁移",
+      "llm_evidence": "针对特定法律管辖区的跨领域知识迁移",
+      "canonical_evidence": "针对特定法律管辖区的跨领域知识迁移",
+      "llm_tldr_en": "Explores cross-domain knowledge transfer to improve LLM performance in expertise-scarce legal domains.",
+      "llm_tldr_cn": "探索跨领域知识迁移，以提升大语言模型在专业知识稀缺的法律领域中的表现。",
+      "llm_tldr": "探索跨领域知识迁移，以提升大语言模型在专业知识稀缺的法律领域中的表现。",
+      "llm_tags": [
+        "query:q2"
+      ],
+      "matched_query_tag": "query:q2",
+      "matched_query_text": "large language models in legal applications",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.21103v1",
+      "title": "AI Governance under Political Turnover: The Alignment Surface of Compliance Design",
+      "abstract": "Governments are increasingly interested in using AI to make administrative decisions cheaper, more scalable, and more consistent. But for probabilistic AI to be incorporated into public administration it must be embedded in a compliance layer that makes decisions reviewable, repeatable, and legally defensible. That layer can improve oversight by making departures from law easier to detect. But it can also create a stable approval boundary that political successors learn to navigate while preserving the appearance of lawful administration. We develop a formal model in which institutions choose the scale of automation, the degree of codification, and safeguards on iterative use. The model shows when these systems become vulnerable to strategic use from within government, why reforms that initially improve oversight can later increase that vulnerability, and why expansions in AI use may be difficult to unwind. Making AI usable can thus make procedures easier for future governments to learn and exploit.",
+      "authors": [
+        "Andrew J. Peterson"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "econ.GN"
+      ],
+      "published": "2026-04-22T21:42:50+00:00",
+      "link": "https://arxiv.org/pdf/2604.21103v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "AI to make administrative decisions legally defensible",
+      "llm_evidence_cn": "利用AI使行政决策在法律上站得住脚",
+      "llm_evidence": "利用AI使行政决策在法律上站得住脚",
+      "canonical_evidence": "利用AI使行政决策在法律上站得住脚",
+      "llm_tldr_en": "Models the governance and compliance layer for AI in public administrative decision-making.",
+      "llm_tldr_cn": "为公共行政决策中的人工智能治理和合规层建立了形式化模型。",
+      "llm_tldr": "为公共行政决策中的人工智能治理和合规层建立了形式化模型。",
+      "llm_tags": [
+        "query:q4"
+      ],
+      "matched_query_tag": "query:q4",
+      "matched_query_text": "judicial decision-making and artificial intelligence",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.21193v1",
+      "title": "Trust but Verify: Introducing DAVinCI -- A Framework for Dual Attribution and Verification in Claim Inference for Language Models",
+      "abstract": "Large Language Models (LLMs) have demonstrated remarkable fluency and versatility across a wide range of NLP tasks, yet they remain prone to factual inaccuracies and hallucinations. This limitation poses significant risks in high-stakes domains such as healthcare, law, and scientific communication, where trust and verifiability are paramount. In this paper, we introduce DAVinCI - a Dual Attribution and Verification framework designed to enhance the factual reliability and interpretability of LLM outputs. DAVinCI operates in two stages: (i) it attributes generated claims to internal model components and external sources; (ii) it verifies each claim using entailment-based reasoning and confidence calibration. We evaluate DAVinCI across multiple datasets, including FEVER and CLIMATE-FEVER, and compare its performance against standard verification-only baselines. Our results show that DAVinCI significantly improves classification accuracy, attribution precision, recall, and F1-score by 5-20%. Through an extensive ablation study, we isolate the contributions of evidence span selection, recalibration thresholds, and retrieval quality. We also release a modular DAVinCI implementation that can be integrated into existing LLM pipelines. By bridging attribution and verification, DAVinCI offers a scalable path to auditable, trustworthy AI systems. This work contributes to the growing effort to make LLMs not only powerful but also accountable.",
+      "authors": [
+        "Vipula Rawte",
+        "Ryan Rossi",
+        "Franck Dernoncourt",
+        "Nedim Lipka"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-04-23T01:37:50+00:00",
+      "link": "https://arxiv.org/pdf/2604.21193v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "verifying LLM claims in high-stakes legal domains",
+      "llm_evidence_cn": "验证法律等高风险领域中大模型的生成内容",
+      "llm_evidence": "验证法律等高风险领域中大模型的生成内容",
+      "canonical_evidence": "验证法律等高风险领域中大模型的生成内容",
+      "llm_tldr_en": "A framework to enhance factual reliability of LLM outputs in sensitive domains like law and healthcare.",
+      "llm_tldr_cn": "一种增强法律和医疗等敏感领域大模型输出事实可靠性的框架。",
+      "llm_tldr": "一种增强法律和医疗等敏感领域大模型输出事实可靠性的框架。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "artificial intelligence for legal analysis",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.21469v1",
+      "title": "Cross-Domain Data Selection and Augmentation for Automatic Compliance Detection",
+      "abstract": "Automating the detection of regulatory compliance remains a challenging task due to the complexity and variability of legal texts. Models trained on one regulation often fail to generalise to others. This limitation underscores the need for principled methods to improve cross-domain transfer. We study data selection as a strategy to mitigate negative transfer in compliance detection framed as a natural language inference (NLI) task. Specifically, we evaluate four approaches for selecting augmentation data from a larger source domain: random sampling, Moore-Lewis's cross-entropy difference, importance weighting, and embedding-based retrieval. We systematically vary the proportion of selected data to analyse its effect on cross-domain adaptation. Our findings demonstrate that targeted data selection substantially reduces negative transfer, offering a practical path toward scalable and reliable compliance automation across heterogeneous regulations.",
+      "authors": [
+        "Fariz Ikhwantri",
+        "Dusica Marijan"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-04-23T09:28:50+00:00",
+      "link": "https://arxiv.org/pdf/2604.21469v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "automatic compliance detection from legal texts",
+      "llm_evidence_cn": "法律文本的自动合规检测",
+      "llm_evidence": "法律文本的自动合规检测",
+      "canonical_evidence": "法律文本的自动合规检测",
+      "llm_tldr_en": "Explores data selection for cross-domain legal compliance detection using NLI.",
+      "llm_tldr_cn": "研究了利用自然语言推理进行跨领域法律合规检测的数据选择策略。",
+      "llm_tldr": "研究了利用自然语言推理进行跨领域法律合规检测的数据选择策略。",
+      "llm_tags": [
+        "query:q5"
+      ],
+      "matched_query_tag": "query:q5",
+      "matched_query_text": "artificial intelligence for legal analysis",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
