@@ -1,0 +1,2243 @@
+Title: Algorithmic Feature Highlighting for Human-AI Decision-Making
+
+URL Source: https://arxiv.org/pdf/2604.22236v1
+
+Published Time: Mon, 27 Apr 2026 00:23:28 GMT
+
+Number of Pages: 35
+
+Markdown Content:
+# Algorithmic Feature Highlighting for Human–AI Decision-Making 
+
+Yifan Guo Jann Spiess Stanford University April 23, 2026 
+
+Abstract 
+
+Human decision-makers often face choices about complex cases with many potentially relevant fea-tures, but limited bandwidth to inspect and integrate all available information. In such settings, we study algorithms that highlight a small subset of case-specific features for human consideration, rather than producing a single prediction or recommendation. We model highlighting as a constrained information policy that selects a small number of features to reveal. A central issue is how humans interpret the algorithm’s choice of features: a sophisticated agent correctly conditions on the selection rule, while a 
+
+naive agent updates only on revealed feature values and treats the selection event as exogenous. We show that optimizing highlighting for sophisticated agents can be computationally intractable, even in simple discrete and binary settings, whereas optimizing for naive agents is tractable as long as the maximal bandwidth is fixed. We also show that a highlighting policy that is optimal for sophisticated agents can perform arbitrarily poorly when deployed to naive agents, motivating robust, implementable alternatives. We illustrate our framework in a calibrated empirical exercise based on the American Housing Survey. Overall, our results establish the value of highlighting a context-specific set of features rather than a fixed one as a practically appealing and computationally feasible tool for achieving human–algorithm complementarity. 
+
+# 1 Introduction 
+
+In high-stakes decision-making, algorithms frequently assist rather than replace human decision-makers. For example, algorithms may screen resumes, but final hiring decisions are still made by managers. In such settings, having algorithms recommend a final action may not be sufficient for decision-makers to make high-quality decisions that reflect their private information and preferences. Instead, effective algorithmic support tools should surface interpretable and verifiable details that are most relevant to the final decision. In this article, we propose a model of joint human–algorithm decision-making in which the algorithm 
+
+highlights key features that are relevant to the downstream decision of the human decision-maker. We model highlighting as a constrained information policy that selects which of a large number of features to reveal. We show that simple and computationally tractable algorithms are able to improve markedly over policies that instead always reveal the same features, and that this gain is robust to different ways in which decision-makers may interpret the selected features. Overall, we argue that highlighting presents a practically appealing and computationally feasible tool for achieving human–algorithm complementarity that raises rich theoretical questions and warrants further investigation. 
+
+> Yifan Guo (yifanguo@stanford.edu) and Jann Spiess (jspiess@stanford.edu), Graduate School of Business, Stanford University. We thank Haozhan Gao and three anonymous referees for helpful comments.
+
+1
+
+> arXiv:2604.22236v1 [cs.GT] 24 Apr 2026
+
+We model human–algorithm interaction as a principal–agent game between an algorithm designer (prin-cipal) who decides which features to highlight and a human decision-maker (agent) who observes the high-lighted features and makes a decision. The joint goal of principal and agent is to choose an action for a decision instance that is characterized by a potentially high-dimensional feature vector. The algorithm de-signer specifies an algorithm that observes the full feature vector and selects a subset of its components to report to a bandwidth-constrained decision-maker. The human decision-maker observes only those features highlighted by the algorithm. After receiving the highlighted features, the agent infers missing information and then chooses an action. For example, when a candidate applies for a job, the algorithm may observe all information contained in the application and then strategically highlight a subset of features for the human HR manager, who makes the final decision. Throughout, we assume that preferences between the algorithm designer and the decision-maker are aligned. We believe that our focus on highlighting features rather than providing predictions or summaries has two important advantages in practice: First, presenting more than a simple prediction or recommended ac-tion allows the human decision-maker to learn richer information that provides important context and can be combined with private information. Second, the constraint that the algorithm can only pick existing fea-tures means that the provided information is interpretable, trustworthy, and verifiable. For example, simply providing a summary generated by large-language models (LLMs) could be problematic since we cannot generally guarantee that it contains only factual information about a given case. By contrast, even if we use an LLM to decide which features to highlight, the resulting information remains correct by construction, even without strong guarantees about the underlying algorithm. 1
+
+We consider different modes of human decision-making to highlight potential limitations in practice. We focus on two benchmark models of human decision-makers: a sophisticated agent and a naive agent. Both agents observe the features highlighted by the algorithm and update their posteriors accordingly. The 
+
+sophisticated agent also takes into account the information contained in the algorithm’s decision about which features to highlight, in addition to the value of the highlighted features. By contrast, the naive agent ignores why the algorithm highlights specific features and processes only the highlighted features at face value. For example, a hiring manager could be sophisticated if they respond not just to the information contained in a summary, but also to what is left out. Or they could be naive if they simply fill in the blanks based on their best guess, without taking into account why some information may be included or left out. In practice, a real decision-maker may behave as a mixture of these two types, exhibiting both sophisticated and naive behaviors. We show that these different modes of updating have vastly different implications for optimal highlight-ing policies, their robustness, and their computation. We first document gaps between the optimal policies for naive and sophisticated agents, and the cost of optimizing for one when the audience is the other. While the sophisticated agent always does at least as well as the naive agent, we show in simple examples that deploying a policy that targets the naive agent may still lead to an arbitrarily large gap from the optimal 
+
+policy for a sophisticated audience (“price of simplicity”). Conversely, we demonstrate that a highlighting policy optimized for a sophisticated agent can have arbitrarily bad performance for a naive agent (“price of complexity”) relative to the latter’s optimal policy. Beyond the potential cost to naive agents, we illustrate that optimal sophisticated solutions tend to be overly complex. Optimal solutions that optimize for a sophisticated decision-maker not only lack robustness; they are also often infeasible to compute. Since the sophisticated agent interprets not only the revealed features, but also takes into account why they were revealed, the principal’s optimization problem should account for this additional information channel. As with hardness results in algorithmic Bayesian persuasion, we   
+
+> 1This would still leave space for deception by a misaligned principal since the choice of which features are selected could be driven by a different objective (akin to Bayesian persuasion, Kamenica and Gentzkow, 2011), but the deception would then mainly be driven by failing to highlight the most relevant information rather than misrepresenting feature values.
+
+2show that the optimal highlighting problem for a sophisticated agent is NP-hard. Therefore, aiming for first-best highlighting schemes for sophisticated decision-makers may lead to overly complex and unintuitive solutions that are both computationally intractable and lack robustness against suboptimal agent decisions. In contrast to the sophisticated case, even first-best optimal solutions for naive updating can generally be computed in polynomial time. Beyond such first-best solutions, we also consider even simpler greedy solutions that select features based on the incremental information they provide. Focusing on the case of independent binary features, we show that this greedy solution yields first-best outcomes for the naive agent and provides additional gains for the sophisticated agent. Specifically, we provide an analytical characteri-zation of the asymptotic average loss for both types of agents, which we extend to the case where there may be limited correlation across features. We show that the simple algorithms we consider can substantially outperform a benchmark in which a fixed set of features is highlighted. By highlighting ex-post surprises, we can generally obtain considerably smaller losses across both sophisticated and naive updaters. We show that these algorithms have some sur-prising properties. For example, in our setting, it is not generally optimal to always highlight the maximal allowable number of features, since additional information does not always lead to better downstream deci-sions. Instead, optimal algorithms may withhold incremental information if that information misleads more than it helps. We illustrate these findings in a calibrated numerical exercise using data from the American Housing Survey. Using data from around 1,500 homes from the Minneapolis–St. Paul metro area and a Gaussian belief model over 44 housing characteristics, we show that contextual highlighting policies improve sub-stantially over fixed policies: for example, when highlighting up to k = 10 features, a contextual greedy algorithm cuts loss by more than half. The exercise also confirms the non-monotonicity result in practice: a contextual greedy policy with ten features outperforms even full revelation of all 43 non-price features. Overall, the exercise demonstrates how a relatively simple, computationally efficient greedy algorithm can produce highly informative posteriors even when updating is naive. The assumptions of perfect alignment, joint priors, and (partially) rational updating represent substantive limitations of our main model, which suggest important further work. We therefore also discuss extensions to more realistic updating rules and additional frictions between principal and agent. Beyond sophisti-cated and naive agents, we consider specific behavioral biases in which agents update their beliefs based on stereotypes. We also discuss private information of the agent, wrong beliefs, and misaligned preferences. In addition to these extensions, we discuss more complex feature distributions. With Normally distributed fea-tures, we show that sophisticated solutions take unintuitive and complex forms, reinforcing our prescription to optimize for naive updating. The remaining article is structured as follows. Section 2 reviews the related literature in human–AI interaction, information design, and feature revelation. Section 3 introduces the model of algorithmic fea-ture highlighting with naive and sophisticated updating. Section 4 characterizes the cost of misoptimization when the designer targets the wrong updating type. Section 5 studies computational complexity, establish-ing hardness for sophisticated updating and tractability for naive updating, and analyzes greedy algorithms. Section 6 provides closed-form optimal policies and asymptotic loss characterizations for independent bi-nary features. Section 7 presents our simulation study based on the American Housing Survey. Section 8 discusses extensions, and Section 9 concludes. 
+
+# 2 Related Literature 
+
+We contribute to an interdisciplinary literature that aims to model and develop solutions for human–algorithm interaction. We also build upon approaches from information design and the literature on subset selection under constraints. 32.1 Human–AI Decision Making and Behavioral Foundations 
+
+We relate to a growing literature that studies how humans and algorithms jointly make decisions. Noti et al. (2025) formalizes AI-assisted decision making with a learning human and shows that the optimal feature-revelation schedule balances short-run accuracy against long-run human learning, yielding a tractable com-binatorial characterization. Greenwood et al. (2025) analyzes instance-contingent algorithmic delegation; it shows that the optimal delegate can be strictly better than the best standalone AI and provides both hardness results and efficient algorithms. Tan et al. (2026) studies the complementary question of when to dispatch a human reviewer under a budget on human effort, deriving a closed-form optimal rule and applying it to AI-assisted peer review. Athey, Bryan, and Gans (2020) studies the allocation of decision authority between humans and AI. Boyacı, Canyakmaz, and De V´ ericourt (2024) studies how machine input affects accuracy and effort, while Green and Chen (2019) articulates practical principles for algorithm-in-the-loop decision making. Balakrishnan, Ferreira, and Tong (2025) shows that feature transparency reduces naive advice-weighting bias in human–algorithm collaboration with private information. More broadly, work on design-ing human–AI collaboration under behavioral responses (e.g., Agarwal, Moehring, and Wolitzky, 2025; McLaughlin and Spiess, 2022) studies how optimal disclosure, recommendation, and automation designs change when humans exhibit biased responses. Bastani, Bastani, and Sinchaisri (2026) studies sequen-tial decision-making and proposes an RL-based approach to produce simple, interpretable “tips” targeted to bottlenecks in the human policy. McLaughlin and Spiess (2024); Hoong and Dreyfuss (2025) provide frameworks for algorithmic recommendations that allow for suboptimal responses. Our framework differs in that the AI never acts or makes recommendations directly; instead, it strategically selects which features to surface, and we characterize how performance depends on whether the human anticipates (or neglects) the policy dependence of revealed information. A closely related strand uses decision theory to characterize the value of information that one agent can contribute to another’s decision. Guo et al. (2025) formalizes human–AI complementarity through the expected improvement in best-attainable payoff from an additional signal, and Guo et al. (2026) opera-tionalizes this idea by fine-tuning an LLM to extract signals from a supervisor’s context that complement an existing agent’s recommendation. These works take the space of signals as exogenously given and assume that the receiver best-responds to the induced posterior. By contrast, our signals arise endogenously as a sub-set of the underlying feature vector, which ensures that the revealed content is interpretable and verifiable by construction. Vaccaro, Almaatouq, and Malone (2024) conducts a meta-analysis of 106 studies, finding that human–AI combinations on average perform worse than the best of humans or AI alone. Angelova, Dobbie, and Yang (2023) documents that many judges underperform when overriding algorithmic recom-mendations. Alur, Raghavan, and Shah (2024) proposes a framework for incorporating human expertise by distinguishing algorithmically indistinguishable inputs. Donahue, Chouldechova, and Kenthapadi (2022) provides theoretical conditions under which complementarity is achievable or impossible. 
+
+2.2 Algorithmic Information Design and Persuasion 
+
+Our revelation policy can be viewed as a signaling scheme, directly connecting our setting to the literature on information design and Bayesian persuasion. The foundational work of Kamenica and Gentzkow (2011) introduced Bayesian persuasion, formalizing how a sender commits to an information structure to influence a receiver’s action; a closely related precursor, Rayo and Segal (2010), characterizes optimal disclosure by a sender who commits ex ante to a signal structure and shows that optimal disclosure generically pools states into coarse partitions. This framework has since been extended across economics and operations research: Candogan (2020) surveys applications in operations, and Dughmi and Xu (2016) develops algorithmic tools for computing persuasion schemes with complexity guarantees. We adopt this information-design perspective but introduce behavioral heterogeneity by modeling the 4receiver as either naive (ignoring the selection event) or sophisticated (conditioning on the revelation rule), and we derive structural and computational results for optimal revelation under both types. Relatedly, Yu et al. (2023) combines information design with behavioral modeling via deep learning, demonstrating how to incorporate empirically estimated human responses into signaling schemes. In contrast, we focus on an an-alytically tractable model of belief formation (naive vs. sophisticated) and provide explicit guarantees. The closest work to ours is Hoefer, Manurangsi, and Psomas (2024), which studies algorithmic persuasion with constraints on the design space imposed by verifiable evidence. Their model allows the sender to choose among evidentiary messages subject to a feasibility constraint, whereas in our setting, the highlighted in-formation must correspond to a subset of the state’s features. Related work on privately informed receivers, including Guo and Shmaya (2019), characterizes the sender-optimal disclosure policy as an interval struc-ture, providing a tight structural benchmark for persuasion when the receiver holds private information. 
+
+2.3 Subset Selection and Instance-Wise Feature Revelation 
+
+Our model is closely related to the broad literature on subset selection under a cardinality constraint. In our setting, the most direct benchmark is fixed subset selection: the algorithm commits ex ante to a single set of features to highlight and uses the same set for every instance. This benchmark parallels classical feature selection and sparse approximation problems, where the goal is to select a small number of coordinates that best predict an outcome or reconstruct the remaining coordinates. Such problems are often computa-tionally challenging in the worst case, motivating approximation algorithms and structural conditions under which greedy methods are effective. In the context of selecting predictive variables, Das and Kempe (2011) analyzes greedy subset selection for regression-type objectives via spectral conditions and the submodular-ity ratio, providing guarantees even when exact submodularity does not hold. Relatedly, observation and feature-acquisition objectives in probabilistic models are often approximately submodular, yielding princi-pled greedy policies (Krause and Guestrin, 2007). However, our setting focuses on instance-wise feature selection, which can strictly outperform the fixed-subset benchmark. 
+
+# 3 A Model of Algorithmic Feature Highlighting 
+
+We model the interaction between an algorithm that highlights features and a bandwidth-constrained human decision-maker who updates their belief and takes actions based on the highlighted features. We assume that a decision instance is given by a random vector X = ( Xi)i∈M ∼ P with a finite index set M of size 
+
+|M | = d.2
+
+Highlighting policy. We model feature highlighting as follows. We assume that the features X = ( Xi)i∈M ∈X are accessible to an algorithm that selects (or “highlights”) a subset I ⊆ M with |I| ≤ k and reveals the set I as well as the associated features XI = ( Xi)i∈I to the human decision-maker. Here, k is an exogenously given bandwidth constraint that limits the number of features that can be highlighted. A (de-terministic) highlighting policy is a map 
+
+σ : X → { I ⊆ M : |I| ≤ k}.
+
+Randomized policies can be modeled similarly; deterministic policies suffice for our main hardness and separation results. We assume that this highlighting policy is chosen by an algorithm designer , who acts as the principal of our game.          
+
+> 2In Section 8 we discuss extensions to human private information, in which case features are given by X= ( XM, X H)with machine features XMand human features XH.
+
+5Here, the highlighting policy can be interpreted as follows. In hiring, a company may use an algorithm to assist HR in the recruiting process; the algorithm highlights several key features in each applicant’s resume. In a hospital, the algorithm may highlight key components of a patient’s medical file to assist doctors in their final assessment. In school admissions, the algorithm may highlight key aspects of each candidate’s background for the admissions committee. 
+
+Human belief formation. Upon observing (I, X I ), the human decision-maker forms a posterior belief over the unknown components of X. We assume that the human decision-maker knows the distribution 
+
+P (which acts as their prior), and consider two main ways in which the decision-maker updates to form a posterior: • Sophisticated updating. The sophisticated agent is aware of the prior P and the policy σ, and hence conditions on the selection event. We model this by the distribution 
+
+bPS (· | I, X I ) = P · | XI , σ (X) = I.
+
+Equivalently, bPS is the Bayesian posterior under the joint distribution induced by (P, σ ).• Naive updating. The naive agent updates on the revealed values XI , but ignores the informational content of which set I was selected. We model this by the distribution 
+
+bPN (· | I, X I ) = P(· | XI ),
+
+i.e., the naive agent treats the selection of I as exogenous. Note that this update does not require knowledge of σ.Here, we assume for simplicity that updating is based on the true distribution P. However, our model directly extends to the case where updating is performed according to some prior eP that may or may not be equal to P. In that case, we can still write bPS and bPN for the corresponding posteriors. 
+
+Decision and loss. After forming a belief bP(· | I, X I ), the human chooses an action a ∈ A to minimize expected loss. Given a loss function ℓ : A × X → R, the human plays a Bayes action 
+
+ba(ℓ, bP) ∈ argmin 
+
+> a∈A
+
+EbP[ℓ(a, X )] .
+
+The loss at instance X is then L(bP, X ) = ℓ ba(ℓ, bP), X .
+
+Design objective. We focus on aligned objectives: the algorithm designer seeks to minimize expected loss according to the same loss function. For agent type τ ∈ { S, N } and policy σ, define the expected loss (risk) as 
+
+Rτ (σ) := E
+
+h
+
+L bPτ (· | I, X I ), X i
+
+, I = σ(X).
+
+The design problem is 
+
+min     
+
+> σ:|σ(x)|≤ k
+
+Rτ (σ).
+
+If the designer faces uncertainty over human types, a natural Bayesian objective is a weighted average 
+
+λR S (σ) + (1 − λ)RN (σ) for some population share λ ∈ [0 , 1] . A robust alternative is to minimize the worst-case loss across types, min σ: | σ(x) |≤ k max {RS (σ), R N (σ)}. In settings where sophisticated updating weakly improves performance relative to naive updating for every policy, this minimax problem reduces to minimizing naive risk. 6Special case: recovery. A common special case is recovery of a target quantity y = y(x) ∈ Rm. Let 
+
+A = Rm and define squared loss 
+
+ℓ(a, x ) = ∥a − y(x)∥22.
+
+Then ba(ℓ, bP) = EbP[y(X)] is the posterior mean. 
+
+Robust microfoundation for squared loss. The squared loss above admits a robust interpretation when the downstream decision problem is not known to the algorithm designer. Suppose the human’s action 
+
+a ∈ Rm feeds into a downstream task whose payoff depends on an unknown linear combination β⊤a of the reported action, evaluated against the target β⊤y(x) under quadratic loss (β⊤(a − y(x))) 2. If the coefficient 
+
+β ∈ Rm is unknown and may be chosen adversarially from the unit ball {β : ∥β∥2 ≤ 1}, the worst-case loss reduces to 
+
+sup 
+
+> ∥β∥2≤1
+
+ β⊤(a − y(x)) 2 = ∥a − y(x)∥22,
+
+which is exactly the squared loss above. 
+
+Special case: outcome-targeted recovery. In our simulations, we consider a specific loss function that combines full recovery of the feature vector with prediction loss for a specific target. In this case, y(x) =   x 
+
+> E[Y|X=x]
+
+ for some target outcome Y , and 
+
+ℓ(a, x ) = (1 − α) ∥bx − x∥22 + α (by − E[Y | X = x]) 2
+
+for a =
+
+ bx
+
+> by
+
+
+
+. Full recovery ( α = 0 ) as well as simple prediction ( α = 1 ) are special cases. 
+
+# 4 Naive vs. Sophisticated Updating and the Cost of Misoptimization 
+
+Above, we have introduced a model of feature highlighting in which an algorithm sends a subset of features to a human decision-maker. There, we have considered two different ways in which the human decision-maker may update their belief: either by taking the selection rule into account (sophisticated), or by ignoring selection (naive). We now show that these two ways of updating lead to different solutions, and that opti-mizing for one type of agent comes at a price when the policy is deployed for the other one. Let σN ∈ argmin σ RN (σ) and σS ∈ argmin σ RS (σ) denote optimal policies for naive and sophisti-cated agents, respectively. To quantify the mismatch when a policy optimized for one agent type is deployed to the other, define price of complexity: ∆N := RN (σS ) − RN (σN ) ≥ 0; (1) price of simplicity: ∆S := RS (σN ) − RS (σS ) ≥ 0. (2) The next two examples show that these gaps can be arbitrarily large in either direction: a policy that is optimal for sophisticated agents may perform extremely poorly when deployed to naive agents (large ∆N ), and conversely a policy optimized for naive agents can be arbitrarily suboptimal for sophisticated agents (large ∆S ). 
+
+Example 1 (A sophisticated–optimal scheme can mislead a naive agent) . Let X = ( X1, X 2) where X1 ∈{0, 1} and X2 ∈ { 0, B }, and suppose X is uniform over the four states. Assume B is odd. The machine observes X and reveals at most one coordinate ( k = 1 ). Consider squared recovery loss with y(x) = x,i.e., ℓ(a, x ) = ∥a − x∥22. Define a deterministic highlighting policy σS by 
+
+σS (x) = 
+
+(
+
+{1}, if x1 + x2 is odd ,
+
+{2}, otherwise .
+
+7A sophisticated agent can recover X with zero loss: from (I, x I ) the agent infers the unrevealed coordinate using the fact that σS (X) = I. Hence RS (σS ) = 0 .In contrast, a naive agent ignores the informational content of I. When I = {1}, the naive posterior predicts X2 by its conditional mean E[X2 | X1] = B 
+
+> 2
+
+, incurring squared error ( B 
+
+> 2
+
+)2 = B2 
+
+> 4
+
+. When I = {2},the naive posterior predicts E[X1 | X2] = 1 /2, incurring squared error 1/4. Each event occurs with probability 1/2, so RN (σS ) = 12 · B2 
+
+> 4
+
++ 12 · 14 = B2 
+
+> 8
+
++ 18 . The naive–optimal policy is to always reveal X2,i.e., σN (x) ≡ { 2}, which yields RN (σN ) = E[( X1 − E[X1]) 2] = 1 /4. Therefore 
+
+∆N = RN (σS ) − RN (σN ) = B2 − 18 ,
+
+which can be arbitrarily bad relative to the optimal loss of RN (σN ) = 1 /4.
+
+Example 2 (A naive–optimal scheme can be arbitrarily suboptimal for a sophisticated agent) . Let X =(X1, X 2) where X1 ∈ { 0, B } and X2 ∈ { 0, B }, and suppose X is uniform over the four states. The machine observes X and reveals at most one coordinate ( k = 1 ). Consider squared recovery loss ℓ(a, x ) = ∥a−x∥22.Define a deterministic policy σS by 
+
+σS (x) = 
+
+(
+
+{1}, if x1 = x2,
+
+{2}, otherwise .
+
+A sophisticated agent can recover X with zero loss: if I = {1} then x2 = x1, while if I = {2} then 
+
+x1 = B − x2. Hence RS (σS ) = 0 .Now consider a naive–optimal policy. By symmetry, a naive agent achieves the same expected loss by always revealing either coordinate. Take σN (x) ≡ { 1}. Since the selection is constant, sophistication provides no additional inference under σN , so RS (σN ) = RN (σN ). Under σN , the posterior predicts X2
+
+by its mean E[X2] = B 
+
+> 2
+
+, yielding RS (σN ) = RN (σN ) = E[( X2 − B 
+
+> 2
+
+)2] = B2 
+
+> 4
+
+. Therefore 
+
+∆S = RS (σN ) − RS (σS ) = B2
+
+4 ,
+
+which can be arbitrarily bad relative to the optimal loss of RS (σS ) = 0 .
+
+Together, Example 1 and Example 2 show that optimizing a highlighting policy for one belief-formation model can lead to arbitrarily poor performance when deployed to the other model. Furthermore, optimal sophisticated policies may take unintuitive forms that rely on complex relationships across the full feature vector. In Section 8.1, we show that these findings carry over to the case where the features X are contin-uous: even when they are Normally distributed and relatively low-dimensional, sophisticated solutions take unintuitive and hard-to-interpret forms. These findings motivate a search for simple, robust policies that remain competitive across agent types. 
+
+# 5 Computational Complexity 
+
+Above, we have shown that optimal highlighting policies can differ substantively by whether they optimize for naive or sophisticated decision-makers. We now show that this difference extends to our ability to compute optimal policies. To show a computational contrast between sophisticated and naive receivers, we restrict our attention to discrete instance distributions. Let n := | supp (P)| denote the number of possible instances in the support, 
+
+d the number of machine-observed features, and k the bandwidth constraint. 85.1 Hardness for Optimal Policies for Sophisticated Updating 
+
+Even with binary features and the smallest nontrivial bandwidth k = 1 , optimizing a highlighting policy for a sophisticated agent is NP-hard. The following theorem formalizes our NP-hardness result by a reduction from Euclidean 2-means clustering. 
+
+Theorem 1 (NP-hardness of optimal highlighting for sophisticated agents) . Consider the decision-loss model with a sophisticated agent and bandwidth k = 1 . Given an instance (P, A, ℓ ), computing an op-timal highlighting policy 
+
+σ⋆ ∈ argmin 
+
+> σ
+
+RS (σ)
+
+or equivalently, computing the optimal value min σ RS (σ) is NP-hard (in n and d). This remains true even when X ⊆ { 0, 1}d.Proof sketch. We reduce the problem from Euclidean sum-of-squares clustering with K = 2 , which is NP-hard, as stated by Aloise et al. (2009). Given points z1, . . . , z m ∈ Rp, choose d = 2 + ⌈log 2 m⌉ so 
+
+2d−2 ≥ m. Under bandwidth k = 1 , any deterministic policy induces at most |S| = 2 d + 1 signals. Reserve two signals s1 = ( {1}, 0) and s2 = ( {2}, 0) for clustering. Construct m data states yi = (0 , 0, enc( i)) ∈ { 0, 1}d with distinct tails, and 2d − 1 gadget states 
+
+x0, . . . , x 2d−2 ∈ { 0, 1}d with xt 
+
+> 1
+
+= xt 
+
+> 2
+
+= 1 , one for each non-reserved signal, so each gadget can realize a distinct non-reserved signal under k = 1 . Let P be uniform over the n = m + (2 d − 1) states. Let 
+
+A = Rp ∪ { 0, 1, . . . , 2d − 2} and pick a large constant B larger than any feasible clustering cost bound. Define losses by ℓ(t, x t) = 0 and ℓ(a, x t) = B for a̸ = t, while for data states ℓ(a, y i) = ∥a − zi∥22 if 
+
+a ∈ Rp and ℓ(a, y i) = B otherwise. With this construction, any policy that pools (i) two distinct gadgets or (ii) a gadget with a data state induces conditional Bayes risk at least B under that signal, so an optimal policy must assign all gadgets to distinct non-reserved signals and must not mix gadgets with data states. Hence all data states must be mapped to exactly the two reserved signals s1, s 2, inducing a partition (C1, C 2) of [m]. Under squared loss, the sophisticated best response to each signal is the posterior mean, so the optimal highlighting value satisfies 
+
+min  
+
+> σ
+
+RS (σ) = 1
+
+n min 
+
+> (C1,C 2)2
+
+X
+
+> t=1
+
+X
+
+> i∈Ct
+
+∥zi − μt∥22,
+
+where μt is the centroid of {zi : i ∈ Ct}. Therefore, computing min σ RS (σ) computes the Euclidean 
+
+2-means optimum, implying NP-hardness. 
+
+5.2 Tractability of Optimal Policies for Naive Updating 
+
+The above result shows that determining the optimal highlighting policy for a sophisticated agent is NP-hard, even when k = 1 . In this subsection, we characterize optimal highlighting for a naive agent. The naive model exhibits a different computational complexity from the sophisticated model: in particular, the machine’s optimization problem is polynomial-time solvable when k is a fixed constant. A key advantage of the naive model is computational. Because the naive agent treats the selection event as exogenous, the machine can evaluate the realized loss under any candidate revealed set I pointwise for each realized instance x by computing the naive posterior P(· | XI = xI ) and the induced Bayes action. When the bandwidth k is bounded, this yields an exact algorithm via enumeration; we also present three scalable heuristics that will be useful in binary and correlated settings. 9Exact optimization by enumeration. For each realized instance x, define the realized loss induced by revealing (I, x I ) under the naive posterior: 
+
+LN (I; x) := ℓ(ba(ℓ, P(· | XI = xI )) , x ) .
+
+The naive–optimal policy at x is obtained by minimizing LN (I; x) over all |I| ≤ k. The exact optimization algorithm would enumerate all possible I and calculate the loss (Algorithm 1). The following remark implies that if k is small, then this algorithm can find the optimal policy in polynomial time.                                                    
+
+> ALGORITHM 1: Exact enumeration
+> Input: prior Pon X(discrete support), loss ℓ, action set A, realized instance x, bandwidth k
+> Output: highlight set σenum (x)⊆[d]
+> I⋆← ∅ ;L⋆←+∞;
+> for I⊆[d]with |I| ≤ kdo
+> Compute naive posterior PI(·)←P(· | XI=xI);Compute Bayes action baI∈argmin a∈AEPI[ℓ(a, X )] ;
+> L←ℓ(baI, x );
+> if L < L ⋆then
+> L⋆←L;I⋆←I;
+> end end return σenum (x)←I⋆;
+
+Remark 1 (Tractability of naive–optimal highlighting for bounded bandwidth) . Consider the decision-loss model with a naive agent. Fix k ∈ N. Assume that, given XI , one can evaluate the naive pos-terior P(· | XI ) and compute a Bayes-optimal action ba(ℓ, bPN ) ∈ argmin a∈A EbPN [ℓ(a, X )] in time 
+
+poly(size( P, ℓ, A )) . Then an optimal highlighting policy for the naive agent can be computed in time 
+
+O
+
+
+
+n · Pkt=0 
+
+ dt
+
+
+
+· poly(size( P, ℓ, A )) . In particular, for constant k, computing a naive–optimal highlight-ing policy is polynomial-time in the input size. 
+
+5.3 Greedy-Type Algorithms 
+
+When posterior updates are expensive, the model is high-dimensional, or the bandwidth is relatively large, then complete enumeration may still be computationally unattractive. 
+
+A fast first-moment heuristic. An alternative for real-valued features Xi is to highlight features whose realized values deviate most from their marginal means. Let μi := E[Xi] and define si(x) := |xi − μi|. The deviation heuristic selects the k coordinates with the largest scores (Algorithm 2). Indeed, the algorithm can be seen as using a surprise-based heuristic: it reports those components that represent the largest surprise relative to their expectation. If two scores are equal, we break ties by choosing the one with the smallest index, which provides additional information for the sophisticated agent. This rule ignores correlations and higher-order structure; nevertheless, in the independent Bernoulli recovery benchmark of Section 6, it is optimal. 
+
+Marginal heuristic. Another fast contextual rule evaluates each feature only once, starting from the empty highlighted set. For each coordinate j ∈ [d], define the singleton marginal improvement 
+
+∆( j | ∅ , x ) := LN (∅; x) − LN ({j}; x).
+
+10 ALGORITHM 2: Deviation heuristic                                
+
+> Input: marginal means μi=E[Xi]for i∈[d], realized instance x, bandwidth k
+> Output: highlight set σdev (x)⊆[d]
+> for i←1to ddo
+> si← | xi−μi|;
+> end
+> Let I⋆be the indices of the klargest values in {si}di=1 ;
+> return σdev (x)←I⋆;
+
+The marginal heuristic computes these one-step gains, ranks features by ∆( j | ∅ , x ), and highlights the top k
+
+coordinates (Algorithm 3). Unlike the deviation heuristic, this rule can account for correlations through the posterior induced by revealing a single feature. Unlike the greedy rule below, however, it does not update the ranking after earlier features have been selected, and therefore ignores overlap across the chosen set.                                     
+
+> ALGORITHM 3: Marginal heuristic
+> Input: prior P, loss ℓ, action set A, realized instance x, bandwidth k
+> Output: highlight set σmarg (x)⊆[d]
+> R0←LN(∅;x);
+> for j←1to ddo
+> ∆j←R0−LN({j};x);
+> end
+> Let I⋆be the indices of the klargest values in {∆j}dj=1 ;
+> return σmarg (x)←I⋆;
+
+Greedy information gain. Another scalable design is a greedy policy that builds the highlighted set se-quentially by maximizing the one-step reduction in the realized loss at the realized instance x, where the action is chosen as a Bayes action under the naive posterior. For a candidate coordinate j / ∈ I, define the marginal improvement 
+
+∆( j | I, x ) := LN (I; x) − LN (I ∪ { j}; x).
+
+Starting from I = ∅, the algorithm repeatedly adds the coordinate with the largest ∆( j | I, x ), as long as this improvement is positive (Algorithm 4). 
+
+Relationship among the algorithms. Algorithm 1 is exact and polynomial-time for constant k. Algo-rithm 2 is a fast heuristic that uses only first moments. Algorithm 3 is an intermediate rule as it accounts for the posterior effect of revealing each feature individually, but it ignores redundancy across selected features because it never updates the ranking after a coordinate is added. Algorithm 4 is a greedy algorithm that accounts for belief updates and can exploit correlations: revealing one feature can change the posterior over others. In the independent Bernoulli recovery benchmark (Section 6), Algorithm 4 and Algorithm 3 reduce to Algorithm 2 and are optimal, so they lead to the same highlight sets as Algorithm 1. 
+
+# 6 Asymptotic Analysis for Binary Features 
+
+Above, we have considered general solutions for optimally highlighting features that apply for general features and loss functions. There we have shown that optimal solutions as well as the computational complexity of finding them depend on how beliefs are formed. In this section, we consider the specific case 11 ALGORITHM 4: Greedy information gain with early stopping 
+
+Input: prior P, loss ℓ, action set A, realized instance x, bandwidth k
+
+Output: highlight set σgreedy (x) ⊆ [d]
+
+I ← ∅ ;
+
+baI ∈ argmin a∈A E[ℓ(a, X ) | XI = xI ];
+
+R ← ℓ(baI , x );
+
+for t ← 1 to k do 
+
+j⋆ ← ⊥ ; ∆⋆ ← −∞ ; R⋆ ← +∞;
+
+for j ∈ [d] \ I do 
+
+baI∪{ j} ∈ argmin a∈A E[ℓ(a, X ) | XI∪{ j} = xI∪{ j}];
+
+Rj ← ℓ(baI∪{ j}, x );
+
+∆j ← R − Rj ;
+
+if ∆j > ∆⋆ then 
+
+∆⋆ ← ∆j ; j⋆ ← j; R⋆ ← Rj ;
+
+end end if ∆⋆ ≤ 0 then break ; // withhold further information 
+
+end 
+
+I ← I ∪ { j⋆}; R ← R⋆;
+
+end return σgreedy (x) ← I;
+
+of binary features (i.e., X = {0, 1}d) with the loss function given by the recovery loss ℓ(a, x ) = ∥a − x∥22.Our goal is to characterize the asymptotic performance of the computationally attractive, simple greedy-type algorithms from the previous section. In order to illustrate optimal solutions explicitly and characterize their performance, we first consider naive–optimal highlighting when features are independent. We compare contextual highlighting to fixed subset selection, highlighting a fundamental difference between ex-ante and ex-post selection. We argue that greedy-style algorithms can perform well and serve as candidate “universal” policies that remain competitive for sophisticated agents while being robust for naive agents. Finally, we discuss extensions to weakly correlated settings. 
+
+6.1 Closed-Form Optimal Policies for Naive Updating 
+
+We first solve for optimal highlighting policies for naive updaters in the case when features are independent Bernoulli (but not necessarily identically distributed). Specifically, let X1, . . . , X d be independent with 
+
+Xi ∼ Bern( pi) and pi = E[Xi]. Consider the squared recovery objective with A = Rd and ℓ(a, X ) = 
+
+∥a − X∥22 = Pdi=1 (ai − Xi)2. If the machine reveals (I, X I ), then under the naive posterior the Bayes action is 
+
+bai =
+
+(
+
+Xi, i ∈ I, pi, i / ∈ I, 
+
+and therefore the realized loss at instance X equals 
+
+LN (I; X) = X
+
+> i / ∈I
+
+(Xi − pi)2. (3) 12 Fixed subset benchmark (ex-ante selection). A fixed subset policy chooses a single set I⋆ with |I⋆| ≤ k
+
+and reveals it for every instance. Taking expectation in (3) gives 
+
+E[LN (I; X)] = X
+
+> i / ∈I
+
+E[( Xi − pi)2] = X
+
+> i / ∈I
+
+Var( Xi) = X
+
+> i / ∈I
+
+pi(1 − pi).
+
+Hence, the optimal fixed subset reveals the k coordinates with the largest variances pi(1 − pi).
+
+Lemma 1 (Optimal fixed subset under independence) . In the independent Bernoulli recovery model, an optimal fixed subset policy chooses 
+
+Ifix ∈ argmax  
+
+> I:|I|≤ k
+
+X
+
+> i∈I
+
+pi(1 − pi),
+
+i.e., the k coordinates with largest pi(1 − pi).
+
+Contextual highlighting (ex-post selection). A contextual policy may choose I as a function of the re-alized instance X. Because the naive realized loss (3) is additive across coordinates and depends on each coordinate only through (Xi − pi)2, the per-instance optimal rule is immediate. 
+
+Lemma 2 (naive–optimal contextual highlighting under independence) . In the independent Bernoulli re-covery model, the naive–optimal contextual policy is 
+
+σN (x) ∈ argmax  
+
+> I:|I|≤ k
+
+X
+
+> i∈I
+
+(xi − pi)2,
+
+i.e., it reveals the k coordinates with the largest “surprises” (xi − pi)2.
+
+Contextual can beat fixed subset. Since a fixed subset policy is a special case of a contextual policy, it follows immediately that contextual highlighting weakly dominates fixed subset selection: 
+
+RN (σN ) = E
+
+"
+
+min  
+
+> I:|I|≤ k
+
+X
+
+> i / ∈I
+
+(Xi − pi)2
+
+#
+
+≤ min   
+
+> I:|I|≤ k
+
+E
+
+"X
+
+> i / ∈I
+
+(Xi − pi)2
+
+#
+
+= RN (σfix ).
+
+Moreover, the inequality is strict whenever the identity of the k largest surprise terms is not almost surely constant. Intuitively, fixed subset selection hedges against uncertainty in expectation, whereas contextual selection exploits instance-level variation by revealing whichever coordinates happen to be most informative for that particular x.
+
+Algorithmic implication. In the independence setting, by Lemma 2, Algorithm 2 (deviation) is optimal. Furthermore, Algorithm 3 (marginal heuristic) and Algorithm 4 (greedy information gain) coincide with Al-gorithm 2: revealing coordinate i eliminates the term (xi − pi)2 from (3), so the best marginal improvement is attained by the largest current surprise. 
+
+6.2 Asymptotic Characterization of Average Losses 
+
+We now solve for the asymptotic risk of the above policy for a naive and for a sophisticated updater. In order to calculate approximate losses under the above policies, we consider sequences of distributions Pd
+
+13 over Xd = ( Xd, 1, . . . , X d,d ) with independent coordinates for each d. Each such distribution Pd is given by the marginal probabilities 
+
+pd = ( pd, 1, . . . , p d,d ) ∈ [0 , 1] d, Ed[Xd,i ] = pd,i .
+
+We are specifically interested in the case where highlighting matters in a limit. Therefore, we assume that the bandwidth k itself increases with the dimension: 
+
+Assumption 6.1 (Proportional bandwidth) . The bandwidth k satisfies k/d → α ∈ (0 , 1) as d → ∞ .
+
+In order to derive closed-form expressions for the expected loss under the above policies, we assume that the sequence (pd)d≥1 is stable in the sense that the distribution over the pd,i themselves converges to a distribution over the unit interval with CDF F :
+
+Assumption 6.2 (Stability of the sequence of distributions) . There is a monotone increasing c` adl` ag function 
+
+F : [0 , 1] → [0 , 1] with lim t→0 F (t) = 0 , lim t→1 F (t) = 1 such that 
+
+1
+
+d
+
+> d
+
+X
+
+> i=1
+
+1(pd,i ≤ t) → F (t) (4) 
+
+as d → ∞ for all continuity points t of F .
+
+This assumption leaves the pd,i flexible, and merely assumes that their distribution across i can be approximated well by some function F .For formulating our results, it will be convenient to transform the distributions pd and realizations Xd.Specifically, for all d, i, t , let 
+
+p∗ 
+
+> d,i
+
+=
+
+(
+
+pd,i , pd,i ≤ 12 ,
+
+1−pd,i , otherwise = min( pd,i , 1−pd,i ),X∗ 
+
+> d,i
+
+=
+
+(
+
+Xd,i , pd,i ≤ 12 ,
+
+1−Xd,i , otherwise =
+
+(
+
+Xd,i , pd,i = p∗
+
+> d,i
+
+,
+
+1−Xd,i , otherwise ,F ∗(t) = 
+
+(
+
+F (t) + 1 −F (1 −t), t ≤ 12 ,
+
+1, otherwise .
+
+Then (p∗
+
+> d,i
+
+)d,i , F ∗ fulfills (4) with F ∗ continuously and (weakly) monotonically increasing. Furthermore, by the symmetry of the loss function, we can focus on highlighting the transformed features X∗ 
+
+> d
+
+.We now formulate our main policies of interest in terms of the transformed quantities p∗
+
+> d
+
+, X ∗ 
+
+> d
+
+. For every 
+
+d consider a (fixed) ordering (p∗
+
+> d, (1)
+
+, . . . , p ∗
+
+> d, (d)
+
+) of p∗ such that the p∗ 
+
+> d, (j)
+
+are monotonically increasing, with corresponding realizations X∗ 
+
+> d, (j)
+
+∼ Bern (p∗
+
+> d, (j)
+
+). Then the two highlighting choices of interest can, without loss of generality, be written as: (a) Fixed ex-ante highlighting : An optimal fixed set for highlighting of size k for the naive agent consists of X∗
+
+> d, (d−k+1)
+
+, . . . , X ∗
+
+> d, (d)
+
+, corresponding to the k highest probabilities p∗
+
+> d,i
+
+, which correspond exactly to those original cases where pd,i (1 − pd,i ) is maximal. (b) Greedy data-driven highlighting (Algorithms 1, 2, 3, 4): An optimal data-driven set for highlighting of size at most k consists of the X∗ 
+
+> d, (j)
+
+for the first k indices j for which X∗ 
+
+> d, (j)
+
+= 1 .3 These correspond to the features with the k highest original values of (Xd,i − pd,i )2.      
+
+> 3If there are less than ksuch indices, then we add the highest indices jfor which X∗
+> d, (j)= 0 .
+
+14 For developing our results, it will be helpful to consider a third highlighting scheme: (c) Fixed surprise highlighting : For a fraction β ∈ (0 , 1) , highlight those among the features X∗
+
+> d, (1)
+
+, . . . , X ∗
+
+> d, (⌊βd ⌋)
+
+with X∗ 
+
+> d, (j)
+
+= 1 , corresponding to a varying number of highlighted features (that may be lower or higher than k, and can thus be infeasible). To establish the following results, we show that Procedure (b) and Procedure (c) are asymptotically equiva-lent for the right value of β, which also allows us to characterize their asymptotic gap to Procedure (a). In order to state these results, it will be helpful to consider the quantile function 
+
+Q∗(q) = inf {t ∈ [0 , 1]; F ∗(t) ≥ q}
+
+corresponding to the cdf F ∗, which is its generalized inverse. Based on Q∗, we first characterize the asymp-totic risk for fixed highlighting, where the highlighted set is chosen ex-ante. 
+
+Proposition 1 (Asymptotic risk of optimal fixed highlighting) . Assume that Assumptions 6.1 and 6.2 hold. Then, under optimal fixed highlighting (Procedure (a)), both the naive and the sophisticated agent have the same asymptotic normalized risk, given by 
+
+lim  
+
+> d→∞
+
+RN (σ(a)) = lim  
+
+> d→∞
+
+RS (σ(a)) = lim  
+
+> d→∞
+
+E
+
+ 1
+
+d
+
+> d−k
+
+X
+
+> j=1
+
+ X∗ 
+
+> d, (j)
+
+− p∗
+
+> d, (j)
+
+2
+
+ =
+
+Z 1−α
+
+> 0
+
+Q∗(q) 1 − Q∗(q) dq. 
+
+We next provide an explicit expression for highlighting surprises based on a fixed fraction of features. 
+
+Proposition 2 (Asymptotic risk of fixed surprise highlighting) . Assume that Assumptions 6.1 and 6.2 hold, and consider Procedure (c) for a given β ∈ (0 , 1) .(i) Sophisticated agent : The asymptotic normalized risk is 
+
+lim  
+
+> d→∞
+
+RS (σ(c) 
+
+> β
+
+) = lim  
+
+> d→∞
+
+E
+
+ 1
+
+d
+
+> d
+
+X
+
+> j=⌊βd ⌋+1
+
+ X∗ 
+
+> d, (j)
+
+− p∗
+
+> d, (j)
+
+2
+
+ =
+
+Z 1
+
+> β
+
+Q∗(q) 1 − Q∗(q) dq. 
+
+(ii) Naive agent : The asymptotic normalized risk is 
+
+lim  
+
+> d→∞
+
+RN (σ(c) 
+
+> β
+
+) = lim  
+
+> d→∞
+
+E
+
+ 1
+
+d
+
+> ⌊βd ⌋
+
+X
+
+> j=1
+
+1 X∗ 
+
+> d, (j)
+
+= 0   X∗ 
+
+> d, (j)
+
+− p∗
+
+> d, (j)
+
+2 + 1
+
+d
+
+> d
+
+X
+
+> j=⌊βd ⌋+1
+
+ X∗ 
+
+> d, (j)
+
+− p∗
+
+> d, (j)
+
+2
+
+
+
+=
+
+Z β
+
+> 0
+
+ Q∗(q)2 1 − Q∗(q) dq +
+
+Z 1
+
+> β
+
+Q∗(q) 1 − Q∗(q) dq. 
+
+Assuming that the asymptotic bandwidth is not too large, we can find a fraction β such that Proce-dures (b) and (c) coincide. 
+
+Assumption 6.3 (Limited asymptotic bandwidth) . The limiting bandwidth fraction satisfies 
+
+α ∈
+
+
+
+0,
+
+Z 10
+
+Q∗(q) dq
+
+
+
+.
+
+Proposition 3 (Asymptotic equivalence of greedy and fixed surprise highlighting) . Assume that Assump-tions 6.1, 6.2, 6.3 hold. Let β∗ satisfy R β∗ 
+
+> 0
+
+Q∗(q) dq = α. Then the greedy procedure (Procedure (b)) and the fixed surprise-highlighting procedure (Procedure (c)) with parameter β∗ have the same asymptotic nor-malized risk for both sophisticated and naive agents. In particular, their asymptotic normalized risks are the expressions in Proposition 2 evaluated at β = β∗.
+
+15 Figure 1: Ex-ante fixed subset selection vs. contextual highlighting. Left: the limiting density of feature means p, given by f (p) = 4 p for p ∈ [0 , 12 ] and f (p) = 4 − 4p for p ∈ [ 12 , 1] . Right: the asymptotic highlighting frequency of a feature with mean p under an optimal contextual (data-driven) highlighting policy with bandwidth fraction α = 0 .25 (i.e., k = αd ). The blue region indicates the ex-ante fixed policy, which prioritizes features with largest variance p(1 − p) (hence p near 12 ). The orange triangles indicate the contextual policy, which highlights features with the largest realized surprise |Xi − pi|, leading asymptotically to emphasizing the extreme-p regions. Putting these results together, we obtain an exact characterization of the limiting risks along our asymp-totic sequence. 
+
+Theorem 2 (Asymptotic risk of the greedy algorithm) . Assume that Assumptions 6.1, 6.2, 6.3 hold. Let β∗
+
+be as defined in Proposition 3. (i) Sophisticated agent : The greedy Procedure (b) has asymptotic normalized risk 
+
+lim  
+
+> d→∞
+
+RS (σ(b)) = 
+
+Z 1
+
+> β∗
+
+Q∗(q) 1 − Q∗(q) dq. 
+
+(ii) Naive agent : The greedy Procedure (b) has asymptotic normalized risk 
+
+lim  
+
+> d→∞
+
+RN (σ(b)) = 
+
+Z β∗
+
+> 0
+
+ Q∗(q)2 1 − Q∗(q) dq +
+
+Z 1
+
+> β∗
+
+Q∗(q) 1 − Q∗(q) dq. 
+
+Figure 1 illustrates the qualitative difference between ex-ante fixed subset selection and contextual (data-driven) highlighting. We consider a sequence of independent Bernoulli features Xd,i ∼ Bern( pd,i ) whose empirical distribution of means converges to the symmetric triangular density f (p) = 4 p for p ∈ [0 , 12 ] and 
+
+f (p) = 4 − 4p for p ∈ [ 12 , 1] . Fix α = 14 so that k = d/ 4.Under an optimal ex-ante fixed policy (Procedure (a)), the designer chooses one subset of size k before observing Xd; for squared-error recovery, this amounts to prioritizing features with the largest intrinsic uncertainty pi(1 − pi), i.e., those with pi closest to 12 (blue region). In contrast, the optimal contextual policy (Procedure (b)) conditions on the realized instance and highlights the coordinates with the largest realized deviation |Xi − pi|. As d → ∞ , this “surprise-driven” rule concentrates highlighting on extreme means, producing the triangular regions shown in orange. 16 A simpler numerical example is given by the case where all probabilities are the same, pd,i = p for all d
+
+and i, so that the features are i.i.d. We assume without loss of generality that p ≤ 12 . Then Q∗(q) = p for all 
+
+q ∈ (0 , 1) . By Proposition 1, the asymptotic normalized risk of the fixed highlighting scheme equals 
+
+lim  
+
+> d→∞
+
+RN (σ(a)) = lim  
+
+> d→∞
+
+RS (σ(a)) = 
+
+Z 1−α
+
+> 0
+
+Q∗(q) 1 − Q∗(q) dq = (1 − α) p(1 − p).
+
+By Proposition 3, β∗ solves R β∗ 
+
+> 0
+
+Q∗(q) dq = β∗p = α, so β∗ = α/p (and we assume that α < p by Assumption 6.3). The greedy risk has normalized asymptotic risk 
+
+lim  
+
+> d→∞
+
+RS (σ(b)) = 
+
+Z 1
+
+> β∗
+
+Q∗(q) 1 − Q∗(q) dq = (1 − β∗) p(1 − p) = ( p − α)(1 − p)
+
+for the sophisticated agent, and asymptotic normalized risk 
+
+lim  
+
+> d→∞
+
+RN (σ(b)) = 
+
+Z β∗
+
+> 0
+
+ Q∗(q)2 1 − Q∗(q) dq +
+
+Z 1
+
+> β∗
+
+Q∗(q) 1 − Q∗(q) dq
+
+= β∗ p2(1 − p) + (1 − β∗) p(1 − p) = αp (1 − p) + ( p − α)(1 − p)
+
+for the naive agent. As α → p, the sophisticated agent achieves an average risk approaching zero, the naive agent achieves an average risk p2(1 −p), and a fixed highlighting scheme achieves an average risk p(1 −p)2.
+
+6.3 Partially Correlated Features 
+
+In the previous subsection, we focused on independent features, where it is optimal for a naive receiver to order features by their marginal information value and reveal as many features as the bandwidth constraint allows. With correlation, however, the value of highlighting also depends on its implication for unrevealed features. For a naive receiver who ignores the selection rule, revealing an additional feature can even increase the realized loss in some instances. The next example shows that, in correlated settings, a naive optimal contextual policy need not be monotone in the amount of information highlighted. In particular, it may be optimal to withhold information in some cases. 
+
+Example 3 (With correlation, revealing more can hurt a naive agent) . Let X = ( X1, X 2) ∈ { 0, 1}2 with correlated prior P(0 , 0) = P(0 , 1) = P(1 , 0) = 13 , P(1 , 1) = 0 . The machine observes X and may reveal at most one coordinate (bandwidth k = 1 ), i.e., it chooses I ∈ {∅ , {1}, {2}} and (I, X I ) is revealed. The receiver is naive: upon observing (I, X I ), they use the posterior P(· | XI ) (ignoring the selection rule). Consider squared recovery of the full vector, A = R2, ℓ (a, x ) = ∥a − x∥22. At the instance X = (0 , 0) ,revealing X1 = 0 induces the naive posterior mean E[X2 | X1 = 0] = 12 , hence the naive prediction is (0 , 12 ) and the realized loss is 14 . Symmetrically, revealing X2 = 0 yields prediction ( 12 , 0) and loss 14 .In contrast, revealing nothing induces the prior-mean prediction E[X] = ( 13 , 13 ) and realized loss 29 < 14 .Thus, when features are correlated, highlighting additional information need not improve performance for a naive receiver, and an optimal contextual policy may strictly prefer to withhold information in some cases. 
+
+Example 3 also illustrates why the deviation heuristic (Algorithm 2) and the marginal heuristic (Algo-rithm 3) can be suboptimal under correlation, whereas greedy information gain (Algorithm 4) can adapt by withholding information when the best available reveal would increase the realized loss. In Example 3 with 
+
+k = 1 , the marginal means are μ1 = μ2 = E[Xi] = 1 /3. Algorithm 2 reveals one coordinate at X = (0 , 0) ,and incurs loss 1/4 there, while achieving zero loss at X = (0 , 1) and X = (1 , 0) . Hence 
+
+RN (σdev ) = 13 · 14 = 112 .
+
+17 By contrast, greedy information gain with early stopping selects I = ∅ at X = (0 , 0) (loss 2/9 < 1/4) and reveals the “ 1” coordinate in the other two states, achieving zero loss there. Therefore 
+
+RN (σgreedy ) = 13 · 29 = 227 < 112 .
+
+The above examples show cases where σgreedy is a better selection rule than other approximate al-gorithms. However, the following remark indicates that sometimes Algorithm 4 can perform worse than Algorithm 2 and Algorithm 3. 
+
+Remark 2 (Algorithm 4 can do worse than Algorithm 2 and Algorithm 3) . The early-stopping rule that allows Algorithm 4 to withhold individually harmful reveals can also cause it to reveal strictly too little when reveals help only jointly. Consider Example 3 with bandwidth k = 2 . At X = (0 , 0) , every singleton reveal raises the realized loss: ∆( j | ∅ , X ) = 29 − 14 = − 136 < 0 for j ∈ { 1, 2}, so Algorithm 4 stops at 
+
+∅ with loss 2/9. Both Algorithm 2 and Algorithm 3 reveal {1, 2} at (0 , 0) , which pins down the state and attains loss 0. At the other two realizations X = (0 , 1) and X = (1 , 0) , all three algorithms achieve loss 0.Therefore, in expectation across the three equally likely realizations, 
+
+RN (σgreedy ) = 13 · 29 = 227 > 0 = RN (σdev ) = RN (σmarg ),
+
+so the deviation and marginal heuristics strictly dominate greedy information gain in expected naive loss. 
+
+The previous remark relies on Algorithm 4’s early-stopping rule. Even without early stopping, Algo-rithm 4’s myopic first-step choice can lock it out of the optimal pair, as the following discrete example shows. 
+
+Remark 3 (Algorithm 4 without early stopping can be worse than Algorithm 2) . Let X = ( X1, X 2, X 3) ∈{0, 1}3 with bandwidth k = 2 and four equally likely realizations 
+
+r1 = (0 , 0, 0) , r2 = (1 , 0, 0) , r3 = (1 , 1, 0) , r4 = (0 , 1, 1) ,
+
+so μ = ( 12 , 12 , 14 ). At X = r2, revealing X3 = 0 shifts the naive posterior to E[X1 | X3 = 0] = 2 /3 and 
+
+E[X2 | X3 = 0] = 1 /3, close to x1 = 1 and x2 = 0 . Algorithm 4 therefore picks X3 first; conditional on 
+
+{3}, both remaining additions have ∆( j | { 3}, r 2) = − 136 , so even without early stopping the algorithm completes at σgreedy (r2) = {1, 3} with realized loss 14 . Algorithm 3 also selects {1, 3} from the singleton ranking. Algorithm 2, by contrast, ranks coordinates by |x−μ| = ( 12 , 12 , 14 ) and picks {1, 2}, which uniquely identifies r2 and attains loss 0. At the other three realizations r1, r 3, r 4, all three algorithms attain loss 0.Therefore, in expectation across the four equally likely realizations, 
+
+RN (σgreedy ) = RN (σmarg ) = 14 · 14 = 116 > 0 = RN (σdev ),
+
+so the deviation heuristic strictly dominates both greedy information gain and the marginal heuristic in expected naive loss. 
+
+Good approximation for the correlation case under a weak-mean-shift assumption. A simple suf-ficient assumption is that conditioning on a small number of revealed coordinates does not substantially change posterior means of unrevealed coordinates. 
+
+Assumption 6.4 (Weak-mean-shift) . Assume there exists ε ≥ 0 such that for every i ∈ [d], every set 
+
+S ⊆ [d] \ { i} with |S| ≤ k, and every value xS ,
+
+|E[Xi | XS = xS ] − E[Xi]| ≤ ε. (5) 18 Assumption 6.4 says that even after observing up to k coordinates, each remaining coordinate’s con-ditional mean stays within ε of its unconditional mean. This holds, for example, under standard weak-dependence or bounded-influence regimes. 
+
+Example 4 (Two sufficient conditions for weak-mean-shift) . Assume Xi ∈ [ai, b i] almost surely and let 
+
+R := max i(bi − ai). Fix i and S with |S| ≤ k.(i) Distributional stability in total variation. If 
+
+sup 
+
+> xS
+
+TV  L(Xi | XS = xS ), L(Xi) ≤ δ, 
+
+then sup xS E[Xi | XS = xS ] − E[Xi] ≤ δR .(ii) Linear conditional mean with bounded sparse regression. Suppose there exist coefficients βiS ∈ R|S|
+
+such that 
+
+E[Xi | XS = xS ] = μi + β⊤ 
+
+> iS
+
+(xS − μS ) for all xS ,
+
+and ∥βiS ∥1 ≤ η. If additionally ∥xS − μS ∥∞ ≤ R almost surely, then sup xS E[Xi | XS =
+
+xS ] − μi ≤ ηR .
+
+The simple deviation heuristic is close to optimal under the above assumption, provided that the bound 
+
+ε is sufficiently small. 
+
+Proposition 4 (Deviation heuristic is near-optimal under weak correlation) . Assume X ∈ Rd and the ob-jective is squared recovery. Let μi = E[Xi]. Assume Assumption 6.4 is satisfied. Assume additionally that 
+
+Xi ∈ [ai, b i] almost surely, and let R := max i(bi − ai). Let σdev be the policy from Algorithm 2, and let 
+
+σN be a naive–optimal policy among all policies that reveal at most k coordinates (and may reveal none). Then 
+
+RN (σdev ) ≤ RN (σN ) + 2( d − k) · (2 Rε + ε2).
+
+In particular, when ε is small, the deviation heuristic is near-optimal up to an additive error that vanishes as ε → 0.
+
+# 7 Simulation Case Study Based on the American Housing Survey 
+
+We now illustrate our theoretical results in a calibrated numerical exercise using data from the American Housing Survey (AHS). Home valuation is a canonical decision with many potentially relevant attributes: a prospective buyer or appraiser cares about structural characteristics, neighborhood quality, and price, yet typically lacks the bandwidth to inspect every detail of every listing. In such settings, an algorithm can support the decision-maker by highlighting a small subset of attributes that are most informative for getting a realistic impression and assessing the value of each home. For our specific application, we leverage data from 1,521 homes in the Minneapolis–St. Paul–Bloomington metro area, model the human’s prior as a multivariate Gaussian over 44 housing characteristics, and com-pare a range of highlighting policies primarily from the perspective of a naive agent, with a supplementary robustness exercise for a stylized sophisticated agent. The exercise yields three main takeaways that mirror the theory: (1) contextual highlighting delivers substantial gains over fixed, ex-ante highlighting; (2) taking covariance into account is important, since there is otherwise substantive redundancy across selected fea-tures; and (3) it can sometimes be optimal to highlight less rather than more, as revealing additional features can increase the loss faced by a naive agent in correlated environments. 19 7.1 Setup and Data 
+
+We use the pooled 2021 and 2023 AHS metropolitan samples, restricting to owner-occupied units with an observed self-reported market value ( MARKETVAL ) in the Minneapolis–St. Paul–Bloomington metro area (n = 1 ,521 ). The state vector has 44 features, including log( MARKETVAL ), structural characteristics (unit size, stories, lot size, number of bedrooms, bathrooms, and total rooms), building type, ownership status, heating and cooling systems, condition indicators, and neighborhood quality ratings. For simplicity, we treat all features as real values. 
+
+7.2 Belief Model and Loss 
+
+We model the state as a multivariate Gaussian over the 44 features, with the prior mean and covariance estimated from the data. The price coordinate is stored as log( MARKETVAL ); its prior mean is 12.6725, corresponding to approximately $319,000 in the original dollar scale. When a set S of features is revealed, the naive agent updates to the Gaussian posterior conditional on XS , leaving unrevealed coordinates at their conditional expectations. We use a loss function that is equivalent to the outcome-targeted recovery loss from Section 3. Specifi-cally, for Y = log( MARKETVAL ), we use the loss function 
+
+ℓ(bx, by; x, y ) = α (by − y)2
+
+σ2
+
+> y
+
++ (1 − α)
+
+P 
+
+> j
+
+wj (bxj − xj )2/σ 2
+
+> j
+
+P 
+
+> j
+
+wj
+
+, (6) where wj are feature-specific importance weights and σ2 
+
+> j
+
+is the sample variance of each variable. The weight on log( MARKETVAL ) is fixed exogenously at α = 12 ; the remaining weights are derived from the coefficients of a ridge regression of log( MARKETVAL ) on the other features ( R2 = 0 .51 ). We then evaluate choices by the average sample loss 
+
+L = 1
+
+n
+
+> n
+
+X
+
+> i=1
+
+ℓ(bxi, byi; xi, y i) = 1
+
+n
+
+> n
+
+X
+
+> i=1
+
+"
+
+α (byi − yi)2
+
+σ2
+
+> y
+
++ (1 − α)
+
+P 
+
+> j∈obs (i)
+
+wj (bxij − xij )2/σ 2
+
+> j
+
+P 
+
+> j∈obs (i)
+
+wj
+
+#
+
+. (7) By construction, the no-reveal benchmark achieves a loss of exactly one. All results below refer to the main specification in which MARKETVAL is not directly revealable. 
+
+7.3 Highlighting Policies 
+
+We compare several policies, organized along two margins emphasized in the theory: fixed versus contextual highlighting, and covariance-aware versus covariance-ignorant selection. • Fixed top-k importance. The simplest ex-ante benchmark. It ignores covariance, ranks features once by loss weight, and reveals the same top-k non-price features for every house. • Fixed marginal value. An intermediate ex-ante benchmark that accounts for covariance but not for redundancy among the selected features. For each revealable feature j, it computes the aggregate training loss when only j is revealed, using the full covariance structure to update the posterior over all other features. It then ranks features by marginal loss reduction and selects the top k.• Fixed forward stepwise. The main ex-ante covariance-aware benchmark. Before seeing any specific house, it builds a single ordered list of features by greedy forward selection. At each step, it adds the feature that produces the largest average reduction in the training objective given the features already selected, so it naturally avoids selecting redundant features. 20 • Fixed smart greedy. The ex-ante analogue of smart greedy. It follows the same forward-stepwise search, but may stop early if the next feature does not improve the aggregate fixed-policy objective. In the current sample, this stopping rule is not binding at the budgets we report, so its performance is numerically identical to forward stepwise. • Contextual deviation heuristic (Algorithm 2). The empirical counterpart of the surprise-based rule. For each realized house, it reveals the k observed non-price features with the largest absolute deviation from their marginal means. The rule uses only first moments and ignores covariance, so it is the fastest contextual benchmark but also the most restrictive informationally. • Contextual marginal top-k (Algorithm 3). This policy reacts to the realized house, but scores features one at a time and ignores overlap among selected features. It is therefore contextual but covariance-ignorant. • Contextual greedy. A variant of Algorithm 4 without early stopping. For each house, it chooses features sequentially. At each step, it selects the feature with the largest one-step reduction in that row’s loss and then updates the posterior. • Smart greedy (Algorithm 4). Identical to contextual greedy except that it may stop early if the next step does not improve the current row loss. At small budgets, it is nearly indistinguishable from contextual greedy. At large budgets, early stopping can improve performance by avoiding features whose Gaussian conditional updates introduce more noise than information (see below). For small bandwidths we also compute exact enumeration benchmarks. On the fixed side, we enumerate all subsets for k ≤ 3 to obtain the optimal ex-ante subset under the current objective. On the contextual side, we also run exact enumeration (Algorithm 1) for k ≤ 3 on the full one-metro sample. This is computation-ally feasible in the current application and puts the exact contextual benchmark on the same footing as the other policies. 
+
+7.4 Results 
+
+Table 1 reports the main results, combining all fixed and contextual policies in a single table to facilitate comparison across the two margins. 
+
+Fixed versus contextual. Contextual policies uniformly outperform their fixed-policy counterparts at ev-ery budget we consider, and the gap is quantitatively large. At k = 1 , for example, fixed forward stepwise attains a loss of 0.7616, while contextual greedy attains 0.3917. The gap widens as the budget increases: at k = 10 , contextual greedy attains 0.1603 against 0.3851 for fixed forward stepwise. The advantage of contextual over fixed highlighting is therefore first-order in this realistic data environment. 
+
+The role of correlation in fixed policies. Among fixed policies, the comparison between marginal value and forward stepwise isolates the cost of ignoring correlation. Both policies use the full covariance structure to evaluate each feature’s informativeness, but marginal value evaluates features one at a time while forward stepwise conditions on the features already selected. At k = 1 the two coincide, both selecting UNITSIZE ,the most informative single feature. From k = 2 onward, however, marginal value stacks highly correlated size and room-count variables ( UNITSIZE , BATHROOMS , TOTROOMS , BEDROOMS , UNITFLOORS ), while forward stepwise diversifies quickly across distinct informational dimensions ( UNITSIZE , BLD , OWNLOT ). This pattern demonstrates that accounting for covariance in the evaluation of each individual feature is not sufficient for good fixed-policy performance; one must also account for redundancy among the features jointly selected. 21 Table 1: Global-normalized recovery loss with MARKETVAL hidden. Fixed (ex-ante) Contextual 
+
+k Top-k Marg. val. Fwd step. Exact Deviation Marginal Greedy Smart Exact 0 1.0000 1.0000 1 0.8596 0.7616 0.7616 0.7616 0.9291 0.3917 0.3917 0.3917 0.3917 2 0.6717 0.7169 0.6484 0.6484 0.6929 0.3479 0.2920 0.2920 0.2793 3 0.6025 0.6908 0.5754 0.5754 0.6317 0.3423 0.2494 0.2494 0.2278 4 0.5356 0.6822 0.5170 0.5881 0.3384 0.2233 0.2233 5 0.5232 0.6312 0.4729 0.5481 0.3333 0.2048 0.2048 8 0.4637 0.5047 0.4119 0.4927 0.3124 0.1725 0.1725 10 0.4401 0.4296 0.3851 0.4596 0.3020 0.1603 0.1603 All (43) 0.2363 0.2363 0.2363 0.2363 0.1322 ‡           
+
+> Notes. Lower values are better. The loss is the globally normalized weighted L2 recovery criterion in (7), so the no-reveal benchmark equals one by construction. The sample contains 1,521 housing units in the Minneapolis–St. Paul–Bloomington metro area with observed MARKETVAL . The state and loss use log( MARKETVAL ); dollar-scale price errors are reported only as diagnostics. The value coordinate is not directly revealable. “Marg. val.” ranks features by the loss reduction from revealing each feature alone (covariance-aware but ignores redundancy). “Fwd step.” is greedy forward selection condition-ing on features already chosen. Fixed smart greedy is omitted because it coincides numerically with forward stepwise at the reported budgets. “Deviation” under contextual reveals features with the largest realized absolute deviations from their marginal means. “Marginal” under contextual denotes contextual marginal top-k(covariance-ignorant but posterior-aware for singletons). “Smart” is contextual greedy with per-house early stopping. Fixed “Exact” and contextual “Exact” enumer-ate all subsets for k≤3on the same full sample.
+> ‡Smart greedy with budget k= 43 stops at a median of 25 features per house.
+
+Covariance awareness on both margins. Among fixed policies, forward stepwise uniformly improves on the covariance-ignorant top-k ranking. The top-k rule begins with highly weighted variables such as building type, bathrooms, and unit size, whereas the covariance-aware ordering diversifies more quickly. Similarly, among contextual policies, the simple deviation heuristic performs worst because it uses only first moments: its loss is 0.9291 at k = 1 and 0.6317 at k = 3 , far above even contextual marginal top-k. The covariance-ignorant but posterior-aware marginal top-k improves substantially on deviation, and contextual greedy performs best among the scalable contextual rules. 
+
+Non-monotonicity and the full-reveal benchmark. The bottom row of Table 1 reports the loss when all 43 non-price features are revealed. This full-reveal benchmark attains a loss of 0.2363, which is the irre-ducible error from the MARKETVAL component that cannot be perfectly predicted from the other features. Notably, contextual greedy at k = 10 already achieves 0.1603, substantially below full reveal. Smart greedy with a budget of k = 43 achieves 0.1322 by stopping at a median of 25 features per house, while contextual greedy without early stopping at k = 43 matches the full-reveal loss of 0.2363. The explanation is that re-vealing low-weight, weakly correlated features can degrade the Gaussian posterior estimate of MARKETVAL 
+
+by injecting noise through the covariance update. Early stopping avoids this by withholding features whose marginal effect on the posterior is harmful. This is the empirical counterpart of the non-monotonicity result in Example 3: even in a high-dimensional, realistic setting, revealing more information need not improve outcomes. 
+
+Exact small-k benchmarks. The exact enumeration results confirm that the scalable heuristics are direc-tionally accurate. On the fixed side, exact ex-ante enumeration coincides with fixed forward stepwise for 22 k ≤ 3, selecting {UNITSIZE } at k = 1 , {BLD , UNITSIZE } at k = 2 , and {BLD , UNITSIZE , OWNLOT }
+
+at k = 3 . On the contextual side, the exact oracle equals greedy at k = 1 and improves on contextual greedy at k = 2 and k = 3 : exact contextual loss is 0.2793 versus 0.2920 for contextual greedy at k = 2 , and 0.2278 versus 0.2494 at k = 3 . This suggests that the sequential greedy rule captures much of the value of contextual adaptation while remaining computationally tractable. 
+
+Sophisticated-agent performance and robustness. We also report a stylized robustness exercise for so-phisticated updating at k ≤ 3. The naive benchmark remains the analytical Gaussian posterior throughout. For fixed policies, sophisticated and naive losses coincide because the selected set is constant ex ante. For contextual policies, we simulate sophisticated belief updates based on a simulation from the prior. Specifi-cally, we take 100,000 draws from the fitted Gaussian prior, with each revealable synthetic non-price coor-dinate snapped to the nearest observed AHS support code before policy evaluation and conditioning. Within this sample, we group support draws by the realized selected set and the displayed revealed covariates, and take the empirical conditional mean within that support sample. This procedure presents a way of calculating posteriors based on feature values and feature selection. Table 2a reports the performance of the resulting choices on the actual AHS sample, while Table 2b and Table 2c report two synthetic validations. Under the correct model and exact conditioning, a sophisticated agent should weakly outperform a naive agent. The synthetic benchmarks line up with that logic, while the real-data benchmark remains slightly worse, which we interpret as evidence that the empirical selection-aware posterior is sensitive to misspecification when the true housing distribution deviates from the fitted Gaussian approximation. Furthermore, overfitting may deteriorate the performance of the more complex updating rule. These tables support a narrow but useful conclusion. Once the sophisticated benchmark is put on the same discrete signal alphabet as the AHS data, the synthetic exercises line up with the theory: sophisticated updating improves on naive updating for the contextual policies, with the strongest gains when support and evaluation are drawn from the same discretized Gaussian environment. The deviation heuristic benefits from sophisticated updating as well in the same-sample synthetic benchmark, but its gains are much smaller than those of the posterior-based contextual rules and they disappear out of sample at k = 3 . On the real AHS sample, the empirical sophisticated proxy remains slightly worse than the Gaussian naive benchmark for all contextual policies, including deviation. We read that gap as evidence of misspecification of the Gaussian state model rather than as a substantive challenge to the theoretical dominance logic. However, it points to the practical challenge that results are heavily driven by the exact way beliefs are updated. 
+
+# 8 Extensions 
+
+We discuss several extensions of our framework. First, we comment on continuous instance spaces, where the set of possible states is infinite. Second, we discuss alternative behavioral updating rules that interpo-late between naive and sophisticated belief formation. Third, we incorporate private human information, which affects belief formation. Finally, we mention wrong belief and misaligned preferences as important extensions for future research. 
+
+8.1 Continuous Features and Gaussian Highlighting 
+
+Our main results focus on discrete distributions, where a highlighting policy maps each state in a finite sup-port to a subset of coordinates. In many applications, however, X is continuous, and the posteriors induced by a policy can be even more complex. In such settings, the designer’s problem for a sophisticated receiver 23 Table 2: Performance of the sophisticated agent relative to the naive agent across simulation settings. Lower values are better. 
+
+(a) Real AHS sample with MARKETVAL hidden. 
+
+Fixed (same for naive and sophisticated) Contextual naive Contextual sophisticated 
+
+k Top-k Marg. val. Fwd step. Exact Deviation Marginal Greedy Smart Exact Deviation Marginal Greedy Smart 0 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1.0000 1 0.8596 0.7616 0.7616 0.7616 0.9291 0.3917 0.3917 0.3917 0.3917 0.9407 0.4393 0.4393 0.4393 2 0.6717 0.7169 0.6484 0.6484 0.6929 0.3479 0.2920 0.2920 0.2793 0.7211 0.3665 0.2956 0.2956 3 0.6025 0.6908 0.5754 0.5754 0.6317 0.3423 0.2494 0.2494 0.2278 0.7044 0.3637 0.2637 0.2637 
+
+Notes. Fixed columns are identical for naive and sophisticated agents. Contextual sophisticated columns use an empirical conditional mean built from 100,000 Gaussian support draws, conditioning on the realized selected set and the displayed revealed signal codes after snapping synthetic support draws to the empirical AHS signal alphabet. 
+
+(b) Same 100,000 Gaussian draws used for support and evaluation. 
+
+Fixed (same for naive and sophisticated) Contextual naive Contextual sophisticated 
+
+k Top-k Marg. val. Fwd step. Exact Deviation Marginal Greedy Smart Exact Deviation Marginal Greedy Smart 0 0.9023 0.9023 0.9023 0.9023 0.9023 0.9023 0.9023 0.9023 0.9023 0.9023 0.9023 0.9023 1 0.7879 0.6862 0.6862 0.6862 0.8588 0.4221 0.4221 0.4221 0.8505 0.3407 0.3407 0.3407 2 0.6182 0.6412 0.5920 0.5920 0.7194 0.3831 0.3233 0.3233 0.6751 0.2848 0.2140 0.2140 3 0.5470 0.6166 0.5936 0.5936 0.6296 0.3723 0.2750 0.2750 0.4654 0.2336 0.1070 0.1070 
+
+Notes. Support and evaluation samples coincide, but the revealed synthetic signals are snapped to the empirical AHS support values, so this benchmark is no longer degenerate. Exact contextual columns are omitted because the exact contextual oracle is not recomputed on the synthetic samples. 
+
+(c) Independent 10,000-draw Gaussian evaluation sample. 
+
+Fixed (same for naive and sophisticated) Contextual naive Contextual sophisticated 
+
+k Top-k Marg. val. Fwd step. Exact Deviation Marginal Greedy Smart Exact Deviation Marginal Greedy Smart 0 0.8899 0.8899 0.8899 0.8899 0.8899 0.8899 0.8899 0.8899 0.8899 0.8899 0.8899 0.8899 1 0.7773 0.6739 0.6739 0.6739 0.8462 0.4170 0.4170 0.4170 0.8397 0.3389 0.3389 0.3389 2 0.6142 0.6332 0.5788 0.5788 0.7116 0.3785 0.3191 0.3191 0.6985 0.2971 0.2382 0.2382 3 0.5382 0.6092 0.5804 0.5804 0.6252 0.3681 0.2710 0.2710 0.6684 0.2992 0.2293 0.2293 
+
+Notes. The support sample remains the same 100,000 discretized Gaussian draws, but evaluation is on an independent synthetic sample. The sophisticated gains shrink relative to Table 2b because the empirical conditioning partition thins out of sample. 
+
+24 becomes a continuous-state information design problem. A simple illustration is a Gaussian recovery prob-lem. Let X = ( X1, X 2) ∼ N (0 , I 2) and suppose the target is y(X) = X ∈ R2 with squared loss. Let 
+
+k = 1 and restrict attention to policies that reveal exactly one coordinate value. For a naive agent, revealing coordinate j sets bXj = Xj and leaves the other coordinate at its prior mean 0. The optimal naive policy is therefore to reveal the coordinate with larger magnitude, i.e., σN (x1, x 2) ∈ argmax j∈{ 1,2} |xj |, yielding the expected loss 
+
+RN (σN ) = Emin {X21 , X 22 } ≈ 0.36 .
+
+For a sophisticated agent, however, the choice of which coordinate is revealed can itself convey information about the other coordinate. Any such policy can be represented by two prediction functions h, g : R → R:if the policy reveals X1, the receiver sets ( bX1, bX2) = ( X1, h (X1)) ; if it reveals X2, it sets ( bX1, bX2) = (g(X2), X 2). Thus the designer’s objective can be transformed to finding (h, g ) to minimize 
+
+J(h, g ) = E
+
+h
+
+min 
+
+n
+
+(X2 − h(X1)) 2, (X1 − g(X2)) 2oi 
+
+, (X1, X 2) ∼ N (0 , I 2).
+
+The induced highlighting rule is 
+
+σ(x1, x 2) = 
+
+(
+
+{1}, if (x2 − h(x1)) 2 ≤ (x1 − g(x2)) 2,
+
+{2}, otherwise .
+
+Even in this two-dimensional case, optimizing over (h, g ) is nontrivial. Figure 2 contrasts the naive partition induced by σN with a more intricate partition induced by a numerically optimized pair (h, g ) (computed via a Lloyd-style best-response iteration), which attains expected loss 
+
+RS (σcomplex ) ≈ 0.28 < 0.36 = RS (σN )
+
+a reduction of about 22% relative to σN . This example illustrates that in continuous settings, sophisticated receivers turn the highlighting problem into a continuous information-design problem, and optimal policies may exhibit complex state-dependent regions even with just two dimensions and a highly symmetrical prior. 
+
+Figure 2: Naive vs. complex highlighting in the Gaussian recovery problem with k = 1 . The naive policy is optimal for an agent updating naively, while the complex policy is a numerical approximation of the optimal policy for a sophisticated agent. 25 8.2 Alternative Behavioral Updating and Stereotypes 
+
+Our main model considers two benchmark belief-formation rules: sophisticated updating, which conditions on the selection event, and naive updating, which ignores it. In practice, both assumptions are natural, yet extreme benchmarks. Real decision-maker updating may also be influenced by anchoring, availability, and representativeness. As a specific behavioral deviation, we consider stereotypical updating (e.g. Bordalo et al., 2016), where the agent replaces Bayesian conditioning by finding a representative instance. One stylized version is the following: after observing (I, X I ), the agent selects a single “representative” 
+
+bX ∈ argmax   
+
+> x∈supp (P): xI=XI
+
+P(X = x | XI ),
+
+and then plays the action that is optimal for bX. Under squared recovery loss, this corresponds to imputing all missing coordinates by the most likely completion rather than the posterior mean. A detailed study of optimal highlighting against such behavioral rules is an interesting direction for future work. 
+
+8.3 Private Human Information and a Minimax Property 
+
+Above, we have assumed that a decision instance is fully characterized by the vector x that is available to the algorithm. In practice, the human decision-maker may have additional private information. We now allow the human to observe such private information XH in addition to the algorithm’s message (I, X I ).The posterior definitions in Section 3 extend directly: 
+
+bPS (· | XH , I, X I ) = P(· | XH , X I , σ (XM ) = I),
+
+bPN (· | XH , I, X I ) = P(· | XH , X I ).
+
+The design objective remains to minimize expected loss, except that the Bayes action is now computed under posteriors conditional on XH .Private information also provides an additional motivation for robust design. If the algorithm is uncertain about what XH the human has access to, a natural robust objective is to choose a policy that performs well uniformly over possible private information structures. Because additional private information can only reduce a Bayesian receiver’s expected squared error, the worst case for the designer is the case in which the human observes nothing beyond the highlighted features. Consequently, finding the policy that minimizes expected loss under the assumption that XH = ∅ may itself be viewed as a robust solution to the problem with private information. Formally, fix a jointly distributed model for (XM , X H ) with XM ∈ Rd the machine features available to the designer and XH an additional square-integrable signal that the human may or may not observe. Write 
+
+H for the collection of such private information structures; the degenerate element ∅ ∈ H corresponds to a human with no private information. For a highlighting policy σ with |σ(x)| ≤ k and a receiver type 
+
+τ ∈ { S, N }, let bXτM (σ; XI , X H ) denote the induced Bayes action for reconstructing XM (note that XH is always perfectly available, so does not add loss), and define the risk with private information H by 
+
+Rτ (σ; H) := E
+
+h
+
+XM − bXτM (σ; XI , X H ) 22
+
+i
+
+, I = σ(XM ),
+
+with Rτ (σ; ∅) the risk defined in Section 3. Throughout what follows, the revealed vector XI is under-stood to implicitly carry its index tag I, so that Σ( XI ) = Σ( I, X I ) is a well-defined sub-σ-algebra of the underlying probability space. 26 Proposition 5 (No private information policies are minimax for the sophisticated agent) . For any highlight-ing policy σ and any private information structure H ∈ H ,
+
+RS (σ; H) ≤ RS (σ; ∅).
+
+Consequently, any policy that is optimal in the no private information problem, 
+
+σ⋆ ∈ argmin  
+
+> σ:|σ(x)|≤ k
+
+RS (σ; ∅),
+
+is also minimax-optimal over private information structures, 
+
+σ⋆ ∈ argmin  
+
+> σ:|σ(x)|≤ k
+
+sup 
+
+> H∈H
+
+RS (σ; H).
+
+The above minimax proposition implies that optimizing the highlighting policy for a sophisticated hu-man with no private information delivers a robust solution against arbitrary private information channels the designer may not observe or control. However, the result does not carry over to the naive agent. For the sophisticated agent, the posterior mean is the orthogonal projection of XM onto the full information σ-field generated by the private signal and the highlighting rule, so adding information can only reduce squared loss. The naive agent ignores the informational content of the selection event, so its action is generally not the conditional expectation with respect to that richer σ-field. As a result, the projection argument behind Proposition 5 breaks down for naive updating. 
+
+8.4 Wrong Beliefs and Misaligned Preferences 
+
+The above model assumes that both sophisticated and naive agents have a prior of the world that coincides with the actual distribution. Furthermore, principal (designer) and agent (decision-maker) choices are fully aligned. An important natural extension is to a model where both priors and preferences can differ between principal and agent. Specifically, the agent may start with a prior eP and minimize expected loss for a loss function eℓ. The principal may then still optimize for a highlighting policy for their prior P and loss function 
+
+ℓ, taking both frictions into account and connecting the model further to Bayesian persuasion (Kamenica and Gentzkow, 2011). Highlighting may be an attractive way of collaboration in this case since merely revealing rather than manipulating features may still lead to reasonable solutions even in a world where principal and agent have partially misaligned preferences or different beliefs and may not fully trust each other. 
+
+# 9 Conclusion 
+
+We consider a model of highlighting in human–AI collaboration where an algorithm reveals a subset of features to enable a decision-maker to make better decisions about a given problem instance. Our main takeaway is that the way in which the decision-maker interprets the provided information matters for how to design good algorithms. When the decision-maker interprets the values of the revealed features in isolation, simple algorithms perform close to optimally. However, when the decision-maker also interprets why infor-mation was revealed, optimal algorithms are more complex and may confuse naive decision-makers. Beyond these specific assumptions about how information is interpreted, our approach points to an important agenda of modeling how decision-makers interpret information and deriving tractable highlighting algorithms as a practical tool to achieve human–AI complementarity. 27 References 
+
+Agarwal, Nikhil, Alex Moehring, and Alexander Wolitzky (2025). Designing human-ai collaboration: A sufficient-statistic approach. Technical report, National Bureau of Economic Research. (Cited on page 4.) 
+
+Aloise, Daniel, Amit Deshpande, Pierre Hansen, and Preyas Popat (2009). Np-hardness of euclidean sum-of-squares clustering. Machine learning , 75(2):245–248. (Cited on pages 9 and 29.) 
+
+Alur, Rohan, Manish Raghavan, and Devavrat Shah (2024). Human expertise in algorithmic prediction. arXiv:2402.00793. (Cited on page 4.) 
+
+Angelova, Victoria, Will S. Dobbie, and Crystal Yang (2023). Algorithmic recommendations and human discretion. (Cited on page 4.) 
+
+Athey, Susan C., Kevin A. Bryan, and Joshua S. Gans (2020). The allocation of decision authority to human and artificial intelligence. AEA Papers and Proceedings , 110:80–84. (Cited on page 4.) 
+
+Balakrishnan, Maya, Kris Johnson Ferreira, and Jordan Tong (2025). Human-algorithm collaboration with private information: Na¨ ıve advice-weighting behavior and mitigation. Management Science . (Cited on page 4.) 
+
+Bastani, Hamsa, Osbert Bastani, and Wichinpong Park Sinchaisri (2026). Improving human sequential decision making with reinforcement learning. Management Science , 72(1):733–755. (Cited on page 4.) 
+
+Bordalo, Pedro, Katherine Coffman, Nicola Gennaioli, and Andrei Shleifer (2016). Stereotypes. The Quar-terly Journal of Economics , 131(4):1753–1794. (Cited on page 26.) 
+
+Boyacı, Tamer, Caner Canyakmaz, and Francis De V´ ericourt (2024). Human and machine: The impact of machine input on decision making under cognitive limitations. Management Science , 70(2):1258–1275. 
+
+> (Cited on page 4.)
+
+Candogan, Ozan (2020). Information design in operations. In Pushing the Boundaries: Frontiers in Impact-ful OR/OM Research , pages 176–201. INFORMS. (Cited on page 4.) 
+
+Das, Abhimanyu and David Kempe (2011). Submodular meets spectral: greedy algorithms for subset selec-tion, sparse approximation and dictionary selection. In Proceedings of the 28th International Conference on International Conference on Machine Learning , pages 1057–1064. (Cited on page 5.) 
+
+Donahue, Kate, Alexandra Chouldechova, and Krishnaram Kenthapadi (2022). Human-algorithm collabo-ration: Achieving complementarity and avoiding unfairness. arXiv:2202.08821. (Cited on page 4.) 
+
+Dughmi, Shaddin and Haifeng Xu (2016). Algorithmic bayesian persuasion. In Proceedings of the forty-eighth annual ACM symposium on Theory of Computing , pages 412–425. (Cited on page 4.) 
+
+Green, Ben and Yiling Chen (2019). The principles and limits of algorithm-in-the-loop decision making. 
+
+Proceedings of the ACM on human-computer interaction , 3(CSCW):1–24. (Cited on page 4.) 
+
+Greenwood, Sophie, Karen Levy, Solon Barocas, Hoda Heidari, and Jon Kleinberg (2025). Designing algorithmic delegates: The role of indistinguishability in human-ai handoff. In Proceedings of the 26th ACM Conference on Economics and Computation , pages 306–336. (Cited on page 4.) 
+
+Guo, Yingni and Eran Shmaya (2019). The interval structure of optimal disclosure. Econometrica ,87(2):653–675. (Cited on page 5.) 
+
+28 Guo, Ziyang, Yifan Wu, Jason Hartline, Kenneth Holstein, and Jessica Hullman (2026). Complllm: Fine-tuning llms to discover complementary signals for decision-making. arXiv preprint arXiv:2602.19458 .
+
+> (Cited on page 4.)
+
+Guo, Ziyang, Yifan Wu, Jason Hartline, and Jessica Hullman (2025). The value of information in human-ai decision-making. In The Fourteenth International Conference on Learning Representations . (Cited on page 4.) 
+
+Hoefer, Martin, Pasin Manurangsi, and Alexandros Psomas (2024). Algorithmic persuasion with evidence. 
+
+ACM Transactions on Economics and Computation , 12(4):1–34. (Cited on page 5.) 
+
+Hoong, Ruru and Bnaya Dreyfuss (2025). Improving AI-assisted decision-making through calibrated coars-ening. (Cited on page 4.) 
+
+Kamenica, Emir and Matthew Gentzkow (2011). Bayesian persuasion. American Economic Review ,101(6):2590–2615. (Cited on pages 2, 4, and 27.) 
+
+Krause, Andreas and Carlos Guestrin (2007). Near-optimal observation selection using submodular func-tions. In AAAI , volume 7, pages 1650–1654. (Cited on page 5.) 
+
+McLaughlin, Bryce and Jann Spiess (2022). Algorithmic assistance with recommendation-dependent pref-erences. arXiv:2208.07626. (Cited on page 4.) 
+
+McLaughlin, Bryce and Jann Spiess (2024). Designing algorithmic recommendations to achieve human-ai complementarity. arXiv preprint arXiv:2405.01484 . (Cited on page 4.) 
+
+Noti, Gali, Kate Donahue, Jon Kleinberg, and Sigal Oren (2025). Ai-assisted decision making with human learning. In Proceedings of the 26th ACM Conference on Economics and Computation , pages 38–39. 
+
+> (Cited on page 4.)
+
+Rayo, Luis and Ilya Segal (2010). Optimal information disclosure. Journal of Political Economy ,118(5):949–987. (Cited on page 4.) 
+
+Tan, Lezhi, Naomi Sagan, Lihua Lei, and Jose Blanchet (2026). When should humans step in? optimal human dispatching in ai-assisted decisions. arXiv preprint arXiv:2603.13688 . (Cited on page 4.) 
+
+Vaccaro, Michelle, Abdullah Almaatouq, and Thomas Malone (2024). When combinations of humans and AI are useful: A systematic review and meta-analysis. Nature Human Behaviour , 8(12). (Cited on page 4.) 
+
+Yu, Guanghui, Wei Tang, Saumik Narayanan, and Chien-Ju Ho (2023). Encoding human behavior in infor-mation design through deep learning. Advances in neural information processing systems , 36:7506–7528. 
+
+> (Cited on page 5.)
+
+# Proofs 
+
+Proof of Theorem 1. We prove NP-hardness by a polynomial-time reduction from the Euclidean sum-of-squares clustering decision problem with 2 clusters, which is NP-hard by Aloise et al. (2009). 29 Source problem (Euclidean 2-means). An instance consists of points z1, . . . , z m ∈ Rp and a threshold 
+
+T ∈ R≥0. The question is whether there exists a partition (C1, C 2) of [m] such that 
+
+> 2
+
+X
+
+> t=1
+
+X
+
+> i∈Ct
+
+∥zi − μt∥22 ≤ T, where μt := 1
+
+|Ct|
+
+X
+
+> i∈Ct
+
+zi.
+
+Reduction outline. Given (z1, . . . , z m, T ), we construct in polynomial time a highlighting instance (P, A, ℓ )
+
+(with XM ⊆ { 0, 1}d and k = 1 ) and a scalar eT := T /n such that 
+
+min  
+
+> σ
+
+RS (σ) ≤ eT ⇐⇒ the 2-means instance has optimum ≤ T. 
+
+Therefore, if we could compute min σ RS (σ), we could solve the NP-hard 2-means decision problem by comparing the returned optimum to eT . Hence computing min σ RS (σ) (or an optimizer) is NP-hard. 
+
+Construction. Fix a 2-means instance (z1, . . . , z m, T ).
+
+Step 1: choose the feature dimension. Let 
+
+d := max {6, 2 + ⌈log 2 m⌉} ,
+
+so that 2d−2 ≥ m.
+
+Step 2: define the state space and prior. Assume no private human information ( XH = ∅). The machine-observed instance is binary: XM ∈ { 0, 1}d.
+
+(i) Data states. Let enc : [ m] → { 0, 1}d−2 be any injective map. For each i ∈ [m], define 
+
+yi := (0 , 0, enc( i)) ∈ { 0, 1}d.
+
+(ii) Gadget states (one per non-cluster signal). Under bandwidth k = 1 , a deterministic policy can realize signals of the form s = ( I, x I ) where I ∈ {∅ , {1}, . . . , {d}} and xI ∈ { 0, 1}|I|. Thus there are 
+
+2d + 1 possible signals: 
+
+S = {∅} ∪ { ({j}, 0) , ({j}, 1) : j ∈ [d]}.
+
+Reserve the two “cluster signals” ({1}, 0) and ({2}, 0) for data states, and let 
+
+S0 := S \ { ({1}, 0) , ({2}, 0) }, so |S 0| = 2 d − 1.
+
+Index S0 as S0 = {s0, s 1, . . . , s 2d−2}.For each t ∈ { 0, 1, . . . , 2d − 2}, define a distinct gadget state xt ∈ { 0, 1}d satisfying: 1. xt 
+
+> 1
+
+= xt 
+
+> 2
+
+= 1 (so xt can never realize ({1}, 0) or ({2}, 0) ); 2. xt can realize its designated signal st (i.e., if st = ∅ choose I = ∅; if st = ( {j}, b ) then ensure xtj = b
+
+and choose I = {j}); 3. the vectors xt are all distinct. Such a collection exists for d ≥ 6.Let 
+
+supp( P) := {y1, . . . , y m} ∪ { x0, . . . , x 2d−2}, n := m + (2 d − 1) ,
+
+and let P be uniform over supp( P).
+
+Step 3: define the action space and loss. Let 
+
+A := Rp ∪ { 0, 1, . . . , 2d − 2}, B := T + 1 , eT := Tn .
+
+Define ℓ : A × supp( P) → R≥0 by: 30 1. For gadget states xt,
+
+ℓ(a, x t) = 
+
+(
+
+0, if a = t, B, otherwise .
+
+2. For data states yi,
+
+ℓ(a, y i) = 
+
+(
+
+∥a − zi∥22, if a ∈ Rp,B, if a ∈ { 0, 1, . . . , 2d − 2}.
+
+Completeness. Assume the 2-means instance is a YES instance: there exists a partition (C1, C 2) with cost 
+
+≤ T . Define a policy σ (with k = 1 ) by: 1. For each gadget state xt, choose an index set realizing its designated signal st ∈ S 0.2. For each data state yi, set 
+
+σ(yi) = 
+
+(
+
+{1}, if i ∈ C1,
+
+{2}, if i ∈ C2.
+
+Since yi 
+
+> 1
+
+= yi 
+
+> 2
+
+= 0 , data states realize exactly ({1}, 0) and ({2}, 0) .Then each gadget signal st is produced only by xt, so the sophisticated posterior is degenerate and the Bayes action is a = t, yielding zero gadget loss. For the two data signals, the posterior is supported on 
+
+{yi : i ∈ C1} and {yi : i ∈ C2}; under squared loss, the Bayes action is the conditional mean, i.e., the corresponding centroid μ1, μ 2. Hence 
+
+RS (σ) = 1
+
+n
+
+> m
+
+X
+
+> i=1
+
+∥zi − μcl( i)∥22 ≤ Tn = eT , 
+
+so min σ RS (σ) ≤ eT .
+
+Soundness. Conversely, suppose there exists a policy σ with RS (σ) ≤ eT = T /n .
+
+Claim 1: no signal pools two distinct gadget states. If some realized signal s is generated by distinct gadget states xt and xt′
+
+with t̸ = t′, then any single action a incurs loss at least B on at least one of {xt, x t′
+
+},implying overall expected loss at least B/n > T /n , a contradiction. 
+
+Claim 2: no signal pools a gadget state with a data state. If some signal s is generated by xt and 
+
+yi, then any action a ∈ A incurs loss at least B on at least one of them (vector actions incur B on gadgets; discrete actions incur B on data), giving expected loss at least B/n > T /n , a contradiction. 
+
+Claim 3: gadget states occupy all signals in S0. Each gadget state has xt 
+
+> 1
+
+= xt 
+
+> 2
+
+= 1 , so it cannot realize ({1}, 0) or ({2}, 0) under k = 1 ; hence it must realize some signal in S0. By Claim 1, the 2d − 1
+
+gadget states realize 2d − 1 distinct signals in S0, which has size 2d − 1, so they realize all of S0.
+
+Data states can use only two signals. By Claim 2, data states cannot realize any signal in S0. Therefore every data state must realize one of the remaining two signals ({1}, 0) or ({2}, 0) , inducing a partition 
+
+(C1, C 2) of [m]. Under squared loss, the sophisticated Bayes action for each signal is the centroid of the corresponding cluster, so the data-state contribution equals 
+
+1
+
+n
+
+> 2
+
+X
+
+> t=1
+
+X
+
+> i∈Ct
+
+∥zi − μt∥22.
+
+31 Since RS (σ) ≤ T /n , multiplying by n yields 
+
+> 2
+
+X
+
+> t=1
+
+X
+
+> i∈Ct
+
+∥zi − μt∥22 ≤ T, 
+
+so the original 2-means instance is a YES instance. 
+
+Polynomial-time reduction. The construction is polynomial in the input size: d = O(log m) and n =
+
+m + O(log m), and the instance is binary with k = 1 . Therefore deciding whether min σ RS (σ) ≤ eT is NP-hard. As explained above, this implies computing min σ RS (σ) (or an optimizer) is NP-hard. 
+
+Proof of Lemma 1. If a fixed set I is revealed, the naive Bayes action is ai = Xi for i ∈ I and ai = pi for 
+
+i / ∈ I. Thus loss( I; X) = P 
+
+> i / ∈I
+
+(Xi − pi)2, so 
+
+RN (I) = X
+
+> i / ∈I
+
+E[( Xi − pi)2] = X
+
+> i / ∈I
+
+Var( Xi) = X
+
+> i / ∈I
+
+pi(1 − pi).
+
+Minimizing over |I| ≤ k is equivalent to maximizing P 
+
+> i∈I
+
+pi(1 − pi), hence choose the k largest pi(1 −
+
+pi).
+
+Proof of Lemma 2. Fix x, for any I, LN (I; x) = P 
+
+> i / ∈I
+
+(xi − pi)2 = Pdi=1 (xi − pi)2 − P 
+
+> i∈I
+
+(xi − pi)2.The first term is constant in I, so minimizing loss is equivalent to maximizing P 
+
+> i∈I
+
+(xi − pi)2 over |I| ≤ k,i.e., reveal the k largest surprises. 
+
+Proof of Proposition 1. Write F ∗ 
+
+> d
+
+, Q ∗ 
+
+> d
+
+for the cdf and quantile functions for a uniform draw from the (p∗
+
+> d,i
+
+)di=1 .By Assumption 6.2, F ∗ 
+
+> d
+
+(t) → F ∗(t) for all continuity points of F ∗. Furthermore, the same holds for the quantile functions Q∗ 
+
+> d
+
+and their limit Q∗.Now let U ∼ Uniform ([0 , 1]) . Then Q∗
+
+> d
+
+(U ), Q ∗(U ) are distributed according to F ∗ 
+
+> d
+
+, F ∗, respectively. In particular, for the normalized risk of a fixed subset faced by either the sophisticated or naive agent, we have that, as d → ∞ ,
+
+E
+
+ 1
+
+d
+
+> d−k
+
+X
+
+> j=1
+
+(X∗ 
+
+> d, (j)
+
+− p∗
+
+> d, (j)
+
+)2
+
+ = 1
+
+d
+
+> d
+
+X
+
+> j=1
+
+1(j ≤ d − k) p∗
+
+> d, (j)
+
+(1 − p∗
+
+> d, (j)
+
+)= E[1(U ≤ d − kd )Q∗
+
+> d
+
+(U )(1 − Q∗
+
+> d
+
+(U ))] = E[1(U ≤ 1 − α)Q∗
+
+> d
+
+(U )(1 − Q∗
+
+> d
+
+(U ))] + o(1) 
+
+→ E[1(U ≤ 1 − α)Q∗(U )(1 − Q∗(U ))] = 
+
+Z 1−αq=0 
+
+Q∗(q)(1 − Q∗(q)) dq. 
+
+Proof of Proposition 2. We use the same argument and notation as in the proof of Proposition 1. 
+
+Sophisticated agent. Under fixed surprise highlighting, the sophisticated agent learns the value of the first 
+
+⌊βd ⌋ features, but not anything about the remaining ones. Hence, the expected normalized loss equals 
+
+E
+
+ 1
+
+d
+
+> d
+
+X
+
+> j=⌊βd ⌋+1
+
+(X∗ 
+
+> d, (j)
+
+− p∗
+
+> d, (j)
+
+)2
+
+ = 1
+
+d
+
+> d
+
+X
+
+> j=1
+
+1(j > ⌊βd ⌋) p∗
+
+> d, (j)
+
+(1 − p∗
+
+> d, (j)
+
+)= E
+
+
+
+1
+
+
+
+U > ⌊βd ⌋
+
+d
+
+
+
+Q∗
+
+> d
+
+(U ) 1 − Q∗
+
+> d
+
+(U )
+
+= E 1(U > β ) Q∗
+
+> d
+
+(U ) 1 − Q∗
+
+> d
+
+(U ) + o(1) 
+
+→ E 1(U > β ) Q∗(U ) 1 − Q∗(U ) =
+
+Z 1
+
+> q=β
+
+Q∗(q) 1 − Q∗(q) dq. 
+
+32 Naive agent. For j ≤ ⌊ βd ⌋, the feature is highlighted iff X∗ 
+
+> d, (j)
+
+= 1 , so the naive agent suffers loss on coordinate j iff X∗ 
+
+> d, (j)
+
+= 0 , in which case the squared error equals (0 − p∗
+
+> d, (j)
+
+)2 = ( p∗
+
+> d, (j)
+
+)2. Thus, the naive agent has additional expected loss 
+
+E
+
+ 1
+
+d
+
+> ⌊βd ⌋
+
+X
+
+> j=1
+
+1(X∗
+
+> d, (j)
+
+=0)( X∗ 
+
+> d, (j)
+
+− p∗
+
+> d, (j)
+
+)2
+
+ = 1
+
+d
+
+> d
+
+X
+
+> j=1
+
+1(j ≤ ⌊ βd ⌋) ( p∗
+
+> d, (j)
+
+)2 (1 − p∗
+
+> d, (j)
+
+)= E
+
+
+
+1
+
+
+
+U ≤ ⌊βd ⌋
+
+d
+
+  Q∗
+
+> d
+
+(U )2 1 − Q∗
+
+> d
+
+(U )
+
+= E
+
+h
+
+1(U ≤ β)  Q∗
+
+> d
+
+(U )2 1 − Q∗
+
+> d
+
+(U )i
+
++ o(1) 
+
+→ E
+
+h
+
+1(U ≤ β)  Q∗(U )2 1 − Q∗(U )i
+
+=
+
+Z βq=0 
+
+ Q∗(q)2 1 − Q∗(q) dq. 
+
+Moreover, for j ≥ ⌊ βd ⌋ + 1 the procedure never highlights, so the expected loss on those coordinates is the same as for the sophisticated agent computed above. Combining the two parts yields 
+
+E
+
+ 1
+
+d
+
+> ⌊βd ⌋
+
+X
+
+> j=1
+
+1(X∗
+
+> d, (j)
+
+=0)( X∗ 
+
+> d, (j)
+
+− p∗
+
+> d, (j)
+
+)2 + 1
+
+d
+
+> d
+
+X
+
+> j=⌊βd ⌋+1
+
+(X∗ 
+
+> d, (j)
+
+− p∗
+
+> d, (j)
+
+)2
+
+
+
+→
+
+Z βq=0 
+
+ Q∗(q)2 1 − Q∗(q) dq +
+
+Z 1
+
+> q=β
+
+Q∗(q) 1 − Q∗(q) dq. 
+
+Proof of Proposition 3. Fix β ∈ (0 , 1) . Define the (random) fraction of features revealed by the fixed surprise-highlighting Procedure (c), which are the ones among the first ⌊βd ⌋ coordinates, as 
+
+bαd(β) := 1
+
+d
+
+> ⌊βd ⌋
+
+X
+
+> j=1
+
+X∗
+
+> d, (j)
+
+.
+
+Given the (non-random) vector (p∗
+
+> d, (1)
+
+, . . . , p ∗
+
+> d, (d)
+
+), the variables X∗ 
+
+> d, (j)
+
+are independent Bernoulli with means p∗
+
+> d, (j)
+
+. Hence 
+
+Ebαd(β) = 1
+
+d
+
+> ⌊βd ⌋
+
+X
+
+> j=1
+
+p∗
+
+> d, (j)
+
+, Var  bαd(β) = 1
+
+d2
+
+> ⌊βd ⌋
+
+X
+
+> j=1
+
+p∗
+
+> d, (j)
+
+ 1 − p∗
+
+> d, (j)
+
+ ≤ ⌊βd ⌋
+
+4d2 ≤ 14d .
+
+Furthermore, as in the proof of Proposition 1, 
+
+Ebαd(β) = 1
+
+d
+
+> d
+
+X
+
+> j=1
+
+1(j ≤ ⌊ βd ⌋) p∗
+
+> d, (j)
+
+= E
+
+h
+
+1
+
+
+
+U ≤ ⌊βd ⌋
+
+d
+
+
+
+Q∗
+
+> d
+
+(U )
+
+i
+
+= E1(U ≤ β) Q∗
+
+> d
+
+(U ) + o(1) 
+
+→ E1(U ≤ β) Q∗(U ) =
+
+Z β
+
+> 0
+
+Q∗(q) dq =: α(β).
+
+As a consequence, 
+
+bαd(β) p
+
+−→ α(β) (8) as d → ∞ .The function α(β) is continuous in β. By Assumption 6.3, there exists a β∗ ∈ (0 , 1) such that α(β∗) = 
+
+α, and α(β) is strictly increasing in a neighborhood of β∗.33 Define now bβd as the (random) normalized highest index revealed by the greedy rule Procedure (b), 
+
+bβd = 1
+
+d min 
+
+j ∈ { 1, . . . , d } :
+
+> j
+
+X
+
+> j′=1
+
+X∗ 
+
+> d, (j′)
+
+= k
+
+ ∪ { d}
+
+ ,
+
+where we choose d if all ones are revealed. Then the greedy algorithm is equivalent to the algorithm that highlights all ones among a fraction bβd of cases. For a sufficiently small ε > 0, consider now fixed-highlighting algorithms with fractions β∗ − ε, β∗ + ε.By Equation 8, we have that 
+
+bαd(β∗ − ε) p
+
+−→ α(β∗ − ε), bαd(β∗ + ε) p
+
+−→ α(β∗ + ε).
+
+Since also α(β∗ − ε) < α < α (β∗ + ε) for ε small enough, 
+
+P bα(β∗ − ε) ≤ α ≤ bα(β∗ + ε) → 1.
+
+Since β∗ − ε ≤ bβd ≤ β∗ + ε if and only if bαd(β∗ − ε) ≤ α ≤ bαd(β∗ + ε),
+
+P β∗ − ε ≤ bβd ≤ β∗ + ε → 1.
+
+Hence, bβdp
+
+−→ β∗. (9) As a direct consequence, normalized expected risks are equivalent. 
+
+Proof of Theorem 2. The result follows from combining Proposition 3 with Proposition 2 (evaluated at β =
+
+β∗). 
+
+Proof of Proposition 4. Fix an instance x and a revealed set I with |I| ≤ k. Under squared loss, the naive Bayes action predicts each unrevealed coordinate i / ∈ I by mi(I, x I ) := E[Xi | XI = xI ]. Define the realized loss 
+
+LN (I; x) := X
+
+> i / ∈I
+
+(xi − mi(I, x I )) 2 and the “surrogate” S(I; x) := X
+
+> i / ∈I
+
+(xi − μi)2.
+
+By Assumption 6.4, for each i / ∈ I we have |mi(I, x I ) − μi| ≤ ε. Let δi := mi(I, x I ) − μi so |δi| ≤ ε.Since xi ∈ [ai, b i] and μi ∈ [ai, b i], we have |xi − μi| ≤ R. Expanding, 
+
+(xi − mi)2 = ( xi − μi − δi)2 = ( xi − μi)2 − 2δi(xi − μi) + δ2 
+
+> i
+
+,
+
+so 
+
+(xi − mi)2 − (xi − μi)2 ≤ 2|δi| | xi − μi| + δ2 
+
+> i
+
+≤ 2Rε + ε2.
+
+Summing over at most d − k unrevealed coordinates gives a uniform perturbation bound: 
+
+|LN (I; x) − S(I; x)| ≤ (d − k)(2 Rε + ε2) =: C. 
+
+Algorithm 2 minimizes S(I; x) over |I| ≤ k for each x. Using LN ≤ S + C and S ≤ LN + C to compare the minimizers of S and LN yields LN (Idev (x); x) ≤ LN (I⋆(x); x) + 2 C pointwise. Taking expectation over X proves the proposition. 34 Proof of Proposition 5. We first establish the following fact: for any square-integrable random vector Y and any two σ-algebras with G ⊆ G ′,
+
+E Y − E[Y | G ′] 22 ≤ E Y − E[Y | G ] 22, (10) with equality iff E[Y | G ′] = E[Y | G ] almost surely. Since G ⊆ G ′, the tower property gives E[Y | G ] = 
+
+EE[Y | G ′] G, so we can decompose the coarser error as 
+
+Y − E[Y | G ] =  Y − E[Y | G ′]| {z }
+
+> =: A
+
++  E[Y | G ′] − E[Y | G ]| {z }
+
+> =: B
+
+.
+
+The two terms are orthogonal in L2: B is G′-measurable, and E[A | G ′] = E[Y | G ′] − E[Y | G ′] = 0 , so 
+
+EA⊤B = EE[A | G ′]⊤B = 0 . Pythagoras’ identity then yields 
+
+E Y − E[Y | G ] 22 = E Y − E[Y | G ′] 22 + E E[Y | G ′] − E[Y | G ] 22.
+
+The last term is non-negative, which gives (10), and it vanishes iff E[Y | G ′] = E[Y | G ] almost surely, which gives the equality condition. For a fixed highlighting policy, write I = σ(XM ) for the selected index set; both I and the (index-tagged) revealed coordinates XI are well-defined random variables, and we write Σ( Z) for the σ-algebra generated by a random variable Z (distinct from the highlighting map σ). Because XI carries its index tag, 
+
+Σ( XI ) = Σ( I, X I ), and the sophisticated agent’s information under each private information structure is 
+
+GS 
+
+> ∅
+
+:= Σ( I, X I ) = Σ( XI ), GSH := Σ( I, X I , X H ) = Σ( XI , X H ).
+
+These satisfy the nesting GS 
+
+> ∅
+
+⊆ G SH because adjoining the additional generator XH can only enlarge the generated σ-algebra. Because the sophisticated posterior is bPS (· | XH , I, X I ) = P(· | XH , X I , σ (XM ) = 
+
+I), the sophisticated Bayes action for XM under squared loss is the corresponding conditional expectation. Applying (10) with Y = XM , G = GS 
+
+> ∅
+
+, and G′ = GSH yields 
+
+RS (σ; H) = E XM − E[XM | G SH ] 22 ≤ E XM − E[XM | G S 
+
+> ∅
+
+] 22 = RS (σ; ∅).
+
+Equality holds when E[XM | G SH ] = E[XM | G S 
+
+> ∅
+
+] a.s., e.g. when XH is conditionally independent of XM
+
+given GS 
+
+> ∅
+
+= Σ( I, X I ). The upper bound RS (σ; ∅) does not depend on H, so sup H∈H RS (σ; H) = RS (σ; ∅)
+
+for every highlighting policy, and the outer minimizations coincide. 35

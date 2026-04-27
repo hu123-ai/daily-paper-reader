@@ -1,0 +1,51 @@
+{
+  "label": "2026-04-27",
+  "date": "2026-04-27",
+  "generated_at": "2026-04-27T20:43:34",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/27/2604.22292v1-relevant-relevance-lexical-vectors-for-accurate-legal-text-classification",
+      "section": "quick",
+      "title_en": "ReLeVAnT: Relevance Lexical Vectors for Accurate Legal Text Classification",
+      "authors": "Ishaan Gakhar, Harsh Nandwani",
+      "date": "2026-04-24",
+      "pdf": "https://arxiv.org/pdf/2604.22292v1",
+      "score": "7.0",
+      "evidence": "法院备案文件的法律文本分类",
+      "tldr": "针对法律文档分类中现有方法过度依赖元数据或高算力LLM的问题，本文提出ReLeVAnT框架。该方法通过n-gram处理、对比得分匹配和浅层神经网络，利用文档间的判别性词汇特征进行二分类。ReLeVAnT仅需一次性关键词提取，在LexGLUE数据集上达到了99.3%的准确率，为法律文本的高效、精准分类提供了轻量化解决方案。",
+      "tags": "query:q5",
+      "abstract_en": "The classification of legal documents from an unstructured data corpus has several crucial applications in downstream tasks. Documents relevant to court filings are key in use cases such as drafting motions, memos, and outlines, as well as in tasks like docket summarisation, retrieval systems, and training data curation. Current methods classify based on provided metadata, LLM-extracted metadata, or multimodal methods. These methods depend on structured data, metadata, and extensive computational power. This task is approached from a perspective of leveraging discriminative features in the documents between classes. The authors propose ReLeVAnT, a framework for legal document binary classification. ReLeVAnT utilises n-gram processing, contrastive score matching, and a shallow neural network as the primary drivers for discriminative classification. It leverages one-time keyword extraction per corpus, followed by a shallow classifier to swiftly and reliably classify documents with 99.3% accuracy and 98.7% F1 score on the LexGLUE dataset.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/27/2604.21554v1-engaged-ai-governance-addressing-the-last-mile-challenge-through-internal-expert-collaboration",
+      "section": "quick",
+      "title_en": "Engaged AI Governance: Addressing the Last Mile Challenge Through Internal Expert Collaboration",
+      "authors": "Simon Jarvers, Orestis Papakyriakopoulos",
+      "date": "2026-04-23",
+      "pdf": "https://arxiv.org/pdf/2604.21554v1",
+      "score": "6.0",
+      "evidence": "利用AI流水线从法律文本中提取要求",
+      "tldr": "本研究针对欧盟《人工智能法案》在软件开发实践中落地的“最后一公里”挑战，通过在AI初创公司进行内部行动研究，提出了一种法律文本到行动的转化流程。该流程通过内部专家协作，将法律要求转化为可执行策略。研究揭示了从业者对监管要求的三种认知模式（趋同、已有实践、脱节），强调了将合规要求与系统质量及用户保护相结合的重要性，旨在将AI治理从外部强制转变为团队的共同责任。",
+      "tags": "query:q5",
+      "abstract_en": "Under the EU AI Act, translating AI governance requirements into software development practice remains challenging. While AI governance frameworks exist at industry and organizational levels, empirical evidence of team-level implementation is scarce. We address this \"Last Mile\" Challenge through insider action research embedded within an AI startup. We present a legal-text-to-action pipeline that translates EU AI Act requirements into actionable strategies through internal expert collaboration by extracting requirements from legal text, engaging practitioners in assessment and ideation, and prioritizing implementation through collective evaluation. Our analysis reveals three patterns in how practitioners perceive regulatory requirements: convergence (compliance aligns with development priorities), existing practice (current work already satisfies requirements), and disconnection (requirements perceived as administrative overhead). Based on these patterns, we discuss when governance might be treated genuinely or performatively. Practitioners prioritize requirements that serve end-users or their own development needs, but view verification-oriented requirements as box-ticking exercises. This distinction suggests a translation challenge: regulatory requirements risk superficial treatment unless practitioners understand how compliance serves system quality and user protection. Expert collaboration offers a practical mechanism for transforming governance from external imposition to shared ownership and making previously invisible governance work visible and collective.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/27/2604.22236v1-algorithmic-feature-highlighting-for-human-ai-decision-making",
+      "section": "quick",
+      "title_en": "Algorithmic Feature Highlighting for Human-AI Decision-Making",
+      "authors": "Yifan Guo, Jann Spiess",
+      "date": "2026-04-24",
+      "pdf": "https://arxiv.org/pdf/2604.22236v1",
+      "score": "6.0",
+      "evidence": "针对复杂案例中人类与AI决策的算法特征突出显示",
+      "tldr": "针对人类在复杂决策中处理信息能力有限的问题，本文研究了一种算法特征高亮机制，即从众多特征中筛选出少量关键信息供人类参考。研究对比了“老练”和“天真”两类决策者对筛选规则的理解差异，探讨了不同假设下的计算复杂性，并证明了动态选择特征比固定特征集更能提升人机协作效率。",
+      "tags": "query:q4",
+      "abstract_en": "Human decision-makers often face choices about complex cases with many potentially relevant features, but limited bandwidth to inspect and integrate all available information. In such settings, we study algorithms that highlight a small subset of case-specific features for human consideration, rather than producing a single prediction or recommendation. We model highlighting as a constrained information policy that selects a small number of features to reveal. A central issue is how humans interpret the algorithm's choice of features: a sophisticated agent correctly conditions on the selection rule, while a naive agent updates only on revealed feature values and treats the selection event as exogenous. We show that optimizing highlighting for sophisticated agents can be computationally intractable, even in simple discrete and binary settings, whereas optimizing for naive agents is tractable as long as the maximal bandwidth is fixed. We also show that a highlighting policy that is optimal for sophisticated agents can perform arbitrarily poorly when deployed to naive agents, motivating robust, implementable alternatives. We illustrate our framework in a calibrated empirical exercise based on the American Housing Survey. Overall, our results establish the value of highlighting a context-specific set of features rather than a fixed one as a practically appealing and computationally feasible tool for achieving human-algorithm complementarity.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
