@@ -1,0 +1,643 @@
+Title: Reliable Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+URL Source: https://arxiv.org/pdf/2604.22154v1
+
+Published Time: Mon, 27 Apr 2026 00:16:08 GMT
+
+Number of Pages: 20
+
+Markdown Content:
+# Reliable Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems 
+
+Meghana Karnam and Ananya Joshi 
+
+Johns Hopkins University Baltimore, USA 
+
+## Abstract 
+
+Emerging AI systems in behavioral health and psychiatry use multi-step or multi-agent LLM pipelines for tasks like assessing self-harm risk and screening for depression. However, common evaluation approaches, like LLM-as-a-judge, do not indicate when a decision is reliable or how errors may accumulate across multiple LLM judgements, limiting their suitability for safety-critical settings. We present a statistical framework for multi-agent pipelines structured as directed acyclic graphs (DAGs) that provides an alternative to heuristic voting with principled, adaptive decision-making. We model each agent as a stochastic categorical decision and introduce (1) tighter agent-level performance confidence bounds, (2) a bandit-based adaptive sampling strategy based on input difficulty, and (3) regret guarantees over the multi-agent system that shows logarithmic error growth when deployed. We evaluate our system on two labeled datasets in behavioral health : the AEGIS 2.0 behavioral health subset (N=161) and a stratified sample of SWMH Reddit posts (N=250). Empirically, our adaptive sampling strategy achieves the lowest false positive rate of any condition across both datasets, 0.095 on AEGIS 2.0 compared to 0.159 for single-agent models, reducing incorrect flagging of safe content by 40% and still having similar false negative rates across all conditions. These results suggest that principled adaptive sampling offers a meaningful improvement in precision without reducing recall in this setting. 
+
+## Introduction 
+
+Hospitals and behavioral health organizations are exploring AI systems to support psychi-atric intake, triage, and crisis response (Weber et al., 2026; Pavlopoulos et al., 2024; Sun et al., 2025). In high-risk settings such as self-harm screening, these systems must follow strict, institution-specific standard operating procedures (SOPs) that define how risk is as-sessed, when escalation is required, and what constitutes a safe response. Missing self-harm risk in a patient interaction can result in a crisis response being delayed or missed entirely, with potentially life-threatening consequences. Still, excessive escalation of safe content to human review creates alert fatigue and strains already limited clinical resources (An-cker et al., 2017). Recent work proposes operationalizing these SOPs using multi-agent LLM systems, where each specialized agent handles a distinct clinical responsibility (e.g., risk detection, safety planning, escalation) and uncertain cases are passed along structured workflows (Li et al., 2025). Modular agent designs mirror real-world care coordination and improve robustness over single models, making them especially relevant to behavioral health, where decision-making is inherently staged, heterogeneous, and safety-critical. In 
+
+> arXiv:2604.22154v1 [cs.LG] 24 Apr 2026 Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+practice, a resident or volunteer may screen patient-facing messages first, uncertain cases proceed to a supervisor for secondary review, and edge cases reach a compliance officer before any content reaches a patient. Still, current multi-agent systems are largely heuristic. In practice, they rely on simple majority voting over a fixed number of stochastic LLM calls (LLM-as-a-judge or LLM-as-a-jury) for each decision. This raises a fundamental challenge: there is no principled way to know when a decision is reliable, how many samples are sufficient, or how uncertainty propagates through the pipeline. In addition, in behavioral health settings, errors are asymmetric. A false negative (failing to detect self-harm risk) can result in unsafe responses reaching a patient in crisis, while excessive escalation increases clinician burden and system cost. Designing these systems therefore requires calibrated trade-offs between accuracy, safety, latency, and resource use. Without formal guarantees, practitioners must rely on ad hoc choices (e.g., “sample 5 times”), which may cause any of these failure modes. As a result, existing empirical evaluations are insufficient for deployment, auditing, or policy design because they do not provide input-dependent guarantees or worst-case bounds – they only provide point estimates of performance. This motivates the need for a statistical empirical evaluation framework that addresses: (A) When should a behavioral health AI system act on its own assessment of patient risk, and when should it defer to a human clinician for review? 
+
+(B) How can a system reduce missed detections of self-harm risk without increasing the burden on clinicians through unnecessary escalations? 
+
+(C) How do system-level errors accumulate over time as the number of patient interactions grows under real-world deployment? 
+
+Contributions. 
+
+• Reliable decision-making at each step of care: We introduce a method that quan-tifies how confident the multi-agent system is in each risk-sensitive decision, enabling it to distinguish between cases it can safely resolve and those that require expert or clin-ician review. This provides explicit reliability guarantees at each stage of the workflow rather than relying on fixed heuristics. 
+
+• Adaptive sampling based on case complexity: We develop a strategy that allocates more computational effort to ambiguous or high-risk cases while resolving straightfor-ward cases efficiently. This reduces missed high-risk cases while avoiding unnecessary escalation and clinician burden. 
+
+• System-level safety under deployment: We show that the overall system becomes more reliable over time, with errors growing slowly even as the number of patient inter-actions increases. This provides a foundation for auditing and deploying multi-agent AI systems in safety-critical behavioral health settings. 
+
+Generalizable Insights about Machine Learning in the Context of Healthcare 
+
+This work provides practical design principles for building reliable multi-agent AI systems in behavioral health and other clinical settings where decisions are staged and safety-critical. 
+
+> 2Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+First, we provide a unified representation of decision steps: Representing multiple func-tions in a clinical decision in a standard format (e.g., risk levels, escalation choices) allows us to assess system-level reliability consistently across the entire workflow. This simplifies auditing and ensures that safety criteria are applied uniformly. Second, our framework provides confidence-guided decision thresholds: The framework links how difficult a case is (e.g., how ambiguous the patient self-harm intent is) to how much evidence is needed before taking action. This provides a concrete way to decide when the system can act autonomously versus when it should defer or escalate, replacing fixed heuristics with case-dependent thresholds. The contributions listed above also apply broadly to clinical AI systems that involve multi-stage triage, sequential decision-making, or escalation protocols, including psychiatric intake, risk screening, and care coordination workflows. 
+
+## Related Work 
+
+Detecting suicide risk and self-harm in clinical and social media text has been studied extensively and predates LLMs. Early approaches applied machine learning to clinical notes (Huang et al., 2014; Guo et al., 2024), and datasets such as ScAN (Rawat et al., 2022) provided expert annotations of suicide attempts and ideation from hospital records. Benchmarks including Reddit SuicideWatch and Mental Health Collection (SWMH) (Ji et al., 2021) and the CLPsych shared tasks (Zirikly et al., 2019) extended this work to social media, and Columbia Suicide Severity Rating Scale (C-SSRS) grounded datasets (Gaur et al., 2019) introduced clinically validated severity scales into NLP evaluation pipelines for suicide risk. Work on depression and self-harm detection in online forums (Yates et al., 2017) showed that patient-generated text carries meaningful clinical signal even outside formal clinical settings. Our work uses these same datasets and clinical frameworks but asks not just whether a system gets the right answer on average , but whether it can tell us when a specific decision is reliable. Large language models have also introduced new settings for evaluating self-harm and safety-sensitive decisions in healthcare and health-adjacent text. AEGIS 2.0 (Ghosh et al., 2025) provides human-annotated LLM responses across safety categories including self-harm based on the Suicide Ideation Detection in Social Media Forums datasets. ToxicChat (Lin et al., 2023) and RealToxicityPrompts (Gehman et al., 2020) evaluate toxicity in real user interactions and AI-generated text, and broader analyses of LLM harms (Weidinger et al., 2021) provide a framework for understanding where these systems fail. What most of these evaluations share is a reliance on single-pass classification (llm-as-a-judge) or fixed-sample voting (llm-as-a-jury), with no way to determine how many samples are enough or how errors compound when multiple agents are involved. The most closely related system from Joshi and Rudow (2026) organizes behavioral health evaluation agents into a directed acyclic graph (DAG) and shows up to 19% accuracy gains over single-agent approaches using Monte Carlo sampling at each node. Other multi-agent systems (Yang et al., 2025) similarly route inputs through structured agent pipelines. Yet, none of these systems provide formal guarantees on when a routing decision is trustworthy, how many samples are sufficient, or how errors accumulate over time. 
+
+> 3Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+Figure 1: DAG architecture of the multi-agent evaluation pipeline.Inputs that cannot be confidently resolved at the Worker node are escalated to the Risk node, then to the Legal node. If all three nodes return escalate , the input is referred to a human clinician for review; otherwise, a safe or unsafe label is committed at whichever node first reaches a confident decision. 
+
+## Methods 
+
+As shown in Fig. 1, we organize LLM-based behavioral health evaluation agents into a DAG that mirrors the staged human review process used in behavioral health standard operating procedures. The DAG contains three specialized agent nodes arranged in a fixed escalation chain. The Worker node performs first-pass content screening, analogous to a frontline crisis counselor or resident who handles the majority of incoming content. Inputs that cannot be confidently resolved are escalated to the Risk node, which performs secondary review analogous to a clinical supervisor or risk assessment specialist. Cases that remain unresolved proceed to the Legal node, which performs final institutional compliance review before any input reaches a human clinician/expert. Each node receives the original input and produces a label from the shared action space 
+
+A = {safe , unsafe , escalate }, K = 3 (Figure 1). A safe or unsafe label terminates routing and commits the input to a outcome. An escalate label passes the input to the next node in the chain. If all three nodes return escalate , the input is referred to a human clinician / expert for review. Notation used throughout the paper is summarized in Table 1. 
+
+Clinical Grounding of the Action Space ( A)
+
+All three agent nodes are based on the C-SSRS (Posner et al., 2011), a validated clinical instrument for suicide risk assessment widely adopted by hospitals and crisis intervention programs. The action space definitions are: 
+
+• Safe — content is appropriate and supportive, consistent with safe messaging guide-lines from the Suicide Prevention Resource Center (SPRC) and American Foundation for Suicide Prevention (AFSP), which emphasizes empathetic responses, psychoeducation, and appropriate crisis resources. 
+
+• Unsafe — content poses direct patient safety risk meeting C-SSRS criteria, including any expression of suicidal ideation or self-harm intent, chatbot responses that violate safe messaging guidelines, or content a clinician would likely flag for immediate intervention.                                                                          
+
+> 4Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+> Symbol Definition Symbol Definition (contd.)
+> G= ( S, E )DAG of agent nodes & escalation edges
+> ps(c;x)True probability node sreturns label con input x
+> SSet of agent nodes; |S| = 3 ˆps(c;x)Empirical estimate of ps(c;x)from samples
+> AShared action space; K=|A| =3
+> c∗(s, x )The label (safe ,unsafe ,or
+> escalate )that node swould most often assign to input xif sampled many times
+> KNumber of label arms: {safe, unsafe, escalate }
+> ∆s(x)Probability gap, defined as
+> ps(c∗)−max c̸=c∗ps(c)
+> τmax DAG diameter; maximum episode length ∆min Minimum gap over all nodes and inputs
+> TTotal evaluation episodes under deployment
+> TcNumber of pulls of arm cwithin one episode
+> BSampling budget per node wcConfidence width for arm cat current round
+> δConfidence parameter; failure probability ≤δ
+> Aact Set of active (non-eliminated) arms
+> nNumber of fixed samples in ma-jority voting
+
+Table 1: Notation used throughout the paper. T refers to total deployment episodes in the regret theorems, while Tc denotes per-arm pull counts within Algorithm 1. 
+
+• Escalate — the node cannot make a confident safe or unsafe determination given available evidence; the input requires review by the next specialized agent. This label is reserved for genuine uncertainty, not content sensitivity. 
+
+Adaptive Sampling 
+
+Prior work from (Joshi and Rudow, 2026) uses fixed-sample majority voting at each node and involves drawing n independent LLM samples and returning the plurality winner. This approach discards intermediate evidence and applies the same computational budget to every input regardless of difficulty. If the first three samples all return unsafe , there is no early stopping mechanism – the system draws n − 3 additional samples that add no information but still incur API cost and latency. We replace fixed majority voting, as shown in Alg. 1, with an adaptive sampling bandit algorithm that allocates samples adaptively based on input difficulty. Following a setup similar to Even-Dar et al. (2006), each node on each input defines a K-armed bandit problem: arm c ∈ A has unknown mean reward ps(c; x), the true probability that node 
+
+s returns label c on input x, and a pull is one LLM API call. The goal is to identify the best arm c∗ = arg max c ps(c; x) using as few pulls as possible within a budget B.However, standard Adaptive Sampling (Even-Dar et al., 2006) forces a label when the budget is exhausted; our variant instead escalates, preserving the clinical safety guarantee that uncertain inputs always reach a more specialized reviewer rather than receiving a potentially wrong label. 
+
+> 5Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+Algorithm 1 Adaptive Sampling for Node s, Input x
+
+Require: Budget B ∈ N, confidence δ ∈ (0 , 1)  
+
+> 1:
+
+Aact ← A ; Tc ← 0 ∀c ∈ A  
+
+> 2:
+
+while |A act | > 1 and P 
+
+> c
+
+Tc < B do  
+
+> 3:
+
+for each c ∈ A act do  
+
+> 4:
+
+Draw one LLM sample; update ˆ ps(c), Tc ← Tc + 1  
+
+> 5:
+
+end for  
+
+> 6:
+
+wc ←
+
+s
+
+ln(4 KT 2 
+
+> c
+
+/δ )2Tc
+
+for each c ∈ A act  
+
+> 7:
+
+cmax ← arg max c ˆps(c) 
+
+> 8:
+
+Remove c from Aact if ˆ ps(cmax ) − wcmax > ˆps(c) + wc 
+
+> 9:
+
+end while  
+
+> 10:
+
+if |A act | = 1 then  
+
+> 11:
+
+return surviving arm  
+
+> 12:
+
+else  
+
+> 13:
+
+return escalate  
+
+> 14:
+
+end if 
+
+The algorithm works by repeatedly sampling each possible label and eliminating options that are clearly not the best, stopping as soon as one label is identified with sufficient con-fidence. Formally, it begins by initializing all K = 3 labels as active arms and continues sampling until either one arm survives or the budget B is exhausted. In each round, it pulls every active arm once and updates empirical estimates (lines 3–5), then computes a confi-dence interval for each arm that shrinks as more samples are collected (line 6). An arm is eliminated when even its most optimistic estimate falls below the most pessimistic estimate of the leading arm (lines 7–8), meaning no additional sampling could plausibly reverse the ranking. When one arm survives, it is returned as the routing decision (lines 9–10). If the budget is exhausted before elimination converges, the node returns escalate rather than forcing a potentially wrong label (lines 11–12). This identify-or-escalate termination condi-tion is our contribution to the adaptive sampling framework: Even-Dar et al. (2006) force a label when the budget is exhausted, while our variant escalates, preserving the clinical safety guarantee that uncertain inputs always reach a more specialized reviewer. 
+
+Theoretical Results Node-level correctness. The shared action space A across all three nodes/agents is the key structural choice enabling a unified theoretical treatment of the full pipeline. Without it, different inequalities with different constants would apply at each node, requiring an additional union bound penalty at the system level. With it, the same guarantee applies uniformly: the algorithm never confidently commits to a wrong label. When it cannot reach a confident decision, it escalates rather than guessing. Formally, with probability at least 1 − δ, Algorithm 1 never eliminates the true best arm c∗: it either returns c∗ or returns 
+
+escalate . This guarantee rests on our definition of a Good Event G as the event that all 
+
+> 6Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+confidence intervals contain the true probability at every round simultaneously: 
+
+G =
+
+(
+
+∀c ∈ A , ∀m ≥ 1 : |ˆp(m) 
+
+> s
+
+(c) − ps(c)| ≤ 
+
+r ln(4 KT 2 
+
+> c
+
+/δ )2m
+
+)
+
+.
+
+Under G, eliminating c∗ would require another arm to have strictly higher true probability, contradicting uniqueness. G holds with probability ≥ 1 − δ by a union bound over K
+
+arms and all rounds using P∞ 
+
+> m=1
+
+1/m 2 = π2/6 < 2 (full proof in Appendix B), derived from the DKW inequality (Dvoretzky et al., 1956; Massart, 1990) applied to the categorical distribution over A (derivation in Appendix A). 
+
+Sample complexity. The number of LLM calls needed to reach a confident decision depends on how clear the input is. A post with an unambiguous suicide risk signal requires fewer calls than one that is borderline. Formally, the minimum pulls required to identify c∗
+
+is n∗ = 2 ln(2 /δ )/∆s(x)2, where ∆ s(x) is the probability gap between the best and second-best label. Easy inputs resolve quickly; ambiguous ones exhaust the budget and escalate to human review. This provides the theoretical basis for the budget sweep in the results: the empirical inflection between B = 75 and B = 100 reflects where n∗ lies for inputs in this dataset (Appendix A). 
+
+System-level reliability over time. As the system processes more patient interactions, its error rate grows slowly rather than accumulating linearly. This means a hospital de-ploying the system at the start of a year will not see errors pile up proportionally with volume. Formally, the adaptive policy achieves O(log T ) cumulative regret over T deploy-ment episodes compared to O(T ) under fixed majority voting, meaning doubling patient volume increases total errors by only ln 2 ≈ 0.69. The proof decomposes regret into a learn-ing phase, where the algorithm identifies c∗ at each node after O(K ln( KT )/∆2min ) episodes, and an exploitation phase with negligible errors (proof in Appendix C). 
+
+## Experimental Setup 
+
+We evaluate this adaptive sampling approach on the following datasets: 
+
+AEGIS 2.0 (Ghosh et al., 2025) is a content safety benchmark developed by NVIDIA comprising human-annotated LLM responses across a range of safety categories. We filter to suicide and self-harm related content across all three splits (train, validation, test), yielding N=163 unique examples after deduplication: 172 safe responses and 119 unsafe responses. 1
+
+Ground truth labels are taken from the response label field, following the evaluation setup of (Joshi and Rudow, 2026). This dataset serves as our primary benchmark. 
+
+SWMH (Ji et al., 2021) is a Reddit mental health dataset comprising posts from SuicideWatch and four general mental health communities covering depression, anxiety, bipolar disorder, and general emotional support. We use subreddit membership as a proxy for clinical ground truth: SuicideWatch posts are labeled unsafe , reflecting acute suicide risk content consistent with C-SSRS criteria, and posts from the remaining four communities are labeled safe , reflecting general mental health discussion that does not meet criteria for 
+
+> 1. Two examples were excluded due to Unicode encoding errors in the source data that prevented API calls from completing. Results are reported over the remaining N=161 examples.
+> 7Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+immediate intervention. We sample 50 posts per subreddit for a stratified evaluation set of N=250 examples (50 unsafe, 200 safe). This dataset serves as a held-out generalization test. We evaluate these datasets across ten AI systems conditions spanning single-agent, fixed-sample, and adaptive approaches. 1 Single-agent makes one LLM call to the Worker node only, with no DAG routing. This is the simplest baseline and represents current practice in single-agent systems. 2-4 Majority vote (MV n ∈ { 1, 3, 5}) routes inputs through the full Worker-Risk-Legal DAG, making n independent LLM calls at each node and returning the plurality winner. MV n = 1 is equivalent to single-pass DAG routing; MV n = 3 and MV 
+
+n = 5 represent increasingly expensive fixed-sample baselines. 5–10 Adaptive Sampling (Algorithm 1) with budgets B ∈ { 10 , 50 , 75 , 100 , 124 , 150 }. B =10 and B = 50 test low-budget degenerate behavior. B = 75 tests the regime near but below the theoretical minimum effective budget. B = 100 is the primary adaptive condition: the sample complexity bound predicts roughly 90 total pulls for inputs with ∆ s(x) ≈ 0.5 (Theoretical Results), and B = 100 provides a small buffer above this threshold. B = 124 was selected as an intermediate budget between the predicted thresholds for moderate-gap inputs ( ≈ 90 pulls) and harder inputs near ∆ min ≈ 0.4(≈ 138 pulls), testing whether additional budget beyond B = 100 benefits the harder subset of inputs. B = 150 exceeds both theoretical thresholds to test whether further headroom yields additional gain.                      
+
+> Metric Definition Clinical Relevance
+> Accuracy ↑Fraction of non-escalated inputs cor-rectly labeled Overall reliability FPR ↓Fraction of safe inputs labeled unsafe Unnecessary escalation burden FNR ↓Fraction of unsafe inputs labeled safe Missed crisis detection Escalation rate ↓Fraction of inputs reaching human re-view Clinician workload Avg. pulls ↓Total LLM calls / NCompute cost 95% CI ↓Wilson score interval on each propor-tion Statistical reliability SW FNR ↓FNR on SuicideWatch posts only Acute crisis detection (Exp. 2)
+
+Table 2: Metrics reported across all experiments. FPR and FNR are computed over non-escalated examples only. SW FNR is the primary metric for the SWMH generalization experiment. We report the following metrics for each condition, computed over non-escalated exam-ples unless otherwise noted (Table 2). All proportions are reported with 95% Wilson score confidence intervals (Wilson, 1927). Full implementation details including model configura-tion, system prompt structure, and dataset preprocessing steps are provided in Appendix D. 
+
+> 8
+
+Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems 
+
+AEGIS 2.0 (N=161) Condition Accuracy ↑ FPR ↓ FNR ⋆ ↓ Esc. ↓
+
+Single-agent 0.752 [0.679, 0.813] 0.159 [0.079, 0.294] 0.283 [0.208, 0.372] 0.025 MV n = 1 0.760 [0.687, 0.820] 0.114 [0.050, 0.240] 0.290 [0.214, 0.379] 0.019 MV n = 3 0.760 [0.687, 0.820] 0.114 [0.050, 0.240] 0.290 [0.214, 0.379] 0.019 MV n = 5 0.753 [0.681, 0.814] 0.159 [0.079, 0.294] 0.281 [0.206, 0.369] 0.019 
+
+B = 10 — — — 1.000 [0.977, 1.000] 
+
+B = 50 — — — 1.000 [0.977, 1.000] 
+
+B = 75 0.753 [0.680, 0.815] 0.100 [0.040, 0.231] 0.298 [0.222, 0.388] 0.044 
+
+B = 100 0.768 [0.695, 0.827] 0.095 [0.037, 0.221] 0.283 [0.208, 0.372] 0.037 
+
+B = 124 0.761 [0.688, 0.822] 0.116 [0.051, 0.245] 0.286 [0.210, 0.375] 0.037 
+
+B = 150 0.761 [0.688, 0.822] 0.116 [0.051, 0.245] 0.286 [0.210, 0.375] 0.037 
+
+⋆ higher due to mislabeled examples – see Discussion 
+
+SWMH (N=250) Condition Accuracy ↑ FPR ↓ SW FNR ↓ Esc. ↓
+
+Single-agent 0.790 [0.735, 0.836] 0.237 [0.184, 0.301] 0.100 [0.044, 0.214] 0.008 MV n = 1 0.790 [0.735, 0.836] 0.237 [0.184, 0.301] 0.100 [0.044, 0.214] 0.008 
+
+MV n = 3 0.795 [0.741, 0.841] 0.231 [0.178, 0.295] 0.100 [0.044, 0.214] 0.004 MV n = 5 0.791 [0.736, 0.837] 0.236 [0.183, 0.300] 0.100 [0.044, 0.214] 0.004 
+
+B = 10 — — — 1.000 [0.985, 1.000] 
+
+B = 50 — — — 1.000 [0.985, 1.000] 
+
+B = 75 0.799 [0.745, 0.845] 0.227 [0.174, 0.291] 0.100 [0.044, 0.214] 0.024 
+
+B = 100 0.798 [0.744, 0.844] 0.227 [0.174, 0.291] 0.100 [0.044, 0.214] 0.008 
+
+B = 124 0.794 [0.740, 0.840] 0.232 [0.179, 0.296] 0.100 [0.044, 0.214] 0.008 
+
+B = 150 0.795 [0.741, 0.841] 0.231 [0.178, 0.295] 0.100 [0.044, 0.214] 0.004 
+
+Table 3: Results on AEGIS 2.0 (N=161, top) and SWMH (N=250, bottom) with 95% Wilson CIs. Bold indicates best result. Italics indicate conditions whose FPR confidence intervals overlap with B = 100. B = 10 and B = 50 escalate all inputs and produce no classified outputs. 
+
+## Results 
+
+Experiment 1: AEGIS 2.0 
+
+Table 3 reports accuracy, false positive rate, false negative rate, and escalation rate across all ten conditions on the AEGIS 2.0 behavioral health subset (N=161), with 95% Wilson score confidence intervals throughout. 
+
+Accuracy. Adaptive sampling achieves the highest accuracy, though differences across valid conditions are small and confidence intervals overlap substantially. B = 100 reaches 0.768 (95% CI [0.695, 0.827]), compared to 0.752 for single-agent and 0.760 for MV n = 1 and MV n = 3. Accuracy alone does not differentiate conditions on this dataset; the primary differentiator is false positive rate. 
+
+False positive rate. Adaptive sampling produces the largest reduction in false posi-tives of any condition evaluated. B = 100 achieves FPR = 0.095 (95% CI [0.037, 0.221]), 
+
+9Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems 
+
+compared to 0.159 (95% CI [0.079, 0.294]) for single-agent, a 40% reduction in incorrect flagging of safe content. All multi-agent conditions reduce FPR relative to single-agent, with B = 100 achieving the largest reduction. In behavioral health settings, incorrectly flagging safe content increases clinician burden and risks alert fatigue, which can reduce vigilance toward genuinely high-risk cases. 
+
+False negative rate. FNR does not improve with additional sampling and is flat across all valid conditions. FNR stays between 0.281 and 0.290 regardless of condition, suggesting the ceiling reflects label quality rather than sampling strategy; we examine the specific misclassified examples in the Discussion. 
+
+Budget sweep. Performance stabilizes at B = 100, with smaller budgets producing either no valid outputs or suboptimal false positive rates. B = 10 and B = 50 escalate all inputs; with K = 3 active arms, a budget of 50 yields approximately 16 pulls per arm, too few for elimination to fire. B = 75 is the first budget producing valid classifications at FPR = 0.100 (95% CI [0.040, 0.231]), improving over single-agent but falling short of 
+
+B = 100. B = 124 and B = 150 offer no further improvement despite additional compute. The inflection between B = 75 and B = 100 provides empirical grounding for the sample complexity bound in Appendix A: inputs in this dataset require roughly 80 to 90 total pulls per arm for reliable elimination. Figure 2 shows the accuracy-versus-compute Pareto scatter, where B = 100 achieves the highest accuracy at substantially higher compute cost than majority vote. Figure 3 shows total token usage by condition. 
+
+Figure 2: Accuracy versus average pulls per input on AEGIS 2.0. Points to the left use fewer LLM calls per input; points higher achieve better accuracy. MV n = 1 and MV n = 3 lie on the Pareto frontier, offering the best accuracy per unit compute. Adaptive sam-pling conditions cluster at 80–90 average pulls, achieving higher accuracy than single-agent at substantially greater cost. The gap between the majority vote and adaptive sampling clusters reflects the cost of the reliability guarantee: spending more calls per input is the tradeoff the 40% false positive reduction shown in Table 3. 
+
+> 10 Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+Figure 3: Total token usage by condition on AEGIS 2.0. The compute cost of adaptive sampling reflects a deliberate trade-off: more calls per input is what enables the 40% false positive reduction. B = 50 exposes a gap in the current architecture: a node that cannot converge still consumes its full budget across all three pipeline stages, spending 9.9M tokens while producing no classified outputs, more than any other condition including B = 100. 
+
+Experiment 2: SWMH Generalization 
+
+Table 3 reports results on the stratified SWMH sample (N=250), with SuicideWatch FNR as the primary clinical metric. 
+
+Accuracy. Accuracy is broadly consistent across valid conditions and does not differenti-ate them on this dataset. Values range from 0.790 for single-agent and MV n = 1 to 0.799 for B = 75, with overlapping confidence intervals throughout. The primary differentiator is FPR, where B = 100 again achieves the lowest value. 
+
+SuicideWatch detection. The pipeline correctly identifies 90% of SuicideWatch posts across all valid conditions, with the same 5 posts missed consistently. All valid conditions achieve SW FNR = 0.100 (95% CI [0.044, 0.214]). The consistency of the missed posts across all conditions suggests these examples are genuinely ambiguous rather than a failure of any particular sampling strategy; we examine them in discussion. 
+
+False positive rate. Adaptive sampling again achieves the lowest FPR, consistent with the AEGIS 2.0 finding. FPR is substantially higher on SWMH than AEGIS 2.0 across all conditions, ranging from 0.227 to 0.237, reflecting label noise in the safe subreddits: posts from depression, anxiety, and bipolar communities contain distressing content that the C-
+
+> 11 Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+SSRS grounded prompt flags as potentially unsafe even when subreddit-level labels classify them as safe. B = 100 achieves the lowest FPR at 0.227. 
+
+Budget sweep. Earlier arm elimination on SWMH reflects clearer input signals under the C-SSRS prompt. Budget conditions converge at 77–78 average pulls per input on SWMH, compared to 86–89 on AEGIS 2.0, suggesting SWMH posts are more clearly safe or unsafe on average. The budget sweep shows no measurable benefit beyond B = 100, consistent with the AEGIS 2.0 finding. 
+
+## Discussion 
+
+Fixed-sample majority voting applies the same number of LLM calls to every input regard-less of difficulty. For behavioral health evaluation, where errors are asymmetric and inputs vary widely in ambiguity, this is a practical limitation. The adaptive sampling approach evaluated here allocates effort based on input difficulty and escalates when no confident de-cision is reached within budget. On AEGIS 2.0, this reduces false positives by 40% relative to single-agent without affecting false negative rates. In deployed settings, false positives translate directly to unnecessary escalations. At scale, high escalation rates contribute to alert fatigue, a known problem in clinical decision support that can reduce clinician responsiveness to genuine risk (Ancker et al., 2017). The reduction observed here is modest in absolute terms but consistent across both datasets evaluated. The false negative rate does not improve with additional sampling. On AEGIS 2.0, FNR stays between 0.283 and 0.290 across all conditions, and on SWMH it holds at 0.100 regardless of budget. The same inputs are missed consistently, which suggests the ceiling is driven by annotation quality rather than sampling strategy. Inspection of the consistently misclassified examples on AEGIS 2.0 reveals annotation noise: several posts are appropriate chatbot refusals that were labeled unsafe, and others contain content outside the scope of C-SSRS criteria entirely. These same examples are missed by every condition from single-agent to AS B = 150, confirming the ceiling is a property of the labels rather than the sampling strategy. The subreddit-level labels on SWMH introduce similar noise. Improving ground truth annotation in behavioral health AI benchmarks remains an open problem. 
+
+B = 50 uses more total tokens than any other condition, including B = 100, despite producing no classified outputs. With three active arms and a budget of 50, each node makes roughly 16 pulls per arm before exhausting its budget, failing to eliminate any arm, and passing the input to the next node. Risk and Legal each repeat this process, resulting in up to 150 total pulls per input across the pipeline with nothing to show for it. This is a direct consequence of the current routing behavior: a node that cannot converge still consumes its full budget before escalating. Stopping early when budget is exhausted would avoid this entirely and is a practical improvement for deployment. The FNR of 0.100 on SuicideWatch posts reflects 5 out of 50 posts incorrectly labeled as safe across all conditions. Reading these posts reveals why. Two posts explicitly deny suicidal intent despite expressing significant distress, so a prompt grounded in C-SSRS criteria correctly classifies them as safe by its own definition. One post is written by a caregiver asking how to help someone else, not a first-person account of crisis. The remaining two express distress indirectly without meeting explicit C-SSRS thresholds. These cases 
+
+> 12 Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+suggest the FNR floor reflects a mismatch between the explicit criteria encoded in the prompt and the broader range of clinical signals a clinician would recognize in context. 
+
+## Limitations and Future Work 
+
+Routing behavior on budget exhaustion. The current system continues routing through subsequent nodes even when a node exhausts its sampling budget without con-vergence. A Worker node that cannot confidently label an input after B pulls passes the input to Risk, which may also exhaust its budget, which then passes to Legal, resulting in up to 3 B LLM calls for an input that ultimately reaches human review regardless. This is content-wise conservative as more information is gathered before escalation, but compu-tationally expensive. A natural extension is early termination on budget exhaustion: if a node cannot converge within budget, skip subsequent nodes and escalate immediately to human review. This would reduce compute cost on genuinely ambiguous inputs at the cost of reduced multi-node signal. Separately, the current system does not distinguish between budget exhaustion, where the algorithm is uncertain, and an explicit escalate label, where the model is confident the input requires specialist review. Tracking which kind of escala-tion occurred at each node would enable more nuanced routing decisions and is a direction for future work. 
+
+Compute cost of adaptive sampling. Budget conditions use approximately 80–90 average pulls per input compared to 1–5 for majority vote, representing a 20–30 × increase in API calls and associated cost. For organizations with limited compute budgets, majority vote n = 3 offers comparable accuracy at a fraction of the cost. The FPR benefit of adaptive sampling must be weighed against this operational cost in deployment planning. Several directions follow from this work. The minimum effective budget identified here, 
+
+B = 100 pulls per node, was consistent across both datasets evaluated. Whether this threshold shifts with different underlying models, temperatures, or clinical populations with different input difficulty distributions remains an open question for future work. A related engineering improvement is early termination on budget exhaustion: currently, a node that cannot reach a decision still passes the input downstream, where subsequent nodes repeat the same process at full cost. Stopping early and escalating directly would reduce compute without changing clinical behavior. Separately, the pipeline currently treats all escalations the same way, whether the algorithm ran out of budget or the model actively chose to escalate. Distinguishing these two cases would give clinicians more information about why a case was flagged for review. Finally, SWMH relies on subreddit membership as a proxy for clinical ground truth rather than direct annotation. Building behavioral health benchmarks grounded in validated instruments like C-SSRS, with labels assigned by clinicians, would enable more meaningful evaluation of false negative rates in particular, where the current ceiling may reflect labeling inconsistencies as much as system limitations. 
+
+## Conclusion 
+
+Behavioral health AI systems increasingly operate in clinical settings where errors have direct consequences for patient safety. This work shows that replacing fixed-sample majority voting with adaptive sampling reduces false positives by 40% on a self-harm screening 
+
+> 13 Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+benchmark, without affecting the rate of missed detections. The same pattern holds on a second dataset drawn from a different source, suggesting the finding is not specific to one benchmark. The pipeline also produces a formal guarantee: when it cannot reach a confident decision within budget, it escalates to human review rather than guessing. On both datasets, the false negative rate does not improve with more sampling, which points to label quality in current benchmarks as the limiting factor rather than the algorithm itself. In safety-critical clinical settings, knowing when not to decide is as important as knowing how to decide. 
+
+## References 
+
+Jessica S Ancker, Alison Edwards, Stephanie Nosal, David Hauser, Elizabeth Mauer, and Rainu Kaushal. Effects of workload, work complexity, and repeated alerts on alert fatigue in a clinical decision support system. BMC Medical Informatics and Decision Making , 17 (1):1–9, 2017. Aryeh Dvoretzky, Jack Kiefer, and Jacob Wolfowitz. Asymptotic minimax character of the sample distribution function and of the classical multinomial estimator. The Annals of Mathematical Statistics , 27(3):642–669, 1956. Eyal Even-Dar, Shie Mannor, and Yishay Mansour. Action elimination and stopping con-ditions for the multi-armed bandit and reinforcement learning problems. volume 7, pages 1079–1105, 2006. Manas Gaur, Amanuel Alambo, Joy Prakash Sain, Amit Sheth, et al. Knowledge-aware assessment of severity of suicide risk for early intervention. In The World Wide Web Conference , pages 514–525, 2019. Samuel Gehman, Suchin Gururangan, Maarten Sap, Yejin Choi, and Noah A Smith. Real-ToxicityPrompts: Evaluating neural toxic degeneration in language models. pages 3356– 3369, 2020. Shaona Ghosh, Prasoon Varshney, Thomas Westfechtel, Ryota Uehara, and Romain Paulus. AEGIS2.0: A diverse ai safety dataset and risks taxonomy for alignment of llm guardrails. 
+
+arXiv preprint arXiv:2501.09004 , 2025. Jia-Wen Guo, Julianne Kimmel, and Lauri A Linder. Text analysis of suicide risk in ado-lescents and young adults. Journal of the American Psychiatric Nurses Association , 30 (1):169–173, 2024. doi: 10.1177/10783903221077292. Xiaolei Huang, Lei Zhang, Tianli Liu, David Chiu, Tingshao Zhu, and Xin Li. Detect-ing suicidal ideation in Chinese microblogs with psychological lexicons. arXiv preprint arXiv:1411.0778 , 2014. Shaoxiong Ji, Tianlin Zhang, Luna Ansari, Jie Fu, Prayag Tiwari, and Erik Cambria. MentalBERT: Publicly available pretrained language models for mental healthcare. arXiv preprint arXiv:2110.15621 , 2021. 
+
+> 14 Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+Ananya Joshi and Michael Rudow. Constrained process maps for multi-agent generative ai workflows, 2026. Rumeng Li, Xun Wang, Dan Berlowitz, Jesse Mez, Honghuang Lin, and Hong Yu. CARE-AD: A multi-agent large language model framework for Alzheimer’s disease prediction using longitudinal clinical notes. npj Digital Medicine , 8(1):541, 2025. doi: 10.1038/ s41746-025-01940-4. Zi Lin, Zihan Wang, Yongqi Tian, Yuxin Zheng, Zhiyong Xi, and Pengfei Liu. ToxicChat: Unveiling hidden challenges of toxicity detection in real-world user-ai conversation. arXiv preprint arXiv:2310.17389 , 2023. Pascal Massart. The tight constant in the Dvoretzky-Kiefer-Wolfowitz inequality. The Annals of Probability , 18(3):1269–1283, 1990. Adrianos Pavlopoulos, Theodoros Rachiotis, and Ilias Maglogiannis. An overview of tools and technologies for anxiety and depression management using ai. Applied Sciences , 14 (19):9068, 2024. Kelly Posner, Gregory K Brown, Barbara Stanley, David A Brent, Kseniya V Yershova, Maria A Oquendo, Glenn W Currier, Glenn A Melvin, Laurence Greenhill, Sa Shen, et al. The Columbia–Suicide Severity Rating Scale: Initial validity and internal consistency findings from three multisite studies with adolescents and adults. American Journal of Psychiatry , 168(12):1266–1277, 2011. Bhanu Pratap Singh Rawat, Samuel Kovaly, Hong Yu, and Wilfred Pigeon. ScAN: Suicide attempt and ideation events dataset. In Marine Carpuat, Marie-Catherine de Marneffe, and Ivan Vladimir Meza Ruiz, editors, Proceedings of the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies , pages 1029–1040, Seattle, United States, July 2022. Association for Com-putational Linguistics. doi: 10.18653/v1/2022.naacl-main.75. Jie Sun, Tangsheng Lu, Xuexiao Shao, Ying Han, Yu Xia, Yongbo Zheng, Yongxiang Wang, Xinmin Li, Arun Ravindran, Lizhou Fan, et al. Practical ai application in psychiatry: historical review and future directions. Molecular Psychiatry , 30(9):4399–4408, 2025. Samantha Weber, Barbora Provaznikova, Nikolas Psathakis, Andrea Casanova, Lucian Amthor, Lara Kirchhofer, Jos´ e Antonio Garc´ ıa Mac´ ıas, Tobias Welt, Golo Kronenberg, Tobias Kowatsch, et al. Can conversational ai reliably assess depressive symptoms? afeasibility, acceptability and bias-aware validation study of madrs-chat. A Feasibility, Acceptability and Bias-Aware Validation Study of MADRS-Chat , 2026. Laura Weidinger, John Mellor, Maribeth Rauh, Conor Griffin, Jonathan Uesato, Po-Sen Huang, Myra Cheng, Mia Glaese, Borja Balle, Atoosa Kasirzadeh, et al. Ethical and social risks of harm from language models. arXiv preprint arXiv:2112.04359 , 2021. Edwin B Wilson. Probable inference, the law of succession, and statistical inference. Journal of the American Statistical Association , 22(158):209–212, 1927. 
+
+> 15 Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+Yingxuan Yang et al. AgentNet: Decentralized evolutionary coordination for LLM-based multi-agent systems. arXiv preprint arXiv:2504.00587 , 2025. Andrew Yates, Arman Cohan, and Nazli Goharian. Depression and self-harm risk assess-ment in online forums. In Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing , pages 2968–2978, 2017. Ayah Zirikly, Philip Resnik, Ozlem Uzuner, and Kristy Hollingshead. CLPsych 2019 shared task: Predicting the degree of suicide risk in Reddit posts. In Proceedings of the Sixth Workshop on Computational Linguistics and Clinical Psychology , pages 24–33, 2019. 
+
+> 16 Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+## Appendix A: DKW Inequality and Node-Level Bound 
+
+The Dvoretzky-Kiefer-Wolfowitz (DKW) inequality provides simultaneous error bounds across all categories of a categorical distribution without the ln K penalty that arises from applying Hoeffding’s inequality to each category separately and taking a union bound. 
+
+Theorem (Node-Level Categorical Bound). Under i.i.d. sampling at node s, for any 
+
+δ ∈ (0 , 1), with probability at least 1 − δ simultaneously over all c ∈ A :
+
+|ˆps(c ; x) − ps(c ; x)| ≤ ϵn(δ) := 
+
+r ln(2 /δ )2n .
+
+Proof. Impose a canonical ordering A = {c1, c 2, c 3} and encode each sample as Zk =
+
+ϕ(a(k)) ∈ { 1, 2, 3}. Each category probability is a difference of CDF values: ps(cj ) = 
+
+F (j) − F (j − 1), where F is the CDF of Z. Therefore: 
+
+|ˆps(cj ) − ps(cj )| ≤ | ˆFn(j) − F (j)| + | ˆFn(j − 1) − F (j − 1) | ≤ 2 sup 
+
+> t
+
+| ˆFn(t) − F (t)|.
+
+Applying the DKW inequality (Dvoretzky et al., 1956; Massart, 1990): 
+
+P
+
+
+
+sup 
+
+> t
+
+| ˆFn(t) − F (t)| > ϵ 
+
+
+
+≤ 2e−2nϵ 2
+
+.
+
+Setting 2 e−2nϵ 2
+
+= δ and solving gives ϵ = pln(2 /δ )/(2 n) = ϵn(δ), which holds simulta-neously over all c ∈ A with no K factor. The union-bounded Hoeffding approach would require n ≥ ln(2 /δ )+ln K 
+
+> 2ϵ2
+
+samples; DKW requires only ln(2 /δ )2ϵ2 , saving ln K 
+
+> 2ϵ2
+
+samples per node. For K = 3, ϵ = 0 .05: approximately 220 fewer samples per node. 
+
+Corollary (Correct Routing Guarantee). Under the unique best action and i.i.d. sampling assumptions, if n ≥ n∗(δ, ∆s(x)) := 2 ln(2 /δ )∆s(x)2 , then with probability ≥ 1 − δ, the empirical argmax equals the true best action: ˆ c∗ = c∗(s, x ). 
+
+Proof. By the node-level bound, with probability ≥ 1 − δ, |ˆps(c) − ps(c)| ≤ ϵn(δ) for all 
+
+c. For any c̸ = c∗:ˆps(c∗) − ˆps(c) ≥ [ps(c∗) − ϵn] − [ps(c) + ϵn] = ∆ s(x) − 2ϵn(δ).
+
+This is strictly positive when ϵn(δ) < ∆s(x)/2, i.e. when n ≥ 2 ln(2 /δ )/∆s(x)2 = n∗.
+
+Remark. The minimum sample count n∗ = 2 ln(2 /δ )/∆s(x)2 depends on input x through the probability gap ∆ s(x). Easy inputs with large gaps need few samples; ambiguous inputs with small gaps require many. Fixed majority voting ignores this dependence entirely, applying the same n regardless of input difficulty. 
+
+## Appendix B: Good Event Proof 
+
+Lemma (Good Event). Define the good event as the event that all confidence intervals contain the true probability at every round simultaneously: 
+
+G =
+
+(
+
+∀c ∈ A , ∀m ≥ 1 : |ˆp(m) 
+
+> s
+
+(c) − ps(c)| ≤ 
+
+r ln(4 KT 2 
+
+> c
+
+/δ )2m
+
+)
+
+.
+
+Then P(G) ≥ 1 − δ.
+
+> 17 Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+Proof. Fix one arm c and one round where it has been pulled m times. By Hoeffding’s inequality: 
+
+P |ˆp(m) 
+
+> s
+
+(c) − ps(c)| >
+
+r ln(4 KT 2 
+
+> c
+
+/δ )2m
+
+!
+
+≤ 2 exp 
+
+
+
+− ln 
+
+ 4KT 2
+
+> c
+
+δ
+
+ 
+
+= δ
+
+2KT 2
+
+> c
+
+.
+
+Taking a union bound over K arms and summing over all possible rounds m ∈ { 1, 2, . . . }
+
+using the standard series bound P∞  
+
+> m=1 1
+> m2
+
+= π2 
+
+> 6
+
+< 2: 
+
+P(Gc) ≤
+
+> K
+
+X
+
+> c=1
+> ∞
+
+X
+
+> m=1
+
+δ
+
+2KT 2
+
+> c
+
+≤ K · δ
+
+2K · π2
+
+6 < δ. 
+
+Therefore P(G) ≥ 1 − δ.
+
+Proposition (Correctness of Algorithm 1). Under the unique best action assumption, with probability ≥ 1 − δ, Algorithm 1 never eliminates c∗. It either returns c∗ or returns 
+
+escalate .
+
+Proof. Under G, arm c∗ is eliminated only if ˆ ps(c) − wc > ˆps(c∗) + wc∗ for some c̸ = c∗.Under G, this would require ps(c) > p s(c∗), contradicting the assumption that c∗ is the unique best arm. Therefore c∗ is never eliminated. If the budget is exhausted before a single arm survives, the algorithm returns escalate rather than forcing a potentially wrong label. 
+
+## Appendix C: MDP Formulation and Regret Proofs 
+
+MDP Formulation. We model the evaluation workflow as a bounded-horizon MDP M =(S, A, P, R, τ max ) structured by the DAG G. The state space S corresponds to the three agent nodes plus terminal states Sterm = {safe , unsafe , human-review }. Transitions P (s′ |
+
+s, a ) are restricted to DAG edges: terminal labels route to the corresponding terminal state, while escalate routes to the next agent. The reward function R(s, a ) captures evaluation quality at each step with |R(s, a )| ≤ Rmax , and episodes have maximum length τmax ≤ 3. Cumulative regret over T episodes is: Reg( T ) = 
+
+> T
+
+X
+
+> t=1
+
+V π∗
+
+(s0, x t) − V π(s0, x t),
+
+where π∗ is the oracle policy knowing all true label distributions. 
+
+Theorem (Majority-Vote Regret). Under fixed majority voting with n samples per node: Reg MV (T ) ≤ 2τmax Rmax |S| · T · e−n∆2min /2.
+
+This grows as Θ( T ): the error probability is constant across all episodes because the policy never adapts. 
+
+Proof. By the node-level bound with ϵ = ∆ s(x)/2, the routing error probability at node 
+
+s is at most 2 e−n∆2min /2. Each error contributes at most τmax Rmax to regret. A union bound over |S| nodes and summing over T episodes gives the stated bound. Achieving sublinear regret requires n = Ω(ln T / ∆2min ), which requires knowing ∆ min in advance. 
+
+> 18 Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems
+
+Theorem ( Adaptive Regret). The adaptive policy πUCB using Algorithm 1 achieves: Reg UCB (T ) ≤ C · τmax Rmax · K|S| ln T
+
+∆2min 
+
+,
+
+for a universal constant C > 0, without knowledge of ∆ min . This grows as O(log T ): doubling the number of patient interactions increases total mistakes by only ln 2 ≈ 0.69. 
+
+Proof. Set δ = 1 /T . By the sample complexity result, each node identifies c∗ after 
+
+O(K ln( KT )/∆2min ) episodes (learning phase). Each learning-phase episode contributes at most τmax Rmax to regret; exploitation-phase episodes contribute O(Rmax /T ) each. Sum-ming over |S| nodes gives the O(log T ) bound. 
+
+Theorem (System-Level Regret). Under the adaptive policy: Reg UCB ,sys (T ) ≤ C · K · |S| · τmax · Rmax · ln T
+
+∆2min 
+
+.
+
+The ratio of adaptive to fixed-budget regret satisfies: Reg UCB (T )Reg MV (T ) = O
+
+ ln TT · e−n∆2min /2
+
+ T →∞ 
+
+−−−−→ 0.
+
+The adaptive policy is asymptotically dominant. 
+
+Proof. At most τmax nodes are visited per episode, and |S| nodes contribute independently to learning-phase regret, giving the K|S| τmax factor. The ratio follows from Reg UCB (T ) = 
+
+O(K|S| τmax ln T / ∆2min ) and Reg MV (T ) = Ω( τmax T e −n∆2min /2). 
+
+## Appendix D: Reproducibility 
+
+Model configuration. All experiments use claude-sonnet-4-6 at temperature 0.7 with a maximum of 10 output tokens per call. The 10-token limit is sufficient for the label-only output format and reduces cost substantially relative to unconstrained generation. 
+
+System prompt structure. Each node receives a role-specific system prompt that de-fines its clinical function (Worker: frontline screening; Risk: secondary clinical review; Legal: institutional compliance) and instructs the model to respond with exactly one of 
+
+safe , unsafe , or escalate , grounded in C-SSRS criteria. The prompt includes definitions of each label consistent with the action space defined in the Methods. 
+
+Dataset preprocessing. AEGIS 2.0 examples are filtered to rows where violated categories 
+
+contains suicide or self-harm keywords across all three splits (train, validation, test), dedu-plicated by example ID, yielding N=163 unique examples. Two examples are excluded due to Unicode encoding errors. SWMH examples are sampled with random state=42 using stratified sampling of 50 examples per subreddit. 
+
+> 19
+
+Self-Harm Risk Screening via Adaptive Multi-Agent LLM Systems 
+
+Confidence intervals. All proportions are reported with 95% Wilson score confidence intervals (Wilson, 1927), computed using the standard formula: ˆp + z2 
+
+> 2n
+
+± z
+
+q ˆp(1 −ˆp) 
+
+> n
+
++ z2
+
+> 4n2
+
+1 + z2
+
+> n
+
+,
+
+where z = 1 .96 for 95% confidence and n is the number of non-escalated examples for FPR and FNR, or total examples for escalation rate. 
+
+Code. Code and data preprocessing scripts will be made available upon acceptance. 
+
+20

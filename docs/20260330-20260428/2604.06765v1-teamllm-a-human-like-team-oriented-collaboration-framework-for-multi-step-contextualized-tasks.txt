@@ -1,0 +1,2864 @@
+Title: TeamLLM: A Human-Like Team-Oriented Collaboration Framework for Multi-Step Contextualized Tasks
+
+URL Source: https://arxiv.org/pdf/2604.06765v1
+
+Published Time: Thu, 09 Apr 2026 00:38:39 GMT
+
+Number of Pages: 31
+
+Markdown Content:
+## TeamLLM: A Human-Like Team-Oriented Collaboration Framework for Multi-Step Contextualized Tasks 
+
+Xiangyu Wang 1, Jin Wu 2,3,4 , Haoran Shi 1, Wei Xia 1,Jiarui Yu 4, Chanjin Zheng 2,3 ,
+
+1Department of Educational Psychology, East China Normal University 
+
+2Lab of Artificial Intelligence for Education, East China Normal University 
+
+3Shanghai Institute of Artificial Intelligence for Education, East China Normal University 
+
+4School of Computer Science and Technology, East China Normal University 51274118009@stu.ecnu.edu.cn, chjzheng@dep.ecnu.edu.cn 
+
+Abstract 
+
+Recently, multi-Large Language Model (LLM) frameworks have been proposed to solve con-textualized tasks. However, these frameworks do not explicitly emulate human team role division, which may lead to a single per-spective, thereby weakening performance on multi-step contextualized tasks. To address this issue, we propose TeamLLM , a human-like Team-Oriented Multi-LLM Collaboration Framework. TeamLLM adopts four team roles 
+
+with distinct division and employs a three-phase multi-LLM collaboration for multi-step contextualized tasks. To evaluate the ef-fectiveness of TeamLLM on multi-step con-textualized tasks, we propose Contextually-
+
+Grounded and Procedurally-Structured tasks (CGPST ) and construct the CGPST bench-mark. This benchmark has four core fea-tures: contextual grounding, procedural struc-ture, process-oriented evaluation and multi-dimensional assessment. We evaluate ten pop-ular LLMs on CGPST at overall-level, step-level, and dimension-level. Results show that TeamLLM substantially improves performance on CGPST. We release the benchmark with scenarios, full-process responses and human scores from ten LLMs. The code and data are available at https://anonymous.4open. science/r/TeamLLM-anonymous-C50E/ 1.
+
+1 Introduction 
+
+Recently, researchers have begun exploring multi-Large Language Model (LLM) frameworks for solving contextualized tasks (Lu et al., 2024a; Feng et al., 2025; Liang et al., 2024; Lin et al., 2025). For example, LLM Discussion enhances perfor-mance on creativity tasks such as Alternative Uses Tasks (AUT) and Instances Test by assigning dif-ferent roles to multi-LLM (Lu et al., 2024a). How-ever, these frameworks do not explicitly emulate 
+
+> 1
+
+This is an anonymous GitHub link containing partial data, code, and resources. The full GitHub repository will be made publicly available after acceptance. Traditional Benchmark CGPST Benchmark  
+
+> One Question
+> Single-Turn QA
+> One Scenario
+> Step-(i-1) Response
+> Step-i Requirement
+> Step-i Response
+> For Step-i
+> Final Answer for all steps Final Answer
+> Contextualized Multi-Step QA
+> Cascadia Institute for
+> Neurotechnology (CIN). Seattle,
+> Washington, USA. 2045......
+> What are some
+> creative uses of a fork?
+> 1. Phone Stand
+> 2. Painting Tool
+> ...
+
+Figure 1: Benchmark Comparison. 
+
+human team role division, which may lead to a single perspective and exacerbate output homoge-nization. This limitation may weaken performance on multi-step contextualized tasks (Xu et al., 2025; Wenger and Kenett, 2025; Lu et al., 2024a; Fuku-mura and Ito, 2025). Moreover, frameworks such as LLM Discussion (Lu et al., 2024a) are designed for single-step tasks and may not be directly appli-cable to multi-step contextualized tasks. Multi-step contextualized tasks require not only diverse perspectives but also continuous interaction among LLMs to ensure process controllability ,i.e., strict step-by-step adherence to task require-ments. To this end, we propose TeamLLM , a human-like Team-Oriented Multi-LLM Collabo-ration Framework, introducing two innovations. 
+
+(a) Team role division for diverse perspectives .Inspired by the well-established sociological the-ory of Belbin’s team roles (Belbin, 2010; Belbin and Brown, 2022), we build TeamLLM based on this human team role theory for the first time and assign each LLM a distinct role with specific re-sponsibilities, thereby enabling team role-driven collaboration. (b) Three-phase collaboration for process controllability . Building on team role-1
+
+> arXiv:2604.06765v1 [cs.CL] 8 Apr 2026
+
+based division, we introduce a three-phase process: task initiation, perspective sharing, and consensus building. All LLMs participate in each task step, engaging in multi-turn interactions according to their roles within each step. This design ensures active communication and process. To assess the effectiveness of TeamLLM in multi-step contextualized tasks, inspired by the Fu-ture Problem Solving Program (Treffinger et al., 2012), we propose Contextually-Grounded and 
+
+Procedurally-Structured Tasks ( CGPST ) and build the benchmark. Existing contextualized task bench-marks, such as NOVELTYBENCH (Zhang et al., 2025b), typically adopt a single-step format, requir-ing a one-shot answer without intermediate steps (Fang et al., 2025; Lu et al., 2025; Chakrabarty et al., 2024; Ye et al., 2025). Such settings make it difficult to evaluate LLMs comprehensively espe-cially when tasks involve multi-step and process-oriented evaluation. As shown in Figure 1, CGPST exhibits four core features. Contextual Grounding : Each task is set in a complete future scenario and require LLMs to consider multiple aspects rather than isolated problems. Procedural Structure : Tasks follow a coherent sequence, with each step depending on previous answers, enforcing logical consistency across steps. Process-Oriented Evaluation : In-termediate steps allow fine-grained assessment be-yond final results, providing more comprehensive insights. Multi-Dimensional Assessment : Each step is scored across multiple dimensions within each step, capturing diverse abilities. By combining TeamLLM with CGPST bench-mark, we propose a new paradigm for systemati-cally evaluate LLMs on multi-step contextualized tasks. We evaluate ten LLMs on CGPST, analyzing performance at overall, step and dimension levels. The contributions of this study are as follows. • TeamLLM , a human-like multi-LLM collab-oration framework for multi-step contextual-ized tasks via team role assignment. • The CGPST benchmark , multi-step contex-tualized tasks to evaluate the effectiveness of proposed TeamLLM, with distinct scenarios, full-process responses and the corresponding human scores of ten LLMs. • Comparative analysis , a comprehensive as-sessment of various LLMs on CGPST, provid-ing detailed insights into their performance on multi-step contextualized tasks. 
+
+2 Related Work 
+
+2.1 Multi-LLM Collaboration 
+
+Rapid progress in LLMs has enabled various forms of collaboration design. Some approaches are function-oriented, assigning different modules to different LLMs (Gottweis et al., 2025; Wang et al., 2025; Zhang et al., 2025a; Bai et al., 2025). For ex-ample, the three-phase travel planning framework improves performance with careful division and assignment (Xie and Zou, 2024). Others explored interaction-oriented designs. The Multi-Agent De-bate (MAD) framework, where LLMs debate in a "tit-for-tat" manner and a judge decides the out-come, improves logical accuracy (Du et al., 2024; Liang et al., 2024). LLM Discussion framework emphasizes discussion and idea integration, which promotes interaction and creativity through a three-phase discussion (Lu et al., 2024a). Together, these approaches provide useful insights into multi-LLM coordination, yet they generally do not explicitly emulate human-like team roles, and are not specifi-cally designed for multi-step contextualized tasks. 
+
+2.2 Benchmarking LLMs on Contextualized Tasks                  
+
+> Multi-step Evaluation
+> CGPST ✓process-oriented TTCW (Chakrabarty et al., 2024) ✗result-oriented NOVELTYBENCH (Zhang et al., 2025b) ✗result-oriented CREATIVEMATH (Ye et al., 2025) ✗result-oriented AidanBench (McLaughlin et al., 2024) ✗result-oriented LiveIdeaBench (Ruan et al., 2025) ✗result-oriented Creation-MMBench (Fang et al., 2025) ✗result-oriented NEOCODER (Lu et al., 2025) ✗result-oriented
+
+Table 1: Comparison between the CGPST benchmark and several contextualized benchmarks. 
+
+Benchmarking is the standard method for eval-uating LLMs. Various benchmarks target spe-cific abilities: CREATIVEMATH (Ye et al., 2025) for generating novel mathematical solutions and TTCW (Chakrabarty et al., 2024) for creative story generation from a plot. While valuable, they have three limitations. First, they rely on simple scenar-ios (e.g., a single math problem or a story plot). Second, their single-step format lacks the coher-ence across steps, so correct answers may mask un-derlying flaws. Third, without a multi-step design, evaluations focus solely on final outputs, hindering fine-grained analysis of intermediate process and comprehensive assessment of LLMs’ abilities. 2Qwen 
+
+> Deepseek
+> Kimi
+> GPT
+> Claude
+> Gemini
+> Llama
+
+Team Formation   
+
+> Co-Ordinator Plant
+> Monitor
+> Evaluator Implementer
+
+Team Warm-Up  
+
+> Hello everyone, welcome to today’s
+> team collaboration! I’m Co-Ordinator
+> and I’m glad to join you all in this Task.
+> Hi everyone, I’m Plant! I’m excited to
+> s p a r k t h e t e a m ’ s c r e a t i v i t y . L e t ’ s
+> brainstorm all the way to 2045!
+
+Three-Phase Collaboration 
+
+> Alright team, we’re officially entering the
+> first step — Identifying Challenges.
+> 1. Task Initiation
+> 2. Perspective Sharing
+> I think Oliver’s deep brain stimulation
+> device may pose a potential challenge.
+> The following is an analysis of the logical
+> consistency of each challenge.
+> As Implementer, I will analyze each
+> challenge from the view of feasibility.
+> 3. Consensus Building
+> Based on the team’s discussion, the
+> answers for Step-1 are as follows.
+> Step-1
+
+... 
+
+> Step-N
+> Hi everyone, I’m Monitor Evaluator. My
+> role is to make sure our solutions are
+> built on solid reasoning!
+> Hi everyone, I’m Implementer. I’m
+> excited to bring a down-to-earth view
+> to the team, imaginative and realistic!
+
+Three-Phase Collaboration 
+
+> Let’s move on to Step-N.
+> 1. Task Initiation
+> 2. Perspective Sharing
+> I think ...
+> Analyzing from a logical perspective…
+> A n a l y z i n g f r o m t h e p e r s p e c t i v e o f
+> practical feasibility…
+> 3. Consensus Building
+> Based on the team’s discussion, the
+> answers for Step-N are as follows.
+
+Figure 2: TeamLLM: A Human-Like Team-Oriented Collaboration Framework. 
+
+Algorithm 1 Pseudo code of Team Warm-Up 
+
+Input: Role-Play prompt for each LLM, warm_up prompt Initialize step_history = [] # Store discussion history of current step. 
+
+O(0) 
+
+CO = ACO .ask (Role_Play prompt + warm_up prompt )
+
+Update step_history append 
+
+←−−−− O(0) 
+
+CO 
+
+for each i ∈ { P L, M E, IM P } do # Each LLM speaks in turn. 
+
+O(0) 
+
+i = Ai.ask (Role_Play prompt + step_history )
+
+Update step_history append 
+
+←−−−− O(0) 
+
+i
+
+end for 
+
+3 TeamLLM Framework 
+
+Inspired by Belbin’s theory of team roles (Belbin, 2010; Belbin and Brown, 2022), we adopt four team roles: Co-Ordinator , Plant , Monitor Eval-uator and Implementer (CO, PL, ME, IMP) to form a multi-LLM team, denoted as MLTeam . As shown in Figure 2, MLTeam first undergo a Warm-Up phase for initial activation. Then, for each CG-PST step, MLTeam operates under a three-phase collaboration framework . This multi-turn interac-tion can enhance inter-LLM collaboration, promote diverse ideas, and ensure process controllability. 
+
+3.1 Team Formation 
+
+In this phase, each LLM is assigned a distinct team role via a triplet { Team_Role , Role_Speciality ,
+
+Role_Prompt }, which defines its speciality and be-havioral guidelines (Lu et al., 2024a), as detailed in Appendix C. This role-play mechanism enables LLMs to propose, evaluate, and coordinate solu-tions across the collaboration, emulating human-like division of interaction. 
+
+3.2 Team Warm-Up 
+
+To help MLTeam members get to know each other and clarify their responsibilities, we introduce a Warm-Up phase after team formation as an initial activation (Lu et al., 2024a). This phase facilitates early collaboration, establishes shared context, and lay the foundation for subsequent tasks. Algorithm 1 shows the Warm-Up procedure. Here, O(s)
+
+i denotes the response of role i at step 
+
+s, with s = 0 indicating the Warm-Up phase. Ai
+
+denotes the LLM assigned to role i. ask (p) and 
+
+U pdate step _history (o) indicates the response generated from information p and the operation that appends message o to step _history , respectively. The warm _up prompt guides the CO to initiate MLTeam Warm-Up, as shown in Appendix B. 
+
+3.3 Three-Phase Collaboration 
+
+To ensure process controllability, we design a three-phase collaboration framework, as shown in Algorithm 2. The variable log _history stores aggregated team answers from previous steps. 
+
+step _prompt provides task information for each step, where N denotes the total number of steps. Each SP i is represented as a quadru-ple { Step_Number , Step_Name , Step_Description ,
+
+Step_Output }, with full details in Appendix D. 
+
+3.3.1 Task Initiation 
+
+In this phase, the CO receives the task information for the current step and conveys it to MLTeam, clarifying objectives and requirements and guiding the team into a discussion state. 
+
+O(s)
+
+CO = ACO .ask (Role _P lay prompt +
+
+T ask _Initiation prompt ) (1) 
+
+step _history = U pdate (O(s)
+
+CO ) (2) 
+
+3.3.2 Perspective Sharing 
+
+First, the PL generates an initial solution based on the task requirements, providing a preliminary ba-sis for team discussion. The ME then reviews and refines it to ensure logical consistency, followed by the IMP evaluating its practical feasibility. Through 3Step Requirement Evaluation Metric Score 
+
+Step-1: Identify Challenges Identify up to 8 reasonable challenges based on the future scenario. Fluency, Flexibility, Elaboration, Origi-nality 48 Step-2: Select an Underlying Prob-lem Select the most promising and meaningful challenge from Step-1 as the underlying problem. Integrity of Underlying Problem, Focus of Underlying Problem, Importance / Adequacy of Underlying Problem 30 Step-3: Produce Solutions Generate up to 8 solutions for the underlying prob-lem from Step-2. Fluency, Flexibility, Elaboration, Origi-nality 48 Step-4: Select Criteria Generate 5 evaluation criteria for the solutions from Step-3. Correctly Written, Relevance to the Un-derlying Problem 20 Step-5: Apply Criteria to Top Solution Rank the solutions from Step-3 using the criteria from Step-4 and select the highest-scoring solution. Correctly Used 5Step-6: Develop an Action Plan Develop the top solution from Step-5 into a compre-hensive action plan to address the underlying prob-lem from Step-2. Relevance, Effectiveness, Criteria in De-velopment of Action Plan, Impact, Hu-maneness, Development of Action Plan 35 
+
+Table 2: Detailed Step-wise Information and Evaluation Metrics on CGPST 
+
+Algorithm 2 Pseudo code of Three-Phase Collaboration                   
+
+> Input: Role-Play prompt for each LLM, step prompt = (SP 1, SP 2,..., SP N), Task_Initiation prompt, Consensus_Building prompt Initialize log_history = [] # Store answers of each step.
+> for each s∈ { 1,2, ..., N }do # MLTeam perform each step in order.
+> Initialize step_history = [] # Store discussion history of current step. # Three-Phase Collaboration
+> Update step_history append
+> ←−−−−
+> Task_Initiation( ACO ,SP s,Task_Initiation prompt) Update step_history append
+> ←−−−−
+> Perspective_Sharing( AP L , A M E , A IM P )Update log_history append
+> ←−−−−
+> Consensus_Building( ACO ,Consensus_Building prompt)
+> end for
+
+this multi-perspective refinement, MLTeam gradu-ally builds a more complete solution. 
+
+∀i ∈ { P L, M E, IM P } :
+
+O(s) 
+
+> i
+
+= Ai.ask (Role _P lay prompt 
+
++log _history + step _history ) (3) 
+
+step _history = U pdate (O(s) 
+
+> i
+
+) (4) 
+
+3.3.3 Consensus Building 
+
+The CO integrates perspectives from the previous phase to produce the final team answer of the cur-rent step and the result Answer (s) is appended to 
+
+log _history as part of historical record, providing continuous context for future steps. This ensures MLTeam’s output is coherent and holistic, provid-ing a solid foundation for subsequent collaboration. 
+
+Answer (s) = ACO .ask (Role _P lay prompt 
+
++log _history + step _history 
+
++Consensus _Building prompt )
+
+(5) 
+
+log _history = U pdate (Answer (s)) (6) on CGPST, ensuring cross-step coherence and multi-turn collaboration within each step imposes specific demands on context management. Al-though modern LLMs support large context win-dows (up to 64K or 1M tokens), simply concate-nating all historical records can cause instruction forgetting or underutilization, hindering effective task progression (Gao et al., 2024; Lu et al., 2024b). To address this, TeamLLM uses a dual-variable context management mechanism . Across steps, 
+
+log _history stores the final answer of each step to ensure cross-step coherence . Within a step, 
+
+step _history preserves the ongoing discussion, supporting within-step collaboration . This re-duces unnecessary context accumulation while re-taining critical information, maintaining both con-textual integrity and process controllability. 
+
+4 CGPST Benchmark 
+
+4.1 Contextually Grounding and Procedurally Structuring 
+
+Each task is set within a future scenario, requiring models to generate answers consistent with con-textual information. The 10 scenarios (FS1-FS10) cover topics such as biosecurity, providing a broad and practically relevant set of challenges. Inspired by the Future Problem Solving Program (Treffinger et al., 2012) and the Creative Problem Solving (CPS) model (Treffinger, 1995), each task consists of six sequential steps as shown in Table 2, where the output of one step will influence the next. This structure allows a comprehensive assessment of multi-step thinking and problem solving. 4Category Model (Abbreviation)       
+
+> Open-Source qwen3-235b-a22b-instruct-2507 (qwen3-instruct ), qwen3-235b-a22b-thinking-2507 (qwen3-thinking ), DeepSeek-V3-0324 (deepseek-v3 ), Deepseek-r1 ( deepseek-r1 ), kimi-k2-0711-preview ( kimi-k2 ), llama-4-scout-17b-16e-instruct ( llama-4-scout )Closed-Source gpt-4o ( gpt-4o ), gpt-5 ( gpt-5 ), claude-opus-4-1-20250805 ( claude-4-opus ), gemini-2.5-pro ( gemini-2.5-pro )
+
+Table 3: LLMs Selected for Evaluation 
+
+4.2 Multidimensional Ability Assessment 
+
+The benchmark evaluates both final answers and step-wise performance, enabling process-oriented assessment and nuanced comparison of distinct LLMs. Detailed dimensions are in Appendix E. 
+
+Step-1 and Step-3 
+
+These steps require generating multiple chal-lenges or solutions, thereby assessing divergent thinking . We adopt the four classical dimen-sions from the Torrance Tests of Creative Thinking (TTCT) (Torrance, 1966), widely used in human creativity assessment (Kumar et al., 2025; Zhao et al., 2025). Scores are calculated for each item. Given LLMs’ tendency to produce large quanti-ties of responses, Fluency and Flexibility are less discriminative, while Elaboration and Originality 
+
+better capture creative quality (Lu et al., 2024a); thus, a 3-point scale is used for these two dimen-sions. More details are shown in Appendix M. • Fluency : number of reasonable responses. • Flexibility : diversity of categories covered. • Elaboration : degree of detail in descriptions. • Originality : novelty of responses. 
+
+Step-2 
+
+Step-2 focuses refining a single underlying prob-lem (UP), reflecting convergent thinking .• Integrity : completeness of UP description. • Focus : logical rigor and consistency of UP. • Importance : significance of UP. 
+
+Step-4 and Step-5 
+
+These involve designing and applying criteria, assessing critical thinking and logical thinking .• Correctly Written : valid criteria. • Relevance : alignment with the UP. • Correctly Used : correct application of crite-ria to rank all solutions without ties. 
+
+Step-6 
+
+This step develops the optimal solution from Step-5 into a comprehensive action plan, evaluating 
+
+comprehensive problem solving .• Relevance : alignment with the UP. • Effectiveness : ability to address the UP. • Criteria Alignment : adherence to criteria. • Impact : positive effect on the scenario. • Humaneness : attention to human factors. • Development : completeness and feasibility. A complete CGPST scenario (FS10), the six-step responses of kimi-k2 , and the corresponding human scores are provided in Appendix L. 
+
+5 Experiments 
+
+5.1 Experiment Setup 
+
+We set single-LLM as the baseline to evaluate TeamLLM’s effectiveness using CGPST across ten LLMs (Table 3), while comparing different LLMs’ performance. These models vary in source type and optimization focus, ensuring broad representa-tiveness. More experimental details are shown in Appendix F. Additionally, during Team Formation, meta prompts convey key information, including the scenario and task requirements (Appendix G). 
+
+5.2 Human Evaluation 
+
+We recruit 15 trained human experts to evaluate all responses. Each response is scored by two experts in a double-blind setup. Inter-rater consistency is quantified with: (a) Pearson correlation coeffi-cient (PCC) , measuring linear agreement between two raters on the same response and (b) Intra-class correlation coefficient (ICC) , evaluating absolute agreement across all responses in a scenario. A calibration mechanism ensure reliability: for re-sponses with PCC below 0.7 (practically 0.65), a third expert reassesses and final scores are adjusted. Table 6 shows the improvements, demonstrating the effectiveness of third-party calibration. Full details are shown in Appendix H. 
+
+6 Results 
+
+6.1 Overall Performance 
+
+Table 4 shows TeamLLM consistently improves performance across all scenarios, with seven mod-els showing statistically significant gains, showing the potential of team-oriented approach. Improvement varies by model. Models with high performance ( claude-4-opus , qwen3-instruct ,
+
+GPT-5 ) gain the most, while llama-4-scout and 5Model FS1 FS2 FS3 FS4 FS5 FS6 FS7 FS8 FS9 FS10 Avg                                                                                                                                                                                                                             
+
+> qwen3-instruct - TeamLLM 135.5 142 127 123.5 120.5 142 156 135.5 137 134.5 135.35 ∗∗
+> qwen3-instruct - baseline 116 113 110 122.5 107.5 127.5 125.5 113 117 110 116.2 qwen3-thinking - TeamLLM 115 133.5 135 124 117.5 140.5 146.5 111 116 112 125.1 ∗∗
+> qwen3-thinking - baseline 100.5 108.5 121 120.5 115 126.5 130.5 111.5 103.5 108 114.55 deepseek-v3 - TeamLLM 129 137 130.5 116.5 124.5 114 121.5 102.5 124.5 130 123 ∗∗
+> deepseek-v3 - baseline 114.5 104.5 91 104.5 110 110 116 105.5 104 109.5 106.95 deepseek-r1 - TeamLLM 126.5 132.5 114.5 131 135.5 120.5 126 116 119 107 122.85 ∗∗
+> deepseek-r1 - baseline 109.5 99 109.5 104 97.5 110 119 106.5 103 112 107 kimi-k2 - TeamLLM 134 134 133 120 122 129 107.5 117 127 116.5 124
+> kimi-k2 - baseline 108 113.5 119 124.5 110 127.5 129 124.5 116.5 115 118.75 llama-4-scout - TeamLLM 101 120.5 129 91 111 116 105.5 93 107.5 120 109.45
+> llama-4-scout - baseline 101.5 86 105.5 105.5 91.5 101 110 106 71 104.5 98.25 gpt-4o - TeamLLM 137 134.5 118 121 136.5 138.5 124 135 118 123 128.55 ∗∗
+> gpt-4o - baseline 102 91 104.5 109.5 96 118 124 109 94.5 110 105.85 gpt-5 - TeamLLM 144 139.5 139.5 138 156 143 156 150 130 132 142.8 ∗∗
+> gpt-5 - baseline 133 126 130.5 127 130 126.5 142 139 119 127.5 130.05 claude-4-opus - TeamLLM 133.5 134.5 140.5 132 138.5 144.5 150.5 147.5 116.5 129 136.7 ∗∗
+> claude-4-opus - baseline 108.5 100 123.5 128 118.5 127.5 133 123.5 109 114.5 118.6 gemini-2.5-pro - TeamLLM 130.5 123 121.5 117.5 143 142.5 117.5 143 116 120 127.45
+> gemini-2.5-pro - baseline 115.5 111 124.5 124.5 115 121.5 123.5 118 116 118 118.75
+
+Table 4: Overall performance across 10 CGPST scenarios with Wilcoxon signed-rank test results. Bold indicates the higher score. “Avg” is the model’s mean score, and ∗∗ marks a significant improvement under TeamLLM (p=0.01).         
+
+> Model TeamLLM Baseline
+> qwen3-thinking 1.7 0kimi-k2 2.4 0gemini-2.5-pro 2.9 0.4
+
+Table 5: Average number of blank responses in Step-3.       
+
+> Metric Before Calibration After Calibration
+> PCC 0.71 0.87 ICC 0.58 0.84
+
+Table 6: Consistency Before and After Calibration. 
+
+kimi-k2 improve moderately, suggesting intrin-sic model ability influences team effectiveness. Within the Qwen series, the instruct outperforms the thinking , likely due to stronger instruction-following training that better aligns with structured multi-step tasks requirements. 
+
+6.2 Step-level Comparison 
+
+To examine how TeamLLM improves perfor-mance, we conduct a step-level analysis. Fig-ure 3 shows that TeamLLM generally boosts per-formance across all steps, with the largest gains in divergent thinking (Step-1, 3) and action plan development (Step-6). Improvements in Step-2 are smaller, reflecting relatively strong convergent abil-ities even under the baseline. Notably, kimi-k2 
+
+and gemini-2.5-pro show slight declines in Step-3, which will be analyzed in Section 7.1. Examining step-wise differences highlights model-specific strengths. In Step-1 and 3, gpt-5 ,
+
+qwen3-instruct , and claude-4-opus excel at producing diverse challenges and feasible solu-tions. Step-2 shows minimal variation, reflecting balanced problem-focusing abilities. Steps-4 and 5 exhibit larger score differences, which will be analyzed in Section 6.3.3. Step-6 evaluates action plan formulation, where gpt-5 achieves the high-est scores under both conditions, reinforcing its comprehensive ability on CGPST. 
+
+6.3 Dimension-level Analysis within Steps 
+
+We analyze model performance across individual dimensions for each step, as shown in appendix I. 
+
+6.3.1 Step-1 and Step-3: Divergent Thinking 
+
+In divergent thinking steps, TeamLLM primarily enhances Elaboration and Originality . For ex-ample, qwen3-instruct improves in Step-3 from 12.05 to 14.35 ( Elaboration ) and 4.65 to 8.65 ( Orig-inality ), while gpt-4o rises in Step-1 from 6.65 to 10.05 and 1.85 to 5.5, respectively. Fluency and 
+
+Flexibility are already strong under the baseline, so the main gains are on Elaboration and Originality ,which are more indicative of divergent thinking (Lu et al., 2024a), highlighting the effectiveness of the framework in promoting creative output. 
+
+6.3.2 Step-2: Convergent Thinking 
+
+For convergent thinking, overall improvements are modest, as most models already perform well under the baseline. TeamLLM’s main advantage is in the 
+
+Focus dimension, where team collaboration enables 6qwen3-instruct      
+
+> qwen3-thinking
+> deepseek-v3
+> deepseek-r1
+> kimi-k2
+> llama-4-scout
+> gpt-4o
+> gpt-5
+> claude-4-opus
+> gemini-2.5-pro
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> 120
+> 140
+> Scores
+> 25.55
+> 31.5
+> 24.35
+> 23.65
+> 28.55
+> 35.05
+> 12.9
+> 14.7
+> 2.8
+> 3.8
+> 22.05
+> 26.65
+> 116.2
+> 135.35
+> **
+> 24.25
+> 29.45
+> 24.25
+> 24.6
+> 27.9
+> 27.55
+> 12.35
+> 13.2
+> 4.95
+> 5.0
+> 20.85
+> 25.3
+> 114.55
+> 125.1
+> **
+> 22.5
+> 27.1
+> 21.95
+> 25.0
+> 24.7
+> 31.55
+> 11.25
+> 12.35
+> 5.0
+> 3.8
+> 21.55
+> 23.2
+> 106.95
+> 123
+> **
+> 22.5 26.8
+> 23.55
+> 25.15
+> 24.95
+> 31.15
+> 11.45
+> 12.9
+> 4.6
+> 2.9 19.95
+> 23.95
+> 107
+> 122.85
+> **
+> 24.6
+> 31.15
+> 24.65
+> 24.7
+> 28.95
+> 24.9
+> 11.75
+> 13.65
+> 4.95
+> 4.5
+> 23.85
+> 25.1
+> 118.75
+> 124
+> 20.55 22.2
+> 22.35 23.45
+> 23.0
+> 29.35
+> 11.1
+> 10.6
+> 1.95
+> 1.8
+> 19.3
+> 22.05
+> 98.25
+> 109.45
+> 21.0
+> 29.15
+> 23.3
+> 24.8
+> 23.35
+> 32.55
+> 12.75
+> 13.1
+> 4.85
+> 5.0
+> 20.6
+> 23.95
+> 105.85
+> 128.55
+> **
+> 30.55 33.35
+> 22.75
+> 24.55
+> 31.35
+> 34.1
+> 12.9
+> 15.85 4.85
+> 5.0
+> 27.65
+> 29.95
+> 130.05
+> 142.8
+> **
+> 25.55
+> 30.2
+> 23.3
+> 24.6
+> 28.95
+> 35.25
+> 12.45
+> 14.55
+> 4.9
+> 4.9 23.45
+> 27.2
+> 118.6
+> 136.7
+> **
+> 26.15 30.3
+> 22.15
+> 24.75
+> 28.35
+> 24.65
+> 12.55
+> 13.8
+> 4.55
+> 4.6
+> 25.0
+> 29.35
+> 118.75
+> 127.45
+> Step-1
+> Step-2
+> Step-3
+> Step-4
+> Step-5
+> Step-6
+
+Figure 3: Step-level performance of TeamLLM (right bars) and the baseline (left bars), with different colors representing distinct steps. Horizontal lines with ∗∗ indicate statistically significant differences at p=0.01. 
+
+models to better identify and prioritize critical in-formation within the scenario, thereby enhancing problem recognition and foresight. 
+
+6.3.3 Step-4 and Step-5: Critical Thinking and Logical Thinking 
+
+In Step-4, improvements mainly appear in Rele-vance , indicating that TeamLLM helps align eval-uation criteria more closely with the scenario rather than relying on generic standards, enhanc-ing contextual appropriateness. In Step-5, Team-LLM generally stabilizes performance and bene-fits some LLMs, but not all: deepseek-v3 and 
+
+deepseek-r1 show declines, suggesting that col-laboration may introduce reasoning conflicts for models with weaker logical chains, whereas strong models gain greater consistency and accuracy. Cross-model comparison reveals performance tiers. claude-4-opus , qwen3-thinking , gpt-4o ,and gpt-5 score near-perfect, indicating strong logical abilities. llama-4-scout ranks lowest (1.8–1.95), reflecting difficulty with criteria rank-ing. Duplicates and omissions cause its poor per-formance, with examples in Appendix K. 
+
+6.3.4 Step-6: Comprehensive Problem Solving 
+
+Step-6 requires developing a coherent action plan, aligned with earlier steps and effectively address-ing the underlying problem in Step-2. This tests LLMs’ consistency and problem solving ability in multi-step tasks. TeamLLM generally improves performance across all dimensions, largely due to the diverse perspectives from team roles. gpt-5 
+
+remains the top performer, demonstrating strong multi-step thinking, whereas kimi-k2 shows lim-ited gains, as longer collaborative contexts under TeamLLM constrain its improvement. 
+
+6.4 Ablation Study 
+
+We conduct an ablation study to isolate the effect of team role-based collaboration in TeamLLM by re-moving explicit role assignments while keeping the number of LLMs unchanged, as shown in Figure 5. Removing explicit team role division leads to a consistent drop in performance, while still outper-forming the baseline. The results confirm that the introduction of diverse perspectives derived from human team roles can enhances the performance of TeamLLM in contextualized multi-step tasks. 
+
+7 Discussion 
+
+7.1 Divergent Thinking Quality and Efficiency Analysis in TeamLLM 
+
+qwen3-thinking , gemini-2.5-pro and kimi-k2 
+
+decline in Step-3 (Figure 8(c)), mainly due to each LLM producing 2–3 blank responses on average (Table 5). To account for this, we calculate per-solution efficiencies for Step-3 dimensions: 
+
+F lexibility _Ef f iciency = F lexibility F luency ∈ [0 , 1] (7) 
+
+Elaboration _Ef f iciency = Elaboration F luency ∈ [0 , 2] (8) 70.25 
+
+> 0.5
+> 0.75
+> 1.0
+> 0.617
+> 0.51
+> 0.602
+> 0.556
+> 0.526
+> 0.57
+> 0.56
+> 0.545
+> 0.642
+> 0.536
+> 0.653
+> 0.573
+> 0.632
+> 0.604
+> 0.527
+> 0.547
+> 0.671
+> 0.497
+> 0.737
+> 0.46
+> Flexibility Efficiency
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 1.161
+> 0.592
+> 1.136
+> 0.55
+> 1.066
+> 0.576
+> 1.099
+> 0.545
+> 1.245
+> 0.702
+> 0.889
+> 0.434
+> 0.839
+> 0.465
+> 1.162
+> 0.807
+> 1.103
+> 0.626
+> 1.293
+> 0.633
+> Originality Efficiency
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 1.926
+> 1.535
+> 1.932
+> 1.589
+> 1.559
+> 1.126
+> 1.759
+> 1.149
+> 1.811
+> 1.596
+> 1.535
+> 1.21
+> 1.729
+> 1.174
+> 1.919
+> 1.827
+> 1.774
+> 1.613
+> 1.949
+> 1.687
+> Elaboration Efficiency
+> qwen3-instruct
+> qwen3-thinking
+> deepseek-v3
+> deepseek-r1
+> kimi-k2
+> llama-4-scout
+> gpt-4o
+> gpt-5
+> claude-4-opus
+> gemini-2.5-pro
+
+Figure 4: Comparison of model performance in Step-3 across Flexibility Efficiency, Originality Efficiency, and Elaboration Efficiency. Solid bars correspond to the baseline, while hatched bars correspond to TeamLLM. qwen3-235b-instruct 
+
+> qwen3-235b-thinking
+> deepseek-v3
+> deepseek-r1
+> kimi-k2
+> llama-4-scout
+> gpt-4o
+> gpt-5
+> claude-4-opus
+> gemini-2.5-pro
+> 90
+> 100
+> 110
+> 120
+> 130
+> 140
+> 150
+> Average Scores
+> TeamLLM
+> Ablation
+> Baseline
+
+Figure 5: Ablation study results. 
+
+Orginality _Ef f iciency = Orginality F luency ∈ [0 , 2] (9) These metrics normalize for solution quantity, providing a clearer measure of solution quality. Figure 4 shows that TeamLLM consistently im-proves Elaboration Efficiency and Originality Ef-ficiency , confirming that collaborative team roles enhance each solution’s creativity. Gains in origi-nality slightly exceed those in elaboration , reflect-ing that LLMs can produce detailed ideas but still face limitations in novelty (Zhao et al., 2025). 
+
+qwen3-thinking , gemini-2.5-pro and 
+
+kimi-k2 achieve relatively high per-solution quality despite a drop in overall Step-3 scores, revealing a " quantity–quality trade-off ": fewer generated solutions lead to lower absolute scores, but the quality of each solution improve. Notably, 
+
+gemini-2.5-pro achieves the highest per-solution scores across all three dimensions, highlighting its strong divergent thinking ability. 
+
+7.2 Mitigating Model Output Homogenization via TeamLLM: Insights from Step-1 and 3 
+
+This section examines Step-1 and 3, both divergent thinking, to assess how TeamLLM reduces output homogenization. We quantify semantic diversity using Self-BLEU (Zhu et al., 2018; Yin et al., 2020; Lu et al., 2024a; Liang et al., 2024), where higher Self-BLEU means lower diversity. Due to the neg-ligible probability of 3-grams and 4-grams in Chi-nese, we compute Self-BLEU using a weighted 1-gram (0.8) and 2-gram (0.2) strategy. Diversity is defined as follows, where Self _BLEU (M ) is the average similarity of model M ’s responses, and C
+
+is the set of N responses. 
+
+Diversity = 1 − Self _BLEU (M )= 1 − 1
+
+NNX
+
+i=1 
+
+Self _BLEU (ci)
+
+Self _BLEU (ci) = BLEU (ci, c j |j̸ = i) (10) 
+
+C = {c1, c 2, ..., c N } (11) Figure 6 and 7 show that TeamLLM generally increases response diversity. This improvement stems from team role division and multi-phase col-laboration, which introduce multiple perspectives and reduce homogenization from fixed thinking pat-terns of a single LLM (Liang et al., 2024; Lu et al., 2024a). However, higher diversity does not always correspond to higher Flexibility scores, consistent with existing findings in multi-LLM creativity stud-ies (Lu et al., 2024a). 
+
+8 Conclusions 
+
+We propose TeamLLM, a human-like team-oriented multi-LLM collaboration framework that enhances LLMs’ performance on contextualized multi-step tasks and construct the CGPST bench-mark. Experiments results show that TeamLLM improves overall performance, particularly in diver-gent thinking and comprehensive problem solving, while fostering solution diversity and reducing out-put homogenization. Step-level and dimension-level analyses highlight that collaborative team roles enhance elaboration , originality , and focus .8Limitations 
+
+This work has several limitations. First, CGPST relies on fine-grained human eval-uation across multiple steps and dimensions, which is time-consuming and limits scalability despite careful calibration. Future work will explore au-tomated or hybrid evaluation methods to reduce annotation cost while preserving evaluation fidelity. Second, TeamLLM adopts a fixed set of team roles and a predefined collaboration protocol in-spired by Belbin human team theory. While effec-tive for contextualized multi-step tasks, the gen-eralizability of this design to other task types and domains remains an open question. 
+
+References 
+
+David Bai, Ishika Singh, David Traum, and Jesse Thomason. 2025. Twostep: Multi-agent task plan-ning using classical planners and large language mod-els. Preprint , arXiv:2403.17246. R Meredith Belbin. 2010. Management Teams . Rout-ledge. R. Meredith Belbin and Victoria Brown. 2022. Team Roles at Work . Routledge. Tuhin Chakrabarty, Philippe Laban, Divyansh Agar-wal, Smaranda Muresan, and Chien-Sheng Wu. 2024. Art or artifice? large language models and the false promise of creativity. In Proceedings of the 2024 CHI Conference on Human Factors in Computing Systems , CHI ’24, New York, NY, USA. Association for Computing Machinery. Yilun Du, Shuang Li, Antonio Torralba, Joshua B. Tenenbaum, and Igor Mordatch. 2024. Improving factuality and reasoning in language models through multiagent debate. In Proceedings of the 41st Inter-national Conference on Machine Learning , ICML’24. JMLR.org. Xinyu Fang, Zhijian Chen, Kai Lan, Lixin Ma, Shengyuan Ding, Yingji Liang, Xiangyu Zhao, Farong Wen, Zicheng Zhang, Guofeng Zhang, Haodong Duan, Kai Chen, and Dahua Lin. 2025. Creation-mmbench: Assessing context-aware creative intelligence in mllm. Preprint ,arXiv:2503.14478. Yichun Feng, Jiawei Wang, Lu Zhou, Zhen Lei, and Yixue Li. 2025. Doctoragent-rl: A multi-agent col-laborative reinforcement learning system for multi-turn clinical dialogue. Preprint , arXiv:2505.19630. Kazuma Fukumura and Takayuki Ito. 2025. Can llm-powered multi-agent systems augment human creativ-ity? evidence from brainstorming tasks. In Proceed-ings of the ACM Collective Intelligence Conference ,CI ’25, page 20–29, New York, NY, USA. Associa-tion for Computing Machinery. Muhan Gao, TaiMing Lu, Kuai Yu, Adam Byerly, and Daniel Khashabi. 2024. Insights into LLM long-context failures: When transformers know but don’t tell. In Findings of the Association for Computa-tional Linguistics: EMNLP 2024 , pages 7611–7625, Miami, Florida, USA. Association for Computational Linguistics. Juraj Gottweis, Wei-Hung Weng, Alexander Daryin, Tao Tu, Anil Palepu, Petar Sirkovic, Artiom Myaskovsky, Felix Weissenberger, Keran Rong, Ryu-taro Tanno, Khaled Saab, Dan Popovici, Jacob Blum, Fan Zhang, Katherine Chou, Avinatan Hassidim, Bu-rak Gokturk, Amin Vahdat, Pushmeet Kohli, and 15 others. 2025. Towards an ai co-scientist. Preprint ,arXiv:2502.18864. Harsh Kumar, Jonathan Vincentius, Ewan Jordan, and Ashton Anderson. 2025. Human creativity in the age of llms: Randomized experiments on divergent and convergent thinking. In Proceedings of the 2025 CHI Conference on Human Factors in Computing Systems , CHI ’25, New York, NY, USA. Association for Computing Machinery. Tian Liang, Zhiwei He, Wenxiang Jiao, Xing Wang, Yan Wang, Rui Wang, Yujiu Yang, Shuming Shi, and Zhaopeng Tu. 2024. Encouraging divergent thinking in large language models through multi-agent debate. In Proceedings of the 2024 Conference on Empiri-cal Methods in Natural Language Processing , pages 17889–17904, Miami, Florida, USA. Association for Computational Linguistics. Yi-Cheng Lin, Kang-Chieh Chen, Zhe-Yan Li, Tzu-Heng Wu, Tzu-Hsuan Wu, Kuan-Yu Chen, Hung yi Lee, and Yun-Nung Chen. 2025. Creativity in llm-based multi-agent systems: A survey. Preprint ,arXiv:2505.21116. Li-Chun Lu, Shou-Jen Chen, Tsung-Min Pai, Chan-Hung Yu, Hung yi Lee, and Shao-Hua Sun. 2024a. Llm discussion: Enhancing the creativity of large language models via discussion framework and role-play. Preprint , arXiv:2405.06373. Yi Lu, Jing Nathan Yan, Songlin Yang, Justin T. Chiu, Siyu Ren, Fei Yuan, Wenting Zhao, Zhiyong Wu, and Alexander M. Rush. 2024b. A controlled study on long context extension and generalization in llms. 
+
+Preprint , arXiv:2409.12181. Yining Lu, Dixuan Wang, Tianjian Li, Dongwei Jiang, Sanjeev Khudanpur, Meng Jiang, and Daniel Khashabi. 2025. Benchmarking language model cre-ativity: A case study on code generation. In Pro-ceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Com-putational Linguistics: Human Language Technolo-gies (Volume 1: Long Papers) , pages 2776–2794, Albuquerque, New Mexico. Association for Compu-tational Linguistics. 
+
+9Aidan McLaughlin, Anuja Uppuluri, and James Camp-bell. 2024. Aidanbench: Evaluating novel idea gen-eration on open-ended questions. In Language Gam-ification - NeurIPS 2024 Workshop .Kai Ruan, Xuan Wang, Jixiang Hong, Peng Wang, Yang Liu, and Hao Sun. 2025. Liveideabench: Evaluating llms’ divergent thinking for scientific idea generation with minimal context. Preprint , arXiv:2412.17596. E Paul Torrance. 1966. Torrance tests of creative think-ing. Educational and psychological measurement .Donald J. Treffinger. 1995. Creative problem solving: Overview and educational implications. Educational Psychology Review , 7(3):301–312. Donald J Treffinger, Marianne Solomon, and Deb Woythal. 2012. Four decades of creative vision: In-sights from an evaluation of the future problem solv-ing program international (fpspi). The Journal of Creative Behavior , 46(3):209–219. Yaoxiang Wang, Zhiyong Wu, Junfeng Yao, and Jinsong Su. 2025. Tdag: A multi-agent framework based on dynamic task decomposition and agent generation. 
+
+Neural Networks , 185:107200. Emily Wenger and Yoed Kenett. 2025. We’re different, we’re the same: Creative homogeneity across llms. 
+
+Preprint , arXiv:2501.19361. Chengxing Xie and Difan Zou. 2024. A human-like reasoning framework for multi-phases plan-ning task with large language models. Preprint ,arXiv:2405.18208. Weijia Xu, Nebojsa Jojic, Sudha Rao, Chris Brockett, and Bill Dolan. 2025. Echoes in ai: Quantifying lack of plot diversity in llm outputs. Proceedings of the National Academy of Sciences , 122(35). Junyi Ye, Jingyi Gu, Xinyun Zhao, Wenpeng Yin, and Guiling Wang. 2025. Assessing the creativity of llms in proposing novel solutions to mathematical problems. Proceedings of the AAAI Conference on Artificial Intelligence , 39(24):25687–25696. Haiyan Yin, Dingcheng Li, Xu Li, and Ping Li. 2020. Meta-cotgan: A meta cooperative training paradigm for improving adversarial text generation. Proceed-ings of the AAAI Conference on Artificial Intelligence ,34(05):9466–9473. Wentao Zhang, Liang Zeng, Yuzhen Xiao, Yongcong Li, Ce Cui, Yilei Zhao, Rui Hu, Yang Liu, Yahui Zhou, and Bo An. 2025a. Agentorchestra: A hier-archical multi-agent framework for general-purpose task solving. arXiv preprint .Yiming Zhang, Harshita Diddee, Susan Holm, Hanchen Liu, Xinyue Liu, Vinay Samuel, Barry Wang, and Daphne Ippolito. 2025b. Noveltybench: Evaluating creativity and diversity in language models. In Sec-ond Conference on Language Modeling .Yunpu Zhao, Rui Zhang, Wenyi Li, and Ling Li. 2025. Assessing and understanding creativity in large language models. Machine Intelligence Research ,22(3):417–436. Yaoming Zhu, Sidi Lu, Lei Zheng, Jiaxian Guo, Weinan Zhang, Jun Wang, and Yong Yu. 2018. Texygen: A benchmarking platform for text generation models. In The 41st International ACM SIGIR Conference on Research & Development in Information Retrieval ,SIGIR ’18, page 1097–1100, New York, NY, USA. Association for Computing Machinery. 
+
+10 A Rationale for Team Roles Selection 
+
+In the late 1960s, Dr. Meredith Belbin concluded that team performance depends on the balance of team role distribution, which is known as the team role theory. His research showed that the most suc-cessful teams were made up of a diverse mix of behaviors (Belbin, 2010; Belbin and Brown, 2022). Inspired by this sociological and psychological the-ory, we attempt to introduce human team theory into multi-LLM teams for the first time, and based on this, propose TeamLLM framework. Belbin de-fined nine team roles, which can be further catego-rized into three types: thinking , action , and social ,as shown in Table 11 2. In this appendix, we pro-vide the rationale for selecting the four roles used in our framework: Co-Ordinator , Plant , Monitor Evaluator , and Implementer .First, we exclude certain roles. The Specialist fo-cuses on a specific domain and lacks cross-domain versatility, making it unsuitable for addressing the diverse problems that may arise in a team context. The Resource Investigator is responsible for ex-ploring external opportunities. However, our study focuses on contextualized multi-step tasks like CG-PST, which primarily evaluate the problem-solving abilities of LLMs, and does not require acquiring external resources. Second, to ensure that the constructed team is representative and can maximally reflect the com-position and collaboration patterns of human-like teams, we select roles covering Belbin’s three team role categories. From the thinking category, we choose Plant , valuing its ability to “generate ideas and solve difficult problems.” From action , we se-lect Implementer , emphasizing its ability to “turn ideas into actions and organize work that needs to be done,” ensuring the team’s proposals are practical and feasible. From social , we select Co-Ordinator , which “focuses on the team’s objec-tives and delegates work appropriately,” making it more suitable than the Teamworker for com-pleting the Task Initiation and Consensus Building phases. Finally, since logical thinking is a critical aspect of problem-solving ability evaluation, we addition-ally include Monitor Evaluator , valuing its skill in “making impartial judgments where required and weighing up the team’s options in a dispassionate way.” This prevents the team’s output from being 
+
+> 2
+
+https://www.belbin.com/about/ belbin-team-roles qwen3-instruct 
+
+> qwen3-thinking
+> deepseek-v3
+> deepseek-r1
+> kimi-k2
+> llama-4-scout
+> gpt-4o
+> gpt-5
+> claude-4-opus
+> gemini-2.5-pro
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> Diversity
+> Diversity of Baseline in Step-1
+> Diversity of TeamLLM in Step-1
+> Flexibility of Baseline in Step-1
+> Flexibility of TeamLLM in Step-1
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> 8
+> Flexibility
+
+Figure 6: Comparison of Diversity and Flexibility in Step-1. qwen3-instruct 
+
+> qwen3-thinking
+> deepseek-v3
+> deepseek-r1
+> kimi-k2
+> llama-4-scout
+> gpt-4o
+> gpt-5
+> claude-4-opus
+> gemini-2.5-pro
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> Diversity
+> Diversity of Baseline in Step-3
+> Diversity of TeamLLM in Step-3
+> Flexibility of Baseline in Step-3
+> Flexibility of TeamLLM in Step-3
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> 8
+> Flexibility
+
+Figure 7: Comparison of Diversity and Flexibility in Step-3. 
+
+merely practical but logically flawed. For example, generating an action plan that is feasible but con-tains internal contradictions in step dependencies. Furthermore, because CGPST emphasizes think-ing, including two roles from the thinking category is reasonable. 
+
+B TeamLLM Prompts 
+
+The prompt variables used in TeamLLM are listed in Table 10. 
+
+C Team Role Assignment 
+
+In Team Formation, each LLM is assigned a distinct team role through a triplet { Team_Role ,
+
+Role_Speciality , Role_Prompt }, which specifies the LLM’s and behavioral guidelines. This role-playing mechanism enables LLMs to propose, eval-uate, execute, and coordinate solutions according to their role characteristics throughout the collab-oration process, thereby simulating the division and interaction within human teams. Based on Belbin’s theory of team roles, the triplet prompts for each role are shown in Table 13 and the 
+
+Role _P lay prompt is shown in Table 10, serving as guidance for LLMs. 11 D CGPST Benchmark Step Prompt 
+
+Table 14 presents the detailed step-wise task infor-mation and corresponding output requirements for the CGPST benchmark. Each step specifies the task description and expected outputs, including guidelines for completion. 
+
+E Evaluation Rubrics for CGPST 
+
+To ensure a transparent and systematic evaluation of model performance on contextualized multi-step tasks, Table 15 provides the detailed rubrics for each step of the CGPST benchmark. The scoring criteria are designed to capture not only the correct-ness of responses but also the depth of thinking, creativity, and contextual alignment. Each step is assessed across multiple dimensions, with explicit descriptions of rubrics and corresponding maxi-mum scores. 
+
+F Hyperparameter setting 
+
+on CGPST, different steps are designed to evaluate distinct abilities of LLMs. The temperature affects performance: lower values yield more consistent outputs, while higher values promote diversity (Lu et al., 2024a). To ensure fairness, we assign tar-geted temperature values for different team roles and experimental conditions, as shown in Table 7.            
+
+> Hyper-parameter Condition / Role Value
+> temperature
+> TeamLLM – Co-Ordinator 0.5 TeamLLM – Plant 0.8 TeamLLM – Monitor Evaluator 0.4 TeamLLM – Implementer 0.4 Baseline 0.6
+> top-p –0.9
+> top-k –20
+> Table 7: Hyper-parameter Settings
+
+G Meta Prompt 
+
+We use meta prompt to provide necessary back-ground information about CGPST in the Team Formation phase. These prompts provide LLMs with essential context about the task’s future sce-nario, team roles, collaboration requirements, and necessary evaluation criteria. The meta prompts for TeamLLM framework and the baseline are pre-sented in Table 12, with {future scenario} repre-senting the future scenario for each task. 
+
+H Human Evaluation 
+
+This study requires three experimental conditions: TeamLLM, the baseline and ablation condition, and collected a total of 300 responses based on 10 sce-narios and 10 models. Given the inherently subjec-tive nature of CGPST, we invited 15 trained human experts (H01-H15) to conduct double-blind scoring to ensure objectivity and reliability. Each response was independently scored by two unaware experts. First, all human experts were trained using a fu-ture scenario and a real model response, including detailed explanations of the evaluation dimensions for each step and instructions on how to use the 
+
+human scoring sheet (see Appendix J). Before formal scoring, we carefully designed the scoring procedure. Each scoring session assigned a scenario to each expert, which included 10 re-sponses from all models under the same condition within the same scenario, with the model names hidden. This arrangement ensured that experts only evaluated responses under the same scenario at a time, maintaining consistency and coherence. The scoring process consisted of 12 sessions in total, with each response taking approximately 25–30 minutes to evaluate. Each expert participated in about 3–5 sessions on average, reviewing roughly 30 responses. As discussion in Section 5.2, we employed PCC 
+
+and ICC to ensure consistency. Considering that different steps and dimensions had varying score ranges, we normalized the scores before calcu-lating correlations by dividing each score by the maximum score for the corresponding dimension. Specifically, for each pair of experts (Hx and Hy), PCC was calculated across the 10 responses in the same scenario under the same condition to as-sess agreement on individual ratings. At the same time, the 10 responses were treated as a whole to compute ICC, evaluating the stability and overall agreement of the two experts’ scores within the scenario. A calibration mechanism was also introduced after scoring. When PCC for a response fell be-low a threshold of 0.7 (with a 5% tolerance, set practically at 0.65), a third expert was invited to reassess that response. This mechanism ensured that the final scores were more stable and reliable. As shown in Table 6, the calibration significantly improved scoring consistency. 12 Type Description           
+
+> Perhaps Ambiguous Why Irrelevant to Scenario Solution A Solution to a Challenge Duplicate Similar to Another YES Challenge Blank No Response Provided
+> Table 8: Types of invalid challenges in Step-1.
+> Type Description
+> Perhaps The relationship between the solution, the KVP, and the purpose is unclear. Why The solution is irrelevant to the underlying problem. Duplicate The solution is too similar to another Yes solution. Blank No response provided.
+> Table 9: Types of invalid solutions in Step-3.
+
+I Dimension-level Results for each step 
+
+This appendix presents detailed radar charts of all models’ performance across all dimensions for each step on CGPST, as shown in Figure 8. These charts complement the step and dimension level analyses in the main text by providing a visual comparison of LLMs’ strengths and weaknesses in specific dimensions. Each figure illustrates the relative performance under both TeamLLM and the baseline, enabling a fine-grained examination of how team role-based collaboration affects individ-ual dimension scores across all steps. 
+
+J Human Evaluation Sheet 
+
+For human evaluation, we designed a dedicated Excel scoring sheet for expert raters, adapted from the official FPSP scoring sheet 3. Additionally, we add cell decorations, cell locking, automatic calcu-lations, and other built-in constraints in the score sheet to standardize the scoring process. The sheet also includes scoring rubrics that define what each score level (e.g., 0, 1, and 2) represents for each criterion, helping raters calibrate their judgments. Two representative pages of the evaluation sheet is presented in Figure 9, with some annotations indicating usage instructions. 
+
+K Step 5 Answer Instances of 
+
+llama-4-scout Model 
+
+Table 16 shows some representative examples of 
+
+llama-4-scout in Step-5. Among the 30 responses 
+
+> 3https://resources.futureproblemsolving.org/ article/how-evaluated-global-issues/
+
+generated by llama-4-scout , 24 contained various ranking errors, 2 failed to follow the stepwise re-quirements for answering, and only 4 were correct. This indicates that llama-4-scout exhibits poor per-formance in terms of logical ranking. 
+
+L Complete CGPST Example 
+
+For illustrating the complete CGPST process and human scoring, we provide a complete CGPST scenario (FS10) as shown in Table 17, along with the full six-step responses generated by the 
+
+kimi-k2-0711-preview under the TeamLLM con-dition, as shown in Table 18 to 24. For each step, we also include scores provided by two human ex-perts. The dataset identifier for this response is A05_FS10, and the two human experts are iden-tified as H01 and H02. The PCC agreement be-tween the two experts for this response is 0.8534, which exceeds the predefined consistency thresh-old. Therefore, no post-hoc calibration is applied to the assigned scores. Where necessary, we in-clude additional explanations to help readers better understand the scoring process. 
+
+M Dimension Details for Step-1 and Step-3 of the CGPST 
+
+As described in Section 4.2, Step-1 and Step-3 of the CGPST focus on divergent thinking. Con-sistent with prior research on divergent thinking (Chakrabarty et al., 2024; Kumar et al., 2025; Zhao et al., 2025; Lu et al., 2024a), we adopt the four dimensions from the Torrance Tests of Creative Thinking (TTCT) (Torrance, 1966) assessment to evaluate these steps. Here, we provide the neces-sary details for each of the four dimensions. • Fluency : the sheer volume of meaningful ideas produced in reaction to a given stim-ulus. In proposed CGPST benchmark, fluency 
+
+is measured by counting the number of valid challenges or solutions proposed by the model. Specifically, as shown in Table 15, in Step 1, a challenge is considered valid only if it clearly reflects a causal relationship with the future scenario. In Step 3, a solution is considered valid only if it addresses the underlying prob-lem identified in Step 2. The final fluency 
+
+score is calculated based on the total number of valid challenges or solutions. For invalid challenges or solutions, we defined several types of invalidity for human raters to choose from, as shown in Table 8 and Table 9. 13 • Flexibility : the diversity of categories within the responses. Given that the Future Problem Solving Program (FPSP) is a mature problem-solving program with over 50 years (Treffin-ger et al., 2012), we adopt the 20 categories defined in the program. Table 25 lists all cate-gories and their descriptions. • Elaboration : the depth or granularity of de-tails within the responses. Specifically, this refers to the level of detail in describing the causal relationship between the challenge and the future scenario in Step-1, or the extent to which a solution elaborates on how it ad-dresses the identified underlying problem in Step-3. • Originality : the uniqueness or novelty of an-swers. As described in Appendix H, during each human evaluation session, each expert is assigned all model responses under the same scenario and condition, resulting in a total of ten responses per session. That is, each ex-pert evaluates responses generated for a single future scenario within one session. Prior to scoring, experts carefully read the scenario and develop an initial understanding of the context. Based on this understanding, and through horizontal comparisons across the challenges or solutions proposed by different models, experts assign scores for the original-ity dimension. This evaluation design helps reduce subjectivity and improves the reliabil-ity and accuracy of the originality assessment. 14 Prompts Variables Content 
+
+Role _P lay prompt Your role in the team is {Team_Role}, with the spe-cialty of {Role_Speciality}. The other team members are {Other_Members}, each performing different team roles and responsibilities. {Role_Prompt} 
+
+warm _up prompt Before starting the task, please guide the team members through a warm-up interaction to help them get to know each other and foster a collaborative atmosphere. Encourage each member to briefly introduce their role and responsibil-ities and greet everyone. Use a natural and friendly tone to open the session, inviting members to speak one by one to complete this warm-up activity. Please note that this stage should focus only on team warm-up and not involve the task itself. 
+
+T ask _Initiation prompt The information for Step {Step_Number} is as follows: {Step_Name}, {Step_Description}, {Step_Output} Please clearly and concisely communicate the informa-tion to the team, encouraging members to leverage their strengths to complete it together. Note that you do not need to assign specific roles; just convey the task information. 
+
+Consensus _Building prompt The discussion for Step {Step_Number} has concluded. Based on the contributions of the team, synthesize their opinions and viewpoints to produce the final answer for this step. Note that the final answer should meet the require-ments in [Step_Output]. Please provide the answer directly without any explanation. 
+
+> Table 10: Prompts variables in TeamLLM.
+
+15 Fluency 
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+qwen3-instruct 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+qwen3-thinking 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+deepseek-v3 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+deepseek-r1 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+kimi-k2 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+llama-4-scout 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+gpt-4o 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+gpt-5 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+claude-4-opus 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+gemini-2.5-pro (a) Step-1 Integrity 
+
+Focus 
+
+Adequacy 
+
+2 4 6 8 10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+qwen3-instruct 
+
+> Integrity
+
+Focus 
+
+Adequacy 
+
+2 4 6 8 10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+qwen3-thinking 
+
+> Integrity
+
+Focus 
+
+Adequacy 
+
+2 4 6 8 10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+deepseek-v3 
+
+> Integrity
+
+Focus 
+
+Adequacy 
+
+2 4 6 8 10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+deepseek-r1 
+
+> Integrity
+
+Focus 
+
+Adequacy 
+
+2 4 6 8 10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+kimi-k2 
+
+> Integrity
+
+Focus 
+
+Adequacy 
+
+2 4 6 8 10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+llama-4-scout 
+
+> Integrity
+
+Focus 
+
+Adequacy 
+
+2 4 6 8 10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+gpt-4o 
+
+> Integrity
+
+Focus 
+
+Adequacy 
+
+2 4 6 8 10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+gpt-5 
+
+> Integrity
+
+Focus 
+
+Adequacy 
+
+2 4 6 8 10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+claude-4-opus 
+
+> Integrity
+
+Focus 
+
+Adequacy 
+
+2 4 6 8 10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+gemini-2.5-pro 
+
+(b) Step-2 Fluency 
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+qwen3-instruct 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+qwen3-thinking 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+deepseek-v3 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+deepseek-r1 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+kimi-k2 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+llama-4-scout 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+gpt-4o 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+gpt-5 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+claude-4-opus 
+
+> Fluency
+
+Flexibility 
+
+> Elaboration
+
+Originality 
+
+2 4 6 8
+
+2
+
+4
+
+6
+
+8
+
+4812 16 
+
+4
+
+8
+
+12 
+
+16 
+
+gemini-2.5-pro 
+
+(c) Step-3 Correctly Written 
+
+Relevance 
+
+Correctly Used 
+
+1 2 3 4 5
+
+3
+
+6
+
+9
+
+12 
+
+15 
+
+1
+
+2
+
+3
+
+4
+
+5
+
+qwen3-instruct 
+
+> Correctly Written
+
+Relevance 
+
+Correctly Used 
+
+1 2 3 4 5
+
+3
+
+6
+
+9
+
+12 
+
+15 
+
+1
+
+2
+
+3
+
+4
+
+5
+
+qwen3-thinking 
+
+> Correctly Written
+
+Relevance 
+
+Correctly Used 
+
+1 2 3 4 5
+
+3
+
+6
+
+9
+
+12 
+
+15 
+
+1
+
+2
+
+3
+
+4
+
+5
+
+deepseek-v3 
+
+> Correctly Written
+
+Relevance 
+
+Correctly Used 
+
+1 2 3 4 5
+
+3
+
+6
+
+9
+
+12 
+
+15 
+
+1
+
+2
+
+3
+
+4
+
+5
+
+deepseek-r1 
+
+> Correctly Written
+
+Relevance 
+
+Correctly Used 
+
+1 2 3 4 5
+
+3
+
+6
+
+9
+
+12 
+
+15 
+
+1
+
+2
+
+3
+
+4
+
+5
+
+kimi-k2 
+
+> Correctly Written
+
+Relevance 
+
+Correctly Used 
+
+1 2 3 4 5
+
+3
+
+6
+
+9
+
+12 
+
+15 
+
+1
+
+2
+
+3
+
+4
+
+5
+
+llama-4-scout 
+
+> Correctly Written
+
+Relevance 
+
+Correctly Used 
+
+1 2 3 4 5
+
+3
+
+6
+
+9
+
+12 
+
+15 
+
+1
+
+2
+
+3
+
+4
+
+5
+
+gpt-4o 
+
+> Correctly Written
+
+Relevance 
+
+Correctly Used 
+
+1 2 3 4 5
+
+3
+
+6
+
+9
+
+12 
+
+15 
+
+1
+
+2
+
+3
+
+4
+
+5
+
+gpt-5 
+
+> Correctly Written
+
+Relevance 
+
+Correctly Used 
+
+1 2 3 4 5
+
+3
+
+6
+
+9
+
+12 
+
+15 
+
+1
+
+2
+
+3
+
+4
+
+5
+
+claude-4-opus 
+
+> Correctly Written
+
+Relevance 
+
+Correctly Used 
+
+1 2 3 4 5
+
+3
+
+6
+
+9
+
+12 
+
+15 
+
+1
+
+2
+
+3
+
+4
+
+5
+
+gemini-2.5-pro 
+
+(d) Step-4 and Step-5 Relevance 
+
+Effectiveness 
+
+Criteria 
+
+> Impact
+
+Humaness 
+
+Development 
+
+1 2 3 4 5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+12345
+
+1
+
+2
+
+3
+
+4
+
+5
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+qwen3-instruct 
+
+> Relevance
+
+Effectiveness 
+
+Criteria 
+
+> Impact
+
+Humaness 
+
+Development 
+
+1 2 3 4 5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+12345
+
+1
+
+2
+
+3
+
+4
+
+5
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+qwen3-thinking 
+
+> Relevance
+
+Effectiveness 
+
+Criteria 
+
+> Impact
+
+Humaness 
+
+Development 
+
+1 2 3 4 5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+12345
+
+1
+
+2
+
+3
+
+4
+
+5
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+deepseek-v3 
+
+> Relevance
+
+Effectiveness 
+
+Criteria 
+
+> Impact
+
+Humaness 
+
+Development 
+
+1 2 3 4 5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+12345
+
+1
+
+2
+
+3
+
+4
+
+5
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+deepseek-r1 
+
+> Relevance
+
+Effectiveness 
+
+Criteria 
+
+> Impact
+
+Humaness 
+
+Development 
+
+1 2 3 4 5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+12345
+
+1
+
+2
+
+3
+
+4
+
+5
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+kimi-k2 
+
+> Relevance
+
+Effectiveness 
+
+Criteria 
+
+> Impact
+
+Humaness 
+
+Development 
+
+1 2 3 4 5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+12345
+
+1
+
+2
+
+3
+
+4
+
+5
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+llama-4-scout 
+
+> Relevance
+
+Effectiveness 
+
+Criteria 
+
+> Impact
+
+Humaness 
+
+Development 
+
+1 2 3 4 5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+12345
+
+1
+
+2
+
+3
+
+4
+
+5
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+gpt-4o 
+
+> Relevance
+
+Effectiveness 
+
+Criteria 
+
+> Impact
+
+Humaness 
+
+Development 
+
+1 2 3 4 5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+12345
+
+1
+
+2
+
+3
+
+4
+
+5
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+gpt-5 
+
+> Relevance
+
+Effectiveness 
+
+Criteria 
+
+> Impact
+
+Humaness 
+
+Development 
+
+1 2 3 4 5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+12345
+
+1
+
+2
+
+3
+
+4
+
+5
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+claude-4-opus 
+
+> Relevance
+
+Effectiveness 
+
+Criteria 
+
+> Impact
+
+Humaness 
+
+Development 
+
+1 2 3 4 5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+1
+
+2
+
+3
+
+4
+
+5
+
+12345
+
+1
+
+2
+
+3
+
+4
+
+5
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+gemini-2.5-pro 
+
+(e) Step-6 
+
+Figure 8: Dimension-level performance of TeamLLM (red) and baseline (blue) across all steps. 
+
+16 (a) Step-1 Scoring Page 
+
+(b) Step-6 Scoring Page 
+
+Figure 9: Two representative pages of the Excel scoring sheet designed for human evaluation, with some annotated usage instructions. 
+
+17 Category Roles Description Strengths Thinking Plant Tends to be highly creative and good at solving problems in unconventional ways. Creative, imaginative, free-thinking, generates ideas and solves difficult problems. Monitor Evaluator Provides a logical eye, making impartial judgements where required and weighs up the team’s options in a dispassionate way. Sober, strategic and discerning. Sees all options and judges accurately. Specialist Brings in-depth knowledge of a key area to the team. Single-minded, self-starting and dedicated. They provide specialist knowledge and skills. Action Shaper Provides the necessary drive to ensure that the team keeps moving and does not lose focus or momentum. Challenging, dynamic, thrives on pressure. Has the drive and courage to overcome obstacles. Implementer Needed to plan a workable strategy and carry it out as efficiently as possible. Practical, reliable, efficient. Turns ideas into actions and organises work that needs to be done. Completer Finisher Most effectively used at the end of tasks to polish and scrutinise the work for errors, subjecting it to the highest standards of quality control. Painstaking, conscientious, anxious. Searches out errors. Polishes and perfects. Social Resource Investigator Uses their inquisitive nature to find ideas to bring back to the team. Outgoing, enthusiastic. Explores op-portunities and develops contacts. Co-ordinator Needed to focus on the team’s objec-tives, draw out team members and del-egate work appropriately. Mature, confident, identifies talent. Clarifies goals. Teamworker Helps the team to gel, using their versa-tility to identify the work required and complete it on behalf of the team. Co-operative, Co-operative, percep-tive and diplomatic. Listens and averts friction. 
+
+Table 11: Belbin Team Roles. 
+
+18 TeamLLM Baseline 
+
+You are about to participate in a contextual-ized task. In this task, you will receive a scenario about future societal issues. Please work with your team to complete the problem solving task according to your assigned role and responsibili-ties. You will participate as a team member in all six steps of the problem solving process. Team-work is key to success! You are expected to ac-tively listen to others’ ideas, clearly express your own viewpoints, and collaborate based on your role, engaging in a systematic discussion through-out the task. Please maintain an active dialogue, continuously communicate and coordinate with your teammates, and work together to complete the task. The future scenario for this task is as follows: 
+
+{future scenario} 
+
+Please carefully read the above scenario and use it as the basis for participating in the subse-quent problem solving task. Please note that during the task, you must adhere to the following requirements: 1. Actively collaborate with your team mem-bers, carefully consider their contributions, and work together to advance the task. 2. Clearly understand and adhere to your assigned team role and responsibilities, ensuring consistency in role-playing. 3. Follow the six-step problem solving pro-cess strictly. 4. All responses should be in Chinese, with clear language and accurate logic. 5. For each response, only output what you intend to say—do not include any role descrip-tions, labels, or guiding text. You are about to participate in a contextual-ized task. In this task, you will receive a scenario about future societal issues. Please follow the task steps and independently complete the task. The future scenario for this task is as follows: 
+
+{future scenario} 
+
+Please carefully read the above scenario and use it as the basis for participating in the subse-quent problem solving task. Please note that during the task, you must adhere to the following requirements: 1. For each response, only output what you intend to say—do not include any explanations, labels, or guiding text. 2. All responses should be in Chinese, with clear language and accurate logic. 
+
+> Table 12: Meta Prompts for TeamLLM and Baseline Conditions.
+
+19 Team_Role Role_Speciality Role_Prompt 
+
+Co-Ordinator Team guidance, task organization, consen-sus integration As the Co-Ordinator of the team, your primary responsibility is to organize and guide team collaboration, drive task progress, and integrate perspectives. Your contributions should demon-strate leadership and structure, clearly guiding the team to focus on the current step, engaging each member to fulfill their role, and synthesizing everyone’s response to form team consensus. Plant Innovative thinking, generating novel solutions, proposing unusual yet poten-tially valuable ideas As the Plant of the team, your main responsibility is to propose creative, even unconventional ideas to inspire the team. Your contributions should be imaginative and open-minded, daring to challenge conventions. Focus on the current task and generate as many creative ideas as possible to provide a draft for team discussion. Monitor Evaluator Rational analysis, logical judgment, reasoning As the Monitor Evaluator of the team, your main responsibil-ity is to evaluate the Plant’s contributions from a rational and logical perspective. Focus on the current task step, applying your reasoning and analytical skills to assess the feasibility and logical consistency of the Plant’s ideas, providing guidance for the team’s final integrated answer. Implementer Task execution, feasibility analysis, pragmatic implemen-tation As the Implementer of the team, your main responsibility is to assess the Plant’s ideas from a feasibility and practical imple-mentation perspective. Focus on the current task step, lever-aging your expertise in pragmatism and execution to provide recommendations that ensure the team’s final integrated answer is actionable and realistic. 
+
+> Table 13: Role play prompts. Each role is defined as a triplet {Team_Role, Role_Speciality, Role_Prompt} guiding the LLM’s behavior.
+
+20 Step_Name Step_Description Step_Output 
+
+Step-1: Identify Challenges Please carefully read the future scenario and identify up to eight challenges or problems specifically related to the scenario context. Please describe each challenge in a complete sentence, following these require-ments: 1. Use declarative sentences. 2. Use modal verbs like “might,” “could,” or “should.” 3. Explain what the challenge is, why it is a challenge, and how it connects to the scenario. 4. Number each challenge, e.g., “1. xxx.” Step-2: Select an Underlying Problem From the challenges in Step-1, select the most impactful one and refor-mulate it into a focused core problem statement. Provide a complete description including: 1. Challenge number: the identifier of the specific challenge from Step 1 that is being developed into the underlying problem. 2. Conditional phrase (CP): a fact or condition drawn from the future scenario, which provides the theoretical or situational basis for the problem. 3. Stem + Key Verb Phrase (KVP): the core phrasing of the underlying prob-lem, usually starting with “How might we. . . ” or “In what ways can we. . . ”. The KVP should contain only one active verb specifying the main action or intervention to be taken, and should avoid absolute or overly broad verbs to ensure focus and feasibility. 4. Purpose: typically expressed with “in order to” or “so that”, clarifying the intended goal of the KVP. 5. Future scenario parameters: the three parameters of time, location, and theme that situate the underlying problem within the scenario. Step-3: Produce Solutions Generate up to eight possible solutions based on the underlying prob-lem. Each solution should: 1. Each solution must be written as a complete sentence. 2. Use “will” rather than “might” to indicate certainty. 3. Each solution should address at least three of the following aspects: Who, What, How, Why, When, and Where. 4. Ensure alignment with the key verb phrase (KVP) and the intended purpose of the underlying problem. 5. Begin each solution with a number, e.g., “1. . . . ”. Step-4: Select Criteria Create five criteria to evaluate the solutions. Each criterion should: 1. Be properly phrased: single dimension, superlatives as needed, indicate evaluation direction, phrased as a question 2. Be relevant to the underlying problem 3. Numbered, e.g., “1. xxx” Step-5: Apply Criteria to Top Solution Evaluate the eight solu-tions from Step-3 using the criteria from Step-4 in a matrix format. Please provide the answers for this step in the following matrix (grid) format: 
+
+Solution ID | Criterion 1 | Criterion 2 | Criterion 3 | Criterion 4 | Criterion 5 | Total Score 1 | 5 | 7 | 6 | 4 | 8 | 30 2 | 8 | 6 | 7 | 5 | 7 | 33 ... | ... | ... | ... | ... | ... | ... 
+
+Highest-scoring solution ID: <ID>, Solution: <content of the highest-scoring solution> Requirements: 1. For each criterion, all solutions must be scored. 2. Scores for each criterion should range from 1 to x, where 1 represents the worst-performing solution and x represents the best. 3. No two solutions may receive the same score under the same criterion; i.e., each column must be a unique permutation of 1 to x.4. Provide both the full scoring matrix and the ID and content of the highest-scoring solution. Step-6: De-velop an Action Plan Develop the top solution from Step-5 into an ac-tionable plan. Develop the highest-scoring solution selected in Step-5 into a comprehensive action plan. The plan should systematically and thoroughly explain how the underlying problem is addressed, how the solution will be implemented, and how the future scenario will be impacted. Please provide the final action plan in the following format: Best Solution ID: # (fill in the solution ID) Best Solution Content: (fill in the content of the best solution) Action Plan: (full, detailed action plan) 
+
+Table 14: Step-wise Task Requirements and Outputs on CGPST. 
+
+21 Step Dimension Rubric Max Score 
+
+Step-1: Identify Challenges Fluency Each reasonable challenge is counted as Yes ; one Yes 
+
+challenge = 1 point. 8Flexibility If a Yes challenge belongs to a new category, 1 point is awarded. 8Elaboration If a Yes challenge has a clear logical-causal relation-ship and is described in detail, 2 points are awarded. 16 Originality If a Yes challenge demonstrates unique creativity, 2 points are awarded. 16 Step-2: Select an Underlying Problem Integrity: CP Whether it is connected to the future scene and KVP. 2Integrity: Stem & KVP Contains only one clear active verb phrase. 3Integrity: Purpose Contains only one purpose that is associated with KVP. 3Integrity: Future Scene Parameters Clearly reflects the theme, location, and time. 2Focus of Underly-ing Problem High-quality KVP, clear purpose, strong linkage be-tween KVP and purpose, and relevant to the future scene. 10 Adequacy / Impor-tance The problem is major and important in the future scenario. 10 Step-3: Produce Solutions Fluency A solution idea that addresses the KVP and supports the action purpose is marked as Yes . Each Yes counts for 1 point. 8Flexibility A Yes solution that belongs to a new category counts for 1 point. 8Elaboration A Yes solution that includes three elements out of who, what, how, why, when, counts for 2 points. 16 Originality A Yes solution that demonstrates unique creativity counts for 2 points. 16 Step-4: Select Criteria Correctly Written A criterion is written correctly, 1 point each. 5Relevance Criteria are clear, specific, and highly relevant to the underlying problem, 3 points each. 15 Step-5: Apply Cri-teria to Top Solu-tion Correctly Used The scoring matrix is used correctly. 5Step-6: Develop an Action Plan Relevance The action plan is highly relevant to the underlying problem. 5Effectiveness The action plan effectively and comprehensively ad-dresses the underlying problem. 5Criteria in Devel-opment of Action Plane The action plan adequately responds to the estab-lished criteria. 5Impact The action plan has a significant and positive impact on the future scenario. 5Humaneness The action plan demonstrates clear human concern and empathy. 5Development The action plan is clearly structured, sufficiently elab-orated, and highly feasible and complete. 10 
+
+> Table 15: Evaluation Rubrics for CGPST Benchmark.
+
+22 Ranking errors (A06_FS1): The ranking scores assigned by each criteria are not a permutation of 1 to the total number of solutions (i.e., 8). 
+
+Solution ID | Criterion 1 | Criterion 2 | Criterion 3 | Criterion 4 | Criterion 5 | Total Score | 1 | 8 | 6 | 7 | 9 | 5 | 35 | | 2 | 5 | 8 | 9 | 7 | 8 | 37 | | 3 | 9 | 5 | 6 | 8 | 9 | 37 | | 4 | 6 | 9 | 8 | 6 | 7 | 36 | | 5 | 7 | 7 | 5 | 9 | 6 | 34 | | 6 | 4 | 4 | 9 | 8 | 8 | 33 | | 7 | 3 | 9 | 7 | 5 | 9 | 33 | | 8 | 2 | 6 | 8 | 7 | 5 | 28 | 
+
+The solution with the highest total score is: 2. The solution is: The government will formulate and enforce strict cybersecurity regulations, requiring companies developing autonomous driving systems to comply with specific safety standards. Regular security audits and evaluations will be conducted on these systems, with full implementation scheduled to be completed in Istanbul by 2052. 
+
+Ranking errors (A06_FS5): The ranking matrix is incomplete. 
+
+Solution ID | Criterion 1 | Criterion 2 | Criterion 3 | Criterion 4 | Criterion 5 | Total Score | 9 | 9 | 9 | 9 | 9 | 9 | 45 | 
+
+The solution with the highest total score is: 9. The solution is: By leveraging technologies such as artificial intelligence, blockchain, and the Internet of Things (IoT), a decentralized platform for cherry tree breeding and disease resistance monitoring will be established. This platform can connect cherry farmers, research institutions, and government departments in Tasmania, enabling data sharing, resource integration, and collaborative work. It will provide functions including real-time monitoring, predictive analysis, and smart contract-based incentives, so as to accelerate the cultivation of disease-resistant cherry tree varieties and improve the risk resilience of Tasmania’s cherry industry. 
+
+Non-compliant responses (A06_FS4): The model fails to apply five criteria generated in Step-4 to rank the solutions with the scoring matrix. The solution with the highest total score is: 2. The solution is: Local schools will collaborate with communities to launch a toy and book sharing program. A toy and book exchange center will be established, where residents can donate and borrow items. The program is scheduled to be fully completed within three months and will be jointly maintained by teachers and students of the participating schools.  
+
+> Table 16: Step 5 Answer Instances of llama-4-scout .
+
+23 FS10: Ocean Soup Future Scenario 
+
+As Jobie Sakai leans on the railing of the Ola Kai, she admires the beauty of her ocean paradise. Jobie, a fifth generation Hawaiian devoted to the future of her homeland, is dedicated to her job as an environmental chemist aboard the Ola Kai #6, one of Hawai’i’s floating science laboratories. The Ola Kai (meaning "healthy ocean") Project is a combined effort of the Hawaiian Environmental Council and the University of Hawai’i. Now, in 2035 after 15 active years, the project is struggling to live up to its nickname: the OK Project. Originally, the OK Project focused on the waters affected by Hawai’i’s island-generated pollutants. Public interest in the project led to a resurgence in eco-education; recycling and the reduced use of plastics became an accepted part of island life for Hawai’i residents. The "adopt a beach" clean-up program became a popular draw for eco-tourists. However, researchers like Jobie became increasingly aware that their efforts were not enough. The world’s largest manufacturers of plastic products border both sides of the Pacific. A ten million square mile system of rotating currents called the North Pacific Gyre has its axis near the 137 islands of the Hawaiian chain. Pacific environmental regulations have historically been weak or disregarded by heavy industrial nations who continue to use these waters as a dumping ground. Consequently, the 1500 mile-long archipelago paradise has been attacked by ocean soup for many years. The soup surrounds Hawai’i, placing the islands and their resources at risk of permanent damage. Especially vulnerable are the sparsely-inhabited northwest islands, the world’s largest protected marine sanctuary that is home to many endangered fish, birds, seals, and Hawai’i’s beleaguered fishing industry. Eco-tourism routes have been altered to reduce impact on indigenous species and circumnavigated due to the location of floating laboratories. With the increasing damaging effects from ocean soup on the island chain, Jobie and her coworkers realized that the Ola Kai Project’s numerous floating labs had to broaden their territory while narrowing their focus. Due to the scope of the damage, the project directors reached out to other groups working in the Pacific and consulted with the National Oceanic and Atmospheric Administration (NOAA). It was determined that the best approach would be to divide up the responsibilities among agencies. Now the OK Project labs focus solely on the battle against microplastics, leaving the collection of larger trash to other organizations. Ola Kai laboratory crews record various data for analysis, keeping track of multiple fish species and beneficial organisms like plankton. Specified lab crews weigh the microplastic debris collected on a weekly basis and compile that data while Jobie and other chemists continue their in-depth examination of the plastic degradation and its effect on the waters surrounding the islands. Collection of debris that is smaller than a pencil eraser has often done more harm than good to sea life. After experimenting with several collection methods, the OK Project currently uses below-surface robotic collectors that randomly collect plastic particles being carried by the currents. Project teams are also experimenting with alternative collection methods, including new nanofiber sieves and use of pollution-dissolving lasers. Ola Kai’s floating labs have plastic-to-fuel conversion systems capable of harvesting tons of plastic pollution and converting it into diesel fuel for the labs, thus eliminating the need to return to shore for disposal of the waste in a landfill. In spite of their progress, water samples still show an alarming amount of plastic particles. 
+
+> Table 17: A complete future scenario FS10 used on CGPST.
+
+24 Challenges Score Item H01 H02 
+
+1. The concentration of microplastics may have exceeded the density of plankton by tenfold, disrupting the energy input of the base food chain. This challenge arises from the warning in the scenario that "water samples still show an alarming amount of plastic particles." Category Elaboration Originality Environment 10Environment 102. Subsurface robotic collectors may miss low-velocity eddy zones, creating data gaps and masking local ecological collapse points. This is directly related to the scenario’s mention that "after experimenting with several collection methods," weekly weighing is still required, implying sampling limitations. Category Elaboration Originality Technology 11Technology 113. The plastic-to-fuel conversion system may emit nanoscale black carbon particles, which could exacerbate imbalances in ocean surface heat absorption. This challenge stems from the scenario emphasizing "eliminating the need to return to shore for disposal" without addressing potential secondary emissions. Category Elaboration Originality Technology 10Technology 114. Endangered species in the northwest islands may face unknown toxicological effects from ingesting micro-fragments of plastics broken down by lasers. The scenario mentions that laser technology "can dissolve pollutants" but does not evaluate the byproducts of fragmentation. Category Elaboration Originality Environment 10Environment 115. Adjustments to eco-tourism routes around floating laboratories may transfer visitor pressure to other more fragile reefs. This challenge is directly related to the scenario’s note that routes were "altered to reduce impact" but without ensuring overall pressure reduction. Category Elaboration Originality Recreation 10Recreation 116. Legal exemptions for manufacturers on both sides of the Pacific may cause Hawaiian regional governance to operate in isolation. This challenge is closely related to the scenario’s statement that "environmental regulations have historically been weak or disregarded." Category Elaboration Originality Law & Justice 10Law & Justice 117. The efficiency of the plastic-to-diesel system may suddenly decline due to sea spray corrosion, forcing laboratories to rely on land-based resupply. This challenge is implied in the scenario mentioning "harvesting tons of plastic" without considering long-term durability. Category Elaboration Originality Technology 10Technology 118. Data protocols among the network of floating labs may be incompatible, hindering multinational collaboration in compiling a comprehensive microplastic hotspot map. This challenge is directly related to the scenario emphasizing "dividing responsibilities among agencies" without a unified standard. Category Elaboration Originality Communication 12Communication 11
+
+Step-1 Score: 
+
+H01: { Fluency : 8, Flexibility : 5, Elaboration : 8, Originality : 3, Total Score : 24} H02: { Fluency : 8, Flexibility : 5, Elaboration : 8, Originality : 7, Total Score : 28} Table 18: Step-1 (Identify Challenges) of A05_FS10. 
+
+25 Responses 
+
+Challenge ID: 1. In 2035, in the waters surrounding the Hawaiian Islands, when microplastic concentrations may have exceeded the density of plankton tenfold, threatening the energy input at the base of the food chain, how can we reduce the overwhelming proportion of microplastics at the bottom of the food chain to restore energy flow in the Pacific ecosystem and protect the future of endangered species? Time: 2035 Location: Waters surrounding the Hawaiian Islands Theme: Microplastic Management and Ecological Restoration 
+
+Rater Input (This field requires human raters to manually input it in the scoring sheet.) 
+
+Input Item H01 H02 
+
+Condition Phrase 
+
+> "microplastic concentrations may have exceeded the density of plankton tenfold, threatening the energy input at the base of the food chain" "In 2035, in the waters surrounding the Hawaiian Islands, when microplastic concentrations may have exceeded the density of plankton tenfold"
+
+Stem "how can we" "how can we" 
+
+Key Verb Phrase (KVP) 
+
+> "reduce the overwhelming proportion of microplastics at the bottom of the food chain" "reduce the overwhelming proportion of microplastics"
+
+Purpose "restore energy flow and protect the future of endangered species" "to restore energy flow in the Pacific ecosystem and protect the future of endangered species" 
+
+Future Scenario Parameters  
+
+> {"Theme": 1, "Location": 1, "Time": 1} {"Theme": 1, "Location": 1, "Time": 1}
+
+Rater Score Score Item H01 H02 
+
+Condition Phrase 2 2Stem & KVP 3 3Purpose 1 1Future Scenario Parameters 2 2Focus of Underlying Problem 6 6Adequacy / Importance 8 8Total Score 22 22 
+
+Table 19: Step-2 (Select an Underlying Problem) of A05_FS10. 
+
+26 Solutions Score Item H01 H02 
+
+1. The Ola Kai project chemistry team will deploy glycosylated nanosponges, dispersing 2 tons within a 20 km radius of the Ola Kai mooring point by August 2035. Subsurface robots will recover the flocs and recycle them through the onboard plastic-to-diesel system, directly reducing microplastic ingestion by plankton, lowering the proportion of plastics at the base of the food chain, restoring energy flow, and protecting endangered species. Category Elaboration Originality Technology 20Technology 212. Google X Lab and Hawaiian community divers will run a crowdsourced "photoacoustic unmanned vessel + AR snorkeling goggles" collection program across the northwest islands by December 2035. Unmanned vessels will map microplastic clouds in real-time using laser sonar, while AR glasses guide divers to precise retrieval points, clearing high-density fragments weekly to reduce microplastic accumulation at the base of the food chain and preserve Pacific ecosystem energy balance. Category Elaboration Originality Technology 20Technology 223. NOAA and Hawaiian Electric will pilot a 2-nautical-mile-diameter "bubble curtain + photocatalytic net" system north of Kaua’i by October 2035. Wave-driven pumps will concentrate microplastics, which are then broken down by photocatalytic nets into short-chain acids absorbable by phytoplankton, reducing microplastic dominance on plankton and restoring baseline energy input. Category Elaboration Originality Technology 20Technology 214. SpaceX and a local high school team will launch the CubeSat constellation "KiloEye" by July 2035. Weekly scans of the 137 Hawaiian Islands will use hyperspectral data to direct Ola Kai drones for targeted microplastic removal, lowering the risk of plankton mis-ingestion at the source and ensuring Pacific ecosystem energy flow is rebalanced. Category Elaboration Originality 
+
+✗ Duplicate 
+
+✗✗✗ Duplicate 
+
+✗✗
+
+5. Japan’s SpiraNova and the University of Hawai’i will plant 300 "biopolymer-coated kelp ropes" off the west coast of the Big Island in Q3 2035. Kelp leaves will adsorb microplastics, and harvested ropes will be processed into high-value composites, directly removing plastics at the base of the food chain and generating revenue while protecting endangered species’ habitats. Category Elaboration Originality Technology 22Technology 226. The Ola Kai project biology team will release living blue-green algae “Plastic Sentinel” strains in a 500-hectare demonstration area off the northwest reef of the main Hawaiian Island by November 2035. These algae continuously secrete degrading enzymes to break down 0.1–1 mm microplastics, reducing plankton ingestion, restoring baseline energy input, and protecting the Pacific ecosystem. Category Elaboration Originality Technology 22Technology 217. MantaSync and the University of Hawai’i will deploy five “body-mounted” manta ray filtration units along the Maui–Ni’ihau route by September 2035. These units capture microplastics in real-time during swimming and ferment them into manta ray body oils. Due to their large feeding area, they significantly dilute plastics at the base of the food chain, reducing pollution at entry points. Category Elaboration Originality Technology 22Technology 218. A local cruise company and the state government will retrofit the first ferry deck in Honolulu Harbor into a “container-scale algae farm” by October 2035. Chlorella algae will consume microplastics from tourist wastewater and convert them into aviation-grade biodiesel, reducing overall plastic input from tourism, lowering plankton ingestion, and maintaining Pacific energy flow. Category Elaboration Originality Government & Politics 21Government & Politics 21
+
+Step-3 Score: 
+
+H01: { Fluency : 7, Flexibility : 2, Elaboration : 14, Originality : 7, Total Score : 30} H02: { Fluency : 7, Flexibility : 2, Elaboration : 14, Originality : 9, Total Score : 32} 
+
+NOTE: Only solutions that satisfy the requirements are considered valid challenges ( Yes ) and proceed to category assignment. Otherwise, solutions are excluded from further categorization (e.g., Solution 4). 
+
+Table 20: Step-3 (Produce Solutions) of A05_FS10. 
+
+27 Criteria Score Item H01 H02 
+
+1. Which approach can most rapidly reduce the net microplastic content inside plankton? Correctly Written Relevance 12122. Which pathway requires the lowest one-time capital investment? Correctly Written Relevance 10 113. Which model has the highest potential for rapid global replication and scaling? Correctly Written Relevance 11114. Which technology poses the least risk of secondary ecological disturbance to endangered species? Correctly Written Relevance 11125. Which solution maintains the lowest full-life-cycle carbon footprint over 15 years? Correctly Written Relevance 1212
+
+Step-4 Score: 
+
+H01: { Correctly Written : 5, Relevance : 6, Total Score : 11} H02: { Correctly Written : 5, Relevance : 8, Total Score : 13} 
+
+NOTE: 
+
+1. All criteria satisfy the requirements of single dimension , superlatives as needed , clear indication of evaluation direction , and phrasing as questions , and thus are all "correctly written". 2. The rubrics for Relevance are defined as follows: 0 points for irrelevance or repetition ; 1 point for being vague and unspecific ; 2 points for being relatively specific yet improvable ; 3 points for being clear, specific and highly relevant .3. The rubrics and detailed explanations for the two dimensions are available in the scoring sheet .Table 21: Step-4 (Select Criteria) of A05_FS10. 
+
+Responses Score Item H01 H02 
+
+Solution ID | Criterion 1 | Criterion 2 | Criterion 3 | Criterion 4 | Criterion 5 | Total Score 1 | 8 | 6 | 7 | 7 | 6 | 34 2 | 6 | 8 | 5 | 6 | 7 | 32 3 | 7 | 3 | 6 | 3 | 5 | 24 4 | 5 | 5 | 8 | 5 | 4 | 27 5 | 4 | 4 | 4 | 4 | 3 | 19 6 | 3 | 7 | 3 | 5 | 8 | 26 7 | 2 | 2 | 2 | 2 | 2 | 10 8 | 1 | 1 | 1 | 1 | 1 | 5 
+
+The solution with the highest total score is: 1. The solution is: The Ola Kai project chemistry team will deploy glycosylated nanosponges, dispersing 2 tons within a 20 km radius of the Ola Kai mooring point by August 2035. Subsurface robots will recover the flocs and recycle them through the onboard plastic-to-diesel system, directly reducing microplastic ingestion by plankton, lowering the proportion of plastics at the base of the food chain, restoring energy flow, and protecting endangered species. Correctly Used 4 4
+
+Step-5 Score: 
+
+H01: { Correctly Used : 4, Total Score : 4} H02: { Correctly Used : 4, Total Score : 4} 
+
+NOTE: In the score matrix, the ranking for Criterion 4 does not follow the required 1–8 sequence (there are two 5s and no 8), resulting in an error in the matrix. Therefore, a score of 4 is assigned. Detailed scoring rubrics can be found in the human evaluation sheet. Table 22: Step-5 (Apply Criteria to Top Solution) of A05_FS10. 
+
+28 Solutions Score Item H01 H02 
+
+The solution with the highest total score is: 1. The solution is: The Ola Kai project chemistry team will deploy glycosylated nanosponges, dispersing 2 tons within a 20 km radius of the Ola Kai mooring point by August 2035. Subsurface robots will recover the flocs and recycle them through the onboard plastic-to-diesel system, directly reducing microplastic ingestion by plankton, lowering the proportion of plastics at the base of the food chain, restoring energy flow, and protecting endangered species. Action Plan: 1. Problem Closure Nanosponges use a "molecular magnet" mechanism to selectively adsorb 0.1–1 mm microplastics, aggregating them into millimeter-scale flocs that cannot be ingested by plankton. Recovered flocs are immediately converted into diesel, achieving a “collect-convert-use” zero-waste cycle, directly reducing the overwhelming proportion of microplastics at the base of the food chain. 2. Implementation Steps and Timeline • Phase A – R&D and Validation (Now–Oct 2025): Ola Kai Chemistry Team × MIT Materials Department iterate the third-generation biodegradable nanosponges and complete biotoxicity-degradation tests. • Phase B – Pilot Demonstration (Nov 2025–Apr 2026): Deploy 100 kg in South Bay, Oahu; 30-day monitoring shows ≥ 70% reduction of microplastics in plankton. • Phase C – Scale-up Production (May 2026–Feb 2027): Hawaii biorefinery produces 2 tons per month and establishes freeze-dry packaging chain. • Phase D – Full Deployment (Mar 2027–Jul 2035): Deploy 2 tons in March, June, September each year, covering a 20 km radius grid; six “Kokua-γ” subsurface robots operate in shifts, producing 400 L/day diesel for self-use. • Phase E – Monitoring and Iteration (Parallel): Weekly underwater imaging + Raman verification to maintain microplastic concentration <50% of plankton; formula updated every six months. 3. Resources and Responsibilities • Funding: Ola Kai Research $300k + NOAA Innovation Fund $400k + State Green Bonds $300k + Carbon Credit Pre-sale; total ≤ $1M. • Team: Chemistry team handles materials, MIT provides R&D, NOAA provides monitoring platform, State Environmental Department supervises approvals. 4. Risks and Contingency • Nanomaterial leakage: Three passive samplers monitor in real-time; > 10 μg/L triggers magnetic recovery nets. • Robot malfunction: 1:1 spare parts + 48-hour offshore repair; if failure rate >15%, NOAA backup ROVs are deployed. • Regulatory delays: Suspension during typhoon season; stock maintained at 1.5× safety level. 5. Impacts and Scaling • Local: By 2028, microplastic content in plankton decreases by 80%, coral spawning rates increase by 30%. • Regional: By 2030, open “Nanosponges Sharing Depot” allows replication in Guam, Palau, Tuvalu. • Global: By 2032, included in IMO Green Shipping Guidelines; long-haul fleets can treat plastics in-transit, establishing a Pacific-wide “food chain firewall.” 
+
+Relevance Effectiveness Criteria in Development of Action Plan Impact Humaneness Development 334438333324
+
+Total Score 25 18 
+
+Table 23: Step-6 (Develop an Action Plan) of A05_FS10. 
+
+29 Step H01 H02 
+
+Step-1: Identify Challenges 24 28 Step-2: Select an Underlying Problem 22 22 Step-3: Produce Solutions 30 32 Step-4: Select Criteria 11 13 Step-5: Apply Criteria to Top Solutions 4 4Step-6: Develop an Acion Plan 25 18 
+
+Total Score 116 117 Table 24: Score Summary of A05_FS10. All total scores in the table are automatically calculated in the scoring sheet. 
+
+30 Category Description 
+
+Arts & Aesthetics Arts include expression via music, painting, sculpture, theatre, film, or other creative media. Aesthetics focuses upon beauty and whether some-thing is pleasant to view or experience. Basic Needs Basic Needs include food, clothing and shelter—elements important for survival. Business & Commerce Business includes retail stores, restaurants, offices, corporations, etc. 
+
+Commerce focuses upon the trade or the buying and selling of goods and services. Communication Communication deals with the exchange of information. Culture & Religion Culture includes the customs, arts, social institutions, and achievements of a particular group. Religion includes a system of faith or worship. Defense Defense involves protection, safety, security, and/or privacy. This includes physical efforts by individuals, or groups as well as protection provided by firewalls and passwords. Economics Economics is the branch of knowledge that concerns the distribution, production, and consumption of wealth. Education Education includes schools, training, instruction, and learning. Environment Environment includes one’s surroundings or conditions that shape the lives of people, plants, or animals. Ethics & Morality Ethics include the principles that govern a person’s behavior. Morality 
+
+involves principles concerning the distinction between right and wrong. Government & Politics Government deals with how a community or country is managed. Politics 
+
+involves elections and/or the activities related to making governmental decisions, especially debates or conflicts among individuals or parties having or hoping to achieve power. Law & Justice Law includes the creation and enforcement of recognized laws, court procedures, sentencing, and personnel. Justice is the seeking of fairness and reasonable implementation of laws. Miscellaneous Miscellaneous is assigned when an idea does not fit within another cate-gory. If you have more than one Miscellaneous idea, and they are unrelated to each other, you may designate them as Miscellaneous 1 and 2. Physical Health Physical Health deals with the condition and care of the body as opposed to the mind. Psychological Health Psychological Health focuses upon emotional and mental well-being. Recreation Recreation includes hobbies, sports, entertainment, and other activities pursued during leisure time. Science Science is the systematic study of the structure and behavior of the physical and natural world (including the wider universe) through observation and experiment. Social Relationships Social Relationships encompass the connections between individuals with recurring interactions. Technology Technology is associated with machines, equipment, and/or certain ad-vancements developed from applying practical or scientific knowledge. Transportation Transportation is concerned with the movement of individuals, groups, or goods from place to place.   
+
+> Table 25: Category List for Flexibility in Step-1 and Step-3.
+
+31
