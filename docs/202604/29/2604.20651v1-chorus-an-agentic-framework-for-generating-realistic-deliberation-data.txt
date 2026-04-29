@@ -1,0 +1,472 @@
+Title: CHORUS: An Agentic Framework for Generating Realistic Deliberation Data
+
+URL Source: https://arxiv.org/pdf/2604.20651v1
+
+Published Time: Thu, 23 Apr 2026 01:05:06 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# CHORUS: A N AGENTIC FRAMEWORK FOR GENERATING 
+
+# REALISTIC DELIBERATION DATA 
+
+A P REPRINT 
+
+Athanasios Koursaris 1, George Domalis 1, Alexandra Apostolopoulou 1, Konstantinos Kanaris 1, Dimitris Tsakalidis 1
+
+and Ioannis E. Livieris 1,2 1Novelcore, Athens, GR 10436, 
+
+{koursaris,domalis,apostolopoulou,kanaris,tsakalidis}@novelcore.eu 
+
+> 2
+
+Department of Business Administration & Organization Administration, University of Peloponnese, Kalamata, GR 24100 livieris@uop.gr 
+
+April 23, 2026 
+
+# ABSTRACT 
+
+Understanding the intricate dynamics of online discourse depends on large-scale deliberation data, a resource that remains scarce across interactive web platforms due to restrictive accessibility policies, ethical concerns and inconsistent data quality. In this paper, we propose C HORUS , an agentic frame-work, which orchestrates LLM-powered actors with behaviorally consistent personas to generate realistic deliberation discussions. Each actor is governed by an autonomous agent equipped with memory of the evolving discussion, while participation timing is governed by a principled Poisson process-based temporal model, which approximates the heterogeneous engagement patterns of real users. The framework is further supported by structured tool usage, enabling actors to access external resources and facilitating integration with interactive web platforms. The framework was deployed on the D ELIBERATE platform and evaluated by 30 expert participants across three dimensions: content realism, discussion coherence and analytical utility, confirming C HORUS 
+
+as a practical tool for generating high-quality deliberation data suitable for online discourse analysis. *** This paper has been accepted for presentation at Engineering Applications and Advances of Artificial Intelligence 2026 (EAAAI’26) . Cite: Koursaris, A., Domalis, G., Apostolopoulou, A., Kanaris, K., Tsakalidis, D., Livieris, I.E. (2026) CHORUS: An Agentic Framework for Generating Realistic Deliberation Data. In Engineering Applications and Advances of Artificial Intelligence .*** 
+
+Keywords Agentic AI · Large language models · Persona-based simulation · Deliberation data generation · Multi-agent simulation. 
+
+# 1 Introduction 
+
+Deliberation data encompasses all forms of structured and unstructured records in the context of online participatory discourse, including argumentative exchanges, opinion expressions and interactive responses, generated within web platforms designed to facilitate rational and inclusive discussion among citizens [Behrendt et al., 2025]. Such data constitute a critical resource for online discourse analysis, underpinning objectives ranging from studying deliberation dynamics and communication patterns to benchmarking natural language processing pipelines [Lawrence and Reed, 2019, Steenbergen et al., 2003]. However, the acquisition of deliberation data at sufficient scale poses a significant challenge, exacerbated by platform access restrictions, ethical considerations surrounding user privacy and incon-sistent quality of available datasets [Argyle et al., 2023, Bisbee et al., 2023]. As the demand for large-scale public discourse analysis grows across research, policy-making and digital platform governance, the problem of delibera-
+
+> arXiv:2604.20651v1 [cs.AI] 22 Apr 2026
+
+CHORUS: An Agentic Framework for Generating Realistic Deliberation Data A P REPRINT 
+
+tion data scarcity becomes increasingly acute, underscoring the need for alternative approaches capable of generating high-quality, realistic and ethically sound deliberation data. Although simulation-driven approaches have demonstrated remarkable capabilities in modeling complex interactive settings [Park et al., 2023, Yang et al., 2024], their application to deliberation data generation remains constrained by several fundamental limitations. Most notably, such frameworks exhibit a predominant focus on goal-directed tasks, rather than the open-ended, multi-turn deliberative discourse characteristic of authentic participatory exchanges [Liu et al., 2023, Wang et al., 2025]. Existing approaches incorporating user personas have been primarily developed for security testing and software evaluation [Lu et al., 2025, Mayr et al., 2025], remaining limited in producing sustained, contextually coherent conversations and emulating the emergent multi-user dynamics observed during authentic in-teraction [Casoria et al., 2025, Li et al., 2024]. Furthermore, the heterogeneous temporal patterns shaping internet discourse are largely unaddressed, as current solutions lack principled mechanisms for modeling the diverse partic-ipation rates characteristic of real platforms. These shortcomings underscore the need for frameworks combining behavioral fidelity, temporal realism and contextual awareness to adequately support deliberative environments. To address these challenges, we propose C HORUS 1 (CHaracter-driven Orchestrated Response & User Simulation), an agentic simulation framework able to generate realistic deliberation data by orchestrating LLM-powered actors on interactive web platforms. C HORUS grounds each actor’s behavior in a structured persona and equips it with contex-tual awareness of the evolving discussion, producing dialogue which is both semantically coherent and behaviorally diverse. A principled Poisson process-based model governs the temporal dynamics of actor participation, while struc-tured tools facilitate web platform integration and interactivity, providing actors with the ability to access external resources. Each actor is governed by an autonomous agent equipped with memory of the evolving discussion and a persona-driven behavioral profile. C HORUS was deployed on D ELIBERATE and evaluated across three dimensions: content realism, discussion coherence and analytical utility, confirming that it constitutes a practical tool for generating high-quality deliberation data suitable for online discourse analysis. • We develop an agentic simulation framework named C HORUS , which orchestrates a cast of LLM-powered actors with clearly defined, behaviorally consistent personas to generate realistic deliberation discussions on interactive web platforms. • We propose a Poisson process-based temporal model governing actor participation dynamics, alongside a structured tool suite enabling seamless integration with external web platforms through the translation of generative outputs into concrete platform actions. • We deploy C HORUS on the public platform, D ELIBERATE , and evaluate its performance across content real-ism, discussion coherence and analytical utility, demonstrating its effectiveness as a practical tool for gener-ating high-quality deliberation data without reliance on real user participation. The remainder of this paper is organized as follows. Section 2 reviews related work on agentic simulation frameworks and persona-based approaches. Section 3 presents the C HORUS framework, detailing its actor model, temporal dy-namics and tool integration. Section 4 describes the deployment on D ELIBERATE , reports the generated discussion outputs and presents the expert evaluation results. Finally, Section 5 concludes the paper and outlines directions for future research. 
+
+# 2 Related work 
+
+The development of effective simulation frameworks for interactive web platforms represents a confluence of two fun-damental research directions: (1) agentic orchestration architectures, which coordinate multiple LLM-powered agents to simulate authentic user-to-user interactions through shared platforms and (2) persona-based simulation strategies, which generate behaviorally realistic synthetic users. The first direction focuses on multi-agent simulation, including orchestration capabilities, coordination mechanisms and the social dynamics necessary for realistic multi-user inter-action. The second direction concerns the construction of behaviorally diverse agent personas, including critical work on data-driven behavioral grounding. In the rest of this section, we provide a comprehensive review across these areas, highlighting their contributions and limitations which motivate the development of C HORUS .Park et al. [2023] deployed 25 LLM-powered agents in “Smallville”, each equipped with observation, memory with reflection and planning modules, demonstrating emergent capabilities such as autonomously spreading event invita-tions, forming relationships and coordinating group activities. The architecture established that LLM-powered agents grounded in memory and planning mechanisms can produce believable social behaviors without explicit scripting.  
+
+> 1The name C HORUS is inspired by the Chorus of ancient Greek tragedy, a collective of voices that commented on, reacted to and shaped the unfolding narrative, mirroring the role of simulated actors in participatory discourse
+
+# 2CHORUS: An Agentic Framework for Generating Realistic Deliberation Data A P REPRINT 
+
+However, the framework remains isolated from real interactive platforms, where generated content must maintain semantic coherence with an ongoing and dynamically evolving deliberation. Sun et al. [2025] introduced Persona-L, leveraging LLMs and an ability-based framework to generate personas of people with complex needs, demonstrating that careful prompting strategies can expand persona diversity beyond typ-ical demographic representations. The methodology produces synthetic user profiles capturing nuanced combinations of abilities, preferences and behavioral characteristics, though it addresses persona construction in isolation without modeling how multiple concurrent personas collectively shape discourse within shared interactive environments. Yang et al. [2024] scaled agentic simulation with OASIS, supporting up to one million LLM-based agents on simulated social media platforms, replicating phenomena including information spreading, group polarization and herd effects. The authors demonstrated that larger agent group scale leads to enhanced group dynamics and more realistic emergent collective behaviors, establishing scale as a critical factor in simulation fidelity. Despite these advances, the framework remains oriented toward modeling broad social dynamics rather than generating the semantically coherent, multi-turn deliberative discourse required for structured participatory platforms. Li et al. [2024] demonstrated that demographic-based personas exhibit limited predictive accuracy compared to data-driven behavioral patterns, with substantial performance improvements when steering LLMs toward behavioral pat-terns extracted from actual user response data. This finding motivates the integration of empirical behavioral ground-ing into persona design, though the work does not extend to modeling temporal participation dynamics or multi-party discourse structures characteristic of real platform activity. Casoria et al. [2025] found that model censorship impacts the ability of LLM-generated personas to capture contro-versial or “negative” traits such as low agreeableness or high neuroticism, reducing behavioral diversity in synthetic user populations. This limitation is particularly relevant for deliberation simulation, where skeptical, contrarian, or disengaged user archetypes are essential for generating discussions that approximate the full spectrum of authentic participatory discourse. Despite the advances reported across these two research directions, their applicability to realistic deliberation data generation remains limited. Existing agentic frameworks simulate social dynamics within self-contained virtual en-vironments without interfacing with real platforms, while persona-based methods enhance behavioral realism but do not model how concurrent participants collectively shape discourse over time. A further limitation shared across both lines of work is the absence of principled temporal modeling, as the participation patterns and engagement asym-metries characterizing organic platform activity remain outside the scope of current approaches. CHORUS bridges these gaps by deploying persona-driven agents directly on interactive platforms within a unified orchestration frame-work, coupling behavioral consistency with a stochastic formulation of participation dynamics to produce realistic deliberation data exhibiting both the content diversity and temporal structure of authentic user interaction. 
+
+# 3 CHORUS : Proposed Framework 
+
+The primary objective of C HORUS is the generation of realistic deliberation data through the interaction of independent actors. It instantiates a set of N actors A = {a1, . . . , a N }, each governed by an autonomous agent, whose interactions are orchestrated. Each actor ai ∈ A , with i = 1 , 2, . . . N is characterized by a persona ρi, which encapsulates its biographical context, communication style, core beliefs and engagement patterns, serving as the behavioral blueprint that constrains the underlying agent’s outputs to remain consistent with a specific user archetype throughout the simu-lation. The agent associated with each actor maintains awareness of the evolving discussion by continuously accessing its own personal posting and actions history, Hpost  
+
+> i
+
+and Haction  
+
+> i
+
+, respectively, producing actions and posts that reflect both its persona-driven identity and the current state of the deliberation as well as the shared history H. Specifically, 
+
+Hpost  
+
+> i
+
+records all content previously submitted by actor ai, while Haction  
+
+> i
+
+tracks all voting actions performed, preventing redundant engagement with already-acted-upon content. Algorithm 1 presents the main simulation cycle governing the execution of the agentic deliberation framework. A key design decision concerns the mechanism governing when each actor participates in the discussion. A persona-driven approach, wherein the agent itself decides whether to post or act based on its persona and the current discussion state, was deliberately avoided, as it introduces systematic bias: the LLM’s intrinsic tendencies would disproportionately shape participation timing, resulting in engagement patterns that reflect model priors rather than realistic user behavior [Casoria et al., 2025, Li et al., 2024]. Instead, the temporal dynamics of each actor’s participation are governed by independent Poisson processes parameterized by actor-specific rates λpost  
+
+> i
+
+and λaction  
+
+> i
+
+, introducing principled stochas-ticity that approximates the heterogeneous engagement patterns observed on real platforms. Intuitively, λpost  
+
+> i
+
+and λaction 
+
+> i
+
+represent the expected number of posts and actions performed by actor ai per unit time, respectively; higher values encode more active engagement profiles. 
+
+# 3CHORUS: An Agentic Framework for Generating Realistic Deliberation Data A P REPRINT 
+
+The algorithm initializes a global priority queue Q and for each actor ai, samples initial posting and action event times from Poisson( λpost  
+
+> i
+
+) and Poisson( λaction  
+
+> i
+
+) respectively, inserting the corresponding events into Q. The simu-lation proceeds by iteratively extracting the earliest pending event from Q and dispatching the associated procedure until either the queue is exhausted or the simulation horizon T is reached. Upon termination, the algorithm returns 
+
+H = SNi=1 
+
+ Hpost  
+
+> i
+
+∪ H action 
+
+> i
+
+, the complete shared discussion history. Thus, H constitutes the complete record of all synthetic deliberation activity, serving as the primary output of the simulation and the input to downstream NLP analytical pipelines. Algorithm 2 presents the A CTION procedure, which governs the voting behavior of actor ai. The agent reasons over the aggregated post history SNj=1 Hpost  
+
+> j
+
+and its personal action history Haction  
+
+> i
+
+to select a set of M candidate posts Ci for potential voting, leveraging the actor’s persona ρi to ensure behavioral consistency. For each candidate post c ∈ C i, a Bernoulli trial is performed by drawing u ∼ U (0 , 1) ; the vote is executed only if u exceeds the actor-specific threshold 
+
+θaction  
+
+> i
+
+, introducing controlled stochasticity in action execution. Each executed vote is recorded in Haction  
+
+> i
+
+, ensuring that actors do not repeatedly act on the same content. Intuitively, θaction  
+
+> i
+
+acts as a selectivity filter: actors with higher thresholds engage more discriminately with existing content, while lower values encode indiscriminate engagement behavior. 
+
+Algorithm 1 Agentic Simulation Cycle 
+
+Parameters: 
+
+T : simulation duration 
+
+A = {a1, . . . , a N }: actor set 
+
+λpost  
+
+> i
+
+, λ action  
+
+> i
+
+> 0: Poisson rates of the i-th actor ai, ∀i = 1 , 2, . . . , N 
+
+Output: 
+
+H = SNi=1 
+
+ Hpost  
+
+> i
+
+∪ H action 
+
+> i
+
+: shared discussion history 
+
+1: Q ← ∅ ▷ Initialization 
+
+2: for i = 1 to N do 
+
+3: Hpost  
+
+> i
+
+← ∅ ; Haction  
+
+> i
+
+← ∅ 
+
+4: tpost  
+
+> i
+
+∼ Poisson( λpost  
+
+> i
+
+); Q.PUSH (tpost  
+
+> i
+
+, a i, POST )
+
+5: taction  
+
+> i
+
+∼ Poisson( λaction  
+
+> i
+
+); Q.PUSH (taction  
+
+> i
+
+, a i, ACTION )
+
+6: while Q̸ = ∅ do 
+
+7: (t∗, a i, PROC ) ← Q .POP () ▷ Extract earliest event 
+
+8: If t∗ > T break 
+
+9: PROC (ai) ▷ Execute A CTION (ai) or P OST (ai)
+
+10: tnext ← t∗ + Poisson( λPROC  
+
+> i
+
+); Q.PUSH (tnext , a i, PROC )
+
+11: return H
+
+Algorithm 2 ACTION (ai)
+
+Parameters: 
+
+ρi: Persona of the i-th actor ai
+
+θaction  
+
+> i
+
+∈ [0 , 1] : action execution threshold of actor ai
+
+Inputs: 
+
+ai: actor 
+
+Output: 
+
+Updated Haction 
+
+> i
+
+1: Ci ← AGENT i(∪Nj=1 Hpost j , Haction  
+
+> i
+
+, ρ i) ▷ Agent selects M candidate posts for action 
+
+2: for each c ∈ C i do 
+
+3: Draw u ∼ U (0 , 1) 
+
+4: if u > θ action  
+
+> i
+
+then 
+
+5: VOTE (c) ▷ Upvote or downvote c via T
+
+6: Haction  
+
+> i
+
+← H action  
+
+> i
+
+∪ { (ai, c, VOTE (c)) } ▷ Update action history of i-th actor Algorithm 3 presents the P OST procedure, which governs the content generation behavior of actor ai. At each posting event, the actor determines whether to submit a new comment or a reply by drawing v ∼ U (0 , 1) and comparing against the reply probability preply  
+
+> i
+
+. A higher preply  
+
+> i
+
+encodes a reactive communication style, wherein the actor predominantly 
+
+# 4CHORUS: An Agentic Framework for Generating Realistic Deliberation Data A P REPRINT 
+
+responds to existing contributions rather than initiating independent arguments. In the reply case, the agent reasons over the post histories of all other actors SNj=1 Hpost  
+
+> j
+
+to select a target post t∗, either to agree or disagree with, consistent with its persona ρi. In both cases, the agent may optionally invoke the shared tool suite T . For instance, performing web searches to incorporate references prior to generating content. The resulting post c is published to the platform via T and recorded in Hpost  
+
+> i
+
+.
+
+Algorithm 3 POST (ai)
+
+Parameters: 
+
+ρi: Persona of the i-th actor ai
+
+preply  
+
+> i
+
+∈ [0 , 1] : reply probability of actor ai
+
+Inputs: 
+
+ai: actor 
+
+Output: 
+
+Updated Hpost  
+
+> i
+> 1:
+
+Draw v ∼ U (0 , 1)  
+
+> 2:
+
+if v ≤ preply  
+
+> i
+
+then ▷ Reply with probability preply  
+
+> i
+> 3:
+
+t∗ ← AGENT i(∪Nj=1 Hpost  
+
+> j
+
+, ρ i) ▷ Agent selects target to agree or disagree with  
+
+> 4:
+
+c ← AGENT i(t∗, T ) ▷ Agent optionally invokes T to enrich reply  
+
+> 5:
+
+else ▷ New comment with probability 1 − preply  
+
+> i
+> 6:
+
+c ← AGENT i(∪Nj=1 Hpost  
+
+> j
+
+, ρ i, T ) ▷ Agent optionally invokes T to enrich comment  
+
+> 7:
+
+PUBLISH (c) ▷ Post content to platform via T 
+
+> 8:
+
+Hpost  
+
+> i
+
+← H post  
+
+> i
+
+∪ { (ai, c )} ▷ Update post history of i-th actor 
+
+# 4 Use Case Scenario: Integration with D ELIBERATE 
+
+To validate C HORUS in a realistic deployment setting, we integrated the framework with D ELIBERATE , an AI-powered web platform for facilitating citizen engagement on policy issues through structured online discussions. D ELIBERATE 
+
+employs NLP-based pipelines to extract thematic trends, identify consensus and contention and generate deliberation reports from user contributions [Livieris et al., 2026], supporting evidence-based policymaking through synthesized stakeholder insights. This section describes the pilot deployment configuration, presents the generated discussion outputs and reports the results of an expert evaluation assessing content realism, discussion coherence and analytical utility. The pilot scenario simulated a public deliberation titled “ Extreme Weather Events Due to Climate Change ”2, instan-tiating N = 10 actors across four persona archetypes over a simulation horizon of T = 20 minutes. All agents are powered by Claude Sonnet 4.5, selected for its balance between generation quality and cost efficiency across sustained multi-actor simulations and completed at an estimated API cost of less than 2 euros. The cast comprised four (4) Casual Users, one (1) Expert, three (3) Advocates and two (2) Skeptics, whose behavioral profiles are summarized as follows: • Casual User: Polite, conversational participants with an informal tone and anecdotal, experience-driven con-tent. They produce short sentence-level responses (10–20 words), operating with partially enabled discussion history (recent context only). • Expert: A polite, educational participant with a formal tone and methodical, evidence-backed content quality. Produces extended paragraph-level responses (50–100 words), leveraging full discussion history. • Advocate: Assertive, mission-driven participants with a semi-formal tone and policy-informed, advocacy-oriented content quality. They produce moderate sentence-to-paragraph-level responses (20–30 words), op-erating with partially enabled discussion history. • Skeptic: Pragmatic and analytical participants with a direct tone and scrutinizing, fact-focused content quality. They produce structured paragraph-level responses (30–50 words), leveraging full discussion history with active tracking of prior claims. 
+
+> 2The complete source code of C HORUS , together with the discussion data generated during this pilot, are publicly available at
+> https://github.com/novelcore/chorus-simulation-framework/
+
+# 5CHORUS: An Agentic Framework for Generating Realistic Deliberation Data A P REPRINT 
+
+The archetype distribution approximates the stakeholder composition typical of real-world deliberation platforms, where citizen voices constitute the majority of contributions, domain experts provide lower-frequency but higher-density input, advocates introduce policy-level framing and skeptics promote deliberative diversity through critical counterpoints. The corresponding behavioral parameters governing each archetype’s temporal and interactional dy-namics are reported in Table 1. All actors are equipped with a shared base tool suite T comprising post submission, discussion history retrieval and voting (upvote/downvote) actions. In addition, the Expert actor is provisioned with a web search tool, enabling evidence retrieval from external sources prior to content generation, consistent with its archetype’s evidence-backed communication profile.                                              
+
+> Actor Archetype λpost
+> iλaction
+> ipreply
+> iθaction
+> i
+> Casual User 1 Casual User 1.0 1.4 0.45 0.35 Casual User 2 0.7 1.0 0.40 0.40 Casual User 3 1.2 1.5 0.50 0.30 Casual User 4 0.5 0.7 0.35 0.45 Expert Expert 0.4 0.6 0.60 0.65 Advocate 1 Advocate 1.0 1.8 0.55 0.25 Advocate 2 1.2 2.0 0.60 0.20 Advocate 3 0.8 1.6 0.50 0.30 Skeptic 1 Skeptic 0.55 1.3 0.70 0.55 Skeptic 2 0.45 1.1 0.75 0.60
+
+Table 1: Actor configuration and behavioral parameters. λpost  
+
+> i
+
+and λaction  
+
+> i
+
+denote the expected number of posts and actions per unit time, preply  
+
+> i
+
+the probability of replying to an existing post, and θaction  
+
+> i
+
+the action selectivity threshold. Figure 1 illustrates the simulated activity produced by C HORUS over the T = 20 minute horizon, reporting per-minute participation dynamics, per-actor engagement volumes and the distribution of new comments versus replies. Figure 1(a) confirms that the Poisson process-based temporal model produces sustained yet irregular participation, with posting rates fluctuating between 3 and 13 posts per minute and voting actions ranging from 6 to 25 per minute. Actions consistently outnumber posts throughout the simulation, reflecting the higher λaction parameterization across all archetypes. Neither signal exhibits monotonic trends or periodic structure, approximating the bursty, non-stationary activity patterns characteristic of real online platforms. Figure 1(b) reveals the intended engagement asymmetry across archetypes. Actors: “Advocate 1” and “Advocate 2” are the most active contributors in both posts and actions, while the Expert actor produces the fewest posts consistent with its lower λpost value. Notably, action counts are dispropor-tionately high relative to post counts across all actors, with “Skeptic 2” exhibiting one of the largest action-to-post ratios despite moderate posting volume, reflecting a tendency to engage reactively with existing content rather than initiating new threads. Finally, Figure 1(c) validates the behavioral differentiation encoded in preply  
+
+> i
+
+. Casual Users produce predominantly new comments with few replies, consistent with their low reply probability of 0.30. Advocates exhibit a more balanced distribution, reflecting their intermediate preply = 0 .50 . “Skeptic 2” is the most notable case, where replies outnumber new comments, consistent with the archetype’s high preply = 0 .75 and its persona-driven tendency to critically engage with prior assertions rather than introduce independent arguments. The actor: “Expert” produces exclusively new comments, reflecting both its low reply probability and its role as an anchor of technical content within the discussion. CHORUS was preliminarily evaluated by a group of 30 experts involved in the D ELIBERATE project, comprising QA practitioners, linguists and AI researchers overseeing NLP pipeline integration. The evaluation was conducted via an online questionnaire using a five-point Likert scale (1: strongly disagree, 2: disagree, 3: moderate, 4: agree, 5:strongly agree) across three dimensions: content realism, discussion coherence and analytical utility. The corresponding eval-uation questions were formulated as follows: (i) “Does the generated synthetic content convincingly approximate real user participation in terms of linguistic quality and behavioral diversity?” , (ii) “Do the simulated discussions exhibit coherent argumentation, diverse viewpoints and natural interaction patterns consistent with real deliberation?” and (iii) “Does the discussion produce interpretable outputs when processed by the platform’s NLP analytical pipelines?” 
+
+Results were encouraging across all dimensions, as summarized in Table 2. Content realism scored highest ( μ = 4 .6), reflecting evaluator confidence that synthetic contributions were difficult to distinguish from genuine user input in terms of tone, vocabulary and argumentation style. Discussion coherence received a slightly lower score ( μ = 4 .1), attributable to the inherent difficulty of replicating emergent multi-party discourse dynamics, including topic drift and implicit contextual references, through persona-conditioned generation alone. Analytical utility scored μ = 4 .3,
+
+# 6CHORUS: An Agentic Framework for Generating Realistic Deliberation Data A P REPRINT 
+
+Figure 1: Simulated activity over T = 20 minutes: (a) posts and actions per minute across all actors, (b) aggregate post and action counts per actor and (c) new comments versus replies per actor. 
+
+# 7CHORUS: An Agentic Framework for Generating Realistic Deliberation Data A P REPRINT 
+
+confirming that C HORUS -generated data constitutes a suitable input for downstream NLP pipelines, yielding thematic outputs consistent with genuine climate adaptation discourse.         
+
+> Dimension Mean Score Description
+> Content Realism 4.6 Linguistic quality and behavioral diversity Discussion Coherence 4.1 Argumentation coherence and interaction patterns Analytical Utility 4.3 Suitability for downstream NLP pipeline processing
+
+Table 2: Expert evaluation results across the three assessed dimensions (5-point Likert scale). 
+
+# 5 Conclusions and Future Research 
+
+In this work, we presented an agentic-based framework named C HORUS , which orchestrates LLM-powered actors with behaviorally consistent personas to generate realistic deliberation data on interactive web platforms. The framework addresses a critical bottleneck in online discourse analysis: the scarcity of large-scale deliberation data imposed by restrictive platform access policies, ethical constraints surrounding user privacy and inconsistent dataset quality. By grounding synthetic user behavior in structured personas, a principled Poisson process-based temporal model and structured tool usage, C HORUS provides researchers and platform operators with a controlled yet richly diverse source of deliberation data suitable for discourse analysis, platform demonstration and NLP pipeline evaluation. CHORUS was deployed on the D ELIBERATE platform within a climate adaptation pilot scenario, instantiating 10 ac-tors across four persona archetypes over a 20-minute simulation horizon. The framework successfully produced a heterogeneous discussion exhibiting the engagement asymmetry, topical diversity and interaction patterns character-istic of authentic participatory discourse. Preliminary expert evaluation across 30 participants yielded encouraging results relative to content realism, analytical utility and discussion coherence, confirming that C HORUS -generated data constitutes a credible substitute for real user participation in platform demonstration and analytical pipeline validation. A key limitation of the current evaluation concerns the absence of ablation studies isolating the contribution of indi-vidual framework components. Comparisons against simpler baselines, such as a single LLM generating the complete discussion monolithically, or configurations omitting persona-driven behavioral grounding or Poisson process-based temporal modeling, would provide direct quantitative evidence for the necessity of each design decision. Addressing this gap constitutes an important direction for future work. Moreover, the current evaluation does not quantify tool invocation frequency or its effect on content quality and relies exclusively on Claude Sonnet 4.5, leaving the empir-ical contribution of tool usage and the sensitivity to model substitution unexamined. A systematic analysis of tool utilization patterns and cross-model evaluation are planned as part of the framework’s forthcoming extension. In our future work, we intend to extend the current capabilities of C HORUS by involving adversarial simulation, where specialized archetypes introduce disruptive behaviors such as polarizing rhetoric and deliberate misinformation, enabling the study of platform resilience under controlled conditions. A second direction concerns adaptive actor archetypes, wherein behavioral strategies are iteratively refined in response to the evolving discussion state, moving beyond static persona parameterization toward dynamic agent adaptation. Finally, we intend to conduct larger-scale validation studies involving comparative evaluation against real deliberation data and deployment across diverse policy domains, with the long-term goal of establishing C HORUS as a robust benchmarking tool for participatory platform research. 
+
+Acknowledgements This work received funding from the Horizon Europe research and innovation programme under Grant Agreement No. 101137711, project NEUROCLIMA (Developing and assessing novel educational and user-centred actions towards scaling up behavioural change and climate resilience through an AI-enhanced solution). 
+
+# 8CHORUS: An Agentic Framework for Generating Realistic Deliberation Data A P REPRINT 
+
+# A Use Case Outputs: Thematic Trend Analysis 
+
+The thematic clusters presented below are produced by D ELIBERATE ’s automated NLP analysis pipeline and are included to demonstrate the analytical utility of C HORUS -generated data: the ability of the framework to produce discussions of sufficient thematic richness and structural diversity to yield interpretable, policy-relevant outputs without reliance on real user participation. 
+
+Trend 1 
+
+– Title : Immediate Cooling Solutions for Vulnerable Populations During Extreme Heat Events. – Summary : Vulnerable individuals, particularly the elderly, face life-threatening conditions during extreme heat yet cannot afford cooling systems. Existing air-conditioned public buildings should be immediately opened as cooling centers, with accessible information on their locations to prevent health crises. – Keywords : “summer”, “cooling”, “hospital”, “apartment”, “buildings”, “people”, “years”, “day”, “numbers”, “construction”. 
+
+Trend 2 
+
+– Title : Equitable Climate Adaptation: Addressing Infrastructure Needs and Funding Gaps. – Summary : Climate adaptation funding disproportionately favors those with existing resources, while complex EU funding processes further limit uptake by under-resourced municipalities. The absence of enforceable standards mandating equity assessments and accessible thermal refuges represents a critical policy gap. – Keywords : “adaptation”, “cooling”, “climate”, “costs”, “infrastructure”, “billion”, “thermal”, “heat events”, “requirements”, “policy”. 
+
+Trend 3 
+
+– Title : Supporting Agricultural Resilience Amidst Climate Disasters: The Overlooked Crisis. – Summary : Agricultural workers and rural communities in Greece remain overlooked amid urban-focused discussions, with drought and fires decimating farms and threatening food security. Without targeted support, insurance mechanisms and planning priorities beyond urban cooling, Greece risks irreversible decline in agricultural self-sufficiency. – Keywords : “coastal”, “infrastructure”, “building codes”, “cooling”, “cooling systems”, “water”, “food”, “heat”. 
+
+Trend 4 
+
+– Title : Healthcare Infrastructure and Preparedness: Addressing the Challenges of Extreme Heat Events. – Summary : Extreme heat events are overwhelming emergency services and exposing failures in healthcare preparedness, with under-cooled neighborhoods recording significantly higher admission rates. A compre-hensive approach integrating phased retrofitting, updated regulatory standards and climate-resilient urban design is needed to reduce heat-related mortality. – Keywords : “infrastructure”, “heat”, “cooling”, “thermal”, “buildings”, “emergency”, “costs”, “healthcare”, “social housing”, “climate”, “performance”, “housing”, “capacity”, “temperatures”. 
+
+# References 
+
+Maike Behrendt, Stefan Sylvius Wagner, Carina Weinmann, Marike Bormann, Mira Warne, and Stefan Harmeling. Natural language processing to enhance deliberation in political online discussions: A survey. arXiv preprint arXiv:2506.02533 , 2025. John Lawrence and Chris Reed. Argument mining: A survey. Computational linguistics , 45(4):765–818, 2019. Marco R Steenbergen, André Bächtiger, Markus Spörndli, and Jürg Steiner. Measuring political deliberation: A discourse quality index. Comparative European Politics , 1(1):21–48, 2003. Lisa P Argyle, Ethan C Busby, Nancy Fulda, Joshua R Gubler, Christopher Rytting, and David Wingate. Out of one, many: Using language models to simulate human samples. Political Analysis , 31(3):337–351, 2023. 
+
+# 9CHORUS: An Agentic Framework for Generating Realistic Deliberation Data A P REPRINT 
+
+James Bisbee, Joshua Clinton, Cassy Dorff, Brenton Kenkel, and Jennifer Larson. Synthetic replacements for human survey data. The Perils of Large Language Models , 2023. Joon Sung Park, Joseph O’Brien, Carrie Jun Cai, Meredith Ringel Morris, Percy Liang, and Michael S Bernstein. Generative agents: Interactive simulacra of human behavior. In Proceedings of the 36th annual acm symposium on user interface software and technology , pages 1–22, 2023. Ziyi Yang, Zaibin Zhang, Zirui Zheng, Yuxian Jiang, Ziyue Gan, Zhiyu Wang, Zijian Ling, Jinsong Chen, Martz Ma, Bowen Dong, et al. Oasis: Open agent social interaction simulations with one million agents. arXiv preprint arXiv:2411.11581 , 2024. Xiao Liu, Hao Yu, Hanchen Zhang, Yifan Xu, Xuanyu Lei, Hanyu Lai, Yu Gu, Hangliang Ding, Kaiwen Men, Kejuan Yang, et al. Agentbench: Evaluating llms as agents. arXiv preprint arXiv:2308.03688 , 2023. Dakuo Wang, Ting-Yao Hsu, Yuxuan Lu, Hansu Gu, Limeng Cui, Yaochen Xie, William Headean, Bingsheng Yao, Akash Veeragouni, Jiapeng Liu, et al. Agenta/b: Automated and scalable web a/btesting with interactive llm agents. 
+
+arXiv preprint arXiv:2504.09723 , 2025. Yuxuan Lu, Bingsheng Yao, Hansu Gu, Jing Huang, Zheshen Jessie Wang, Yang Li, Jiri Gesi, Qi He, Toby Jia-Jun Li, and Dakuo Wang. Uxagent: An llm agent-based usability testing framework for web design. In Proceedings of the Extended Abstracts of the CHI Conference on Human Factors in Computing Systems , pages 1–12, 2025. Roman Mayr, Michel Schimpf, and Thomas Bohné. Chatchecker: A framework for dialogue system testing through non-cooperative user simulation. In NeurIPS 2025 Workshop on Evaluating the Evolving LLM Lifecycle: Bench-marks, Emergent Abilities, and Scaling , 2025. Luigi Casoria, Pietro Neroni, Luca Sabatucci, Agnese Augello, and Giuseppe Caggianese. Evaluating llms for syn-thetic personas generation: A comparative analysis of personality representation and censorship effects. In Pro-ceedings of the 16th Biannual Conference of the Italian SIGCHI Chapter , pages 1–9, 2025. Junyi Li, Charith Peris, Ninareh Mehrabi, Palash Goyal, Kai-Wei Chang, Aram Galstyan, Richard Zemel, and Rahul Gupta. The steerability of large language models toward data-driven personas. In Proceedings of the 2024 Con-ference of the North American Chapter of the Association for Computational Linguistics: Human Language Tech-nologies (Volume 1: Long Papers) , pages 7290–7305, 2024. Lipeipei Sun, Tianzi Qin, Anran Hu, Jiale Zhang, Shuojia Lin, Jianyan Chen, Mona Ali, and Mirjana Prpa. Persona-l has entered the chat: Leveraging llms and ability-based framework for personas of people with complex needs. In 
+
+Proceedings of the 2025 CHI Conference on Human Factors in Computing Systems , pages 1–31, 2025. Ioannis E. Livieris, Alexandra Apostolopoulou, Dimitris Tsakalidis, George Domalis, and Nikos Karacapilidis. Lever-aging AI Techniques to Augment Actionable Knowledge Discovery and Informed Policy Making in Public Deliber-ation , pages 253–272. Springer Nature Switzerland, 2026. 
+
+# 10
