@@ -1,0 +1,573 @@
+Title: A Multi-Agent Framework with Structured Reasoning and Reflective Refinement for Multimodal Empathetic Response Generation
+
+URL Source: https://arxiv.org/pdf/2604.18988v1
+
+Published Time: Wed, 22 Apr 2026 00:34:15 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# A Multi-Agent Framework with Structured Reasoning and Reflective Refinement for Multimodal Empathetic Response Generation 
+
+# Liping Wang ∗
+
+lipingwang@mail.ustc.edu.cn School of Information Science and Technology, USTC Hefei, China 
+
+# Cheng Ye ∗
+
+kyrieye@mail.ustc.edu.cn School of Information Science and Technology, USTC Hefei, China 
+
+# Weidong Chen †
+
+chenweidong@ustc.edu.cn School of Information Science and Technology, USTC Hefei, China 
+
+# Peipei Song 
+
+beta.songpp@gmail.com School of Information Science and Technology, USTC Hefei, China 
+
+# Bo Hu 
+
+hubo@ustc.edu.cn School of Information Science and Technology, USTC Hefei, China 
+
+# Zhendong Mao 
+
+zdmao@ustc.edu.cn School of Information Science and Technology, USTC Hefei, China 
+
+## Abstract 
+
+Multimodal empathetic response generation (MERG) aims to gen-erate emotionally engaging and empathetic responses based on users’ multimodal contexts. Existing approaches usually rely on an implicit one-pass generation paradigm from multimodal context to the final response, which overlooks two intrinsic characteristics of MERG: (1) Human perception of emotional cues is inherently structured rather than a direct mapping. The conventional para-digm neglects the hierarchical progression of emotion perception, leading to distorted emotional judgments. (2) Given the inherent complexity and ambiguity of human emotions, the conventional paradigm is prone to significant emotional biases, ultimately result-ing in suboptimal empathy. In this paper, we propose a multi-agent framework for MERG, which enhances empathy through structured reasoning and reflective refinement. Specifically, we first introduce a structured empathetic reasoning-to-generation module that ex-plicitly decomposes response generation via multimodal perception, consistency-aware emotion forecasting, pragmatic strategy plan-ning, and strategy-guided response generation, providing a clearer intermediate path from multimodal evidence to response realiza-tion. Besides, we develop a global reflection and refinement module, in which a global reflection agent performs step-wise auditing over intermediate states and the generated response, eliminating existing emotional biases and empathy errors, and triggering targeted regen-eration. Overall, such a closed-loop framework enables our model to gradually improve the accuracy of emotion perception and elim-inate emotion biases during the iteration process. Experiments on several benchmarks, e.g., IEMOCAP and MELD, demonstrate that  
+
+> Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and the full citation on the first page. Copyrights for components of this work owned by others than the author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or republish, to post on servers or to redistribute to lists, requires prior specific permission and/or a fee. Request permissions from permissions@acm.org.
+> Conference acronym ’XX, Woodstock, NY
+> ©2018 Copyright held by the owner/author(s). Publication rights licensed to ACM. ACM ISBN 978-1-4503-XXXX-X/2018/06 https://doi.org/XXXXXXX.XXXXXXX
+
+our model has superior empathic response generation capabilities compared to state-of-the-art methods. 1
+
+## CCS Concepts 
+
+• Computing methodologies → Multi-agent systems ; Scene understanding .
+
+## Keywords 
+
+Multimodal Empathetic Response Generation, Multi-Agent System, Large Language Model 
+
+ACM Reference Format: 
+
+Liping Wang[1], Cheng Ye[1], Weidong Chen[2], Peipei Song, Bo Hu, and Zhen-dong Mao. 2018. A Multi-Agent Framework with Structured Reasoning and Reflective Refinement for Multimodal Empathetic Response Generation. In 
+
+Proceedings of Make sure to enter the correct conference title from your rights confirmation email (Conference acronym ’XX). ACM, New York, NY, USA, 10 pages. https://doi.org/XXXXXXX.XXXXXXX 
+
+## 1 Introduction 
+
+Recent advances in empathetic response generation have high-lighted the need to produce responses that are not only fluent, but also supportive and contextually sensitive to the user’s emotional state [ 4, 15 , 23 ]. In real interactions, however, such understanding rarely comes from language alone. Facial expressions, posture, and other nonverbal visual cues often provide important evidence about the speaker’s situation and affective condition. This has motivated growing interest in multimodal empathetic response generation (MERG), where response generation is grounded in both conversa-tional context and nonverbal visual signals [ 36 , 39 ]. Compared with text-only settings, this task is substantially more challenging. The model must reason over heterogeneous modalities with nontrivial semantic gaps and cross-modal alignment difficulty [ 8, 34 ]. More importantly, effective empathy depends on both factual grounding in the situation and affective grounding in the speaker’s emotional  
+
+> 1Code will be released in the final version of the paper.
+> ∗These authors contributed equally to this work.
+> †Corresponding authors.
+> arXiv:2604.18988v1 [cs.CV] 21 Apr 2026 Conference acronym ’XX, June 03–05, 2018, Woodstock, NY Wang et al.
+
+experience. These two aspects are both essential for generating responses that are supportive and appropriate [11, 12, 15]. Existing research has advanced empathetic response genera-tion through contextual emotion modeling, knowledge-enhanced generation, multimodal understanding, and recent attempts at mul-timodal empathetic response generation [ 8 , 11 , 12 , 34 , 39 ]. Never-theless, most of them still treat response generation as a largely implicit one-pass mapping from multimodal context to text without explicitly decomposing the intermediate reasoning process. Such a paradigm overlooks two fundamental characteristics of MERG: (1) Human emotional perception is inherently structured. For in-stance, when perceiving an image, humans sequentially identify affective elements, respond to these elements, and finally derive an emotional conclusion. In the one-pass generation diagram, the structured reasoning process remains implicit, making it difficult to localize and correct early-stage errors, especially when textual and visual cues are only partially aligned, which severely compromises both the accuracy and interpretability of emotional perception. (2) Furthermore, since human emotions possess intrinsic complexity and ambiguity, emotion resonance requires a progressive evolu-tionary process. One-pass generation diagram oversimplifies this dynamic and is prone to significant affective errors. These errors may propagate to downstream generation, leading to responses that are fluent but insufficiently grounded, strategically misaligned, or only superficially empathetic. 
+
+Figure 1: Conventional methods generate responses in a sin-gle implicit pass, making errors difficult to trace. Our frame-work instead adopts structured empathetic reasoning and reflective refinement, enabling targeted re-generation and improved final response selection. 
+
+To address these limitations, we propose a multi-agent frame-work for multimodal empathetic response generation, consisting of a structured empathetic reasoning-to-generation pipeline and a global reflection and refinement module. Specifically, the structured empathetic reasoning-to-generation pipeline decomposes genera-tion into four coordinated stages. Firstly, we extract concrete visual and textual evidence for emotion perception from multimodal input. Subsequently, we design a consistency-aware emotion forecaster to predict the emotion conclusion for the response through focus on the consistency between extracted emotion evidence. Besides, we introduce a pragmatic strategy planning agent to determine how the response should be delivered. Finally, we generate the em-pathetic response with the guidance of the aggregation for above information. Overall, this pipeline provides a clearer and more con-trollable path from multimodal evidence to empathetic response generation. Building on this process, we design a global reflection and refinement module. A global reflection agent is designed to step-wise audit over the intermediate outputs and the generated response, identify the earliest faulty stage, and trigger targeted re-generation. Besides, instead of simply returning the last refined re-sponse, the framework selects the final output from the refinement history, which helps reduce error propagation and over-correction. Finally, through the closed-loop combination of progressive struc-tured reasoning-to-generation and global reflection and refinement, our framework improves the consistency, strategic coherence, and emotional appropriateness of the generated response. In summary, our main contributions are as follows: 
+
+• We propose a multi-agent framework for multimodal empa-thetic response generation. Specifically, we design a closed-loop iterative generation framework that continuously optimizes the responses through a reflection and refinement mechanism, which enhances the ability to produce empathetic responses that are emo-tionally appropriate, strategically coherent, and well supported by multimodal context. 
+
+• We introduce a structured reasoning-to-generation module that explicitly decomposes response generation via four dense com-ponents, providing a clearer intermediate path from multimodal evidence to response realization. Besides, we develop a global re-flection and refinement module, in which a global reflection agent performs step-wise auditing over intermediate states and the gener-ated response, eliminating existing emotional biases and empathy errors, and triggering targeted regeneration. 
+
+• Extensive experiments on several benchmarks ( i.e., IEMOCAP and MELD) demonstrate the effectiveness of the proposed method and two core components, achieving relative improvements of 16.4%/16.0% in Acc./Empathy on the IEMOCAP dataset. 
+
+## 2 Related Work 
+
+Prior work relevant to our study mainly falls into three lines: multi-modal emotion understanding, empathetic response generation and emotional support conversation, and LLM-based multi-agent refine-ment. These lines respectively relate to the two core components of our framework: the structured empathetic reasoning-to-generation pipeline, which requires grounded multimodal perception, emotion forecasting, strategy planning, and response realization, and the global reflection and refinement module, which performs targeted revision over intermediate decisions and generated responses. 
+
+## 2.1 Multimodal Emotion Analysis 
+
+Reliable affect understanding is a prerequisite for multimodal empa-thetic response generation. Early work such as DialogueRNN [ 18 ]modeled speaker-aware emotional dynamics in conversation, while MELD [ 21 ] established a widely used benchmark with synchronized textual, acoustic, and visual streams. Subsequent studies moved beyond simple multimodal fusion toward more explicit modeling of conversational structure and cross-modal interaction. Zhang et al. [ 34 ] characterized both intra-modal and inter-modal influences in conversational emotion recognition, and MMGCN [ 8] modeled cross-modal and inter-speaker dependencies through graph-based A Multi-Agent Framework with Structured Reasoning and Reflective Refinement for Multimodal Empathetic Response Generation Conference acronym ’XX, June 03–05, 2018, Woodstock, NY 
+
+reasoning. Later work further strengthened robustness and relia-bility under challenging conversational conditions. M3Net [ 2], for instance, revisited multimodal graph reasoning from multivariate and multi-frequency perspectives, while CMERC [ 26 ] highlighted the importance of calibrated prediction under noisy or ambiguous evidence. These studies provide an important basis for multimodal affect understanding. However, they mainly treat emotion recogni-tion as the final objective, rather than as an intermediate reasoning stage that must remain consistent with downstream strategy plan-ning and empathetic response generation. 
+
+## 2.2 Empathetic Response Generation 
+
+Empathetic response generation aims to produce responses that are emotionally appropriate and contextually supportive to the speaker. EmpatheticDialogues [ 23 ] established a widely adopted benchmark for this task, and subsequent studies have mainly improved gen-eration quality through stronger affect modeling, external knowl-edge integration, and more explicit intermediate reasoning. Early methods focused on enhancing emotional awareness in generation. EmpDG [ 11 ] incorporated dialogue-level and token-level emotion signals, while MIME [ 17 ] modeled emotional mimicry to improve empathetic expression. Another line of work introduced external knowledge to better support response generation. KEMP [ 12 ] in-tegrated commonsense and emotional lexical knowledge through an emotional context graph, and SEEK [ 28 ] modeled emotion flow together with emotion–knowledge interaction. More recent work has begun to make the generation process more explicit. CASE [ 41 ] aligned cognition and affection in a coarse-to-fine manner, and IAMM [ 33 ] improved response generation with iterative asso-ciative memory. Related progress in emotional support dialogue further highlights the importance of explicit intermediate structure, such as decoupled strategy prediction in EmoDynamiX [ 27 ]. On the multimodal side, STICKERCONV [ 39 ] introduced multimodal empa-thetic responses with stickers, AvaMERG [ 36 ] extended the task to synchronized text, speech, and facial video, and personality-aware multimodal empathy modeling [ 29 ] incorporated multimodal user cues together with personal traits. Recent work further advances this direction through open-source avatar-based systems such as EmpathyEar [ 5 ] and community-level task development such as the Ava-MERG Challenge [ 35 ], while E3RG [ 13 ] explores explicit modular decomposition for multimodal empathetic response gen-eration. Despite this progress, most existing methods either remain largely end-to-end or expose only part of the intermediate gen-eration process. Few frameworks explicitly organize multimodal perception, emotion forecasting, pragmatic strategy planning, and response generation within a unified pipeline. 
+
+## 2.3 LLM-based Multi-Agent Systems and Iterative Refinement 
+
+Recent advances in LLM-based agentic frameworks suggest a natu-ral way to decompose complex generation tasks into specialized roles. Representative systems such as AutoGen [ 31 ] and MetaGPT [ 7 ]demonstrate that structured role assignment and workflow design can improve coordination over multi-step tasks. In parallel, itera-tive refinement methods such as Reflexion [ 25 ] and Self-Refine [ 16 ]show that linguistic feedback can improve generation quality with-out parameter updates. In the dialogue domain, MultiAgentESC [ 32 ]further illustrates the promise of collaborative LLM agents for emo-tional support conversation. Nevertheless, existing agentic and reflection-based methods are still predominantly text-centric, and are rarely designed for multimodal empathetic response generation. More importantly, they usually do not provide a structured mecha-nism to audit intermediate states step by step, identify the earliest faulty stage, and perform targeted downstream re-generation across perception, emotion forecasting, strategy planning, and response re-alization. Recent multimodal systems such as E3RG [ 13 ] also adopt explicit decomposition for empathetic response generation, but they do not provide a step-wise auditing mechanism that identifies and corrects errors at the earliest responsible stage. Our frame-work builds on this line of research, but adapts it to multimodal empathetic response generation through a structured reasoning-to-generation pipeline coupled with a global reflection and refinement module. 
+
+## 3 Method 3.1 Task Formulation and Framework Overview 
+
+Formally, the multimodal empathetic response generation task is defined as follows. Let C = {( 𝑠 𝑖 , 𝑢 𝑖 )} 𝑁 𝑖 =1 denote the conversational history, where 𝑠 𝑖 and 𝑢 𝑖 represent the speaker and the textual ut-terance at turn 𝑖 , respectively. Paired with C is a sequence of raw video clips V = {𝑣 𝑖 }𝑁 𝑖 =1. To align the continuous visual stream with the discrete textual context, we extract a set of representative keyframes ˜V from V. Ultimately, our objective is to generate an empathetic and pragmatically appropriate next-turn response 𝑅 
+
+conditioned on the multimodal context (C , ˜V) .We propose a multi-agent framework for multimodal empa-thetic response generation, composed of a structured empathetic reasoning-to-generation pipeline and a global reflection and re-finement module. The former progressively conducts multimodal perception, emotion forecasting, strategy planning, and response generation, while the latter inspects the intermediate reasoning process and the final response to provide targeted feedback for iterative refinement. An overview of the framework is shown in Fig. 2. 
+
+## 3.2 Structured Reasoning-to-Generation 
+
+The first four agents form a structured empathetic reasoning-to-generation pipeline. We adopt this progressive design because mul-timodal empathetic response generation involves a sequence of tightly coupled yet distinct processes, rather than a direct mapping from context to the final response [ 32 , 37 ]. By explicitly organiz-ing multimodal perception, emotion forecasting, strategy planning, and response generation into a structured empathetic reasoning-to-generation pipeline, the framework establishes a clearer intermedi-ate path toward the final response and provides a more controllable basis for subsequent reflection and refinement. 
+
+3.2.1 Multimodal Perception Agent . Multimodal Perception Agent (MPA) is responsible for extracting concrete visual and tex-tual evidence from the raw multimodal context. Since multimodal Conference acronym ’XX, June 03–05, 2018, Woodstock, NY Wang et al. 
+
+Figure 2: Overview of the proposed framework. Given the multimodal context, the structured empathetic reasoning-to-generation pipeline progressively performs multimodal perception, emotion forecasting, strategy planning, and response generation. A global reflection and refinement module then audits intermediate states and the generated response, attributes errors to the responsible stage, and triggers targeted re-generation. The final response is selected from the refinement history. 
+
+empathetic response generation depends on both verbal and non-verbal cues, organizing the input into explicit perceptual evidence provides a cleaner basis for downstream reasoning [ 37 ]. Acting as the observation stage of the pipeline, it identifies response-relevant cues from the dialogue history C and sampled video frames ˜V. The process is formulated as 
+
+𝑍 𝑝 = MPA (C , ˜V) (1) where 𝑍 𝑝 comprises the grounded multimodal evidence for down-stream emotion forecasting and strategy planning. 
+
+3.2.2 Consistency-Aware Emotion Forecaster . The Consistency-Aware Emotion Forecaster (CAEF) is designed to predict the emo-tion for the final response. Because textual and visual signals may provide complementary or partially inconsistent cues, the emotion forecasting agent jointly models the dialogue context, visual obser-vations, and grounded perceptual evidence to infer the emotion that should guide subsequent planning and generation [6]. Formally, 
+
+𝑍 𝑒 = CAEF (C , ˜V, 𝑍 𝑝 ) (2) where 𝑍 𝑒 denotes the forecasted emotion representation. 
+
+3.2.3 Pragmatic Strategy Planner . The Pragmatic Strategy Plan-ner (PSP) is responsible for determining how the final response should be delivered. This agent is introduced because the forecasted emotion alone is insufficient to specify communicative intention and expression style [ 3, 15 ]. Based on the dialogue context, per-ceptual evidence, and forecasted emotion, the PSP constructs a structured pragmatic plan with four dimensions: communication goal ( 𝛾 ), interpersonal stance ( 𝛼 ), pragmatic tactic ( 𝜌 ), and linguis-tic tone ( 𝜏 ). By explicitly defining 𝑍 𝑠 = {𝛾, 𝛼, 𝜌, 𝜏 },the framework converts high-level empathetic intent into a structured pragmatic plan. Formally, 
+
+𝑍 𝑠 = PSP (C , 𝑍 𝑝 , 𝑍 𝑒 ) (3) where 𝑍 𝑠 denotes the pragmatic plan for the subsequent response generation agent. 
+
+3.2.4 Strategy-Grounded Response Generator . The Strategy-Grounded Response Generator (SGRG) is responsible for generating the final response conditioned on the dialogue context and the outputs 𝑍 𝑝 , 𝑍 𝑒 , and 𝑍 𝑠 from the preceding agents. Specifically, it realizes the pragmatic plan in natural language while incorporating the perceptual evidence, forecasted emotion, and retrieved auxiliary context from K . The generation process is formulated as: 
+
+𝑅 = SGRG (C , ˜V, 𝑍 𝑝 , 𝑍 𝑒 , 𝑍 𝑠 , K) (4) where 𝑅 denotes the generated response. 
+
+## 3.3 Global Reflection and Refinement 
+
+The Global Reflection Agent (GRA) ensures global alignment through an iterative refinement process. Let 𝑡 ∈ { 1, . . . ,𝑇 } denote the refine-ment iteration index, where 𝑡 = 1 corresponds to the initial output of the structured empathetic reasoning-to-generation pipeline. At each iteration, the GRA performs two steps: (1) Step-wise Func-tional Audit and (2) Error Attribution and Pipeline Re-generation. After refinement terminates, a deterministic evaluation function selects the final response from the recorded generation history. 
+
+1. Step-wise Functional Audit: In each iteration 𝑡 , the GRA performs a sequential check to verify whether each agent in the structured empathetic reasoning-to-generation pipeline has ful-filled its specific role. It evaluates: (i) the MPA ( 𝑍 (𝑡 ) 
+
+> 𝑝
+
+) for factual accuracy and multimodal interpretation; (ii) the CAEF ( 𝑍 (𝑡 ) 
+
+> 𝑒
+
+) for the plausibility of the forecasted emotion under multimodal evidence; (iii) the PSP ( 𝑍 (𝑡 ) 
+
+> 𝑠
+
+) for the appropriateness of the strategic plan; and A Multi-Agent Framework with Structured Reasoning and Reflective Refinement for Multimodal Empathetic Response Generation Conference acronym ’XX, June 03–05, 2018, Woodstock, NY 
+
+(iv) the SGRG for whether the generated utterance 𝑅 (𝑡 ) complies with the constraints set by 𝑍 𝑝 , 𝑍 𝑒 , and 𝑍 𝑠 .
+
+2. Error Attribution and Pipeline Re-generation: If a mis-match is detected, the GRA identifies the specific agent responsible for the error. To prevent error propagation, the structured em-pathetic reasoning-to-generation pipeline is re-activated starting from the failed agent. For example, if the error is localized to the CAEF ( 𝑍 𝑒 ), the feedback 𝐹 (𝑡 ) is used to re-generate a corrected emo-tional state 𝑍 (𝑡 +1) 
+
+> 𝑒
+
+. This update automatically triggers new rounds of strategic planning ( 𝑍 (𝑡 +1) 
+
+> 𝑠
+
+) and response generation ( 𝑅 (𝑡 +1) ). 
+
+𝐹 (𝑡 ) = GRA (C , ˜V, 𝑍 (𝑡 ) 
+
+> 𝑝
+
+, 𝑍 (𝑡 ) 
+
+> 𝑒
+
+, 𝑍 (𝑡 ) 
+
+> 𝑠
+
+, 𝑅 (𝑡 ) ) (5) 
+
+{𝑍 (𝑡 +1) 
+
+> 𝑘
+
+, . . . , 𝑅 (𝑡 +1) } = Pipeline (C , ˜V, 𝑍 (𝑡 ) , 𝜋 𝑘 (𝐹 (𝑡 ) )) (6) where 𝑘 ∈ { 𝑝, 𝑒, 𝑠, 𝑟 } denotes the agent identified as the source of error, 𝜋 𝑘 (𝐹 (𝑡 ) ) denotes its correction instruction, and 𝑍 (𝑡 ) =
+
+{𝑍 (𝑡 ) 
+
+> 𝑝
+
+, 𝑍 (𝑡 ) 
+
+> 𝑒
+
+, 𝑍 (𝑡 ) 
+
+> 𝑠
+
+, 𝑅 (𝑡 ) } denotes the outputs from iteration 𝑡 , which are retained to support feedback-guided, targeted refinement in the next iteration. The closed-loop continues until all functional checks are passed or the maximum iteration count is reached. 
+
+3. Final Response: To mitigate semantic drift and over-correction in prolonged iterations, the framework selects the optimal response 
+
+𝑅 final from the history H = {( 𝑅 (𝑡 ) , 𝐹 (𝑡 ) )} 𝑇 𝑡 =1 rather than defaulting to 𝑅 (𝑇 ) [ 9]. We map each audit feedback 𝐹 (𝑡 ) into a lexicographic evaluation tuple: 
+
+Φ(𝑡 ) =
+
+
+
+𝑐 (𝑡 ) 
+
+> 1
+
+, 𝑐 (𝑡 ) 
+
+> 2
+
+, . . . , 𝑐 (𝑡 ) 
+
+> 𝑚
+
+, −𝑡 
+
+
+
+(7) where 𝑐 (𝑡 ) 
+
+> 𝑖
+
+∈ { 0, 1} are binary check results extracted from 𝐹 (𝑡 ) ,ordered by architectural priority. The term −𝑡 serves as a regular-ization penalty to favor earlier states during ties. The final output is then determined by 𝑅 𝑓 𝑖𝑛𝑎𝑙 = 𝑅 (𝑡 ∗ ) , where the optimal index 
+
+𝑡 ∗ = arg max lex    
+
+> 𝑡 ∈ { 1,...,𝑇 }
+
+Φ(𝑡 ) ensures the selection of the most consis-tent and least over-optimized generation. 
+
+## 4 Experiment 
+
+We evaluate the proposed framework on IEMOCAP [ 1 ] and MELD [ 21 ] through automatic evaluation, human evaluation. In addition to overall comparison results, we further analyze the contribution of key components and provide qualitative case studies. 
+
+## 4.1 Experimental Setup 
+
+4.1.1 Datasets. We conduct experiments on two widely used mul-timodal dialogue datasets, IEMOCAP and MELD. IEMOCAP is a multimodal dyadic conversation dataset with roughly 12 hours of audiovisual recordings, accompanied by transcripts and emotion labels [ 1 ]. Following prior settings [ 19 , 30 ], we use Session 5 for evaluation. MELD is a multimodal multi-party dialogue benchmark built from the TV series Friends. It includes 1,433 dialogues and about 13K utterances annotated with emotion and sentiment labels [ 21 ]. We adopt the official split and report results on its test set. In both datasets, the model takes the dialogue history and sampled video keyframes as input. 
+
+4.1.2 Metrics. We evaluate our model using both automatic met-rics and human evaluation. Following prior work, we report Perplex-ity (PPL), Emotion Accuracy (Acc.), Distinct-1/2, and BERTScore 
+
+Algorithm 1 Overall procedure of the proposed framework. 
+
+Require: Multimodal context (C , ˜V) , retrieval memory K; max iterations 𝑇 max .
+
+Ensure: Final refined response 𝑅 ∗. 
+
+> 1:
+
+// Stage 1: Structured Reasoning-to-Generation Pipeline  
+
+> 2:
+
+𝑍 (1) 
+
+> 𝑝
+
+← MPA (C , ˜V)  
+
+> 3:
+
+𝑍 (1) 
+
+> 𝑒
+
+← CAEF (C , ˜V, 𝑍 (1) 
+
+> 𝑝
+
+) 
+
+> 4:
+
+𝑍 (1) 
+
+> 𝑠
+
+← PSP (C , 𝑍 (1) 
+
+> 𝑝
+
+, 𝑍 (1) 
+
+> 𝑒
+
+) {𝑍 𝑠 = {𝛾, 𝛼, 𝜌, 𝜏 }} 
+
+> 5:
+
+𝑅 (1) ← SGRG (C , ˜V, 𝑍 (1) 
+
+> 𝑝
+
+, 𝑍 (1) 
+
+> 𝑒
+
+, 𝑍 (1) 
+
+> 𝑠
+
+, K)  
+
+> 6:
+
+𝑅 ∗ ← 𝑅 (1) 
+
+> 7:
+
+𝐹 (1) ← GRA (C , ˜V, 𝑍 (1) 
+
+> 𝑝
+
+, 𝑍 (1) 
+
+> 𝑒
+
+, 𝑍 (1) 
+
+> 𝑠
+
+, 𝑅 (1) ) 
+
+> 8:
+
+H ← {( 𝑅 (1) , 𝐹 (1) )}  
+
+> 9:
+
+for 𝑡 = 1 to 𝑇 max do  
+
+> 10:
+
+if 𝐹 (𝑡 ) .is _valid = True then  
+
+> 11:
+
+break  
+
+> 12:
+
+end if  
+
+> 13:
+
+𝐹 (𝑡 ) 
+
+> 𝑘
+
+← 𝜋 𝑘 (𝐹 (𝑡 ) ), 𝑘 ∈ {𝑝, 𝑒, 𝑠, 𝑟 } is the identified error source  
+
+> 14:
+
+// Stage 2: Global Reflection and Refinement Module  
+
+> 15:
+
+for all components 𝑖 before 𝑘 do  
+
+> 16:
+
+𝑍 (𝑡 +1) 
+
+> 𝑖
+
+← 𝑍 (𝑡 ) 
+
+> 𝑖
+
+{Keep previously validated outputs}  
+
+> 17:
+
+end for  
+
+> 18:
+
+Re-run the pipeline from component 𝑘 with corrective feed-back 𝐹 (𝑡 ) 
+
+> 𝑘
+> 19:
+
+{𝑍 (𝑡 +1) 
+
+> 𝑘
+
+, . . . , 𝑅 (𝑡 +1) } ← Pipeline (C , ˜V, K, 𝑍 (𝑡 ) , 𝐹 (𝑡 ) 
+
+> 𝑘
+
+) 
+
+> 20:
+
+𝐹 (𝑡 +1) ← GRA (C , ˜V, 𝑍 (𝑡 +1) 
+
+> 𝑝
+
+, 𝑍 (𝑡 +1) 
+
+> 𝑒
+
+, 𝑍 (𝑡 +1) 
+
+> 𝑠
+
+, 𝑅 (𝑡 +1) ) 
+
+> 21:
+
+H ← H ∪ {( 𝑅 (𝑡 +1) , 𝐹 (𝑡 +1) )}  
+
+> 22:
+
+end for  
+
+> 23:
+
+// Stage 3: Final Response  
+
+> 24:
+
+𝑡 ∗ ← arg max lex  
+
+> 𝑡
+
+Φ(𝑡 ) 
+
+> 25:
+
+𝑅 ∗ ← 𝑅 (𝑡 ∗ ) 
+
+> 26:
+
+return 𝑅 ∗
+
+[11 , 30 , 40 ] for automatic evaluation. PPL evaluates the fluency and overall generation difficulty of the produced response under the language model, where a lower value indicates that the response is more natural and better formed. Acc. measures the correctness of target emotion prediction. Distinct-1/2 measures lexical diversity based on the proportions of distinct unigrams and bigrams in gen-erated responses [ 10 ]. We also report the precision, recall, and F1 of BERTScore to evaluate semantic similarity between generated and reference responses at the contextual embedding level [ 38 ]. Lower PPL indicates better performance, while higher Acc., Distinct-1/2, and BERTScore indicate stronger results. In addition to automatic metrics, we perform human evaluation to provide a complemen-tary assessment of response quality. The generated responses are rated on a 5-point Likert scale from three aspects. Empathy mea-sures whether the response appropriately reflects understanding of the speaker’s emotional state and situation. Coherence evaluates whether the response is consistent with the dialogue context and communicative focus. Fluency assesses the naturalness, readability, and grammatical well-formedness of the response. Conference acronym ’XX, June 03–05, 2018, Woodstock, NY Wang et al. 
+
+4.1.3 Implementation Details. All five agents in our framework are instantiated with the same backbone model, Qwen3.5:27B , and are served locally through Ollama † [20 , 22 ]. The proposed framework is fully training-free , with all results obtained by inference only under the original model parameters. For evaluation, we follow stan-dard benchmark settings, using Session 5 of IEMOCAP for testing [ 19 , 30 ] and the official test split of MELD [ 21 ]. In the closed-loop reflection module, we allow at most two refinement iterations after the initial pipeline pass, which provides a practical balance between computational cost and over-correction. When retrieval is enabled, the memory is built prior to evaluation to prevent information leak-age, using Session 2 for IEMOCAP and the development split for MELD. Unless otherwise stated, all experiments are conducted on a single NVIDIA RTX 3090 GPU. 
+
+## 4.2 Main Results 
+
+We first examine whether the proposed framework improves overall response generation quality under both automatic and human eval-uation. Table 1 compares our method with representative baselines on IEMOCAP and MELD. 
+
+Automatic Evaluation. Under automatic evaluation, our method shows a favorable overall trend on both datasets. On IEMOCAP, it improves PPL, Dist-1/2, Acc., and BERT-F1 over the compared baselines. On MELD, it also maintains competitive results on PPL, Dist-1/2, and BERT-F1, while remaining slightly below ERGM on Acc. Overall, these results suggest that the proposed framework is particularly helpful for improving final response generation quality, while its benefit on target-emotion forecasting is somewhat more sensitive to the dataset. The lower PPL suggests that our model makes response gen-eration more stable and better constrained, since the response is produced from a structured reasoning process with grounded per-ception, emotion forecasting, pragmatic planning, and subsequent reflection, rather than from raw multimodal input alone. The much higher Dist-1/2 further indicates that the framework is less prone to generic and repetitive responses. A likely reason is that explicit strategy planning provides more diverse communicative intentions before surface realization, while the reflection module further helps correct underspecified outputs. As a result, the generated responses become more diverse without an obvious loss of semantic relevance, which is also consistent with the BERTScore results. 
+
+Human Evaluation. The human evaluation results show a sim-ilar overall trend. Our method obtains consistently favorable scores on empathy, coherence, and fluency across both datasets, suggest-ing that its improvements are not limited to automatic metrics. This tendency is broadly consistent with the framework design: multimodal evidence extraction, emotion forecasting, and strategy planning are explicitly separated in the pipeline, and stage-level mismatches can be further corrected through reflection before final response selection. 
+
+> †https://ollama.com
+
+## 4.3 Component and Design Analysis 
+
+We next analyze two questions: whether each agent in the proposed framework is necessary, and whether the cascaded reasoning-to-generation pipeline is preferable to an independent organization. The corresponding results are reported in Table 2. 
+
+Effect of Individual Agents (MPA, CAEF, PSP, and GRA). 
+
+We first perform agent-wise ablation to assess the role of each core agent in the proposed framework. Removing any core agent leads to degradation on at least part of the metrics, suggesting that all four agents make meaningful contributions. In particular, removing MPA or GRA causes the clearest drop in emotion accuracy, underscoring the role of grounded multimodal evidence and reflective correc-tion. Removing PSP also weakens diversity and semantic matching, indicating that explicit pragmatic planning helps bridge emotion understanding and final response generation. Although removing CAEF yields a lower PPL, it also reduces diversity and BERTScore, suggesting that lower perplexity alone does not necessarily imply better empathetic response quality. 
+
+Effect of Cascaded reasoning-to-generation Pipeline Orga-nization. We further compare the proposed cascaded reasoning-to-generation pipeline with an independent variant to examine the role of explicit inter-stage dependency. The cascaded design yields more favorable results on most metrics, especially emotion accuracy and BERT-F1. This suggests that the gain comes not only from introducing multiple agents, but also from organizing them as a progressive reasoning pipeline. By passing grounded evidence, forecasted emotion, and pragmatic strategy across stages, the frame-work provides more coherent guidance for downstream generation and thus leads to better final responses. 
+
+Effect of Maximum Iteration Count and Final Response Selection. We next analyze two design choices in the closed-loop reflection and refinement module: the maximum iteration count 
+
+𝑇 max and the final response selection mechanism. As shown in Table 3, among the tested settings, 𝑇 max = 2 provides the most balanced performance. Compared with 𝑇 max = 1, it brings clear gains in diversity and emotion accuracy, while further increasing 
+
+𝑇 max does not yield consistent improvement. This suggests that a small number of refinement iterations is sufficient to correct major stage-level mismatches, whereas additional iterations may introduce over-correction or semantic drift. A second observation from Table 3 is that effective refinement usually requires only a small number of iterations. As the maximum iteration count increases, the average selected iteration remains concentrated in the early rounds, suggesting that most useful cor-rections are made early and that additional iterations bring limited benefit. This is further supported by the variant without final re-sponse selection, where directly using the last-iteration output leads to lower emotion accuracy and slightly weaker semantic matching. 
+
+Effect of Retrieval Top-𝑘 . We further analyze the role of the retrieval library by varying the number of retrieved exemplars used during generation. The results indicate that retrieval is helpful when used sparingly. Small top-𝑘 settings yield modest gains in semantic matching, while increasing 𝑘 does not lead to consistent improvement in BERTScore. This suggests that a limited number of relevant exemplars can provide useful auxiliary support, whereas excessive retrieved context may introduce noise. A Multi-Agent Framework with Structured Reasoning and Reflective Refinement for Multimodal Empathetic Response Generation Conference acronym ’XX, June 03–05, 2018, Woodstock, NY 
+
+Table 1: Comparison with baselines on IEMOCAP and MELD under automatic and human evaluation metrics. The best and second-best results are marked with bold and underline, respectively. 
+
+## Datasets Methods Automatic Evaluation Human Evaluation PPL Dist-1 Dist-2 Acc. 𝑃 BERT 𝑅 BERT 𝐹 BERT Emp. Coh. Flu. IEMOCAP 
+
+## Non-LLM methods 
+
+## MoEL [14] 48.34 0.88 3.56 64.18 80.11 82.92 81.49 2.91 3.09 3.37 MIME [17] 44.81 0.92 3.67 65.52 79.93 82.17 81.03 2.88 3.14 3.34 EmpDG [11] 43.68 0.96 3.89 64.27 80.33 83.75 82.00 2.94 3.22 3.42 CEM [24] 45.03 1.09 4.15 64.83 80.96 83.83 82.37 3.02 3.27 3.65 SEEK [28] 44.35 1.03 3.94 66.40 80.71 83.34 82.01 3.04 3.24 3.58 EmpSOA [40] 38.17 1.16 4.72 67.35 81.25 84.40 82.79 3.06 3.28 3.61 CASE [41] 36.59 1.18 4.93 65.94 81.04 83.89 82.44 3.05 3.25 3.63 IAMM [33] 38.36 1.15 4.69 66.78 81.45 84.81 83.10 3.07 3.26 3.57 ERGM [30] 30.21 3.16 11.18 72.05 83.57 86.33 84.93 3.31 3.44 3.80 
+
+## LLM-based methods 
+
+## GPT-4-V (+ 5-shot) - 3.89 26.06 58.74 80.11 82.56 81.31 3.16 3.58 4.66 Llama 3.2-11B 7.62 3.95 22.08 60.52 82.31 82.06 82.18 3.31 3.44 4.59 
+
+## MultiAgent methods 
+
+## Ours 1.94 37.25 81.10 83.87 84.03 86.64 85.28 3.84 3.96 4.91 
+
+## MELD 
+
+## Non-LLM methods 
+
+## MoEL [14] 56.84 0.71 3.22 57.93 80.98 81.75 81.36 2.90 3.16 3.29 MIME [17] 48.50 0.64 2.88 56.90 79.50 80.29 79.89 2.98 3.22 3.36 EmpDG [11] 50.51 0.89 4.05 57.62 80.20 81.59 80.88 2.92 3.23 3.26 CEM [24] 54.00 0.97 4.36 57.55 78.77 80.40 79.57 2.95 3.20 3.30 SEEK [28] 54.72 1.01 4.54 58.95 81.33 82.97 82.14 2.97 3.27 3.33 EmpSOA [40] 53.33 1.02 4.60 59.69 82.71 84.68 83.68 2.96 3.27 3.38 CASE [41] 36.02 1.10 5.07 60.48 81.59 83.91 82.73 2.92 3.25 3.42 IAMM [33] 36.02 1.08 4.85 58.72 82.38 84.55 83.45 2.95 3.24 3.47 ERGM [30] 29.61 2.96 10.84 66.45 83.95 85.28 84.61 3.38 3.47 3.85 
+
+## LLM-based methods 
+
+## GPT-4-V (+ 5-shot) - 3.92 25.58 54.62 78.51 75.96 77.21 3.18 3.55 4.59 Llama 3.2-11B 7.36 3.86 21.03 55.18 81.39 80.64 81.01 3.30 3.46 4.56 
+
+## MultiAgent methods 
+
+## Ours 2.06 28.14 77.04 64.79 85.30 84.23 84.72 3.75 3.85 4.88 
+
+Table 2: Ablation study on core agents and reasoning-to-generation pipeline organization in the proposed framework.                                           
+
+> Ablation PPL ↓Dist-1/2 ↑Acc. ↑P. ↑R. ↑F. ↑
+> Agent-wise ablation
+> w/o A.1 (MPA) 2.02 34.65/80.23 77.42 83.90 86.43 85.12 w/o A.2 (CAEF) 1.43 32.72/76.09 –83.09 86.14 84.56 w/o A.3 (PSP) 1.40 34.73/75.36 80.65 83.16 86.00 84.52 w/o A.5 (GRA) 1.44 32.20/73.43 74.19 82.98 85.61 84.25
+> pipeline organization
+> Cascaded 1.94 37.25/81.10 83.87 84.03 86.64 85.28
+> Independent 1.90 36.78/79.03 74.19 83.28 85.55 84.37
+
+Framework Performance across Different Backbones. We further examine whether the proposed framework remains effective across backbone models of different capacities. Table 5 shows that the framework remains applicable to both larger and relatively smaller backbones, with smaller models still achieving reasonable performance. Meanwhile, the final results still vary with backbone 
+
+Table 3: Effect of maximum iteration count and final response selection in the closed-loop reflection and refinement mod-ule.                                                                        
+
+> Setting PPL ↓Dist-1/2 ↑Acc. ↑P. ↑R. ↑F. ↑Avg. 𝑡 ∗
+> 𝑇 max =11.38 29.92/74.39 74.19 82.92 86.28 84.53 0.26
+> 𝑇 max =21.94 37.25/81.10 83.87 84.03 86.64 85.28 1.16
+> 𝑇 max =31.29 30.79/73.05 74.19 82.82 85.50 84.10 1.35
+> 𝑇 max =41.43 32.58/74.03 83.87 82.65 85.77 84.15 1.26
+> 𝑇 max =51.38 34.00/77.09 74.19 82.71 85.62 84.17 1.42
+> 𝑇 max =61.47 34.41/72.91 77.42 83.10 85.60 84.29 1.23
+> Without final response selection
+> 𝑇 max =22.02 37.55/81.82 77.42 83.73 85.97 84.80 –
+
+capability, indicating that stronger models provide more reliable support for multimodal reasoning and response generation. Conference acronym ’XX, June 03–05, 2018, Woodstock, NY Wang et al. 
+
+Table 4: Effect of retrieval top-𝑘 in the auxiliary retrieval library.                                                
+
+> Setting PPL ↓Dist-1/2 ↑Acc. ↑P. ↑R. ↑F. ↑
+> w/o Retrieval 1.91 37.06/80.00 74.20 83.81 86.05 84.88 Top-𝑘 = 1 1.94 37.25/81.10 83.87 84.03 86.64 85.28 Top-𝑘 = 2 1.91 36.13/77.66 77.42 83.66 86.56 85.05 Top-𝑘 = 3 1.87 37.19/79.71 80.65 84.40 86.64 85.47 Top-𝑘 = 4 1.87 37.33/80.57 77.42 83.87 86.58 85.17
+> Top-𝑘 = 5 1.92 37.57/81.36 74.20 83.44 86.13 84.74
+
+Table 5: Framework performance across backbone models of different capacities.                                           
+
+> Backbone Model PPL ↓Dist-1/2 ↑Acc. ↑P. ↑R. ↑F. ↑
+> Qwen3.5:27B 1.94 37.25/81.10 83.87 84.03 86.64 85.28
+> Qwen3.5:9B 2.27 38.22/ 85.98 80.64 83.24 85.92 84.53 Qwen3-VL:32B 2.07 38.14/80.73 77.42 83.63 85.96 84.75 Qwen2.5-VL:7B 1.71 32.21/70.41 67.74 83.84 85.78 84.77 Gemma3:12B 1.21 40.19 /83.86 83.87 84.22 85.80 84.97 LLaVA:13B 1.70 18.46/56.99 74.19 80.38 84.32 82.27
+
+Figure 3: Tone and interpersonal stance distributions under different forecasted emotions. 
+
+## 4.4 Qualitative Analysis 
+
+We further analyze the internal behavior of the pragmatic strategy planner (PSP) and global reflection agent (GRA) to better understand how our model works beyond aggregate metrics. 
+
+PSP Strategy Patterns under Different Forecasted Emo-tions. We first examine whether PSP adapts response strategy to different forecasted emotions. As shown in Fig. 3, tone and interper-sonal stance exhibit clear emotion-conditioned patterns. Sadness and fear are more often associated with gentler tones, whereas anger and frustration tend to correspond to firmer or blunter strate-gies. Happiness and excitement show relatively more light, teasing, supportive, or playful patterns. Overall, these results suggest that PSP performs emotion-sensitive pragmatic adaptation rather than using a fixed response style. 
+
+GRA Error Attribution Patterns. We next examine whether GRA can globally identify the agent that should be re-run. As 
+
+Figure 4: Distribution of GRA error attributions across A1– A4 on IEMOCAP and MELD. 
+
+shown in Fig. 4, revisions are concentrated on A2 (CAEF) and A4 (SGRG), while A1 (MPA) is selected much less frequently. This suggests that GRA does not revise the pipeline uniformly, but is able to route feedback to the more responsible stage. It also indicates that emotion forecasting and response generation are relatively more challenging stages, and therefore are more likely to require regeneration. 
+
+Case Study. Fig. 5 shows a representative example of closed-loop reflection in our framework. In this dialogue, the speaker’s intense expression makes the target emotion easy to overestimate, and Agent 2 (CAEF) initially predicts angry . The critic then identifies this prediction as overstated and routes the revision back to Agent 2, where the emotion is corrected to frustrated . This illustrates the critic’s ability to locate the source of the error and enable targeted correction. The example also shows that emotion prediction affects downstream generation. With angry , the response uses “You’re just,” which sounds more direct and assertive; after the emotion is revised to frustrated , the final response instead adopts “Maybe,” yielding a softer and better calibrated formulation. This highlights the role of the structured empathetic reasoning-to-generation pipeline in shaping the final response through emotion-aware generation. 
+
+## 5 Conclusion 
+
+In this paper, we propose a multi-agent framework for MERG, which leverages a closed-loop iterative optimization network to overcome the inherent limitations of conventional one-pass gener-ation paradigms, such as inaccurate affective perception and biased response generation. Such closed-loop paradigm not only enhances the precision and interpretability of emotion perception but also facilitates the identification of affective deviations and the refine-ment of responses through a reflective loop, thereby significantly boosting the system’s empathetic capacity. Specifically, we intro-duce a structured reasoning-to-generation pipeline that decouples the complex task into several cascaded agents, which not only refines the hierarchical emotional perception but also enables fine-grained error localization, allowing discrepancies in the generation process to be precisely traced back to specific functional stages. Fur-thermore, we introduce a global reflection and refinement module, centered around a global reflection agent that audits each individual agent to pinpoint error origins and guides iterative response cor-rections. Overall, such a closed-loop framework enables our model to gradually improve the accuracy of emotion perception and elim-inate emotion biases during the iteration process. Experiments on several benchmarks, e.g., IEMOCAP and MELD, demonstrate that A Multi-Agent Framework with Structured Reasoning and Reflective Refinement for Multimodal Empathetic Response Generation Conference acronym ’XX, June 03–05, 2018, Woodstock, NY 
+
+Figure 5: Case study of closed-loop reflection. The critic iden-tifies that the initial emotion prediction ( angry ) is overstated, reroutes refinement to Agent 2, and corrects it to frustrated ,which further leads to a more appropriate response phrasing. 
+
+our model has superior empathic response generation capabilities compared to state-of-the-art methods. 
+
+## References 
+
+[1] Carlos Busso, Murtaza Bulut, Chi-Chun Lee, Abe Kazemzadeh, Emily Mower, Sungbok Kim, Jeannette N. Chang, Sungbok Lee, and Shrikanth S. Narayanan. 2008. IEMOCAP: Interactive emotional dyadic motion capture database. Language Resources and Evaluation 42, 4 (2008), 335–359. doi:10.1007/s10579-008-9076-6 [2] Feiyu Chen, Jie Shao, Shuyuan Zhu, and Heng Tao Shen. 2023. Multivari-ate, Multi-Frequency and Multimodal: Rethinking Graph Neural Networks for Emotion Recognition in Conversation. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) . 10761–10770. https://openaccess.thecvf.com/content/CVPR2023/html/Chen_Multivariate_ Multi-Frequency_and_Multimodal_Rethinking_Graph_Neural_Networks_for_ Emotion_CVPR_2023_paper.html [3] Yi Cheng, Wenge Liu, Wenjie Li, Jiashuo Wang, Ruihui Zhao, Bang Liu, Xiaodan Liang, and Yefeng Zheng. 2022. Improving Multi-turn Emotional Support Dia-logue Generation with Lookahead Strategy Planning. In Proceedings of the 2022 Conference on Empirical Methods in Natural Language Processing , Yoav Goldberg, Zornitsa Kozareva, and Yue Zhang (Eds.). Association for Computational Linguis-tics, Abu Dhabi, United Arab Emirates, 3014–3026. doi:10.18653/v1/2022.emnlp-main.195 [4] Yang Deng, Wenxuan Zhang, Yifei Yuan, and Wai Lam. 2023. Knowledge-enhanced Mixed-initiative Dialogue System for Emotional Support Conversations. In Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) . Association for Computational Linguistics, Toronto, Canada. doi:10.18653/v1/2023.acl-long.225 [5] Hao Fei et al . 2024. EmpathyEar: An Open-source Avatar Multimodal Empa-thetic Chatbot. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations .[6] Devamanyu Hazarika, Roger Zimmermann, and Soujanya Poria. 2020. Misa: Modality-invariant and-specific representations for multimodal sentiment anal-ysis. In Proceedings of the 28th ACM International Conference on Multimedia .1122–1131. [7] Sirui Hong, Mingchen Zhuge, Jonathan Chen, Xiawu Zheng, Yuheng Cheng, Jinlin Wang, Ceyao Zhang, Zili Wang, Steven Ka Shing Yau, Zijuan Lin, Liyang Zhou, Chenyu Ran, Lingfeng Xiao, Chenglin Wu, and Jürgen Schmidhuber. 2024. MetaGPT: Meta Programming for A Multi-Agent Collaborative Frame-work. In The Twelfth International Conference on Learning Representations . https: //openreview.net/forum?id=VtmBAGCN7o [8] Jingwen Hu, Yuchen Liu, Jinming Zhao, and Qin Jin. 2021. MMGCN: Multi-modal Fusion via Deep Graph Convolution Network for Emotion Recognition in Conversation. In Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers) . Association for Computational Linguistics, Online, 5666–5675. doi:10.18653/v1/2021.acl-long.440 [9] Jie Huang, Xinyun Chen, Swaroop Mishra, Huaixiu Steven Zheng, Jainel Morjaria, Nixon Lau, Seung-Hee Lee, Dixit Bhatia, Ahmed Hassan Awadallah, Karthik Narasimhan, and Denny Zhou. 2024. Large Language Models Cannot Self-Correct Reasoning Yet. In The Twelfth International Conference on Learning Representations (ICLR) . https://openreview.net/forum?id=IkmPE9X7vM [10] Jiwei Li, Michel Galley, Chris Brockett, Jianfeng Gao, and Bill Dolan. 2016. A Diversity-Promoting Objective Function for Neural Conversation Models. In 
+
+Proceedings of the 2016 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies . Association for Computational Linguistics, San Diego, California, 110–119. doi:10.18653/v1/N16-1014 [11] Qintong Li, Hongshen Chen, Zhaochun Ren, Pengjie Ren, Zhaopeng Tu, and Zhumin Chen. 2020. EmpDG: Multi-resolution Interactive Empathetic Dialogue Generation. In Proceedings of the 28th International Conference on Computational Linguistics . International Committee on Computational Linguistics, Barcelona, Spain (Online), 4454–4466. https://aclanthology.org/2020.coling-main.394/ [12] Qintong Li, Piji Li, Zhaochun Ren, Pengjie Ren, and Zhumin Chen. 2022. Knowl-edge Bridging for Empathetic Dialogue Generation. In Proceedings of the AAAI Conference on Artificial Intelligence . https://qtli.github.io/publication/kemp/ [13] Yifan Lin et al . 2025. E3RG: Building Explicit Emotion-driven Empathetic Re-sponse Generation System with Multimodal Large Language Model. In Proceed-ings of the 33rd ACM International Conference on Multimedia .[14] Zhaojiang Lin, Andrea Madotto, Jamin Shin, Peng Xu, and Pascale Fung. 2019. MoEL: Mixture of Empathetic Listeners. In Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP) . Association for Computational Linguistics, Hong Kong, China, 121–132. doi:10.18653/v1/D19-1012 [15] Siyang Liu, Chujie Zheng, Orianna Demasi, Sahand Sabour, Yu Li, Zhou Yu, Yong Jiang, and Minlie Huang. 2021. Towards Emotional Support Dialog Systems. In 
+
+Proceedings of the 59th Annual Meeting of the Association for Computational Lin-guistics and the 11th International Joint Conference on Natural Language Processing (Volume 1: Long Papers) . Association for Computational Linguistics, Online, 3469– 3483. doi:10.18653/v1/2021.acl-long.269 [16] Aman Madaan, Niket Tandon, Prakhar Gupta, Skyler Hallinan, Luyu Gao, Sarah Wiegreffe, Uri Alon, Nouha Dziri, Shrimai Prabhumoye, Yiming Yang, Shashank Gupta, Bodhisattwa Prasad Majumder, Katherine Hermann, Sean Welleck, Amir Yazdanbakhsh, and Peter Clark. 2023. Self-Refine: Iterative Refinement with Self-Feedback. In Advances in Neural Information Processing Systems , Vol. 36. https://openreview.net/forum?id=S37hOerQLB [17] Navonil Majumder, Pengfei Hong, Shanshan Peng, Jiankun Lu, Deepanway Ghosal, Alexander Gelbukh, Rada Mihalcea, and Soujanya Poria. 2020. MIME: MIMicking Emotions for Empathetic Response Generation. In Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP) .Association for Computational Linguistics, Online, 8968–8979. doi:10.18653/v1/ 2020.emnlp-main.721 [18] Navonil Majumder, Soujanya Poria, Devamanyu Hazarika, Rada Mihalcea, Alexander F. Gelbukh, and Erik Cambria. 2019. DialogueRNN: An Attentive RNN for Emotion Detection in Conversations. In Proceedings of the AAAI Confer-ence on Artificial Intelligence , Vol. 33. 6818–6825. doi:10.1609/aaai.v33i01.33016818 [19] Yuzhao Mao, Guang Liu, Xiaojie Wang, Weiguo Gao, and Xuan Li. 2021. Dia-logueTRM: Exploring Multi-Modal Emotional Dynamics in a Conversation. In 
+
+Findings of the Association for Computational Linguistics: EMNLP 2021 . Associa-tion for Computational Linguistics, Punta Cana, Dominican Republic, 2694–2704. doi:10.18653/v1/2021.findings-emnlp.229 [20] Ollama. 2026. Ollama Documentation. https://docs.ollama.com. Accessed: 2026-03-28. [21] Soujanya Poria, Devamanyu Hazarika, Navonil Majumder, Gautam Naik, Erik Cambria, and Rada Mihalcea. 2019. MELD: A Multimodal Multi-Party Dataset for Emotion Recognition in Conversations. In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics . Association for Computational Linguistics, Florence, Italy, 527–536. doi:10.18653/v1/P19-1050 [22] Qwen Team. 2026. Qwen/Qwen3.5-27B. https://huggingface.co/Qwen/Qwen3.5-27B. Official model card. Accessed: 2026-03-28. Conference acronym ’XX, June 03–05, 2018, Woodstock, NY Wang et al. 
+
+[23] Hannah Rashkin, Eric Michael Smith, Margaret Li, and Y-Lan Boureau. 2019. Towards Empathetic Open-domain Conversation Models: A New Benchmark and Dataset. In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics . Association for Computational Linguistics, Florence, Italy, 5370–5381. https://aclanthology.org/P19-1534/ [24] Sahand Sabour, Chujie Zheng, and Minlie Huang. 2022. CEM: Commonsense-Aware Empathetic Response Generation. Proceedings of the AAAI Conference on Artificial Intelligence 36, 10 (2022), 11229–11237. doi:10.1609/aaai.v36i10.21373 [25] Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik R. Narasimhan, and Shunyu Yao. 2023. Reflexion: Language Agents with Verbal Reinforcement Learning. In Advances in Neural Information Processing Systems , Vol. 36. https: //openreview.net/forum?id=vAElhFcKW6 [26] Geng Tu, Feng Xiong, Bin Liang, Hui Wang, Xi Zeng, and Ruifeng Xu. 2024. Multimodal Emotion Recognition Calibration in Conversations. In Proceedings of the 32nd ACM International Conference on Multimedia . Association for Computing Machinery, Melbourne, VIC, Australia, 9621–9630. doi:10.1145/3664647.3681515 [27] Chenwei Wan, Matthieu Labeau, and Chloé Clavel. 2025. EmoDynamiX: Emo-tional Support Dialogue Strategy Prediction by Modelling MiXed Emotions and Discourse Dynamics. In Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers) . Association for Computational Linguistics, Albuquerque, New Mexico, 1678–1695. doi:10.18653/v1/2025.naacl-long.81 [28] Lanrui Wang, Jiangnan Li, Zheng Lin, Fandong Meng, Chenxu Yang, Weiping Wang, and Jie Zhou. 2022. Empathetic Dialogue Generation via Sensitive Emotion Recognition and Sensible Knowledge Selection. In Findings of the Association for Computational Linguistics: EMNLP 2022 . Association for Computational Linguis-tics, Abu Dhabi, United Arab Emirates, 4634–4645. doi:10.18653/v1/2022.findings-emnlp.340 [29] Jiaqiang Wu, Xuandong Huang, Zhouan Zhu, and Shangfei Wang. 2025. From Traits to Empathy: Personality-Aware Multimodal Empathetic Response Gen-eration. In Proceedings of the 31st International Conference on Computational Linguistics . Association for Computational Linguistics, Abu Dhabi, UAE, 8925– 8938. https://aclanthology.org/2025.coling-main.598/ [30] Jiaqiang Wu, Shangfei Wang, Yanan Chang, and Zhouan Zhu. 2025. Empathetic Response Generation Through Multi-modality. IEEE Transactions on Affective Computing (2025). doi:10.1109/TAFFC.2025.3599869 Early access. [31] Qingyun Wu, Gagan Bansal, Jieyu Zhang, Yiran Wu, Beibin Li, Erkang Zhu, Li Jiang, Xiaoyun Zhang, Shaokun Zhang, Jiale Liu, Ahmed Hassan Awadallah, Ryen W. White, Doug Burger, and Chi Wang. 2024. AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation. In 
+
+First Conference on Language Modeling . https://www.microsoft.com/en-us/research/publication/autogen-enabling-next-gen-llm-applications-via-multi-agent-conversation-framework/ [32] Yangyang Xu, Jinpeng Hu, Zhuoer Zhao, Zhangling Duan, Xiao Sun, and Xun Yang. 2025. MultiAgentESC: A LLM-based Multi-Agent Collaboration Framework for Emotional Support Conversation. In Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing . Association for Computational Linguistics, Suzhou, China, 4665–4681. doi:10.18653/v1/2025.emnlp-main.232 [33] Zhou Yang, Zhaochun Ren, Wang Yufeng, Haizhou Sun, Chao Chen, Xiaofei Zhu, and Xiangwen Liao. 2024. An Iterative Associative Memory Model for Empathetic Response Generation. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) . Association for Computational Linguistics, Bangkok, Thailand, 3081–3092. doi:10.18653/v1/ 2024.acl-long.170 [34] Dong Zhang, Weisheng Zhang, Shoushan Li, Qiaoming Zhu, and Guodong Zhou. 2020. Modeling both Intra- and Inter-modal Influence for Real-Time Emotion Detection in Conversations. In Proceedings of the 28th ACM Interna-tional Conference on Multimedia . Association for Computing Machinery, 503–511. doi:10.1145/3394171.3413949 [35] Han Zhang et al . 2025. The ACM Multimedia 2025 Grand Challenge of Avatar-based Multimodal Empathetic Response Generation. In Proceedings of the 33rd ACM International Conference on Multimedia .[36] Han Zhang, Zixiang Meng, Meng Luo, Hong Han, Lizi Liao, Erik Cambria, and Hao Fei. 2025. Towards Multimodal Empathetic Response Generation: A Rich Text-Speech-Vision Avatar-based Benchmark. arXiv preprint arXiv:2502.04976 
+
+(2025). https://arxiv.org/abs/2502.04976 [37] Han Zhang, Zixiang Meng, Meng Luo, Hong Han, Lizi Liao, Erik Cambria, and Hao Fei. 2025. Towards Multimodal Empathetic Response Generation: A Rich Text-Speech-Vision Avatar-based Benchmark. In Proceedings of the ACM Web Conference 2025 (WWW ’25) . 2872–2881. doi:10.1145/3696410.3714739 [38] Tianyi Zhang, Varsha Kishore, Felix Wu, Kilian Q. Weinberger, and Yoav Artzi. 2020. BERTScore: Evaluating Text Generation with BERT. In International Confer-ence on Learning Representations . https://openreview.net/forum?id=SkeHuCVFDr [39] Yiqun Zhang, Fanheng Kong, Peidong Wang, Shuang Sun, Lingshuai Wang, Shi Feng, Daling Wang, Yifei Zhang, and Kaisong Song. 2024. STICKERCONV: Generating Multimodal Empathetic Responses from Scratch. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) . Association for Computational Linguistics, Bangkok, Thailand, 7707–7733. doi:10.18653/v1/2024.acl-long.417 [40] Weixiang Zhao, Yanyan Zhao, Xin Lu, and Bing Qin. 2023. Don’t Lose Your-self! Empathetic Response Generation via Explicit Self-Other Awareness. In 
+
+Findings of the Association for Computational Linguistics: ACL 2023 . Associ-ation for Computational Linguistics, Toronto, Canada, 13331–13344. https: //aclanthology.org/2023.findings-acl.843/ [41] Jinfeng Zhou, Chujie Zheng, Bo Wang, Zheng Zhang, and Minlie Huang. 2023. CASE: Aligning Coarse-to-Fine Cognition and Affection for Empathetic Response Generation. In Proceedings of the 61st Annual Meeting of the Association for Com-putational Linguistics (Volume 1: Long Papers) . Association for Computational Linguistics, Toronto, Canada, 8223–8237. doi:10.18653/v1/2023.acl-long.457
