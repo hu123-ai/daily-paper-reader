@@ -1,0 +1,1314 @@
+Title: GeoMind: An Agentic Workflow for Lithology Classification with Reasoned Tool Invocation
+
+URL Source: https://arxiv.org/pdf/2604.21501v1
+
+Published Time: Fri, 24 Apr 2026 00:48:25 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+# GeoMind: An Agentic Workflow for Lithology Classification with Reasoned Tool Invocation 
+
+## Yitong Zhou 1, Mingyue Cheng 1, Jiahao Wang 1, Qingyang Mao 1, Qi Liu 1
+
+1State Key Laboratory of Cognitive Intelligence, University of Science and Technology of China, Hefei, China {yitong.zhou,jiahaowang,maoqy0503}@mail.ustc.edu.cn {mycheng,qiliuql}@ustc.edu.cn 
+
+## Abstract 
+
+Lithology classification in well logs is a fundamental geoscience data mining task that aims to infer rock types from multi dimen-sional geophysical sequences. Despite recent progress, existing ap-proaches typically formulate the problem as a static, single-step dis-criminative mapping. This static paradigm limits evidence-based di-agnostic reasoning against geological standards, often yielding pre-dictions that are detached from geological reality due to a lack of do-main priors. In this work, we propose GeoMind, a tool-augmented agentic framework that models lithology classification as a sequen-tial reasoning process. GeoMind organizes its toolkit into percep-tion, reasoning, and analysis modules, which respectively translate raw logs into semantic trends, infer lithology hypotheses from multi-source evidence, and verify predictions against stratigraphic constraints. A global planner adaptively coordinates these modules based on input characteristics, enabling geologically plausible and evidence-grounded decisions. To guarantee the logical consistency of GeoMind, we introduce a fine-grained process supervision strat-egy. Unlike standard methods that focus solely on final outcomes, our approach optimizes intermediate reasoning steps, ensuring the validity of decision trajectories and alignment to geological con-straints. Experiments on four benchmark well-log datasets demon-strate that GeoMind consistently outperforms strong baselines in classification performance while providing transparent and trace-able decision-making processes 1.
+
+## Keywords 
+
+Lithology classification, Agentic workflow, Large language models 
+
+ACM Reference Format: 
+
+Yitong Zhou 1, Mingyue Cheng 1, Jiahao Wang 1, Qingyang Mao 1, Qi Liu 1.2026. GeoMind: An Agentic Workflow for Lithology Classification with Reasoned Tool Invocation. In . ACM, New York, NY, USA, 12 pages. https: //doi.org/10.1145/nnnnnnn.nnnnnnn 
+
+## 1 Introduction 
+
+Lithology classification from well-log data is a core task in subsur-face characterization, supporting critical downstream applications such as reservoir evaluation, mineral exploration, and geological 
+
+> 1
+
+The code is at https://github.com/lqzxt/GeoMind. Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and the full citation on the first page. Copyrights for components of this work owned by others than the author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or republish, to post on servers or to redistribute to lists, requires prior specific permission and/or a fee. Request permissions from permissions@acm.org. 
+
+Conference’17, Washington, DC, USA 
+
+© 2026 Copyright held by the owner/author(s). Publication rights licensed to ACM. ACM ISBN 978-x-xxxx-xxxx-x/YYYY/MM https://doi.org/10.1145/nnnnnnn.nnnnnnn Well Log Data   
+
+> Noise
+> Ambiguous
+> Boundaries
+> Depth
+> GR
+> （Gamma Ray ）
+> RES
+> （Resistivity ）
+> DTS
+> (Shear Slowness)
+> I. The Challenge: Noisy & Stratigraphic Conflicts
+> (1) Classical ML Methods
+> (2) LLM -Based Methods
+> Pattern
+> matching
+> Semantic
+> Reasoning
+> Overfits Local Noise
+> Overlooks Stratigraphic Priors
+> Insensitive to
+> Numerical Values
+> II. GeoMind
+> Traceable Reasoning
+> Path & Geological
+> Rationale
+> Well Log
+> Data
+> Well Log
+> Data
+> Well Log
+> Data
+
+Planner  Executor  Reflector   
+
+> (Global Strategy) (Local Analysis) (Consistency Check)
+> Trend Analysis
+> Quality
+> Reward
+> Intermediate
+> Decision
+> Correctness Reward
+> Disagreement
+> Arbitration
+> Reward
+> Process Supervision Rewards
+
+Figure 1: Motivation of GeoMind. GeoMind addresses noisy, stratigraphically conflicting well logs through a process-supervised agentic workflow with process rewards. 
+
+modeling [ 7 ]. Well logs provide dense, multivariate measurements along depth and reflect complex interactions among lithology, petro-physical properties, and measurement conditions [ 10 , 21 ]. From a data mining perspective, this task represents a complex sequence labeling problem where multi-dimensional, noisy measurements from well logs must be mapped to discrete geological classes along a depth axis. Mapping these numerical signals to lithological labels is challenging due to ambiguous formation boundaries and the vari-able responsiveness of logging tools to geological changes [ 11 , 12 ]. Significant advancements in this field have been driven by nu-merical data-driven models [ 2, 26 , 39 ] and the recent language-model-based methods [ 9, 26 , 44 ]. Traditional machine learning and deep time-series models learn discriminative mappings from raw geophysical measurements to lithology labels, often performing well in controlled settings. However, they typically rely mainly on statistical associations. Consequently, they can be fragile under distribution shifts or near ambiguous boundaries, and they struggle to model the consistency constraints imposed by stratigraphic se-quences [ 28 ]. Conversely, large language models (LLMs) are actively being explored for geological reasoning [ 6 , 25 , 29 , 36 ], leveraging knowledge implicitly encoded in their pretrained parameters. While LLM-based methods improve semantic grounding, they often face difficulties with numerical precision and noisy multichannel sig-nals [5, 12]. These complementary failure modes are illustrated in Figure 1: numerical models tend to overfit local noise and violate  
+
+> arXiv:2604.21501v1 [cs.AI] 23 Apr 2026 Conference’17, July 2017, Washington, DC, USA Yitong Zhou 1, Mingyue Cheng 1, Jiahao Wang 1, Qingyang Mao 1, Qi Liu 1
+
+stratigraphic consistency, whereas LLM-based approaches struggle with fine-grained numerical patterns. Despite promising results, a fundamental limitation persists: most existing approaches treat lithology classification as a static, single-step mapping. In this conventional view, models infer la-bels in a single forward pass, effectively isolating the process from domain-specific logical constraints. Consequently, these systems lack the agency to leverage external diagnostic tools to verify their predictions. Furthermore, they are incapable of addressing inter-mediate reasoning errors; unlike human experts who iteratively gather evidence, static models lack the mechanism to reference neighboring context or perform self-correction based on geological plausibility [ 23 , 24 , 36 ]. This structural deficiency often results in unstable predictions and opaque decision-making processes. Motivated by this, we propose GeoMind, an agentic framework that reframes lithology classification as a sequential multi-step rea-soning. GeoMind is built upon a hierarchical toolkit organized into perception, reasoning, and analysis modules, designed to bridge the gap between numerical well-log signals and geological logic. Specifically, the workflow begins with perception components that translate raw series data into semantic trend narratives. These nar-ratives are synthesized by reasoning engines to formulate initial hypotheses, which are audited by analytical validators against strati-graphic constraints to ensure geological plausibility. This entire process is coordinated by a global planner that adapts execution paths based on input signal characteristics. To align this complex be-havior with expert knowledge, we introduce a process-supervised training strategy employing module-aware group relative policy optimization. By optimizing intermediate reasoning steps alongside final predictions, GeoMind achieves lithology classifications that are not only accurate but also supported by transparent, traceable decision paths. Our contributions are as follows: 
+
+• We propose GeoMind, an autonomous-agent paradigm for lithology classification that emulates an expert-like reason-ing paradigm via a plan-execute-reflect process, enabling reasoning and revision under a stratigraphic context. 
+
+• We propose a process-supervised training framework for Ge-oMind, combining domain-adaptive supervised fine-tuning with MA-GRPO and module-level process rewards to shape the agent’s intermediate reasoning, providing step-level guid-ance beyond outcome-only feedback. 
+
+• Experiments on four public benchmarks show that GeoMind improves both generalization across geological settings and classification performance while producing explicit traceable reasoning paths with geological rationales. 
+
+## 2 Related Work 2.1 Lithology Classification 
+
+Lithology classification from well logs is a core sequence-labeling task in subsurface characterization. It provides key inputs for reser-voir evaluation, stratigraphic interpretation, and geological mod-eling [ 7, 10 ]. As illustrated in Figure 2, well-log data show strong depth-wise sequential structure and lithology-related semantics, which makes it difficult to model long-range stratigraphic depen-dencies and to disambiguate formation boundaries. Early work 50 100 150 200         
+
+> GR
+> 2610
+> 2615
+> 2620
+> 2625
+> 2630
+> 2635
+> 2640
+> 2645
+> 2650
+> Depth (ft)
+> 0.4 0.6 0.8
+> ILD_log10
+> 010
+> DeltaPHI
+> 10 20 30
+> PHIND
+> 345
+> PE Lithology
+> Nonmarine
+> coarse siltstone
+> Nonmarine
+> fine siltstone
+> Marine siltstone
+> and shale
+> Wackestone
+> (limestone)
+> Packstone-grainstone
+> (limestone)
+
+Figure 2: Well-log curves from the facies dataset across depth for a representative interval. The data contain strong depth-wise sequential structure and lithology-grounded semantics. 
+
+typically relied on petrophysical heuristics and rule-based log anal-ysis [ 1 , 10 ]. Later studies adopted supervised learning over mul-tivariate logging measurements, using classical models such as GBDT [ 20 ] and XGBoost [ 3 ]. More recent work has explored deep sequence and time-series architectures, including CNN/RNN vari-ants [ 39 ], attention-based encoders [ 41 ], to capture local structure and depth-wise dependencies. To reduce geologically implausi-ble rapid switches, some methods incorporate stratigraphic priors through smoothing or explicit transition constraints, for example, Markov-style checks [ 28 , 33 ]. However, these approaches often emphasize local numerical mapping or fixed smoothing, omitting explicit global stratigraphic consistency or a systematic integration of multi-source evidence. These gaps reduce interpretability and can hurt robustness in complex geological settings. 
+
+## 2.2 Time Series Classification 
+
+As the well logs are a series of sensor data indicating chemical and physical characteristics of geology, the lithology classification task shares significant similarities with general time series classification. Early deep learning approaches [ 15 ] adapted standard neural archi-tectures to sequential data, learning discriminative representations from local windows. To better capture temporal dependencies and multi-scale patterns, subsequent works introduced hybrid archi-tectures such as LSTM-FCN [ 18 ] and InceptionTime [ 16 ]. More recently, the field has witnessed a paradigm shift towards foun-dation models and Large Language Models. Approaches such as MOMENT [ 14 ] leverage pre-trained transformer backbones for uni-versal time-series representations, while methods like GPT4TS [ 44 ]and TableTime [ 40 ] attempt to reprogram or fine-tune LLMs to process numerical sequences directly. Despite their success in gen-eral domains, these purely data-driven or implicitly knowledgeable models often struggle to handle the specific "salt-and-pepper" noise inherent in well logs or to explicitly enforce stratigraphic consis-tency, highlighting the need for a framework that can integrate rigorous numerical processing with verifiable geological reasoning. GeoMind: An Agentic Workflow for Lithology Classification with Reasoned Tool Invocation Conference’17, July 2017, Washington, DC, USA 
+
+## 2.3 Reinforcement Learning for LLM Agents 
+
+Reinforcement learning has become a foundational paradigm for aligning large language models with increasingly complex con-straints and reasoning tasks [ 30 , 35 ]. While early approaches pre-dominantly utilized PPO [ 32 ], they often suffer from training insta-bility and high computational overhead, particularly when facing the credit assignment problem inherent in sparse, outcome-based reward settings [ 23 ]. To address this, recent advancements have shifted towards reference-free or group-relative optimization strate-gies, such as DPO [ 31 ] and GRPO [ 34 ], which estimate baselines via group statistics to stabilize learning without a separate value network. However, when seamlessly transplanting these methods to agentic workflows [ 13 , 17 ], current practices still largely rely on coarse-grained, whole-trajectory evaluations. This outcome-centric supervision inadvertently ignores the dense process signals within intermediate steps, failing to explicitly distinguish the specific con-tributions of planning, execution, and reflection modules. 
+
+## 3 The Proposed GeoMind 3.1 Problem Definition 
+
+Let D = {( 𝑋 (𝑖 ) , 𝑦 (𝑖 ) )} 𝑛 𝑖 =1 denote a lithology classification dataset, where 𝑋 (𝑖 ) ∈ R𝑇 𝑖 ×𝑑 is a multivariate log sequence with 𝑇 𝑖 depth samples and 𝑑 logging channels, and 𝑦 (𝑖 ) = [𝑦 (𝑖 ) 
+
+> 1
+
+, . . . , 𝑦 (𝑖 ) 
+
+> 𝑇 𝑖
+
+] is the corresponding lithology label sequence with 𝑦 (𝑖 ) 
+
+> 𝑡
+
+∈ C for a fixed set of classes C. The goal is to learn a depth-aligned sequence labeling function 𝑓 𝜃 : R𝑇 𝑖 ×𝑑 → C 𝑇 𝑖 that maps each well-log sequence to a lithology prediction at every depth sample, i.e., ˆ𝑦 (𝑖 ) = 𝑓 𝜃 (𝑋 (𝑖 ) ) with 
+
+ˆ𝑦 (𝑖 ) 
+
+> 𝑡
+
+∈ C . In practice, 𝑓 𝜃 may be trained and evaluated using local windows 𝑋 (𝑖 )  
+
+> 𝑡 :𝑡 +𝑘 −1
+
+∈ R𝑘 ×𝑑 (with 𝑘 ≪ 𝑇 𝑖 ) to handle long sequences, while ensuring that the final predictions remain consistent and aligned over the full depth interval. 
+
+## 3.2 Overview of the GeoMind Framework 
+
+GeoMind is a lithology classification framework that integrates specialized numerical predictors with large language model-based reasoning through a structured, process-supervised workflow. As illustrated in Figure 3, GeoMind organizes lithology interpretation as a multi-step decision process coordinated by a Planner-Executor-Reflector architecture. The planner decomposes the classification task and orchestrates tool usage based on logging data characteris-tics, the executor performs perception, reasoning, and validation through diverse modular analytical tools, and the reflector resolves conflicts and refines predictions under geological constraints. To enhance domain reliability, the underlying language model is first adapted via supervised fine-tuning on lithology well-log–specific instruction data, and the entire workflow is further optimized us-ing multi-objective process supervision that provides fine-grained rewards at key intermediate reasoning stages. 
+
+## 3.3 Tool Preparation 
+
+To bridge the gap between raw geophysical signals and geological reasoning, we develop a modular toolkit for evidence-based model-ing. It comprises three hierarchical layers: perception tools convert numerical sequences into qualitative trends, reasoning engines in-tegrate multi-source evidence to form lithological hypotheses, and 
+
+Table 1: Tools used by the executor and their roles in gen-erating intermediate evidence, candidate predictions, and geological consistency signals. Tool Descriptions                                     
+
+> Case Retriever Retrieves 𝐾 most similar historical windows and their labels as neighborhood evidence. It outputs neighbor tuples
+> N𝑡 ={( 𝑋 (𝑗 ), 𝑦 (𝑗 ), 𝑠 𝑡,𝑗 )} 𝐾 𝑗 =1, where 𝑠 𝑡,𝑗 is a normalized similarity score computed from multiple distance metrics. Trend Pattern Extractor Converts multivariate log curves into a structured natural-language trend description 𝑧 𝑡 , summarizing depth-aware cues such as stable segments, turning points, and magnitude changes to bridge numerical patterns and semantic reasoning. Neighbor Vote Aggregator Transforms retrieved neighbors into class confidences 𝑝 nbr
+> 𝑡 via similarity-weighted voting under a local smoothness assumption, providing an empirical prior over lithology classes. Neural Probability Interpreter Interprets the neural classifier output 𝑝 nn
+> 𝑡 into concise, human-readable statements (optionally thresholded) and produces an explanation 𝑒 𝑡 to improve transparency and calibration. Semantic Reasoning Engine Fuses the well-log table, trend narrative 𝑧 𝑡 , and neighbor evidence
+> (N 𝑡 , 𝑝 nbr
+> 𝑡 )to generate a stepwise reasoning trace ℎ𝑡 and an LLM candidate prediction ˜𝑦 llm
+> 𝑡 (or a distribution over classes). Consensus Conflict Scanner Compares three predictors (neighbor vote, neural net, and semantic reasoning) to quantify agreement and produce a conflict report 𝑞 𝑡 , highlighting uncertainty regions and disagreement patterns that often occur near boundaries or transitions. Stratigraphic Sequence Validator Validates plausibility of predicted lithology sequences using a Markov transition model learned from training labels, and outputs a validation signal 𝑣 that flags low-probability jumps.
+
+analytical validators audit these hypotheses against stratigraphic constraints to ensure geological consistency. This decoupled archi-tecture enables GeoMind to perform iterative, verifiable decision-making that mirrors human expert analysis. Table 1 and Appendix A provide further details on the toolset and its implementation. 
+
+## 3.4 Agentic Workflow Design 
+
+We formalize the lithology identification process as an agentic workflow consisting of three distinct phases. 
+
+3.4.1 Planner. The planner leverages a LLM to perform task decom-position and tool orchestration. Given a well-log segment, the plan-ner analyzes data characteristics such as signal variability and depth continuity, and dynamically generates an execution plan specifying which tools to invoke. Formally, given a well-log window 𝑋 𝑡 :𝑡 +𝑘 −1
+
+and optional context, the planner produces an execution plan as an ordered tool-call sequence: P𝑡 = (𝑎 𝑡, 1, 𝑎 𝑡, 2, . . . , 𝑎 𝑡,𝐿 𝑡 ), 𝑎 𝑡,ℓ ∈A (T ) , where A (T ) is the action space induced by tool invoca-tions (tool choice and arguments). This design allows GeoMind to adapt its analysis strategy across different wells and stratigraphic settings, rather than relying on a fixed inference pipeline. 
+
+3.4.2 Executor. Guided by P𝑡 , the executor executes a tool-augmented analysis to produce intermediate evidence and candidate lithology predictions for the current well-log window. Conceptually, this stage forms a three-layer pipeline: perception tools transform raw multivariate logs into retrieval- and text-based representations, rea-soning tools fuse multi-source evidence to yield candidate labels and calibrated confidence signals, and analysis tools diagnose inconsis-tencies and enforce geological plausibility through cross-predictor conflict checks and stratigraphic transition validation. Conference’17, July 2017, Washington, DC, USA Yitong Zhou 1, Mingyue Cheng 1, Jiahao Wang 1, Qingyang Mao 1, Qi Liu 1Integrating all 
+
+> evidence… Final
+> Classification with
+> Justification
+
+1. PLANNER 
+
+3. REFLECTOR 
+
+LLM as Reflector 
+
+> Synthesis
+> &
+> Validation
+
+LLM as Planner     
+
+> What tools do I need
+> for this data?
+> Perception : Extract
+> Trends & Retrieve
+> Cases…
+> Reasoning : LLM
+> Inference & Voting…
+> Analysis : Scan
+> Conflicts…
+> Validation : Check
+> Transitions…
+> Input Signals :
+> Neural Net: [ Shale ]
+> Neighbors: [ Sandstone ]
+> Context Trend:[ Sandstone ]
+> --------------------------------
+> Thinking Process :
+> Detected conflict at boundary. ..
+> Contextual trend suggests...
+> --------------------------------
+> Final Output : [ Sandstone ]
+> Reward 3: Reflection
+> Correction Reward
+> Reward 1:
+> Trend Quality
+> Reward
+> Reward 2:
+> LLM Accuracy
+> Reward
+> Reward 3:
+> Reflection
+> Correction
+> Reward
+
+Process Reward Layer    
+
+> Classification
+> Results
+> Error
+> Diagnosis
+> Correct
+> Answer
+> Incorrect
+> Routing
+> LLM Lithology
+> Classification
+> Results
+> Accuracy
+> Calculation
+> Trend
+> Pattern
+> Description
+> Process
+> Reward Model
+> [SFT -trained] Clarity
+> Precision
+> Complet
+> eness
+> Perception Tools Analysis Tools
+> Reasoning Tools
+> Trend Pattern
+> Extractor
+> Case
+> Retriever Consensus
+> Conflict Scanner
+> Stratigraphic
+> Sequence Validator
+> Neighbor Vote
+> Aggregator
+> Neural Prob
+> Interpreter
+> Semantic
+> Reasoning
+> Engine
+> Neighbor
+> Current
+> Neighbor
+> Depth
+> Value
+> Change
+> Turning
+> Point
+> Neural
+> Prob
+> LLM
+> Result
+> Vote
+> Result
+> Compare
+> &
+> Analyze
+> Conflict
+> Report
+> Sand Shale
+> Lime
+> Silt
+> Marl
+> 0.8 0.7
+> 0.3
+> 0.8
+> 0.8
+> 0.2 0.4
+> Valid
+> Transition
+> Anomalous
+> Transition
+> Shale
+> （80% ）
+> Lithology
+> Reasoning
+> Classification
+> Results
+> LLM
+> Well Log Data
+> Geological
+> Knowledge
+> Reward 1:Trend
+> Quality Reward
+> Reward 2:LLM
+> Accuracy Reward
+> Trend
+> Analysis
+> LLM
+
+2. EXECUTOR 
+
+> Trend Pattern
+> Extractor
+> Case
+> Retriever
+> Consensus
+> Conflict Scanner
+> Stratigraphic
+> Sequence Validator
+> Neighbor Vote
+> Aggregator
+> Neural Prob
+> Interpreter
+> Semantic
+> Reasoning Engine
+
+Classification Result 
+
+> Guide
+> Ground
+> Truth
+> Multi -source
+> classification
+> results
+
+Well Log Data Input 
+
+> Analysis
+> Reasoning
+> Perception
+> Data Input
+
+Figure 3: Overview of GeoMind for well-log lithology classification. GeoMind uses a Planner–Executor–Reflector workflow with process rewards to coordinate predictors and LLM reasoning for accurate, interpretable predictions. The depicted executor workflow is shown for illustrative purposes; actual execution paths are dynamically adjusted based on the planner’s outputs. 
+
+3.4.3 Reflector. The Reflector serves as a critical meta-decision module that systematically consolidates diverse executor outputs. Formally, we define this aggregation process as: 
+
+( ˆ𝑦 𝑡 , ˆℎ𝑡 ) = Reflect 
+
+
+
+˜𝑦 nbr 
+
+𝑡 , ˜𝑦 nn 
+
+𝑡 , ˜𝑦 llm 
+
+𝑡 
+
+| {z }
+
+Candidates 
+
+, 𝑝 nbr 
+
+𝑡 , 𝑝 nn 
+
+𝑡 
+
+| {z }
+
+Confidences 
+
+, ℎ 𝑡 , 𝑞 𝑡 , 𝑣 𝑡 
+
+| {z }
+
+Diagnostics 
+
+
+
+, (1) where the inputs consist of: (i) Candidate predictions from neigh-bor voting ( ˜𝑦 nbr 
+
+𝑡 ), the neural classifier ( ˜𝑦 nn 
+
+𝑡 ), and LLM reasoning ( ˜𝑦 llm 
+
+𝑡 ); (ii) Confidence distributions (𝑝 nbr 
+
+𝑡 , 𝑝 nn 
+
+𝑡 ) indicating statisti-cal certainty; and (iii) Diagnostic context , including the reasoning trace ℎ𝑡 , the conflict report 𝑞 𝑡 , and the stratigraphic validation signal 𝑣 𝑡 . The Reflector synthesizes these signals to produce the final lithology label ˆ𝑦 𝑡 and a refined explanation ˆℎ𝑡 , ensuring the prediction is both statistically supported and geologically coherent. 
+
+## 3.5 Training Strategy 
+
+3.5.1 Domain Adaptive Supervised Fine-Tuning. To equip the LLM with lithology-specific priors and well-log interpretation conven-tions, we perform domain-adaptive supervised fine-tuning on Qwen3-4B. We curate an instruction set by consolidating lithology knowl-edge from resources such as Wikipedia-style descriptions and re-structuring it into actionable QA-style supervision; to improve data quality and reduce single-teacher bias, the SFT instructions are constructed offline by teacher models (Gemini-3-Pro) using the training split. Specifically, we distill common lithology identifica-tion cues, log-curve interpretations, canonical diagnostic criteria, and handling heuristics into 600 QA, and further add 200 cross-type contrastive QA samples (e.g., sandstone vs. siltstone, shale vs. mudstone, carbonate vs. clastic) to inject analysis habits that align the LLM with supervised lithology labeling. This contrastive supervision enforces a comparative reasoning paradigm, guiding the model to move beyond brittle range-rule judgments. Instead, it learns to summarize global characteristics and distinct boundary cues, which effectively mitigates the impact of logging noise and aligns the model’s predictions with invariant geological semantics. 
+
+3.5.2 Process Reward Design. Unlike conventional approaches that supervise only final classification outcomes, GeoMind injects pro-cess rewards at key intermediate stages to guide the entire reasoning workflow. We design three complementary reward components. 
+
+Trend Analysis Reward. To provide privacy-preserving, stable, and rubric-consistent process rewards, we distill multi-criteria judg-ments into a local trend reward model. We use GPT-5 only as an 
+
+offline teacher to construct supervised data and fine-tune a Qwen3-4B evaluator. From training wells, we sample fixed-length windows 
+
+𝑋 𝑡 . For each 𝑋 𝑡 , we query GPT-5 under two prompting paradigms: (a) describe-then-classify , which first produces a trend narrative 𝑧 𝑡 
+
+and then predicts the label, and (b) direct classification . We repeat inference multiple times with stochastic decoding and compute 
+
+pass@ 𝑘 accuracy for both paradigms. A window is regarded as 
+
+trend-helpful if the narrative improves decision quality: 
+
+Δ𝑡 = pass@ 𝑘 trend (𝑋 𝑡 ) − pass@ 𝑘 direct (𝑋 𝑡 ) > 0. (2) We focus reward-model supervision on these windows to ensure the learned reward captures narratives that are causally useful for downstream reasoning rather than stylistic preferences. For each selected window 𝑋 𝑡 , we treat the teacher-generated narrative 𝑧 𝑡 as a high-quality reference and create diagnostically incorrect narratives via structured perturbations. We generate per-turbed curves 𝑋 ′
+
+𝑡 by applying controlled operations (e.g., shifting turning points, flipping trend directions, or altering depth align-ment), and ask GPT-5 to narrate 𝑋 ′
+
+𝑡 to obtain 𝑧 ′
+
+𝑡 . We then form mis-matched training pairs (𝑋 𝑡 , 𝑧 ′
+
+𝑡 ) so that 𝑧 ′
+
+𝑡 serves as a realistic hard GeoMind: An Agentic Workflow for Lithology Classification with Reasoned Tool Invocation Conference’17, July 2017, Washington, DC, USA Input X
+
+Policy 
+
+Model   
+
+> Trend Module
+> (qtrend ,otrend )
+> Trend Module
+> (qtrend ,otrend )
+> Group
+> Sampling
+> (G)
+
+𝜏 (1)
+
+𝜏 (G)
+
+𝜏 (g)    
+
+> ··· ···
+> r1
+> rG
+> Process Reward
+> rtrend
+> (1)
+> Process Reward
+> rtrend
+> (G)
+> Reasoning Module
+> (qreasoning ,oreasoning )
+> Reasoning Module
+> (qreasoning ,oreasoning )
+> r1
+> rG
+> Reflector Module
+> (qreflector ,oreflector )
+> Reflector Module
+> (qreflector ,oreflector )
+> r1
+> rG
+> Process Reward
+> rreasoning
+> (1)
+> Process Reward
+> rreasoning
+> (G)
+> Process Reward
+> rreflector
+> (1)
+> Process Reward
+> rreflector
+> (G)
+> otrend
+> otrend
+> oreasoning
+> oreasoning
+> Reference
+> Model
+
+KL     
+
+> 𝜏 (1)...𝜏 (G)
+> Process Reward Groups
+> Group
+> Computation
+> rG
+> r2
+> r1
+> …
+> rG
+> r2
+> r1
+> rG
+> r2
+> r1
+> …
+> …
+> A1
+> A2
+> AG
+> …
+> A1
+> A2
+> AG
+> A1
+> A2
+> AG
+> …
+> …
+
+Policy Update 
+
+Trained  Frozen 
+
+Figure 4: MA-GRPO architecture with group sampling, module-specific process rewards, and KL-regularized policy update. 
+
+negative for the original evidence 𝑋 𝑡 . Finally, GPT-5 assigns rubric-based scores on four criteria—Accuracy, Completeness, Clarity, and Depth alignment. We employ standard supervised fine-tuning on Qwen3-4B to output the four rubric scores. This process reward en-courages faithful and complete abstractions of well logs and keeps RL training fully self-contained. 
+
+LLM Classification Accuracy Reward. After the semantic reason-ing engine outputs ˜𝑦 llm for a window, we measure prediction cor-rectness against ground truth. For a window of length 𝑘 (or any evaluation batch), the accuracy reward is: 
+
+𝑅 llm _acc = 1
+
+𝑘 
+
+> 𝑘
+
+∑︁ 
+
+> 𝑢 =1
+
+I ˜𝑦 llm  
+
+> 𝑢
+
+= 𝑦 𝑢 
+
+ ∈ [ 0, 1]. (3) This provides supervision for intermediate reasoning outputs, help-ing stabilize training and improve workflow convergence. 
+
+Reflection Correction Reward. The reflector is rewarded for re-solving predictor conflicts by selecting the correct label when evidence permits . Let the candidate labels be ˜𝑦 (1) 
+
+> 𝑡
+
+= ˜𝑦 nbr  
+
+> 𝑡
+
+, ˜𝑦 (2) 
+
+> 𝑡
+
+= ˜𝑦 nn  
+
+> 𝑡
+
+, and 
+
+˜𝑦 (3) 
+
+> 𝑡
+
+= ˜𝑦 llm  
+
+> 𝑡
+
+, and denote the candidate set as Y𝑡 = { ˜𝑦 (1) 
+
+> 𝑡
+
+, ˜𝑦 (2) 
+
+> 𝑡
+
+, ˜𝑦 (3) 
+
+> 𝑡
+
+}.We quantify the level of agreement among predictors by 
+
+𝑚 𝑡 = max  
+
+> 𝑐 ∈ C
+> 3
+
+∑︁ 
+
+> 𝑖 =1
+
+I
+
+h
+
+˜𝑦 (𝑖 ) 
+
+> 𝑡
+
+= 𝑐 
+
+i
+
+, (4) where 𝑚 𝑡 ∈ { 1, 2, 3} indicates whether the candidates are fully split (𝑚 𝑡 = 1), partially aligned ( 𝑚 𝑡 = 2), or unanimous ( 𝑚 𝑡 = 3). Our reward emphasizes actionable correction : when the ground-truth label is present among candidates (i.e., 𝑦 𝑡 ∈ Y 𝑡 ), the reflector should identify and select it; otherwise, the step provides no di-rect correction signal and we avoid injecting noisy supervision. Meanwhile, when predictors already agree (high 𝑚 𝑡 ), choosing that consensus is treated as a baseline behavior and does not receive additional reward. This yields the compact form 
+
+𝑅 refl  
+
+> 𝑡
+
+= I[ 𝑦 𝑡 ∈ Y 𝑡 ] · 
+
+
+
+I[ ˆ𝑦 𝑡 = 𝑦 𝑡 ] − I[ ˆ𝑦 𝑡 ≠ 𝑦 𝑡 ] · 𝜂 (𝑚 𝑡 )
+
+
+
+, (5) where ˆ𝑦 𝑡 is the reflector’s decision and 𝜂 (𝑚 𝑡 ) modulates the penalty by disagreement severity. In particular, we set 𝜂 (2) = 1.0 to penal-ize missing an available correction when two predictors align, and 
+
+𝜂 (1) = 0.5 to apply a milder penalty under maximal conflict, reflect-ing the higher intrinsic difficulty; when predictors are unanimous (𝑚 𝑡 = 3), the term is typically inactive in practice as 𝑦 𝑡 ∈ Y 𝑡 implies the correct label coincides with the consensus. 
+
+3.5.3 MA-GRPO. Training agentic frameworks with multi-step reasoning capabilities presents a significant challenge: standard RL approaches typically assign a single scalar reward at the trajectory’s termination (e.g., accuracy). In a complex agentic workflow, this sparse signal exacerbates the credit assignment problem , where the policy struggles to distinguish which specific module contributed to the success or failure, such sparse rewards lead to poor conver-gence and difficulty in credit assignment, as a correct final predic-tion might be reached through flawed intermediate reasoning. To address this, we propose module-aware group relative policy optimization (MA-GRPO) . In Figure 4, MA-GRPO treats the agen-tic workflow as a composite of distinct, independently optimizable interaction events. By leveraging the process rewards defined in Sec. 3.5.2, we compute advantages for each module locally within a group of sampled trajectories, ensuring that each component of the agent is supervised by its most relevant objective. 
+
+Formulation. Let the GeoMind workflow be represented as a sequential generation process involving a set of trainable modules 
+
+M = {Trend, Reasoning, Reflector }. For a given input well-log window 𝑋 , the agent generates a global trajectory 𝜏 consisting of ordered query-response pairs 𝜏 = {( 𝑞 𝑚 , 𝑜 𝑚 )} 𝑚 ∈ M , where 𝑞 𝑚 is the prompt context for module 𝑚 (which may depend on previous outputs) and 𝑜 𝑚 is the generated response. We employ a group sampling mechanism to estimate baselines. For each training step, given an input 𝑋 , we rollout a group of 
+
+𝐺 independent global trajectories {𝜏 (𝑔 ) }𝐺 𝑔 =1. The trajectories di-verge after the first step. The 𝑔 -th trajectory is a consistent causal chain: 𝜏 (𝑔 ) =
+
+
+
+(𝑞 (𝑔 )
+
+> trend
+
+, 𝑜 (𝑔 )
+
+> trend
+
+), . . . , (𝑞 (𝑔 )
+
+> refl
+
+, 𝑜 (𝑔 ) 
+
+> refl
+
+)
+
+
+
+. This sampling pat-tern ensures that we capture the variance in reasoning paths while maintaining continuity and consistency within each group member. 
+
+Module-Specific Advantage Estimation. Instead of aggregating rewards into a single trajectory return, we assign the specific pro-cess rewards derived in Sec. 3.5.2 to their corresponding module interactions. For a module 𝑚 in trajectory 𝑔 , let 𝑟 (𝑔 ) 
+
+> 𝑚
+
+denote the Conference’17, July 2017, Washington, DC, USA Yitong Zhou 1, Mingyue Cheng 1, Jiahao Wang 1, Qingyang Mao 1, Qi Liu 1
+
+obtained process reward (e.g., 𝑅 trend for the Trend Narrator). We compute the advantage 𝐴 (𝑔 ) 
+
+> 𝑚
+
+by normalizing the reward against the group statistics for that specific module step: 
+
+𝐴 (𝑔 ) 
+
+> 𝑚
+
+= 𝑟 (𝑔 ) 
+
+> 𝑚
+
+− 𝜇 𝑚 
+
+𝜎 𝑚 + 𝜖 , (6) where 𝜇 𝑚 = 1
+
+> 𝐺
+
+Í𝐺 𝑖 =1 𝑟 (𝑖 ) 
+
+> 𝑚
+
+and 𝜎 𝑚 =√︃ 1
+
+> 𝐺
+
+Í𝐺 𝑖 =1 (𝑟 (𝑖 ) 
+
+> 𝑚
+
+− 𝜇 𝑚 )2 are the mean and standard deviation of the rewards for module 𝑚 .
+
+Joint Optimization Objective. A key distinction from standard GRPO is that MA-GRPO does not treat the workflow as a single tra-jectory with a shared return. Instead, each LLM call (𝑞 𝑚 , 𝑜 𝑚 ) is op-timized with a module-local objective using its own group-relative advantage 𝐴 (𝑔 ) 
+
+> 𝑚
+
+in (6) . Concretely, we form a module-indexed train-ing set of interaction events by collecting the 𝑚 -th query–response pairs across the group, and apply a GRPO-style update only to the tokens generated within that module. This realizes module-aware credit assignment: process rewards supervise the module that gen-erated the corresponding intermediate artifact, rather than being backpropagated indiscriminately through all modules in the chain. Formally, for each module 𝑚 ∈ M and each sampled global rollout 𝑔 , define the module interaction event 𝑒 (𝑔 ) 
+
+> 𝑚
+
+= (𝑞 (𝑔 ) 
+
+> 𝑚
+
+, 𝑜 (𝑔 ) 
+
+> 𝑚
+
+, 𝑟 (𝑔 ) 
+
+> 𝑚
+
+).MA-GRPO maximizes the module-conditioned surrogate objectives: 
+
+JMA-GRPO (𝜃 ) =∑︁ 
+
+> 𝑚 ∈ M
+
+E𝑞 𝑚 ∼D 𝑚 
+
+"
+
+1
+
+𝐺 
+
+> 𝐺
+
+∑︁ 
+
+> 𝑔 =1
+
+
+
+𝜌 (𝑔 ) 
+
+> 𝑚
+
+(𝜃 ) 𝐴 (𝑔 )
+
+> 𝑚
+
+− 𝛽 DKL (𝜋 𝜃 (· | 𝑞 𝑚 ) ∥ 𝜋 ref (· | 𝑞 𝑚 )) 
+
+#
+
+,
+
+(7) where 𝜌 (𝑔 ) 
+
+> 𝑚
+
+(𝜃 ) = 𝜋 𝜃 (𝑜 (𝑔 )         
+
+> 𝑚 |𝑞 (𝑔 )
+> 𝑚 )
+> 𝜋 𝜃 old (𝑜 (𝑔 )
+> 𝑚 |𝑞 (𝑔 )
+> 𝑚 )
+
+is the probability ratio for mod-ule 𝑚 , and D𝑚 denotes the distribution of module prompts in-duced by running the workflow (i.e., the prompt pool for module 
+
+𝑚 ). Importantly, 𝐴 (𝑔 ) 
+
+> 𝑚
+
+is computed only from {𝑟 (𝑖 ) 
+
+> 𝑚
+
+}𝐺 𝑖 =1 (module-local group normalization), so the update for 𝑚 depends solely on its designated process reward, decoupling learning signals across Trend/Reasoning/Reflector while still training a unified policy 𝜋 𝜃 .
+
+## 4 Experiments 4.1 Experimental Setup 
+
+4.1.1 Datasets. We benchmark our approach on four public well-log datasets covering diverse geological settings to evaluate se-quence labeling performance: SEAM 2, from the SEG Wiki portal, serves as a standard benchmark providing depth-aligned multi-channel logs with lithology labels. Facies 3 contains logs from the Council Grove gas reservoir (Kansas), with labels derived from core interpretations. FORCE 4 is designed for lithology prediction using multiple geophysical measurements. GeoLink 5: a large-scale North Sea collection by GEOLINK-S2, featuring depth-aligned lithology interpretations and wireline logs. 
+
+> 2https://wiki.seg.org/wiki/Open_data#Well_logs
+> 3https://www.kaggle.com/datasets/imeintanis/well-log-facies-dataset
+> 4https://www.kaggle.com/datasets/faresazzam/well-logs-dataset-for-machine-learning
+> 5https://github.com/LukasMosser/geolink_dataset?tab=readme-ov-file
+
+Table 2: Statistics of the datasets used in this work. Note that ’Interval’ denotes the sampling interval.                          
+
+> Dataset # Wells # Samples # Dim # Classes Interval
+> SEAM 57,092 18 710m Facies 73,164 790.5m FORCE 11 52,766 11 50.15m Geolink 128 580,205 811 0.125m
+
+4.1.2 Baselines. To conduct a comprehensive and fair comparison, we compare against several baselines grouped into four categories: 
+
+Machine learning-based methods: nn-DTW [ 19 ], GBDT [ 20 ], XG-Boost [ 3]. Deep learning-based methods: LSTMFCN [ 18 ], MLP [ 37 ], InceptionTime [ 16 ], MiniRocket [ 8 ], MOMENT [ 14 ]. LLM-based 
+
+approaches: InstructTime [4], GPT4TS [44] and TableTime [40]. 
+
+4.1.3 Evaluation Metrics. To evaluate the lithology classification performances, here we select three widely used metrics [ 38 , 43 ], i.e., Precision, Recall [ 27 ], and F1 measure [ 22 ]. Considering our task is a multi-class classification problem, we use the weighted average scores to evaluate the performances of our proposed methods and all baselines. Specifically, we weight the metrics of each class by the number of samples from that class. 
+
+4.1.4 Implementation Details. Our GeoMind framework was trained and evaluated on a machine equipped with 4 × NVIDIA A800 GPUs, due to the additional memory and compute overhead introduced by multi-stage tool invocation and long-horizon rollouts. For the numerical module in GeoMind, we use GPT4TS as the numerical predictor, with the same input preprocessing protocol as other neu-ral baselines. We report the mean performance over multiple runs with different random seeds. More detailed deployment specifica-tions can be found in Appendix E. 
+
+## 4.2 Main Results 
+
+Table 3 presents the overall performance comparison across four lithology benchmarks. The results demonstrate that GeoMind con-sistently achieves superior performance compared to state-of-the-art methods. The key observations are summarized as follows: (1) Consistent Superiority via Multi-Source Coordination :Across all datasets, GeoMind consistently achieves the strongest (or near-strongest) weighted F1 scores, effectively balancing the trade-off between precision and recall. Notably, these gains are not limited to a single baseline category; GeoMind surpasses clas-sical machine learning models, deep time-series classifiers, and recent LLM-based formulations. This indicates that the improve-ment stems not merely from scaling the backbone, but from the proposed coordination mechanism. By reconciling heterogeneous evidence sources: numerical patterns, neighborhood consistency, and semantic reasoning, GeoMind synthesizes a more verifiable and accurate decision process than individual paradigms. (2) Stability in Complex Geological Settings : GeoMind’s perfor-mance advantage is particularly pronounced on datasets character-ized by severe distribution shifts, inter-well heterogeneity, or am-biguous boundaries. In these complex scenarios, purely numerical models often overfit local signal statistics, while standalone LLMs can become unstable due to noisy multi-channel measurements. Ge-oMind addresses this tension through process supervision, which GeoMind: An Agentic Workflow for Lithology Classification with Reasoned Tool Invocation Conference’17, July 2017, Washington, DC, USA 
+
+Table 3: Performance comparison on four lithology-related datasets. Best results are in bold and second-best are underlined. 
+
+Method SEAM Facies FORCE GeoLink Precision Recall F1 Precision Recall F1 Precision Recall F1 Precision Recall F1 nn-DTW 0.8112 0.8276 0.8243 0.3705 0.3565 0.3487 0.3213 0.3200 0.2905 0.3342 0.3847 0.3479 GBDT 0.8184 0.8522 0.8393 0.4673 0.3951 0.3702 0.2293 0.2712 0.2501 0.4251 0.4029 0.4122 XGBoost 0.8379 0.8707 0.8355 0.4725 0.4004 0.4086 0.4329 0.3718 0.3612 0.3825 0.3623 0.3644 LSTMFCN 0.8120 0.8590 0.8312 0.3261 0.3512 0.3270 0.3030 0.3441 0.2907 0.3729 0.3764 0.3705 MLP 0.8364 0.8592 0.8426 0.2841 0.3394 0.3067 0.2647 0.3074 0.2769 0.3894 0.4141 0.4054 InceptionTime 0.8535 0.8578 0.8537 0.4505 0.4069 0.4062 0.3931 0.4054 0.3614 0.4170 0.4125 0.4116 MiniRocket 0.8442 0.8607 0.8583 0.3676 0.3223 0.2859 0.3221 0.3014 0.2876 0.3948 0.4095 0.4027 MOMENT 0.8492 0.8609 0.8515 0.3582 0.3964 0.3714 0.3478 0.3448 0.3438 0.3715 0.4078 0.3850 InstructTime 0.8389 0.8553 0.8428 0.3854 0.4017 0.3896 0.2815 0.3279 0.2994 0.3647 0.3972 0.3768 GPT4TS 0.8486 0.8467 0.8425 0.4439 0.4325 0.4155 0.3851 0.3784 0.3453 0.4291 0.4161 0.4130 TableTime 0.8335 0.8419 0.8367 0.3529 0.3729 0.3615 0.2794 0.3347 0.3017 0.3382 0.3916 0.3591 
+
+Ours 0.8647 0.8619 0.8584 0.4686 0.4527 0.4431 0.4379 0.3946 0.3678 0.4398 0.4269 0.4245 Table 4: Ablation study of the GeoMind framework. We re-port the F1 score across four benchmarks. The notation “w/o” indicates the removal of a specific module or strategy, and “maj. vote” refers to the majority voting strategy. Method SEAM Facies FORCE GeoLink GeoMind(Ours) 0.8584 0.4431 0.3678 0.4245 
+
+Impact of Training Strategy 
+
+w/o Domain-adaptive SFT 0.8512 0.4387 0.3629 0.4198 
+
+w/o Agentic Workflow RL 0.7941 0.3683 0.3007 0.3462 
+
+w/o Process Rewards 0.8446 0.4185 0.3391 0.3989 
+
+w/o MA-GRPO 0.8397 0.4094 0.3318 0.3927 
+
+Impact of Agentic Components 
+
+w/o Reflector (maj. vote) 0.8325 0.4060 0.3272 0.3941 
+
+w/o Reflector (LLM only) 0.8289 0.4012 0.3457 0.4119 
+
+w/o Planner (fixed plan) 0.8408 0.3996 0.3234 0.4082 
+
+explicitly exposes intermediate evidence and guides the workflow. This results in significantly more stable predictions around critical lithological transitions, which is essential for reliable downstream stratigraphic interpretation. 
+
+## 4.3 Ablation Study 
+
+To validate the contribution of specific components within Geo-Mind, we perform an ablation study across all four benchmarks. The results, summarized in Table 4, isolate the effects of our training strategies and the modular design. 
+
+Impact of Training Strategy. The system benefits primarily from learning a workflow-aware policy rather than relying solely on the base model’s domain adaptation. Removing the agentic work-flow RL (performing inference directly with the SFT model) causes the most significant performance drop. This suggests that end-to-end optimization of multi-step decision-making is critical for interpreting well logs, particularly where boundary ambiguity and distribution shifts occur. Consequently, GeoMind’s performance gains stem from coordinating planning, execution, and verification rather than stronger individual step predictions. Process-level supervision and module-aware optimization also yield measurable improvements. Removing process rewards leads to consistent performance drops, indicating that shaping intermediate reasoning helps stabilize predictions. Replacing MA-GRPO with standard GRPO (using only outcome rewards) similarly degrades results, underscoring the need to mitigate optimization interference and assign credit to specific workflow stages. SFT contributes a smaller but steady gain, providing a domain prior while the primary improvements arise from RL-driven workflow learning. 
+
+Impact of Agentic Components. We examine the agentic modules to understand the role of orchestration and self-correction. Both the reflector and planner are essential for reliable predictions, with the reflector serving a central role in reconciling conflicting cues and maintaining robustness under uncertainty. Replacing the reflec-tor with majority voting underperforms the full model, as simple aggregation fails to exploit structured feedback. Removing the re-flector entirely (the “LLM-only” setting) causes further degradation, demonstrating that effective reflection requires integrating multi-source evidence rather than a single reasoning path. Furthermore, using a fixed plan where all tools execute sequentially reduces ac-curacy. This confirms that adaptive planning, which orders actions based on local signals, is superior to a static pipeline. 
+
+## 4.4 Analysis of Stratigraphic Fragmentation 
+
+To address the physically implausible “salt-and-pepper” noise com-mon in discriminative models, we measure the Fragmentation Rate :percentage of segments thinner than the minimum valid formation thickness. As shown in Figure 6, classical methods like XGBoost ex-hibit the highest fragmentation rates, primarily because they treat local windows in isolation without adhering to global stratigraphic Conference’17, July 2017, Washington, DC, USA Yitong Zhou 1, Mingyue Cheng 1, Jiahao Wang 1, Qingyang Mao 1, Qi Liu 1
+
+(a) Actor Gradient Norm (b) Training Trajectory Return (c) Validation Trajectory Return 0 50 100 150 200 250 300 350                
+
+> Training Step
+> 0.6
+> 0.8
+> 1.0
+> 1.2
+> 1.4
+> Grad Norm
+> MA-GRPO (Ours) GRPO 050 100 150 200 250 300 350
+> Training Step
+> 0.15
+> 0.20
+> 0.25
+> 0.30
+> 0.35
+> 0.40
+> 0.45
+> 0.50
+> 0.55
+> Return
+> MA-GRPO (Ours)
+> GRPO 050 100 150 200 250 300 350
+> Training Step
+> 0.10
+> 0.15
+> 0.20
+> 0.25
+> 0.30
+> 0.35
+> 0.40
+> 0.45
+> Return
+> MA-GRPO (Ours)
+> GRPO
+
+Figure 5: Comparison of actor gradient norm and trajectory return between MA-GRPO and GRPO. MA-GRPO demonstrates steadier loss reduction and achieves higher returns earlier, indicating a more stable process-supervised optimization. 
+
+Figure 6: Comparison of fragmentation rates across Fa-cies, FORCE, and GeoLink datasets. GeoMind consistently achieves the lowest rates, demonstrating a relative reduction of up to 27.9% compared to the XGBoost baseline. 
+
+constraints. In contrast, GeoMind consistently achieves the low-est fragmentation rates across all datasets, representing a relative reduction of up to 28% compared to baselines. This improvement stems from our agentic workflow rather than simple smoothing: the Stratigraphic Sequence Validator (Section 3.4) flags anomalous transitions, enabling the Reflector to resolve conflicts using trend narratives. This effectively filters spurious noise while preserving genuine thin beds, yielding geologically verifiable interpretations. 
+
+## 4.5 Generalization Across Lightweight Time Series Predictors 
+
+To verify that GeoMind is not coupled to a specific lightweight pre-dictor, we replace the numerical backbone with three representative time-series classifiers (XGBoost, InceptionTime and GPT4TS) and report the F1 on four benchmarks. Table 5 shows GeoMind yields consistent gains across every backbone. The most pronounced gains occur on the challenging datasets (e.g., FORCE, Facies), where Geo-Mind improves F1 for XGBoost (+4.8%) and InceptionTime (+3.7%), indicating that the planner–executor–reflector coordination and process supervision are particularly effective under distribution shifts and boundary ambiguity. Across backbones, GeoMind gener-ally increases F1, suggesting that the workflow stabilizes decision-making by reconciling heterogeneous evidence. These results sup-port GeoMind as a plug-and-play framework that robustly enhances a wide range of lightweight predictors, demonstrating strong gen-eralization across different model families. 
+
+Table 5: Performance consistency analysis (Weighted F1) across different lightweight predictors. Applying the Geo-Mind framework consistently improves performance across various backbones and datasets. Dataset XGBoost InceptionTime GPT4TS                              
+
+> Original w/ GeoMind Original w/ GeoMind Original w/ GeoMind SEAM 0.8355 0.8521 0.8537 0.8567 0.8425 0.8584
+> Facies 0.4086 0.4375 0.4062 0.4277 0.4155 0.4431
+> FORCE 0.3612 0.4095 0.3614 0.3988 0.3453 0.3678
+> GeoLink 0.3644 0.3868 0.4116 0.4254 0.4130 0.4245
+
+## 4.6 Process Rewards for Stable Convergence 
+
+We examine whether fine-grained process rewards can stabilize RL training for our multi-step Planner–Executor–Reflector work-flow by comparing MA-GRPO with standard GRPO. Figure 5 shows that MA-GRPO drives a faster and smoother decrease in critic loss, and reaches higher trajectory returns earlier on both the train-ing and validation splits, while GRPO improves more slowly with larger fluctuations. At the same time, the Actor Gradient Norm exhibits lower oscillations, indicating that MA-GRPO achieves bet-ter convergence. These observations align with our design choice to supervise intermediate trend narration, LLM decision accuracy, and reflection-based correction, and to optimize them with module-aware, group-relative advantages to alleviate sparse-reward credit assignment and reduce stage-wise optimization interference. 
+
+## 5 Conclusion 
+
+This work proposed GeoMind, a process-supervised agentic work-flow for lithology classification, designed to address challenges in well-log data interpretation, such as noisy signals and stratigraphic inconsistencies. By integrating specialized numerical predictors and large language model-based reasoning, GeoMind improved classi-fication accuracy while maintaining transparent decision-making processes. The experiments demonstrated that GeoMind outper-formed state-of-the-art methods across several benchmark datasets, providing consistent gains, especially in complex geological set-tings. Furthermore, the incorporation of process rewards and a structured Planner–Executor–Reflector workflow contributed to the stability of the framework, making it effective in handling noisy data and ambiguous boundaries. GeoMind’s ability to combine fine-grained intermediate supervision with final predictions highlights its potential as a reliable tool for geoscience data analysis. GeoMind: An Agentic Workflow for Lithology Classification with Reasoned Tool Invocation Conference’17, July 2017, Washington, DC, USA 
+
+## References 
+
+[1] George B Asquith and Charles R Gibosn. 1982. Basic well log analysis for geologists .American Association of Petroleum Geologists. [2] Paolo Bestagini, Vincenzo Lipari, and Stefano Tubaro. 2017. A machine learning approach to facies classification using well logs. In Seg technical program expanded abstracts 2017 . Society of Exploration Geophysicists, 2137–2142. [3] Tianqi Chen, Tong He, Michael Benesty, Vadim Khotilovich, Yuan Tang, Hyunsu Cho, Kailong Chen, Rory Mitchell, Ignacio Cano, Tianyi Zhou, et al . 2015. Xgboost: extreme gradient boosting. R package version 0.4-2 1, 4 (2015), 1–4. [4] Mingyue Cheng, Yiheng Chen, Qi Liu, Zhiding Liu, Yucong Luo, and Enhong Chen. 2025. InstrucTime: Advancing Time Series Classification with Multimodal Language Modeling. In Proceedings of the Eighteenth ACM International Conference on Web Search and Data Mining (Hannover, Germany) (WSDM ’25) . Association for Computing Machinery, New York, NY, USA, 792–800. doi:10.1145/3701551. 3703499 [5] Mingyue Cheng, Xiaoyu Tao, Qi Liu, Ze Guo, and Enhong Chen. 2026. Posi-tion: Beyond Model-Centric Prediction–Agentic Time Series Forecasting. arXiv preprint arXiv:2602.01776 (2026). [6] Mingyue Cheng, Jiahao Wang, Daoyu Wang, Xiaoyu Tao, Qi Liu, and Enhong Chen. 2026. Can slow-thinking llms reason over time? empirical studies in time series forecasting. In Proceedings of the Nineteenth ACM International Conference on Web Search and Data Mining . 99–110. [7] Toby Darling. 2005. Well logging and formation evaluation . Elsevier. [8] Angus Dempster, Daniel F Schmidt, and Geoffrey I Webb. 2021. Minirocket: A very fast (almost) deterministic transform for time series classification. In 
+
+Proceedings of the 27th ACM SIGKDD conference on knowledge discovery & data mining . 248–257. [9] Cheng Deng, Tianhang Zhang, Zhongmou He, Qiyuan Chen, Yuanyuan Shi, Yi Xu, Luoyi Fu, Weinan Zhang, Xinbing Wang, Chenghu Zhou, et al . 2024. K2: A foundation language model for geoscience knowledge understanding and utilization. In Proceedings of the 17th ACM International Conference on Web Search and Data Mining . 161–170. [10] John H Doveton. 1985. Log analysis of subsurface geology: concepts and computer methods. (1985). [11] Ahmed H El-Banbi, Ahmed El-Maraghi, and Mohamed Helmy Sayyouh. 2025. Artificial Intelligence Applications in Log Interpretation-A Review. Egyptian Journal of Petroleum 34, 4 (2025), 7. [12] Elizabeth Fons, Rachneet Kaur, Soham Palande, Zhen Zeng, Tucker Balch, Manuela Veloso, and Svitlana Vyetrenko. 2024. Evaluating large language models on time series feature understanding: A comprehensive taxonomy and bench-mark. arXiv preprint arXiv:2404.16563 (2024). [13] Alexander Golubev, Maria Trofimova, Sergei Polezhaev, Ibragim Badertdinov, Maksim Nekrashevich, Anton Shevtsov, Simon Karasik, Sergey Abramov, An-drei Andriushchenko, Filipp Fisin, et al . 2025. Training long-context, multi-turn software engineering agents with reinforcement learning. arXiv preprint arXiv:2508.03501 (2025). [14] Mononito Goswami, Konrad Szafer, Arjun Choudhry, Yifu Cai, Shuo Li, and Artur Dubrawski. 2024. Moment: A family of open time-series foundation models. arXiv preprint arXiv:2402.03885 (2024). [15] Hassan Ismail Fawaz, Germain Forestier, Jonathan Weber, Lhassane Idoumghar, and Pierre-Alain Muller. 2019. Deep learning for time series classification: a review. Data mining and knowledge discovery 33, 4 (2019), 917–963. [16] Hassan Ismail Fawaz, Benjamin Lucas, Germain Forestier, Charlotte Pelletier, Daniel F Schmidt, Jonathan Weber, Geoffrey I Webb, Lhassane Idoumghar, Pierre-Alain Muller, and François Petitjean. 2020. Inceptiontime: Finding alexnet for time series classification. Data Mining and Knowledge Discovery 34, 6 (2020), 1936–1962. [17] Dongfu Jiang, Yi Lu, Zhuofeng Li, Zhiheng Lyu, Ping Nie, Haozhe Wang, Alex Su, Hui Chen, Kai Zou, Chao Du, et al . 2025. Verltool: Towards holistic agentic reinforcement learning with tool use. arXiv preprint arXiv:2509.01055 (2025). [18] Fazle Karim, Somshubra Majumdar, Houshang Darabi, and Samuel Harford. 2019. Multivariate LSTM-FCNs for time series classification. Neural networks 116 (2019), 237–245. [19] Rohit J Kate. 2016. Using dynamic time warping distances as features for improved time series classification. Data mining and knowledge discovery 30, 2 (2016), 283– 312. [20] Guolin Ke, Qi Meng, Thomas Finley, Taifeng Wang, Wei Chen, Weidong Ma, Qiwei Ye, and Tie-Yan Liu. 2017. Lightgbm: A highly efficient gradient boosting decision tree. Advances in neural information processing systems 30 (2017). [21] Ning Li, Binsen Xu, Hongliang Wu, Zhou Feng, Yusheng Li, Kewen Wang, and Peng Liu. 2021. Application status and prospects of artificial intelligence in well logging and formation evaluation. Acta Petrolei Sinica 42, 4 (2021), 508. [22] Zhi Li, Zhefeng Wang, Zhicheng Wei, Xiangguang Zhou, Yijun Wang, Baoxing Huai, Qi Liu, Nicholas Jing Yuan, Renbin Gong, and Enhong Chen. 2021. Cross-oilfield reservoir classification via multi-scale sensor knowledge transfer. In 
+
+Proceedings of the AAAI Conference on Artificial Intelligence , Vol. 35. 4215–4223. [23] Hunter Lightman, Vineet Kosaraju, Yuri Burda, Harrison Edwards, Bowen Baker, Teddy Lee, Jan Leike, John Schulman, Ilya Sutskever, and Karl Cobbe. 2023. Let’s verify step by step. In The Twelfth International Conference on Learning Representations .[24] Yen-Ting Lin, Di Jin, Tengyu Xu, Tianhao Wu, Sainbayar Sukhbaatar, Chen Zhu, Yun He, Yun-Nung Chen, Jason E Weston, Yuandong Tian, et al . 2025. Step-kto: Optimizing mathematical reasoning through stepwise binary feedback. In 
+
+Proceedings of The 3rd Workshop on Mathematical Natural Language Processing (MathNLP 2025) . 15–33. [25] Zhouhan Lin, Cheng Deng, Le Zhou, Tianhang Zhang, Yi Xu, Yutong Xu, Zhong-mou He, Yuanyuan Shi, Beiya Dai, Yunchong Song, et al . 2023. Geogalactica: A scientific large language model in geoscience. arXiv preprint arXiv:2401.00434 
+
+(2023). [26] Jing-Jing Liu and Jian-Chao Liu. 2022. Integrating deep learning and logging data analytics for lithofacies classification and 3D modeling of tight sandstone reservoirs. Geoscience Frontiers 13, 1 (2022), 101311. [27] Qi Liu, Enhong Chen, Hui Xiong, Chris HQ Ding, and Jian Chen. 2011. Enhancing collaborative filtering by user interest expansion via personalized ranking. IEEE Transactions on Systems, Man, and Cybernetics, Part B (Cybernetics) 42, 1 (2011), 218–233. [28] Zhege Liu, Junxing Cao, Jiachun You, Shuna Chen, Yujia Lu, and Peng Zhou. 2021. A lithological sequence classification method with well log via SVM-assisted bi-directional GRU-CRF neural network. Journal of Petroleum Science and Engineering 205 (2021), 108913. [29] Yucong Luo, Yitong Zhou, Mingyue Cheng, Jiahao Wang, Daoyu Wang, Tingyue Pan, and Jintao Zhang. 2025. Time Series Forecasting as Reasoning: A Slow-Thinking Approach with Reinforced LLMs. arXiv preprint arXiv:2506.10630 (2025). [30] Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, et al . 2022. Training language models to follow instructions with human feedback. Advances in neural information processing systems 35 (2022), 27730–27744. [31] Rafael Rafailov, Archit Sharma, Eric Mitchell, Christopher D Manning, Stefano Ermon, and Chelsea Finn. 2023. Direct preference optimization: Your language model is secretly a reward model. Advances in neural information processing systems 36 (2023), 53728–53741. [32] John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov. 2017. Proximal policy optimization algorithms. arXiv preprint arXiv:1707.06347 
+
+(2017). [33] Agnes Schumann. 2002. Hidden Markov models for lithological well log classifi-cation. Terra Nostra 4 (2002), 373–378. [34] Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei Zhang, Mingchuan Zhang, YK Li, Yang Wu, et al . 2024. Deepseekmath: Pushing the limits of mathematical reasoning in open language models. arXiv preprint arXiv:2402.03300 (2024). [35] Nisan Stiennon, Long Ouyang, Jeffrey Wu, Daniel Ziegler, Ryan Lowe, Chelsea Voss, Alec Radford, Dario Amodei, and Paul F Christiano. 2020. Learning to summarize with human feedback. Advances in neural information processing systems 33 (2020), 3008–3021. [36] Xiaoyu Tao, Mingyue Cheng, Ze Guo, Shuo Yu, Yaguo Liu, Qi Liu, and Shijin Wang. 2026. MemCast: Memory-Driven Time Series Forecasting with Experience-Conditioned Reasoning. arXiv preprint arXiv:2602.03164 (2026). [37] Hind Taud and Jean-Franccois Mas. 2017. Multilayer perceptron (MLP). In 
+
+Geomatic approaches for modeling land change scenarios . Springer, 451–455. [38] Michele Tonutti, Emanuele Ruffaldi, Alessandro Cattaneo, and Carlo Alberto Avizzano. 2019. Robust and subject-independent driving manoeuvre anticipation through domain-adversarial recurrent neural networks. Robotics and Autonomous Systems 115 (2019), 162–173. [39] Valentin Tschannen, Matthias Delescluse, Mathieu Rodriguez, and Janis Keuper. 2017. Facies classification from well logs using an inception convolutional network. arXiv preprint arXiv:1706.00613 (2017). [40] Jiahao Wang, Mingyue Cheng, Qingyang Mao, Yitong Zhou, Daoyu Wang, Qi Liu, Feiyang Xu, and Xin Li. 2025. Tabletime: Reformulating time series classification as training-free table understanding with large language models. In Proceedings of the 34th ACM International Conference on Information and Knowledge Management .3009–3019. [41] Danyan Xie, Zeyang Liu, Fuhao Wang, and Zhenyu Song. 2024. A transformer and LSTM-based approach for blind well lithology prediction. Symmetry 16, 5 (2024), 616. [42] Qiying Yu, Zheng Zhang, Ruofei Zhu, Yufeng Yuan, Xiaochen Zuo, Yu Yue, Weinan Dai, Tiantian Fan, Gaohong Liu, Lingjun Liu, et al . 2025. Dapo: An open-source llm reinforcement learning system at scale. arXiv preprint arXiv:2503.14476 
+
+(2025). [43] Yi Zheng, Qi Liu, Enhong Chen, Yong Ge, and J Leon Zhao. 2014. Time se-ries classification using multi-channels deep convolutional neural networks. In 
+
+International conference on web-age information management . Springer, 298–310. [44] Tian Zhou, Peisong Niu, Liang Sun, Rong Jin, et al . 2023. One fits all: Power general time series analysis by pretrained lm. Advances in neural information processing systems 36 (2023), 43322–43355. Conference’17, July 2017, Washington, DC, USA Yitong Zhou 1, Mingyue Cheng 1, Jiahao Wang 1, Qingyang Mao 1, Qi Liu 1
+
+## A Tools Description 
+
+This appendix provides a self-contained description of the tool modules used in GeoMind. For an input well-log window 𝑋 𝑡 :𝑡 +𝑘 −1,the executor invokes a set of tools to produce intermediate evidence, candidate predictions, and consistency signals. We group the tools into perception , reasoning , and analysis categories, and detail their inputs/outputs and key computations below. 
+
+Perception tools. Case retriever retrieves a neighborhood of similar historical windows and their labels: 
+
+N𝑡 = {( 𝑋 ( 𝑗 ) , 𝑦 ( 𝑗 ) , 𝑠 𝑡,𝑗 )} 𝐾 𝑗 =1, (8) where 𝑠 𝑡,𝑗 is a normalized similarity score computed by combining multiple distance metrics (Euclidean, Manhattan, and cosine) with metric-specific weights. The retrieved neighbors provide empirical evidence and local priors for downstream inference. Trend narrator 
+
+converts multivariate log curves into a structured natural-language trend description 𝑧 𝑡 . The narrative summarizes depth-aware quanti-tative cues such as stable segments, turning points, and magnitude changes, and serves as a semantic bridge between numerical signals and LLM-based reasoning. 
+
+Reasoning tools. Neighbor vote aggregator converts the retrieved neighborhood into class confidences under a local smoothness assumption. Let 𝑤 𝑡,𝑗 ≥ 0 denote derived weights normalized as 
+
+Í𝐾 𝑗 =1 𝑤 𝑡,𝑗 = 1. The similarity-weighted voting confidence is 
+
+𝑝 nbr  
+
+> 𝑡
+
+(𝑐 ) =
+
+> 𝐾
+
+∑︁ 
+
+> 𝑗 =1
+
+𝑤 𝑡,𝑗 I𝑦 ( 𝑗 ) = 𝑐  , 𝑐 ∈ C . (9) 
+
+Neural probability interpreter takes the neural classifier softmax output 𝑝 nn  
+
+> 𝑡
+
+∈ [ 0, 1] | C | and produces a concise natural-language ex-planation 𝑒 𝑡 (optionally with confidence thresholding). This module improves transparency by summarizing which classes are supported by the neural predictor and how confident the model is. 
+
+Semantic reasoning engine integrates the well-log table, the trend narrative 𝑧 𝑡 , and neighbor evidence (N 𝑡 , 𝑝 nbr  
+
+> 𝑡
+
+) to generate (i) a stepwise reasoning trace ℎ𝑡 and (ii) an LLM candidate prediction distribution or label ˜𝑦 llm  
+
+> 𝑡
+
+.
+
+Analysis tools. Consensus conflict scanner compares three predic-tors, namely neighbor voting, the neural classifier, and semantic reasoning. Let ˜𝑦 nbr  
+
+> 𝑡
+
+= arg max 𝑐 𝑝 nbr  
+
+> 𝑡
+
+(𝑐 ) and ˜𝑦 nn  
+
+> 𝑡
+
+= arg max 𝑐 𝑝 nn  
+
+> 𝑡
+
+(𝑐 ).The agreement count is defined as 
+
+𝐴 𝑡 = I[ ˜𝑦 nbr  
+
+> 𝑡
+
+= ˜𝑦 nn  
+
+> 𝑡
+
+] + I[ ˜𝑦 nbr  
+
+> 𝑡
+
+= ˜𝑦 llm  
+
+> 𝑡
+
+] + I[ ˜𝑦 nn  
+
+> 𝑡
+
+= ˜𝑦 llm  
+
+> 𝑡
+
+], (10) which indicates full consensus ( 𝐴 𝑡 = 3), majority consensus (exactly two agree), or full disagreement ( 𝐴 𝑡 = 0). The scanner outputs a conflict report 𝑞 𝑡 that summarizes agreement patterns and high-lights regions prone to ambiguity (e.g., near lithological boundaries or transition zones). Stratigraphic sequence validator evaluates plau-sibility using a Markov transition model over lithology labels esti-mated from the training set. With Laplace smoothing, the transition probabilities are 
+
+𝑃 𝑎 →𝑏 = 𝑁 𝑎 →𝑏 + 𝜆 
+
+Í𝑏 ′ ∈ C 𝑁 𝑎 →𝑏 ′ + 𝜆 |C| , (11) where 𝑁 𝑎 →𝑏 counts adjacent transitions 𝑎 → 𝑏 and 𝜆 > 0 is the smoothing constant. Given a predicted sequence ˆ𝑦 1: 𝑇 , the validator flags low-probability jumps based on 𝑃 ˆ𝑦 𝑡 −1→ ˆ𝑦 𝑡 and outputs a vali-dation signal 𝑣 (e.g., anomalous transition indicators) that can be consumed by the reflector. 
+
+## B Inference-Consistent Training Strategy B.1 The Distribution Shift Challenge 
+
+A critical bottleneck in cascading neuro-symbolic systems (such as GeoMind) is the distribution shift between the training and infer-ence phases of the base predictors. In a naive implementation, if the numerical predictor (e.g., GPT4TS or XGBoost) and the downstream agentic workflow (Planner-Executor-Reflector) are trained sequen-tially on the exact same dataset D𝑡𝑟𝑎𝑖𝑛 , the numerical predictor often exhibits over-optimistic performance due to overfitting or memorization. Consequently, the RL agent observes a distribution of “easy” errors and high-confidence correct predictions during its training phase. However, during testing, the numerical predictor inevitably faces generalization errors on unseen wells. This discrepancy leads to a policy collapse : the agent learns to overly rely on the numerical predictor’s output and fails to develop robust correction strategies (e.g., triggering the Reflector to resolve conflicts) because it rarely encounters significant disagreements or low-confidence signals during training. 
+
+## B.2 K-Fold Stacking for Unbiased RL Initialization 
+
+To address this, we introduce a K-Fold Stacking Strategy for generating the observation space for the RL agent. This approach allows us to construct a training set for the agent that simulates the 
+
+generalization error distribution of the base model without reducing the total volume of available training data. The process follows a “Leave-One-Fold-Out” logic: (1) We partition the training wells W𝑡𝑟𝑎𝑖𝑛 into 𝐾 disjoint subsets (folds). (2) For each fold 𝑘 , we train a temporary base predictor 𝑓 (𝑘 ) 
+
+> 𝜃
+
+on all data except fold 𝑘 .(3) We then generate “out-of-sample” predictions (logits and probabilities) for the held-out fold 𝑘 using 𝑓 (𝑘 ) 
+
+> 𝜃
+
+.(4) These unbiased predictions are aggregated to form the input state space for training the GeoMind agent. This strategy ensures that for every sample in the RL training set, the input features (specifically the neural probability interpreter’s confidence 𝑝 𝑛𝑛 𝑡 ) come from a model that has never seen that specific well’s ground truth. This effectively forces the Planner and Reflector to learn under realistic uncertainty conditions. During the final inference phase on the test set (e.g., SEAM or FORCE test splits), we discard the temporary fold models and utilize a final base predictor 𝑓 𝑓 𝑖𝑛𝑎𝑙 𝜃 trained on the entire training corpus 
+
+W𝑡𝑟𝑎𝑖𝑛 to maximize feature extraction capability. 
+
+## B.3 Algorithmic Formulation 
+
+The complete training pipeline, ensuring strict separation of mem-orization and generalization signals, is formalized in Algorithm 1. GeoMind: An Agentic Workflow for Lithology Classification with Reasoned Tool Invocation Conference’17, July 2017, Washington, DC, USA 
+
+Algorithm 1 GeoMind Robust Two-Stage Training via K-Fold Stacking 
+
+Require: Set of training wells W = {𝑊 1, . . . ,𝑊 𝑁 }, Base Model Architec-ture A, Agent Policy 𝜋 𝜙 . 
+
+> 1:
+
+Hyperparameters: Number of folds 𝐾 (e.g., 𝐾 = 5).  
+
+> 2:
+
+Partition W into 𝐾 disjoint subsets: { S 1, . . . , S𝐾 }. 
+
+> 3:
+
+Initialize empty container for RL observations: O𝑅𝐿 ← ∅ . 
+
+> 4:
+
+// Phase 1: Generate Out-of-Fold (OOF) Signals  
+
+> 5:
+
+for 𝑘 = 1 to 𝐾 do  
+
+> 6:
+
+Define training subset: D (𝑘 ) 
+
+> 𝑡𝑟𝑎𝑖𝑛
+
+← W \ S 𝑘  
+
+> 7:
+
+Define validation subset: D (𝑘 ) 
+
+> 𝑣𝑎𝑙
+
+← S 𝑘  
+
+> 8:
+
+Train temporary predictor:  
+
+> 9:
+
+𝑓 𝜃 𝑘 ← Train ( A , D (𝑘 ) 
+
+> 𝑡𝑟𝑎𝑖𝑛
+
+) 
+
+> 10:
+
+for each well 𝑋 ∈ D (𝑘 ) 
+
+> 𝑣𝑎𝑙
+
+do  
+
+> 11:
+
+Generate probabilities: ˆ𝑝 ← 𝑓 𝜃 𝑘 (𝑋 ) 
+
+> 12:
+
+Construct agent state:  
+
+> 13:
+
+𝑠 ← ConstructState ( ˆ𝑝, Context (𝑋 ) )  
+
+> 14:
+
+Store pair: O𝑅𝐿 ← O 𝑅𝐿 ∪ { ( 𝑠, Label (𝑋 ) ) }  
+
+> 15:
+
+end for  
+
+> 16:
+
+end for  
+
+> 17:
+
+// Phase 2: Train Agent Policy  
+
+> 18:
+
+Train Agent 𝜋 𝜙 using O𝑅𝐿 via MA-GRPO (optimizing for correction robustness).  
+
+> 19:
+
+// Phase 3: Finalize Base Model for Inference  
+
+> 20:
+
+Train Master Predictor 𝑓 𝜃 ∗ ← Train ( A , W ) on entire dataset.  
+
+> 21:
+
+return Optimized Policy 𝜋 𝜙 , Master Predictor 𝑓 𝜃 ∗
+
+## C Efficiency Analysis of MA-GRPO 
+
+In this section, we provide a theoretical and empirical analysis of the efficiency advantages of MA-GRPO compared to standard GRPO. We analyze efficiency from two perspectives: sample efficiency and theoretical memory complexity. 
+
+## C.1 Sample Efficiency and Convergence 
+
+Standard Reinforcement Learning on agentic workflows faces a severe credit assignment problem. In standard GRPO, the policy 
+
+𝜋 𝜃 receives a reward signal 𝑅 only after the entire trajectory 𝜏 =
+
+(𝑜 1, . . . , 𝑜 𝐿 ) is completed. The gradient estimator typically takes the form ∇𝐽 ∝ Í𝑡 ∇ log 𝜋 (𝑜 𝑡 ) · ( 𝑅 − 𝑏 ). Because 𝑅 depends on the in-teractions of multiple downstream modules, it acts as a noisy proxy for the quality of early actions (e.g., the Planner’s decision). This noise increases the variance of the gradient estimator, necessitating a larger number of training steps to converge. MA-GRPO addresses this by introducing dense, process-level supervision. The global optimization objective is decomposed into a set of module-local objectives: 
+
+J𝑀𝐴 −𝐺𝑅𝑃𝑂 (𝜃 ) =∑︁ 
+
+> 𝑚 ∈ M
+
+E
+
+"
+
+1
+
+𝐺 
+
+> 𝐺
+
+∑︁ 
+
+> 𝑔 =1
+
+𝐴 (𝑔 ) 
+
+> 𝑚
+
+log 𝜋 𝜃 (𝑜 (𝑔 ) 
+
+> 𝑚
+
+|𝑞 (𝑔 ) 
+
+> 𝑚
+
+)
+
+#
+
+(12) where the advantage 𝐴 (𝑔 ) 
+
+> 𝑚
+
+uses a local reward 𝑟 𝑚 specific to module 
+
+𝑚 . By tightening the causal link between an action 𝑜 𝑚 and its reward 
+
+𝑟 𝑚 , MA-GRPO significantly reduces gradient variance. 
+
+Empirical Evidence. In Figure 5, this theoretical reduction in variance translates to superior sample efficiency. Specifically, Figure 5(b) and 5(c) demonstrate that MA-GRPO reaches a high trajectory return significantly earlier than GRPO; for instance, on the validation set, MA-GRPO achieves a return of 0.35 at approxi-mately 100 steps, whereas GRPO requires over 250 steps to reach the same level. Furthermore, Figure 5(a) illustrates that standard GRPO exhibits high-frequency oscillations and a generally higher gradient norm, indicative of the unstable optimization landscape caused by sparse rewards. In contrast, MA-GRPO maintains a lower and smoother gradient norm, confirming that the module-aware advantages provide a cleaner, more stable learning signal. 
+
+## C.2 Space Efficiency via Graph Decomposition 
+
+While both methods train the same underlying LLM, MA-GRPO offers a distinct theoretical advantage in GPU memory usage during the training phase through computational graph decomposition. 
+
+Standard GRPO (End-to-End Dependency). In standard GRPO, the loss function depends on the cumulative reward of the full trajectory. To compute the gradient ∇𝜃 J𝐺𝑅𝑃𝑂 via backpropagation, the auto-matic differentiation engine must maintain the computational graph (activations and attention states) for the entire sequence of modules 
+
+𝑚 1 → 𝑚 2 → · · · → 𝑚 𝐿 simultaneously. This is because the reward signal at step 𝐿 must propagate back to update parameters at step 1. Consequently, the peak GPU memory usage scales linearly with the total length of the trajectory: M𝑝𝑒𝑎𝑘 ∝ Í𝐿 𝑖 =1 len (𝑜 𝑖 ).
+
+MA-GRPO (Local Gradient Accumulation). In MA-GRPO, the total gradient is the sum of independent gradients from each module: 
+
+∇𝜃 J𝑡𝑜𝑡𝑎𝑙 = ∇𝜃 J𝑇 𝑟𝑒𝑛𝑑 + ∇ 𝜃 J𝑅𝑒𝑎𝑠𝑜𝑛𝑖𝑛𝑔 + ∇ 𝜃 J𝑅𝑒 𝑓 𝑙𝑒𝑐𝑡𝑜𝑟 . (13) Crucially, the gradient ∇𝜃 J𝑚 for module 𝑚 depends only on the local advantage 𝐴 𝑚 and the local policy outputs. It does not strictly require the backward pass to flow from module 𝑚 + 1 to 𝑚 .Therefore, the training loop allows for a sequential optimization strategy: the model performs a forward pass through Module 𝑚 ,immediately computes the local loss L𝑚 using the local reward 𝑟 𝑚 ,and executes a backward pass to compute ∇𝜃 L𝑚 . Once the gradi-ents are accumulated to the optimizer, the intermediate activations (computational graph) of Module 𝑚 can be strictly discarded before proceeding to Module 𝑚 + 1, where only the inference-mode KV cache or re-forwarding for context is required. Under this optimized implementation, the peak memory require-ment is determined by the single largest module interaction rather than the sum of all interactions: 
+
+M𝑀𝐴 −𝐺𝑅𝑃𝑂 𝑝𝑒𝑎𝑘 ∝ max   
+
+> 𝑖 ∈ { 1,...,𝐿 }
+
+(len (𝑜 𝑖 )) . (14) This property makes MA-GRPO theoretically scalable to arbitrarily long agentic workflows without hitting the GPU memory wall (Out-Of-Memory errors) that constrains standard end-to-end RL. 
+
+## D Data Preparation and Setup D.1 Dataset Specifications and Input Features 
+
+To facilitate reproducibility and clarify the inputs used by the Geo-Mind framework, we provide the detailed configuration for each benchmark dataset. Table 6 summarizes the specific geophysical logs and features selected as inputs for the model, along with the target lithological classes. Conference’17, July 2017, Washington, DC, USA Yitong Zhou 1, Mingyue Cheng 1, Jiahao Wang 1, Qingyang Mao 1, Qi Liu 1
+
+Table 6: Detailed specification of input features and target classes for the four benchmark datasets. The input features represent the exact channels used by the GeoMind.                 
+
+> Dataset # Cls Input Features (Curves) Target SEAM 7
+> 9 Channels: Depth, Bed Dip ( 𝑋 , 𝑌 ), Total Porosity, Horizontal Resistivity, TTI Dip ( 𝑋 , 𝑌 ), P-wave Velocity ( 𝑉 𝑝 ), S-wave Velocity ( 𝑉 𝑠 )Layers
+> Facies 9
+> 7 Channels: Depth, Gamma Ray (GR), Deep Induction Resistivity (log 10 ), Neutron-Density Porosity Diff ( Δ𝜙 ), Neutron-Density Porosity (PHIND), Photoelectric Effect (PE), Nonmarine-Marine Indicator Lithofacies
+> FORCE 5
+> 9 Channels: Depth, Caliper (CALI), Sonic Slowness (DTC), Gamma Ray (GR), Neutron Porosity (NPHI), Bulk Density (RHOB), Coordinates (𝑋 , 𝑌 , 𝑍 )Lithology
+> GeoLink 11
+> 9 Channels: Depth, Caliper (CALI), Neutron Porosity (NPHI), Bulk Density (RHOB), Gamma Ray (GR), Sonic Slowness (DTC), Resistivity (Deep, Shallow, Medium) Lithology
+
+For the Facies dataset, the 9 classes correspond to specific deposi-tional environments ranging from Nonmarine sandstone to Phylloid-algal bafflestone . The FORCE dataset targets 5 primary lithologies: 
+
+Shale, Sandstone, Limestone, Marl, and Sandstone/Shale . GeoLink in-cludes 11 granular classes, distinguishing between variations such as Silty Sand , Cross Bedded Sand , and Argillaceous Limestone . Finally, 
+
+SEAM classifies geological ages and salt bodies, including Mother Salt , Cretaceous , and Lower Miocene layers. 
+
+## D.2 Datasets Description 
+
+We evaluate our method on four public well-log datasets collected from established open repositories. Specifically, we use the follow-ing datasets: 
+
+• SEAM 6: the SEG Wiki Open Data "Well logs" catalog as an entry point to publicly released well-log resources for reproducible geoscience benchmarking; 
+
+• Facies 7: the Kaggle Well Log Facies Dataset, which contains facies logs from nine wells in the Council Grove gas reservoir (Kansas) with facies labels derived from core observations; 
+
+• Force 8: the Kaggle Well logs dataset for machine learning, re-leased for lithology (rock-type) prediction from multiple geo-physical well-log measurements and associated with the FORCE 2020 lithology prediction context; 
+
+• Geolink 9: the GEOLINK-S2 well-log dataset accessed via the geolink_dataset repository, which provides analysis notebooks and preprocessing code for the GEOLINK-S2 data. 
+
+> 6https://wiki.seg.org/wiki/Open_data#Well_logs
+> 7https://www.kaggle.com/datasets/imeintanis/well-log-facies-dataset
+> 8https://www.kaggle.com/datasets/faresazzam/well-logs-dataset-for-machine-learning
+> 9https://github.com/LukasMosser/geolink_dataset?tab=readme-ov-file
+
+## D.3 Data Preprocessing and Windowing 
+
+To ensure high-quality input signals for the executor tools, we applied a standardized preprocessing pipeline across all datasets prior to tokenization or numerical embedding. 
+
+Outlier Handling and Imputation. Raw well-log measurements often contain sensor errors or null values due to borehole washout or instrument failure. We first removed physical outliers based on domain knowledge (e.g., removing negative values for Gamma Ray or Density). Missing intervals shorter than 2 meters were filled using linear depth-wise interpolation, while sequences with larger gaps were discarded to maintain continuity. 
+
+Feature Normalization. Given the diverse physical units of the logs, we applied channel-specific normalization: 
+
+• Logarithmic Transformation: For resistivity logs (e.g., 
+
+RDEP , RMED ), which span multiple orders of magnitude, we ap-plied a log 10 transformation to compress the dynamic range: 
+
+𝑥 ′ = log 10 (𝑥 + 𝜖 ).
+
+• Z-Score Standardization: All other linear curves (e.g., GR ,
+
+NPHI , RHOB ) were standardized to zero mean and unit vari-ance: 𝑥 ′ = (𝑥 − 𝜇 )/ 𝜎 , where statistics are computed globally on the training set. 
+
+Sliding Window Generation. To capture local stratigraphic con-text, we sliced the depth-aligned sequences into fixed-length win-dows. We utilized a window size of 𝐿 = 16 depth samples with a stride of 𝑆 = 4 for training, and non-overlapping windows for testing. This window length was empirically selected to include sufficient context for the Trend Narrator to identify meaningful geo-logical patterns (e.g., upward-fining sequences) without introducing excessive noise. 
+
+## E Implementation and Reproducibility Details 
+
+To ensure the reproducibility of GeoMind, we provide the imple-mentation details for our agentic workflow. 
+
+Stage 1: Domain-Adaptive SFT. We fine-tune the base model using the curated instruction dataset (described in Sec. 3.5.1) to adapt it to geological semantics. Specifically, we employ the AdamW optimizer with 𝛽 1 = 0.9 and 𝛽 2 = 0.95 . The training process is conducted with a global batch size of 64 over 3 epochs, incorporating a linear warmup phase of 0.03 epochs. We initialize the learning rate at 2 × 10 −5 and apply a cosine decay scheduler reducing it to 
+
+2 × 10 −6. The maximum sequence length is set to 8192 tokens to accommodate long-context geological reasoning. 
+
+Stage 2: MA-GRPO Training. For the reinforcement learning phase, we employ Module-Aware GRPO to align the agent with process rewards. We sample 𝐺 = 8 trajectories per input for group-relative advantage estimation and set the KL coefficient 𝛽 to 0.04 
+
+to prevent excessive deviation from the SFT reference model. The learning rate is reduced to 5 × 10 −6 to ensure stable policy updates. Furthermore, to encourage exploration and avoid premature conver-gence, we adopt the asymmetric clipping strategy from DAPO [ 42 ]with 𝜖 𝑙𝑜𝑤 = 0.1 and 𝜖 ℎ𝑖𝑔ℎ = 0.3. This configuration allows the agent to retain updates that yield significant advantage improvements while strictly bounding those that might degrade stability.
