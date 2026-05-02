@@ -1,0 +1,84 @@
+Title: Automated Adversarial Collaboration for Advancing Theory Building in the Cognitive Sciences
+
+URL Source: https://arxiv.org/pdf/2604.25521v1
+
+Published Time: Wed, 29 Apr 2026 01:01:31 GMT
+
+Number of Pages: 3
+
+Markdown Content:
+# Automated Adversarial Collaboration for Advancing Theory Building in the Cognitive Sciences 
+
+Suyog Chandramouli 1 George Kachergis 2
+
+Akshay K. Jagadish 3 
+
+> 1
+
+Department of Psychology, Princeton University  
+
+> 2
+
+Department of Psychology, Stanford University  
+
+> 3
+
+Princeton AI Lab, Princeton University 
+
+suyoghc@princeton.edu, george.kachergis@gmail.com, akshay.jagadish@princeton.edu 
+
+Abstract 
+
+Cognitive science often evaluates theories through nar-row paradigms and local model comparisons, limiting the integration of evidence across tasks and realizations. We introduce an automated adversarial collaboration frame-work for adjudicating among competing theories even when the candidate models and experiments must be discovered during the adjudication process. The system combines LLM-based theory agents, program synthesis, and information-theoretic experimental design in a closed loop. In a simulation study spanning three classic cate-gorization theories, the framework recovered the ground-truth theory across noise settings with weaker reliability in the hardest settings. Together, the framework and find-ings provide a concrete proof of concept for closed-loop, in-silico theory adjudication in cognitive science. 
+
+# Introduction 
+
+Building better theories involves integrating evidence across broad experimental design spaces and a wide range of model classes that are aligned with specific the-oretical claims; this is inevitable as theories seek to gen-eralize across tasks and admit multiple computational realizations (Marr & Vaina, 1982; van Rooij & Baggio, 2021). In practice, these spaces are too large to sample systematically with traditional scientific workflows (Mus-slick et al., 2025). As a result, much of cognitive science remains focused on narrow paradigms and local model structures rather than the development and integration of broader theories (Griffiths, 2015). Previous efforts to scale up cognitive science have concentrated on individual components of the theory-building process, such as behavioral data collection (Hartshorne et al., 2019; Jones, 2017), computational modeling (Peterson et al., 2021), and optimal experi-ment design (Cavagnaro et al., 2010). However, recent advances in automated scientific discovery methods have raised the possibility of these components coming together as a larger in-silico discovery loop (Musslick et al., 2025). In line with this, Jagadish et al. (2026) have outlined a vision for an in-silico science of the mind in which large language model (LLM)-based systems de-sign experiments, generate synthetic behavioral data, synthesize models, and perform critic-guided iterative refinement, bringing automated methods closer to the-ory development at scale. Yet, this vision leaves open the problem of theory adjudication: how to link compet-ing theoretical accounts to executable model candidates and iteratively discriminate among them through appro-priate experiments. In this work, we take a first step towards automated theory adjudication by bringing adversarial collaboration (Gilovich et al., 1998; Latham et al., 1988; Mellers et al., 2001) into an in-silico setting. In our framework, LLM agents represent competing theoretical accounts, instantiate them as candidate models, and propose ex-periments that most sharply distinguish their preferred account from rival theories. After observing the results from their experiments, the system updates its beliefs about candidate theories, each agent revises its model specification, and the process continues iteratively. This operationalizes a closed-loop procedure for adjudicat-ing among theories when neither the candidate mod-els nor the most informative experiments are fixed in advance. We consider three classic theories from the categorization literature (Ashby & Maddox, 2005), and demonstrate how our framework can recover ground-truth theories, without requiring manual a priori speci-fication of candidate models and experiments. 
+
+# Setup 
+
+Each run (see Figure 1) begins by registering LLM-based theory agents, each associated with a theoretical claim and one or more candidate models that instanti-ate it. Candidate models are currently synthesized using GeCCo (Rmus et al., 2025), but other program synthesis methods or hand-crafted models can also be provided. Once models are registered, theory agents enter an adversarial debate cycle. Each cycle begins with a computational analysis of divergences in model predic-tions. Agents propose novel experiments based on the   
+
+> arXiv:2604.25521v1 [cs.AI] 28 Apr 2026 repeat for N cycles
+> Compute Divergence Map
+> from Model Predictions Candidate Experiment Pool
+> Select next
+> experiment
+> from pool via
+> EIG
+> Agents compute and register
+> their predictions for
+> selected experiment
+> Run or Simulate
+> Experiment
+> next
+> cycle
+> Candidate Models
+> (e.g. synthesized via GeCCo)
+> Posterior update over Theories
+> Agents Interpret Results,
+> Critique competing accounts,
+> & Revise their model parameter
+> Register Theory Agents
+> Verbal Theoretical
+> Claims
+> Adversarial
+> Collaboration
+> Loop Optional
+> Outer Loop
+> Agents propose
+> novel designs
+> (in open-design
+> condition)
+
+Figure 1: Left panel: Adversarial collaboration loop for theory adjudication and open experiment design. Right Panel: (A) Recovery accuracy across lapse rates for data generated by RULEX, GCM, and SUSTAIN. (B) Signed winning margins show that GCM and SUSTAIN remain more separable than RULEX. summarized divergence map, and proposals that sat-isfy structural validity checks are added to the pool. The system then uses the expected information gain (EIG, Cavagnaro et al., 2010; Myung et al., 2013) to select the most informative experiment to run next. In this simula-tion study, the experimental outcomes are generated by a known cognitive model, but, in principle, they can eas-ily be derived from cognitive foundation models or real human participants. Once predictions are registered and experimental outcomes are observed, the posterior beliefs about the theories are updated; the loop then re-turns to an LLM-mediated phase: the agents interpret the results, critique competing accounts, and may revise parameters and auxiliary claims. After the final cycle, the system aggregates the ex-perimental outcomes and debate traces to assess which theoretical claims and model instantiations are best sup-ported by the accumulated evidence. In the current ver-sion, the resulting evidential record can be fed back into GeCCo to generate fresh candidate models for subse-quent rounds. 
+
+# Results 
+
+To evaluate this framework, we considered a synthetic setting, where we have full access to ground-truth theo-ries, their model instances, and simulated data. Specif-ically, we considered three theory families from the human categorization literature: Generalized Context Model (GCM; Nosofsky, 2011), Rule plus Exception (RULEX; Nosofsky et al., 1994), and Supervised and Unsupervised STratified Adaptive Incremental Network (SUSTAIN; Love et al., 2004). GeCCo was instantiated with the Sonnet-4 model from Anthropic. In three sepa-rate experiments using each theory as the ground-truth, we generated synthetic item-level behavioral data with four levels of noise and tasked the system with recover-ing the underlying theory. Figure 1 summarizes the framework’s recovery rate of the true generating theories under different noise levels, with noisy data created using a lapse-rate policy (with probability 𝜖 , the response is random) for 𝜖 ranging from 0 to 0.4. We measured recovery performance by com-puting the proportion of runs in which the correct theory family was recovered and by the signed winning margin between the two main competing models. Overall, we find that our framework can perfectly recover models un-derlying the three ground-truth theories in the noiseless condition and to varying extents in the noisy condition, with accuracy depending on the theory type. Specifically, we find that the GCM was perfectly re-covered across the different noise settings, while SUS-TAIN remained highly recoverable, except at the high-est noise level (see Figure 1A). In contrast, RULEX’s recoverability rapidly degraded and was no longer re-coverable for 𝜖 > 0.1 . A similar pattern emerges for the winning margins in Figure 1B: while GCM and SUSTAIN remained positively separated from competing models over much of the noise range, the margins for RULEX shrank rapidly and became negative. These results indi-cate a potential bias in GeCCo for generating GCM and SUSTAIN-style models, but the system can still over-come these biases and find the ground-truth theory, as long as the underlying signal is strong. Taken together, these results provide the first proof of concept for an in-silico, closed-loop theory adjudication system for cognitive science, over open model and ex-perimental design space. While the framework recov-ers multiple theory families in controlled settings, recov-ery was uneven across model classes, with persistent fragility for RULEX. This suggests that success depends on the inherent recoverability of synthesized candidate models as much as on the adjudication loop. Therefore, this is not yet a complete solution to automated theory building, but a step towards a system that tightly links model synthesis and experiment design. In future work, we plan to replace hand-crafted cognitive models with a more powerful simulator of human behavior (Binz et al., 2025) and, eventually, real human behavior. 
+
+# References 
+
+Ashby, F. G., & Maddox, W. T. (2005). Human Cate-gory Learning. Annual Review of Psychology , 56 (1), 149–178. https:// doi.org/ 10.1146/ annurev.psych. 56.091103.070217. Binz, M., Akata, E., Bethge, M., Brändle, F., Callaway, F., Coda-Forno, J., Dayan, P., Demircan, C., Eck-stein, M. K., Éltető, N., et al. (2025). A foundation model to predict and capture human cognition. Na-ture , 644 (8078), 1002–1009. Cavagnaro, D. R., Myung, J. I., Pitt, M. A., & Kujala, J. V. (2010). Adaptive design optimization: A mutual information-based approach to model discrimina-tion in cognitive science. Neural computation , 22 (4), 887–905. Gilovich, T., Medvec, V. H., & Kahneman, D. (1998). Va-rieties of regret: A debate and partial resolution. Psy-chological review , 105 (3), 602. Griffiths, T. L. (2015). Manifesto for a new (computa-tional) cognitive revolution. Cognition , 135 , 21–23. Hartshorne, J. K., de Leeuw, J. R., Goodman, N. D., Jennings, M., & O’Donnell, T. J. (2019). A thousand studies for the price of one: Accelerating psycholog-ical science with pushkin. Behavior research meth-ods , 51 (4), 1782–1803. Jagadish, A. K., Rmus, M., Witte, K., Mathony, M., Binz, M., & Schulz, E. (2026). Can we automatize sci-entific discovery in the cognitive sciences? arXiv preprint arXiv:2603.20988 .Jones, M. N. (Ed.). (2017). Big data in cognitive science .Routledge. Latham, G. P., Erez, M., & Locke, E. A. (1988). Resolv-ing scientific disputes by the joint design of crucial experiments by the antagonists: Application to the erez–latham dispute regarding participation in goal setting. Journal of Applied Psychology , 73 (4), 753. Love, B. C., Medin, D. L., & Gureckis, T. M. (2004). Sus-tain: A network model of category learning. Psycho-logical review , 111 (2), 309. Marr, D., & Vaina, L. (1982). Representation and recog-nition of the movements of shapes. Proceedings of the Royal Society of London. Series B. Biological Sciences , 214 (1197), 501–524. Mellers, B., Hertwig, R., & Kahneman, D. (2001). Do frequency representations eliminate conjunction ef-fects? an exercise in adversarial collaboration. Psy-chological Science , 12 (4), 269–275. Musslick, S., Bartlett, L. K., Chandramouli, S. H., Dubova, M., Gobet, F., Griffiths, T. L., Hullman, J., King, R. D., Kutz, J. N., Lucas, C. G., et al. (2025). Automating the practice of science: Op-portunities, challenges, and implications. Proceed-ings of the National Academy of Sciences , 122 (5), e2401238121. Myung, J. I., Cavagnaro, D. R., & Pitt, M. A. (2013). A tutorial on adaptive design optimization. Journal of mathematical psychology , 57 (3-4), 53–67. Nosofsky, R. M. (2011). The generalized context model: An exemplar model of classification. Formal ap-proaches in categorization , 18–39. Nosofsky, R. M., Palmeri, T. J., & McKinley, S. C. (1994). Rule-plus-exception model of classification learning. 
+
+Psychological review , 101 (1), 53. Peterson, J. C., Bourgin, D. D., Agrawal, M., Reichman, D., & Griffiths, T. L. (2021). Using large-scale exper-iments and machine learning to discover theories of human decision-making. Science , 372 (6547), 1209–1214. https : / / doi . org / 10 . 1126 / science . abe2629. Rmus, M., Jagadish, A. K., Mathony, M., Ludwig, T., & Schulz, E. (2025). Generating computational cog-nitive models using large language models. The Thirty-ninth Annual Conference on Neural Informa-tion Processing Systems .van Rooij, I., & Baggio, G. (2021). Theory before the test: How to build high-verisimilitude explanatory theories in psychological science. Perspectives on Psycho-logical Science , 16 (4), 682–697.
