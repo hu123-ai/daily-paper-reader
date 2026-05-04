@@ -6,85 +6,82 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-03
-- 运行时间：2026-05-03 20:21:32 UTC
+- 最新运行日期：2026-05-04
+- 运行时间：2026-05-04 21:03:39 UTC
 - 运行状态：成功
-- 本次总论文数：21
-- 精读区：9
+- 本次总论文数：20
+- 精读区：8
 - 速读区：12
 
 ### 今日简报（AI）
-今日精选 21 篇前沿成果，深度解析 Android 隐私合规检测与流式 Agent 执行的底层理论。
-重点推荐 PrivacyAssist 框架对隐私不一致性的精准捕捉，以及可修正设计为 Agent 实时交互带来的范式革新。
-建议普通读者关注 Agent 在文献检索与人机协作流中的效率提升，探索 AI 助手的实战边界。
-- 详情：[/202605/03/README](/202605/03/README)
+今日深度复盘 20 篇 AI 论文，重点攻克了多智能体流水线的粒度控制与生物医学人机协作新范式。
+满分神作 Agent Capsules 揭示了质量门控在复杂任务中的关键作用，同时 Vibe Medicine 重新定义了医疗科研的协同边界。
+建议关注大小模型联动的推理优化及智能体权力制衡架构，以提升实际应用中的效率与安全性。
+- 详情：[/202605/04/README](/202605/04/README)
 
 ### 精读区论文标签
-1. [PrivacyAssist: A User-Centric Agent Framework for Detecting Privacy Inconsistencies in Android Apps](/202605/03/2604.23248v1-privacyassist-a-user-centric-agent-framework-for-detecting-privacy-inconsistencies-in-android-apps)  
+1. [Agent Capsules: Quality-Gated Granularity Control for Multi-Agent LLM Pipelines](/202605/04/2605.00410v1-agent-capsules-quality-gated-granularity-control-for-multi-agent-llm-pipelines)  
+   标签：评分：10.0/10、query:malm
+   evidence：多智能体大模型流水线的质量门控粒度控制
+2. [Vibe Medicine: Redefining Biomedical Research Through Human-AI Co-Work](/202605/04/2604.23674v1-vibe-medicine-redefining-biomedical-research-through-human-ai-co-work)  
    标签：评分：9.0/10、query:malm
-   evidence：基于大模型的多智能体平台
-2. [Revisable by Design: A Theory of Streaming LLM Agent Execution](/202605/03/2604.23283v1-revisable-by-design-a-theory-of-streaming-llm-agent-execution)  
+   evidence：用于生物医学研究工作流的AI智能体框架
+3. [FlowBot: Inducing LLM Workflows with Bilevel Optimization and Textual Gradients](/202605/04/2604.26258v2-flowbot-inducing-llm-workflows-with-bilevel-optimization-and-textual-gradients)  
    标签：评分：9.0/10、query:malm
-   evidence：流式大模型智能体执行与可逆性理论
-3. [GSAR: Typed Grounding for Hallucination Detection and Recovery in Multi-Agent LLMs](/202605/03/2604.23366v1-gsar-typed-grounding-for-hallucination-detection-and-recovery-in-multi-agent-llms)  
+   evidence：自动诱导智能体和大语言模型工作流
+4. [A Systematic Comparison of Prompting and Multi-Agent Methods for LLM-based Stance Detection](/202605/04/2604.26319v1-a-systematic-comparison-of-prompting-and-multi-agent-methods-for-llm-based-stance-detection)  
    标签：评分：9.0/10、query:malm
-   evidence：用于诊断报告的自主多智能体大模型系统
-4. [ClawMark: A Living-World Benchmark for Multi-Turn, Multi-Day, Multimodal Coworker Agents](/202605/03/2604.23781v1-clawmark-a-living-world-benchmark-for-multi-turn-multi-day-multimodal-coworker-agents)  
+   evidence：大模型提示词与多智能体方法的系统比较
+5. [Skills-Coach: A Self-Evolving Skill Optimizer via Training-Free GRPO](/202605/04/2604.27488v1-skills-coach-a-self-evolving-skill-optimizer-via-training-free-grpo)  
    标签：评分：9.0/10、query:malm
-   evidence：多轮、多日协作智能体的基准测试
-5. [EndoGov: A knowledge-governed multi-agent expert system for endometrial cancer risk stratification](/202605/03/2604.23802v1-endogov-a-knowledge-governed-multi-agent-expert-system-for-endometrial-cancer-risk-stratification)  
+   evidence：大语言模型智能体技能自我进化的自动化框架
+6. [Scaling Video Understanding via Compact Latent Multi-Agent Collaboration](/202605/04/2605.00444v1-scaling-video-understanding-via-compact-latent-multi-agent-collaboration)  
    标签：评分：9.0/10、query:malm
-   evidence：知识治理的多智能体专家系统
-6. [KISS Sorcar: A Stupidly-Simple General-Purpose and Software Engineering AI Assistant](/202605/03/2604.23822v1-kiss-sorcar-a-stupidly-simple-general-purpose-and-software-engineering-ai-assistant)  
+   evidence：用于视频理解的多智能体协作框架
+7. [Self-Adaptive Multi-Agent LLM-Based Security Pattern Selection for IoT Systems](/202605/04/2605.00741v1-self-adaptive-multi-agent-llm-based-security-pattern-selection-for-iot-systems)  
    标签：评分：9.0/10、query:malm
-   evidence：五层智能体层级框架
-7. [Constraint-Guided Multi-Agent Decompilation for Executable Binary Recovery](/202605/03/2604.23940v1-constraint-guided-multi-agent-decompilation-for-executable-binary-recovery)  
+   evidence：基于大语言模型的自适应多智能体安全选择
+8. [RunAgent: Interpreting Natural-Language Plans with Constraint-Guided Execution](/202605/04/2605.00798v1-runagent-interpreting-natural-language-plans-with-constraint-guided-execution)  
    标签：评分：9.0/10、query:malm
-   evidence：用于代码优化与验证的多智能体框架
-8. [AgentVisor: Defending LLM Agents Against Prompt Injection via Semantic Virtualization](/202605/03/2604.24118v1-agentvisor-defending-llm-agents-against-prompt-injection-via-semantic-virtualization)  
-   标签：评分：9.0/10、query:malm
-   evidence：大语言模型智能体及其架构的安全框架
-9. [Bian Que: An Agentic Framework with Flexible Skill Arrangement for Online System Operations](/202605/03/2604.26805v1-bian-que-an-agentic-framework-with-flexible-skill-arrangement-for-online-system-operations)  
-   标签：评分：9.0/10、query:malm
-   evidence：用于系统运维和编排的智能体框架
+   evidence：多智能体计划执行平台
 
 ### 速读区论文标签
-1. [IntrAgent: An LLM Agent for Content-Grounded Information Retrieval through Literature Review](/202605/03/2604.22861v1-intragent-an-llm-agent-for-content-grounded-information-retrieval-through-literature-review)  
+1. [Breaking the Secret: Economic Interventions for Combating Collusion in Embodied Multi-Agent Systems](/202605/04/2604.23511v1-breaking-the-secret-economic-interventions-for-combating-collusion-in-embodied-multi-agent-systems)  
    标签：评分：8.0/10、query:malm
-   evidence：基于大语言模型的内容锚定信息检索智能体
-2. [A Decoupled Human-in-the-Loop System for Controlled Autonomy in Agentic Workflows](/202605/03/2604.23049v1-a-decoupled-human-in-the-loop-system-for-controlled-autonomy-in-agentic-workflows)  
+   evidence：对抗多智能体系统中的合谋行为
+2. [Tandem: Riding Together with Large and Small Language Models for Efficient Reasoning](/202605/04/2604.23623v1-tandem-riding-together-with-large-and-small-language-models-for-efficient-reasoning)  
    标签：评分：8.0/10、query:malm
-   evidence：多智能体环境下的解耦人机协同系统
-3. [ContextWeaver: Selective and Dependency-Structured Memory Construction for LLM Agents](/202605/03/2604.23069v1-contextweaver-selective-and-dependency-structured-memory-construction-for-llm-agents)  
+   evidence：协同大、小语言模型的协作框架
+3. [Structural Enforcement of Goal Integrity in AI Agents via Separation-of-Powers Architecture](/202605/04/2604.23646v1-structural-enforcement-of-goal-integrity-in-ai-agents-via-separation-of-powers-architecture)  
    标签：评分：8.0/10、query:malm
-   evidence：使用依赖结构的LLM智能体记忆框架
-4. [From Coarse to Fine: Self-Adaptive Hierarchical Planning for LLM Agents](/202605/03/2604.23194v1-from-coarse-to-fine-self-adaptive-hierarchical-planning-for-llm-agents)  
+   evidence：AI智能体系统级安全的架构设计
+4. [ClawTrace: Cost-Aware Tracing for LLM Agent Skill Distillation](/202605/04/2604.23853v1-clawtrace-cost-aware-tracing-for-llm-agent-skill-distillation)  
    标签：评分：8.0/10、query:malm
-   evidence：基于大语言模型的智能体和分层规划
-5. [Usable Agent Discovery for Decentralized AI Systems](/202605/03/2604.23080v1-usable-agent-discovery-for-decentralized-ai-systems)  
+   evidence：LLM智能体对话及子智能体生成的追踪平台
+5. [Agentic Adversarial Rewriting Exposes Architectural Vulnerabilities in Black-Box NLP Pipelines](/202605/04/2604.23483v1-agentic-adversarial-rewriting-exposes-architectural-vulnerabilities-in-black-box-nlp-pipelines)  
    标签：评分：7.0/10、query:malm
-   evidence：大规模智能体系统中的去中心化智能体发现
-6. [Discovering Agentic Safety Specifications from 1-Bit Danger Signals](/202605/03/2604.23210v1-discovering-agentic-safety-specifications-from-1-bit-danger-signals)  
+   evidence：用于NLP流水线的双智能体规避框架
+6. [Intention-Aware Semantic Agent Communications for AI Glasses](/202605/04/2604.23691v1-intention-aware-semantic-agent-communications-for-ai-glasses)  
    标签：评分：7.0/10、query:malm
-   evidence：LLM 智能体发现安全目标的框架
-7. [Bridging the Pose-Semantic Gap: A Cascade Framework for Text-Based Person Anomaly Search](/202605/03/2604.23282v1-bridging-the-pose-semantic-gap-a-cascade-framework-for-text-based-person-anomaly-search)  
+   evidence：边缘与服务器之间的语义智能体通信框架
+7. [Prism-Reranker: Beyond Relevance Scoring -- Jointly Producing Contributions and Evidence for Agentic Retrieval](/202605/04/2604.23734v1-prism-reranker-beyond-relevance-scoring----jointly-producing-contributions-and-evidence-for-agentic-retrieval)  
    标签：评分：7.0/10、query:malm
-   evidence：级联框架中的多智能体语义验证
-8. [Bridging Reasoning and Action: Hybrid LLM-RL Framework for Efficient Cross-Domain Task-Oriented Dialogue](/202605/03/2604.23345v1-bridging-reasoning-and-action-hybrid-llm-rl-framework-for-efficient-cross-domain-task-oriented-dialogue)  
+   evidence：用于智能体检索和RAG的重排序器
+8. [S2G-RAG: Structured Sufficiency and Gap Judging for Iterative Retrieval-Augmented QA](/202605/04/2604.23783v1-s2g-rag-structured-sufficiency-and-gap-judging-for-iterative-retrieval-augmented-qa)  
    标签：评分：7.0/10、query:malm
-   evidence：推理与行动的混合LLM-RL框架
-9. [A Systematic Approach for Large Language Models Debugging](/202605/03/2604.23027v1-a-systematic-approach-for-large-language-models-debugging)  
+   evidence：用于问答的迭代检索增强框架
+9. [JudgeSense: A Benchmark for Prompt Sensitivity in LLM-as-a-Judge Systems](/202605/04/2604.23478v1-judgesense-a-benchmark-for-prompt-sensitivity-in-llm-as-a-judge-systems)  
+   标签：评分：6.0/10、query:profile-1
+   evidence：LLM作为评判者系统的提示敏感度基准
+10. [Thinking Like a Clinician: A Cognitive AI Agent for Clinical Diagnosis via Panoramic Profiling and Adversarial Debate](/202605/04/2604.23605v1-thinking-like-a-clinician-a-cognitive-ai-agent-for-clinical-diagnosis-via-panoramic-profiling-and-adversarial-debate)  
    标签：评分：6.0/10、query:malm
-   evidence：调试复杂的基于智能体的推理系统
-10. [From Language to Logic: Bridging LLMs & Formal Representations for RTL Assertion Generation](/202605/03/2604.23100v1-from-language-to-logic-bridging-llms--formal-representations-for-rtl-assertion-generation)  
+   evidence：模拟认知轨迹和对抗性辩论的临床推理框架
+11. [Spore: Efficient and Training-Free Privacy Extraction Attack on LLMs via Inference-Time Hybrid Probing](/202605/04/2604.23711v1-spore-efficient-and-training-free-privacy-extraction-attack-on-llms-via-inference-time-hybrid-probing)  
    标签：评分：6.0/10、query:malm
-   evidence：工具增强的ReAct智能体架构
-11. [Active Inference: A method for Phenotyping Agency in AI systems?](/202605/03/2604.23278v1-active-inference-a-method-for-phenotyping-agency-in-ai-systems)  
-   标签：评分：6.0/10、query:malm
-   evidence：描述计算系统中的智能体特性
-12. [AI Identity: Standards, Gaps, and Research Directions for AI Agents](/202605/03/2604.23280v1-ai-identity-standards-gaps-and-research-directions-for-ai-agents)  
-   标签：评分：6.0/10、query:malm
-   evidence：AI智能体身份与生命周期标准
+   evidence：大语言模型智能体记忆中的隐私风险
+12. [One Size Fits None: Heuristic Collapse in LLM Investment Advice](/202605/04/2604.23837v1-one-size-fits-none-heuristic-collapse-in-llm-investment-advice)  
+   标签：评分：6.0/10、query:q2
+   evidence：解释法律文件和法律咨询标准
 
 
 <div class="dpr-home-promo-card">
