@@ -1,0 +1,1456 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-05T20:04:09.558752+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 2,
+    "deep_divecandidates": 66,
+    "deep_cap": 7,
+    "deep_selected": 25,
+    "quick_candidates": 138,
+    "quick_skim_target": 12,
+    "quick_selected": 12
+  },
+  "deep_dive": [
+    {
+      "id": "2605.01986v1",
+      "title": "12 Angry AI Agents: Evaluating Multi-Agent LLM Decision-Making Through Cinematic Jury Deliberation",
+      "abstract": "What if the twelve jurors of Sidney Lumet's 12 Angry Men (1957) were not men, but large language models? Would the one juror who disagrees still be able to change everyone's mind? This paper instantiates that scenario as a multi-agent benchmark for LLM deliberation: twelve agents, each conditioned on a film-faithful persona, debate the film's murder case using multi-agent framework. Two models representing opposite ends of the RLHF spectrum are tested: GPT-4o (closed-source, heavy alignment) and Llama-4-Scout (open-weight, lighter alignment), across three conditions (baseline, open-minded prompt, no initial vote), with N = 3 replications per cell (18 runs total). Three findings emerge. (i) Seventeen of eighteen runs end in a hung jury (a state where the jury fails to reach a unanimous verdict); the film's central event, gradual minority-to-majority persuasion, almost never occurs, indicating that anchoring is the dominant failure mode of current LLMs in this setting. (ii) The two models exhibit sharply different internal dynamics: GPT-4o produces a mean of 1.0 vote changes per run across all conditions, while Llama-4-Scout ranges from 2.0 (baseline) to 6.0 (open-minded prompt), and is the only model to reach a NOT\\_GUILTY verdict (1 of 3 runs in the no-initial-vote condition). The same ``open-minded'' instruction is internalized by Llama and ignored by GPT-4o. (iii) This asymmetry suggests that the intensity of RLHF alignment training, not model capability, is the primary determinant of deliberative flexibility in multi-agent settings. Flexibility, not capability, tracks human deliberation. The work is framed as an exploratory study and discusses implications for jury-of-LLMs evaluation and multi-agent debate.",
+      "authors": [
+        "Ahmet Bahaddin Ersoz"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-03T17:41:49+00:00",
+      "link": "https://arxiv.org/pdf/2605.01986v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "multi-agent LLM decision-making through jury deliberation",
+      "llm_evidence_cn": "通过陪审团讨论进行多智能体大模型决策",
+      "llm_evidence": "通过陪审团讨论进行多智能体大模型决策",
+      "canonical_evidence": "通过陪审团讨论进行多智能体大模型决策",
+      "llm_tldr_en": "Evaluates multi-agent LLM deliberation using a cinematic jury murder case scenario.",
+      "llm_tldr_cn": "通过电影中的陪审团谋杀案场景评估多智能体大语言模型的协商决策能力。",
+      "llm_tldr": "通过电影中的陪审团谋杀案场景评估多智能体大语言模型的协商决策能力。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.02011v1",
+      "title": "Enhancing Judgment Document Generation via Agentic Legal Information Collection and Rubric-Guided Optimization",
+      "abstract": "Automating the drafting of judgment documents is pivotal to judicial efficiency, yet it remains challenging due to the dual requirements of comprehensive retrieval of legal information and rigorous logical reasoning. Existing approaches, typically relying on standard Retrieval-Augmented Generation and Supervised Fine-Tuning, often suffer from insufficient evidence recall, hallucinated statutory references, and logically flawed legal reasoning. To bridge this gap, we propose Judge-R1, a unified framework designed to enhance LLM-based judgment document generation by jointly improving legal information collection and judgment document generation. First, we introduce Agentic Legal Information Collection, which employs a dynamic planning agent to retrieve precise statutes and precedents from multiple sources. Second, we implement Rubric-Guided Optimization, a reinforcement learning phase utilizing Group Relative Policy Optimization (GRPO) with a comprehensive legal reward function to enforce adherence to judicial standards and reasoning logic. Extensive experiments on the JuDGE benchmark demonstrate that Judge-R1 significantly outperforms state-of-the-art baselines in both legal accuracy and generation quality.",
+      "authors": [
+        "Weihang Su",
+        "Xuanyi Chen",
+        "Yueyue Wu",
+        "Qingyao Ai",
+        "Yiqun Liu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.IR"
+      ],
+      "published": "2026-05-03T18:32:10+00:00",
+      "link": "https://arxiv.org/pdf/2605.02011v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "agentic legal information collection and LLM-based judgment document generation",
+      "llm_evidence_cn": "智能体法律信息采集与基于大模型的判决文书生成",
+      "llm_evidence": "智能体法律信息采集与基于大模型的判决文书生成",
+      "canonical_evidence": "智能体法律信息采集与基于大模型的判决文书生成",
+      "llm_tldr_en": "Proposes Judge-R1 to enhance legal judgment generation using agentic retrieval and rubric-guided optimization.",
+      "llm_tldr_cn": "提出Judge-R1框架，利用智能体检索和准则引导优化来增强法律判决生成。",
+      "llm_tldr": "提出Judge-R1框架，利用智能体检索和准则引导优化来增强法律判决生成。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; legal reasoning methods for court judgment prediction; retrieval augmented legal judgment prediction with large language models; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.02307v1",
+      "title": "SOTOPIA-TOM: Evaluating Information Management in Multi-Agent Interaction with Theory of Mind",
+      "abstract": "As LLM-based agents are increasingly interacting in multi-party settings, they need to properly handle information asymmetry, i.e., knowing when and to whom to disclose information is appropriate. Yet, existing benchmarks fail to measure this ability in realistic multi-party settings. Thus, we introduce SOTOPIA-TOM, a multi-dimensional benchmarking framework to evaluate LLM agents' ability to successfully navigate information asymmetric and privacy sensitive multi-party interactions. We create an interaction environment which enables both public (broadcast) and private (direct message) communication, and craft 160 human-reviewed scenarios across eight industry sectors, each involving 3 to 5 agents with partitioned private knowledge and channel-dependent sharing policies. To measure interaction abilities, we create a multi-dimensional evaluation framework to assess how well agents share useful information, seek missing details, coordinate efficiently, and protect privacy, which we also combine into a composite INFOMGMT metric. Results show that, across 6 LLM backbones and prompting strategies (vanilla, CoT-privacy, and ToM-based interventions), even the largest high-reasoning model (GPT-5) reaches only a 62% INFOMGMT score, which indicates persistent deficiencies in information seeking and privacy-aware decision-making. Additionally, ToM-based interventions more consistently improve the overall coordination-privacy balance (for example, relative to the vanilla baseline, ToM-Coach reduces critical privacy violations on GPT-4o from 9.9% to 2.2% while increasing the composite InfoMgmt score more than 2.5x from 15% to 40%). Overall, SOTOPIA-TOM exposes persistent limitations of current LLM agents in complex, information-asymmetric coordination and provides an extensible testbed for developing more privacy-aware, theory-of-mind capable multi-agent systems.",
+      "authors": [
+        "Yashwanth YS",
+        "Ruichen Wang",
+        "Shihua Zeng",
+        "Xuhui Zhou",
+        "Koichi Onoue",
+        "Vasudha Varadarajan",
+        "Maarten Sap"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA"
+      ],
+      "published": "2026-05-04T07:59:18+00:00",
+      "link": "https://arxiv.org/pdf/2605.02307v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "benchmarking framework for multi-agent interaction",
+      "llm_evidence_cn": "多智能体交互的基准测试框架",
+      "llm_evidence": "多智能体交互的基准测试框架",
+      "canonical_evidence": "多智能体交互的基准测试框架",
+      "llm_tldr_en": "A framework to evaluate information management and Theory of Mind in multi-agent LLM interactions.",
+      "llm_tldr_cn": "一个用于评估多智能体LLM交互中信息管理和心智模型的框架。",
+      "llm_tldr": "一个用于评估多智能体LLM交互中信息管理和心智模型的框架。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.02472v1",
+      "title": "Accurate Legal Reasoning at Scale: Neuro-Symbolic Offloading and Structural Auditability for Robust Legal Adjudication",
+      "abstract": "Legal texts often contain computational legal clauses--provisions whose understanding requires complex logic. While frontier Large Reasoning Models (LRMs) can describe such clauses, building production-ready systems is limited by reasoning errors and the high cost of inference. We propose Amortized Intelligence, a neuro-symbolic approach where we use an LLM once to translate a legal text into Deterministic Autonomous Contract Language (DACL): a typed graph intermediate representation. Adjudication then relies on deterministic graph executions with a visually auditable trace. In comparison against runtime LRM baselines (including GPT-5.2 and Gemini 3 Pro), our DACL-based Agent achieves near-perfect consistency and mitigates the \"reasoning cliff\" observed in probabilistic models. The system reduces compute costs by over 90% in high-volume workflows while satisfying the strict auditability requirements of legal adjudication.",
+      "authors": [
+        "Stanisław Sójka",
+        "Witold Kowalczyk"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-05-04T11:13:59+00:00",
+      "link": "https://arxiv.org/pdf/2605.02472v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "Neuro-symbolic approach for robust legal adjudication and reasoning using LLMs",
+      "llm_evidence_cn": "利用大语言模型进行稳健法律裁决和推理的神经符号方法",
+      "llm_evidence": "利用大语言模型进行稳健法律裁决和推理的神经符号方法",
+      "canonical_evidence": "利用大语言模型进行稳健法律裁决和推理的神经符号方法",
+      "llm_tldr_en": "Proposes a neuro-symbolic approach to translate legal text into a graph for auditable and accurate adjudication.",
+      "llm_tldr_cn": "提出一种神经符号方法，将法律文本转换为图结构，以实现可审计且准确的法律裁决。",
+      "llm_tldr": "提出一种神经符号方法，将法律文本转换为图结构，以实现可审计且准确的法律裁决。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; legal reasoning methods for court judgment prediction; retrieval augmented legal judgment prediction with large language models; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.02489v1",
+      "title": "GRAIL: A Deep-Granularity Hybrid Resonance Framework for Real-Time Agent Discovery via SLM-Enhanced Indexing",
+      "abstract": "As the ecosystem of Large Language Model (LLM)-based agents expands rapidly, efficient and accurate Agent Discovery becomes a critical bottleneck for large-scale multi-agent collaboration. Existing approaches typically face a dichotomy: either relying on heavy-weight LLMs for intent parsing, leading to prohibitive latency (often exceeding 30 seconds), or using monolithic vector retrieval that sacrifices semantic precision for speed. To bridge this gap, we propose \\textbf{GRAIL} (Granular Resonance-based Agent/AI Link), a novel framework achieving sub-400ms discovery latency without compromising accuracy. GRAIL introduces three key innovations: (1) \\textbf{SLM-Enhanced Prediction}, replacing the generalized LLM parser with a specialized, fine-tuned Small Language Model (SLM) for millisecond-level capability tag prediction; (2) \\textbf{Pseudo-Document Expansion}, augmenting agent descriptions with synthetic queries to enhance semantic density for robust dense retrieval; and (3) \\textbf{MaxSim Resonance}, a fine-grained matching mechanism computing maximum similarity between user queries and discrete agent usage examples, effectively mitigating semantic dilution. Validated on \\textbf{AgentTaxo-9K}, our new large-scale dataset of 9,240 agents, GRAIL reduces end-to-end discovery latency by over \\textbf{79$\\times$} compared to LLM-parsing baselines, while significantly outperforming traditional vector search in Recall@10. This framework offers a scalable, industrial-grade solution for the real-time ``Internet of Agents.\"",
+      "authors": [
+        "Jinliang Xu"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL",
+        "cs.IR"
+      ],
+      "published": "2026-05-04T11:41:45+00:00",
+      "link": "https://arxiv.org/pdf/2605.02489v1",
+      "tags": [
+        "keyword:MALM",
+        "query:MALM"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "framework for real-time agent discovery in multi-agent collaboration",
+      "llm_evidence_cn": "多智能体协作中的实时智能体发现框架",
+      "llm_evidence": "多智能体协作中的实时智能体发现框架",
+      "canonical_evidence": "多智能体协作中的实时智能体发现框架",
+      "llm_tldr_en": "Introduces GRAIL, a high-speed framework for discovering LLM agents to facilitate large-scale collaboration.",
+      "llm_tldr_cn": "引入GRAIL框架，通过SLM增强索引实现亚秒级智能体发现，支持大规模多智能体协作。",
+      "llm_tldr": "引入GRAIL框架，通过SLM增强索引实现亚秒级智能体发现，支持大规模多智能体协作。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2604.24905v1",
+      "title": "MultiHedge: Adaptive Coordination via Retrieval-Augmented Control",
+      "abstract": "Decision-making under changing conditions remains a fundamental challenge in many real-world systems. Existing approaches often fail to generalize across shifting regimes and exhibit unstable behavior under uncertainty. This raises the research question: can retrieval-augmented LLM coordination improve the robustness of modular decision pipelines? We propose MultiHedge, a hybrid architecture where an LLM produces structured allocation decisions conditioned on retrieved historical precedents, and execution is grounded in canonical option strategies. In a controlled evaluation using U.S. equities, we compare MultiHedge to rule-based and learning-based baselines. The key result is that memory-augmented retrieval confers greater robustness and stability than increasing model scale alone. Our paper contributes a controlled computational study showing that memory and architectural design play a central role in robustness in modular decision systems.",
+      "authors": [
+        "Feliks Bańka",
+        "Jarosław A. Chudziak"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.AI"
+      ],
+      "published": "2026-04-27T18:38:22+00:00",
+      "link": "https://arxiv.org/pdf/2604.24905v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "retrieval-augmented LLM coordination and hybrid architecture",
+      "llm_evidence_cn": "检索增强的大模型协作与混合架构",
+      "llm_evidence": "检索增强的大模型协作与混合架构",
+      "canonical_evidence": "检索增强的大模型协作与混合架构",
+      "llm_tldr_en": "Proposes MultiHedge, a retrieval-augmented LLM coordination framework for robust decision-making.",
+      "llm_tldr_cn": "提出 MultiHedge，一种用于稳健决策的检索增强型大语言模型协作框架。",
+      "llm_tldr": "提出 MultiHedge，一种用于稳健决策的检索增强型大语言模型协作框架。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.01102v1",
+      "title": "Towards Multi-Agent Autonomous Reasoning in Hydrodynamics",
+      "abstract": "Single-agent systems (SAS) have become the default pattern for LLM-driven scientific workflows, but routing planning, tool use, and synthesis through a single context window comes with a well-known cost: as tool specifications and observational traces accumulate, the effective context available for each decision shrinks, and end-to-end reliability suffers. We present a multi-agent system (MAS) prototype for hydrodynamics in which specialized agents are coordinated through a Layer Execution Graph (LEG). A planner agent constructs query-specific execution topologies from natural-language routing heuristics that capture domain knowledge without hard-coding it as rigid control logic; specialist agents operate under strict tool allowlists and occupy complementary data-class roles. Between layers, consolidator agents fuse parallel outputs into concise briefs, and a reporter agent synthesizes the final response, while the runtime logs provenance for every tool invocation to support auditability. All benchmarks, ablations, and stress tests use Claude Sonnet~4.6 as the backbone model for both specialist and general-purpose agents. Evaluated on 37 queries spanning six complexity categories, the prototype achieves 93.6% factual precision with a 100% pass rate. Accuracy remains above 90% across runs from single-threaded to five independent parallel tracks, and under simulated loss of individual data sources the system degrades gracefully, still returning substantive partial answers. Together, these results suggest that planner-guided, graph-structured multi-agent orchestration can meaningfully alleviate the context-saturation bottlenecks that constrain monolithic single-agent architectures.",
+      "authors": [
+        "Jinpai Zhao",
+        "Albert Cerrone",
+        "Joannes Westerink",
+        "Clint Dawson"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "physics.ao-ph"
+      ],
+      "published": "2026-05-01T21:17:55+00:00",
+      "link": "https://arxiv.org/pdf/2605.01102v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "multi-agent system coordinated through a Layer Execution Graph",
+      "llm_evidence_cn": "通过层执行图协调的多智能体系统",
+      "llm_evidence": "通过层执行图协调的多智能体系统",
+      "canonical_evidence": "通过层执行图协调的多智能体系统",
+      "llm_tldr_en": "Presents a multi-agent system for hydrodynamics using specialized agents and a planner for complex reasoning.",
+      "llm_tldr_cn": "展示了一个用于流体力学的多智能体系统，利用专业智能体和规划器进行复杂推理。",
+      "llm_tldr": "展示了一个用于流体力学的多智能体系统，利用专业智能体和规划器进行复杂推理。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.01133v1",
+      "title": "When Embedding-Based Defenses Fail: Rethinking Safety in LLM-Based Multi-Agent Systems",
+      "abstract": "Large language model (LLM)-powered multi-agent systems (MAS) enable agents to communicate and share information, achieving strong performance on complex tasks. However, this communication also creates an attack surface where malicious agents can propagate misinformation and manipulate group decisions, undermining MAS safety. Existing embedding-based defenses aim to detect and prune suspicious agents, but their effectiveness depends on a clear separation between the text embeddings of malicious and benign messages. Attackers can circumvent such defenses by crafting messages whose embeddings lie close to benign ones. We analyze this failure mode theoretically and validate it empirically with three attacks, Slow Drift, Benign Wrapper, and Chaos Seeding. Our analysis further reveals a fundamental limitation of embedding-based defenses: because they rely solely on the text embeddings, they ignore token-level confidence signals such as logits, which can remain informative when embeddings are not distinguishable under attack. We propose using confidence scores to prune or down-weight messages during MAS communication. Experiments show improved robustness across models, datasets, and communication topologies. Moreover, we find that the effectiveness of confidence signals decays over communication rounds, highlighting the importance of early intervention. This insights can inform and inspire future work on MAS attacks and defenses.",
+      "authors": [
+        "Lingxi Zhang",
+        "Guangtao Zheng",
+        "Hanjie Chen"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.LG",
+        "cs.MA"
+      ],
+      "published": "2026-05-01T22:15:11+00:00",
+      "link": "https://arxiv.org/pdf/2605.01133v1",
+      "tags": [
+        "keyword:MALM",
+        "query:MALM"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "safety in LLM-based multi-agent systems and group decisions",
+      "llm_evidence_cn": "基于大语言模型的多智能体系统安全与群体决策",
+      "llm_evidence": "基于大语言模型的多智能体系统安全与群体决策",
+      "canonical_evidence": "基于大语言模型的多智能体系统安全与群体决策",
+      "llm_tldr_en": "Analyzes safety vulnerabilities in LLM multi-agent systems where malicious agents manipulate group decisions.",
+      "llm_tldr_cn": "分析了基于大语言模型的多智能体系统中恶意智能体操纵群体决策的安全漏洞。",
+      "llm_tldr": "分析了基于大语言模型的多智能体系统中恶意智能体操纵群体决策的安全漏洞。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.01147v1",
+      "title": "Position: Safety and Fairness in Agentic AI Depend on Interaction Topology, Not on Model Scale or Alignment",
+      "abstract": "As large language models are increasingly deployed as interacting agents in high-stakes decisions, the AI safety community assumes that safety properties of individual models will compose into safe multi-agent behavior. This position paper argues that this assumption is fundamentally mistaken. In agentic AI, safety is determined by interaction topology, not model weights. When agents deliberate sequentially or aggregate via parallel voting with a judge, the structure of information flow and decision coupling dominates outcomes. Evidence across model families and scales reveals three persistent topology-driven pathologies: ordering instability, where system behavior depends primarily on agent sequence; information cascades, where early judgments propagate regardless of correctness; and functional collapse, where systems satisfy fairness metrics while abandoning meaningful risk discrimination. Contrary to intuition, scaling to more capable models strengthens these effects by increasing consensus formation and reducing the challenge of initial decisions. These failure modes are invisible to model-centric evaluation and alignment procedures. We argue that agentic AI must be treated as a dynamical system rather than a collection of aligned components. Interaction topology must become a primary target of safety evaluation and regulation, with systems required to demonstrate robustness across architectural variations before deployment.",
+      "authors": [
+        "Tanav Singh Bajaj",
+        "Nikhil Singh",
+        "Karan Anand",
+        "Eishkaran Singh"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-01T22:49:10+00:00",
+      "link": "https://arxiv.org/pdf/2605.01147v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Safety and fairness in agentic AI based on interaction topology in multi-agent systems",
+      "llm_evidence_cn": "基于多智能体系统交互拓扑的智能体 AI 安全与公平性",
+      "llm_evidence": "基于多智能体系统交互拓扑的智能体 AI 安全与公平性",
+      "canonical_evidence": "基于多智能体系统交互拓扑的智能体 AI 安全与公平性",
+      "llm_tldr_en": "Argues that multi-agent AI safety depends on interaction topology rather than individual model alignment.",
+      "llm_tldr_cn": "认为多智能体 AI 的安全性取决于交互拓扑结构，而非单个模型的对齐。",
+      "llm_tldr": "认为多智能体 AI 的安全性取决于交互拓扑结构，而非单个模型的对齐。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.01416v1",
+      "title": "Who Decides What Is Harmful? Content Moderation Policy Through A Multi-Agent Personalised Inference Framework",
+      "abstract": "The increasing scale and complexity of online platforms raises critical policy questions around harmful content, digital well-being, and user autonomy. Traditional content moderation systems rely on centralised, top-down rules, often failing to accommodate the subjective nature of harm perception. This paper proposes an LLM-based multi-agent personalised inference framework that filters content based on unique sensitivity profiles of individual users. Our architecture combines domain-specific Expert Agents, a Manager Agent for orchestrating content analysis and agent selection, and a Ghost Profile Agent for simulating user perspectives, to inform moderation decisions. Evaluated against a range of non-personalised baselines, the system demonstrates up to a 32% improvement in accuracy, showing increased alignment with individual user sensitivities. Beyond technical performance, our framework provides policy-relevant insights for platform governance, providing a scalable way to reconcile moderation policies with societal and individual digital rights",
+      "authors": [
+        "Ewelina Gajewska",
+        "Michal Wawer",
+        "Katarzyna Budzynska",
+        "Jaroslaw A. Chudziak"
+      ],
+      "primary_category": "cs.CY",
+      "categories": [
+        "cs.CY",
+        "cs.CL"
+      ],
+      "published": "2026-05-02T12:28:09+00:00",
+      "link": "https://arxiv.org/pdf/2605.01416v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "LLM-based multi-agent personalised inference framework",
+      "llm_evidence_cn": "基于大模型的多智能体个性化推理框架",
+      "llm_evidence": "基于大模型的多智能体个性化推理框架",
+      "canonical_evidence": "基于大模型的多智能体个性化推理框架",
+      "llm_tldr_en": "Develops a multi-agent framework using expert and manager agents for personalized content moderation.",
+      "llm_tldr_cn": "开发了一个利用专家和管理智能体进行个性化内容审核的多智能体框架。",
+      "llm_tldr": "开发了一个利用专家和管理智能体进行个性化内容审核的多智能体框架。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.01471v1",
+      "title": "Practical Limits of Autonomous Test Repair: A Multi-Agent Case Study with LLM-Driven Discovery and Self-Correction",
+      "abstract": "Maintaining reliable UI test suites in large-scale enterprise applications is a persistent and costly challenge. We present an industrial case study of a multi-agent autonomous testing system evaluated using anonymized execution data from a production-like enterprise UI testing prototype. The application features several hundred dynamic UI elements per screen. Built on a large language model with LangGraph orchestration, Playwright execution, and a RAG knowledge base, the system evolves from human-directed testing toward High-autonomy feature discovery and test execution: given no explicit test targets, it discovers over 100 testable features across 10 UI screens, dynamically expands coverage by an additional 15--30 features through runtime DOM analysis, and iteratively repairs failing tests without human intervention.   We analyzed 300 consecutive autonomous execution reports encompassing 636 individual test-case executions across 10 distinct scenario families. The system achieved a 70% repair convergence rate at the scenario-family level, with a mean of 3.4 repair iterations to convergence. However, only 10% of scenario families succeeded on first attempt, 38% of reports failed to produce any executable test artifact, and we documented concrete instances of assertion weakening and test-case deletion used as workaround mechanisms to achieve superficial convergence.   Our findings show that unrestricted autonomy leads to unstable and often misleading outcomes, while constrained autonomy transforms such systems into operationally viable workflows. Rather than advocating full autonomy, our findings suggest that reliable autonomous testing in enterprise-scale settings requires explicit constraints, validation boundaries, and human oversight to preserve semantic correctness and operational trustworthiness.",
+      "authors": [
+        "Hyukjoo Lee"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-05-02T14:39:55+00:00",
+      "link": "https://arxiv.org/pdf/2605.01471v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "multi-agent autonomous testing system with LangGraph orchestration",
+      "llm_evidence_cn": "使用LangGraph编排的多智能体自主测试系统",
+      "llm_evidence": "使用LangGraph编排的多智能体自主测试系统",
+      "canonical_evidence": "使用LangGraph编排的多智能体自主测试系统",
+      "llm_tldr_en": "Presents an industrial case study of a multi-agent autonomous testing system using LLMs and RAG.",
+      "llm_tldr_cn": "展示了一个使用大语言模型和检索增强生成的多智能体自主测试系统的工业案例研究。",
+      "llm_tldr": "展示了一个使用大语言模型和检索增强生成的多智能体自主测试系统的工业案例研究。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.01555v1",
+      "title": "Automated Interpretability and Feature Discovery in Language Models with Agents",
+      "abstract": "We introduce an autonomous multiagent framework for mechanistic interpretability that automates both explaining and finding internal features in large language models. The system runs two coupled loops: (1) explanation refinement, where an agent proposes competing hypotheses and iteratively tests them with targeted prompt controls and a multi-metric evaluation; and (2) feature discovery, where an agent generates prompt sets, constructs a k-nearest-neighbor graph in activation space, and retrieves candidate features using statistical separability and semantic coherence criteria. On Gemma-2 family models and MLP neurons in weight-sparse transformers, our agent improves over one-shot auto-interpretations, discovers language-specific and safety-relevant features, and produces auditable explanation traces, showing that agent-driven empirical loops yield sharper and more falsifiable explanations than one-shot labels.",
+      "authors": [
+        "Arnau Marin-Llobet",
+        "Javier Ferrando"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.HC"
+      ],
+      "published": "2026-05-02T17:53:30+00:00",
+      "link": "https://arxiv.org/pdf/2605.01555v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "autonomous multiagent framework for mechanistic interpretability",
+      "llm_evidence_cn": "用于机械可解释性的自主多智能体框架",
+      "llm_evidence": "用于机械可解释性的自主多智能体框架",
+      "canonical_evidence": "用于机械可解释性的自主多智能体框架",
+      "llm_tldr_en": "Develops a multi-agent framework to automate explanation and feature discovery in large language models.",
+      "llm_tldr_cn": "开发了一个多智能体框架，用于自动化大语言模型的解释和特征发现。",
+      "llm_tldr": "开发了一个多智能体框架，用于自动化大语言模型的解释和特征发现。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.01562v1",
+      "title": "Neuro-Symbolic Agents for Hallucination-Free Requirements Reuse",
+      "abstract": "The Object-Oriented Method for Requirements Authoring and Management (OOMRAM) is a requirements reuse framework that relies on exact identifier matching and rigid templates, limiting its ability to adapt specifications across diverse contexts. While Large Language Models (LLMs) offer the flexibility to overcome this bottleneck, they introduce the risk of generating structurally invalid or inconsistent requirement combinations. To address this tension, we present a neuro-symbolic multi-agent system that re-conceptualizes requirements reuse as a \\textbf{Model-Driven Elicitation process}. In this paradigm, an LLM serves as a \\textbf{non-deterministic heuristic} for traversing a \\textbf{deterministic domain model} represented by a formal OOMRAM requirement lattice. A deterministic, symbolic validator enforces all structural constraints within the agent loop, effectively eliminating hallucinated requirement combinations by construction. Evaluated on an autonomous benchmark across two application families, our system achieves 100\\% requirement coverage and a constraint-violation rate of only 0.2\\%. Although the F1-score against a single gold standard is moderate (0.47--0.51), every generated specification is structurally valid and satisfies all mandatory domain requirements. The model-agnostic implementation scales to larger lattices via subgraph navigation and provides transparent audit trails for regulatory compliance.",
+      "authors": [
+        "Ahmed Ibrahim"
+      ],
+      "primary_category": "cs.SE",
+      "categories": [
+        "cs.SE",
+        "cs.AI"
+      ],
+      "published": "2026-05-02T18:16:04+00:00",
+      "link": "https://arxiv.org/pdf/2605.01562v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "neuro-symbolic multi-agent system for requirements reuse",
+      "llm_evidence_cn": "用于需求复用的神经符号多智能体系统",
+      "llm_evidence": "用于需求复用的神经符号多智能体系统",
+      "canonical_evidence": "用于需求复用的神经符号多智能体系统",
+      "llm_tldr_en": "Develops a neuro-symbolic multi-agent system combining LLMs with formal models for consistent requirements reuse.",
+      "llm_tldr_cn": "开发了一种神经符号多智能体系统，结合LLM与形式化模型以实现无幻觉的需求复用。",
+      "llm_tldr": "开发了一种神经符号多智能体系统，结合LLM与形式化模型以实现无幻觉的需求复用。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.01566v1",
+      "title": "Multi-Agent Reasoning Improves Compute Efficiency: Pareto-Optimal Test-Time Scaling",
+      "abstract": "Advances in inference methods have enabled language models to improve their predictions without additional training. These methods often prioritize raw performance over cost-effective compute usage. However, computational efficiency is key for real-world applications with resource constraints. We provide a systematic analysis of the inference scaling strategies self-consistency, self-refinement, multi-agent debate, and mixture-of-agents, to study their computational performance tradeoffs. We evaluate methods on two reasoning benchmarks (MMLU-Pro, BBH) and include extensive parameter configurations (e.g., scaling the number of parallel predictions, agents, and debate rounds) across different model sizes. Across 34 configurations and over 100 evaluations, we compute the Pareto-optimal front to select methods that achieve the best accuracy with the lowest computational budget. Notably, inference scaling improves accuracy by up to +7.1% points over chain-of-thought at the highest evaluated budgets (20x the CoT compute budget) on MMLU-Pro. With an equal computing budget, debate and mixture-of-agents outperform self-consistency by 1.3% and 2.7% points, respectively. While self-consistency saturates earlier, multi-agent gains persist, particularly on more complicated tasks. We identify a simple multi-agent design guideline: mixture-of-agents is most efficient when the number of parallel generations exceeds the number of sequential aggregations.",
+      "authors": [
+        "Florian Valentin Wunderlich",
+        "Lars Benedikt Kaesberg",
+        "Jan Philip Wahle",
+        "Terry Ruas",
+        "Bela Gipp"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-02T18:31:02+00:00",
+      "link": "https://arxiv.org/pdf/2605.01566v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "analysis of multi-agent debate and mixture-of-agents strategies",
+      "llm_evidence_cn": "多智能体辩论和智能体混合策略的分析",
+      "llm_evidence": "多智能体辩论和智能体混合策略的分析",
+      "canonical_evidence": "多智能体辩论和智能体混合策略的分析",
+      "llm_tldr_en": "Analyzes computational efficiency and performance tradeoffs of various multi-agent inference scaling strategies.",
+      "llm_tldr_cn": "系统分析了多种多智能体推理扩展策略在计算效率和性能之间的权衡。",
+      "llm_tldr": "系统分析了多种多智能体推理扩展策略在计算效率和性能之间的权衡。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.01675v1",
+      "title": "CP-SynC: Multi-Agent Zero-Shot Constraint Modeling in MiniZinc with Synthesized Checkers",
+      "abstract": "Constraint Programming (CP) is a powerful paradigm for solving combinatorial problems, yet translating natural language problem descriptions into executable models remains a significant bottleneck. While Large Language Models (LLMs) show promise in automating this translation, they often struggle with subtle semantic errors in the absence of oracle validation at test time. To address this, we introduce CP-SynC (Constraint Programming modeling with Synthesized Checkers), a multi-agent workflow for zero-shot constraint modeling in MiniZinc. CP-SynC coordinates modeling agents that generate and refine candidate models and validation agents that synthesize semantic checkers to provide feedback on semantic correctness. To mitigate noise inherent in individual LLM outputs, CP-SynC explores multiple modeling trajectories in parallel and employs selection agents to select the final model via multi-agent evidence aggregation. Extensive experiments on a benchmark of 100 CP problems show that CP-SynC substantially outperforms existing baselines in MiniZinc modeling.",
+      "authors": [
+        "Yuliang Song",
+        "Eldan Cohen"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-05-03T02:17:58+00:00",
+      "link": "https://arxiv.org/pdf/2605.01675v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "multi-agent workflow for zero-shot constraint modeling",
+      "llm_evidence_cn": "零样本约束建模的多智能体工作流",
+      "llm_evidence": "零样本约束建模的多智能体工作流",
+      "canonical_evidence": "零样本约束建模的多智能体工作流",
+      "llm_tldr_en": "Introduces CP-SynC, a multi-agent system that coordinates modeling and validation agents for constraint programming.",
+      "llm_tldr_cn": "引入CP-SynC，一个协调建模和验证智能体以进行约束编程的多智能体系统。",
+      "llm_tldr": "引入CP-SynC，一个协调建模和验证智能体以进行约束编程的多智能体系统。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "frameworks for multi agent large language model systems",
+      "matched_requirement_id": "req-17",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.01739v1",
+      "title": "AgenticVM: Agentic AI for Adaptive Software Vulnerability Management",
+      "abstract": "As software systems grow in scale and complexity, vulnerability management is increasingly strained by high alert volumes, fragmented toolchains, and manual triage processes. We introduce AgenticVM, a multi-agent framework that integrates large language models with security tools to automate vulnerability detection, assessment, prioritization, and reporting. AgenticVM combines rule-based processing, a BERT-based CVSS prediction module, and specialised LLM-driven agents, leveraging data from sources such as the National Vulnerability Database and the European Union Vulnerability Database. Across multiple evaluation scenarios, AgenticVM reduces raw scanner outputs into compact, actionable queues, achieving up to 98% alert reduction (e.g., from 3,983 findings to 82 high-priority items), while predicting missing CVSS attributes with 89.3% accuracy. These results demonstrate improved prioritisation efficiency and reduced analyst workload without compromising risk visibility. Beyond performance, the framework provides practical design insights into agent decomposition, tool-LLM integration, and human-in-the-loop governance for real-world deployment.",
+      "authors": [
+        "Asrul Arifin",
+        "Hussain Ahmad",
+        "Yiyao Zhang",
+        "Diksha Goel"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-05-03T06:37:43+00:00",
+      "link": "https://arxiv.org/pdf/2605.01739v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "multi-agent framework integrating large language models",
+      "llm_evidence_cn": "集成大语言模型的多智能体框架",
+      "llm_evidence": "集成大语言模型的多智能体框架",
+      "canonical_evidence": "集成大语言模型的多智能体框架",
+      "llm_tldr_en": "Introduces AgenticVM, a multi-agent framework using LLMs for automated software vulnerability management.",
+      "llm_tldr_cn": "介绍了 AgenticVM，一个利用大语言模型进行自动化软件漏洞管理的多智能体框架。",
+      "llm_tldr": "介绍了 AgenticVM，一个利用大语言模型进行自动化软件漏洞管理的多智能体框架。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.01750v1",
+      "title": "Talk is Cheap, Communication is Hard: Dynamic Grounding Failures and Repair in Multi-Agent Negotiation",
+      "abstract": "Grounding is the collaborative process of establishing mutual belief sufficient for the current communicative purpose. While static grounding maps language to a shared, externally observable context, dynamic grounding is a joint activity where meaning is negotiated through interaction. Current multi-agent Large Language Model (LLM) benchmarks focus on static, one-shot tasks, overlooking the ability to repair grounding breakdowns across turns. We introduce an iterated, multi-turn negotiation game in which two agents allocate shared resources toward private projects with verifiable jointly optimal outcomes. While individual agents can identify Pareto-optimal allocations in isolation, agent dyads consistently fail to reach them across open- and closed-source models. Our investigation reveals four failure modes: (1) coordination degrades when shared interaction history is absent; (2) yet accumulated context can itself become a liability through stubborn anchoring, where initial proposals are treated as axiomatic rather than negotiable; (3) a reliance on perfunctory fairness (equal resource splits) over reward-maximizing coordination; and (4) failures in referential binding, where agents lose track of commitments across turns. These results highlight dynamic grounding as a critical and understudied axis of multi-agent coordination. Our framework decomposes the coordination gap into measurable components: the oracle baseline establishes that the gap is not attributable to individual reasoning limitations; the no-talk baseline establishes that communication is necessary; and a full-transparency intervention establishes that information exchange alone is insufficient: the bottleneck lies in the interactive processes of joint plan formation, commitment, and execution that constitute dynamic grounding.",
+      "authors": [
+        "Yiheng Yao",
+        "Chelsea Zou",
+        "Robert D. Hawkins"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.AI"
+      ],
+      "published": "2026-05-03T07:12:14+00:00",
+      "link": "https://arxiv.org/pdf/2605.01750v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "communication and grounding failures in multi-agent negotiation",
+      "llm_evidence_cn": "多智能体谈判中的通信与接地失败",
+      "llm_evidence": "多智能体谈判中的通信与接地失败",
+      "canonical_evidence": "多智能体谈判中的通信与接地失败",
+      "llm_tldr_en": "Investigates dynamic grounding and communication repair in multi-turn LLM agent negotiations.",
+      "llm_tldr_cn": "研究了多轮大语言模型智能体谈判中的动态接地和通信修复问题。",
+      "llm_tldr": "研究了多轮大语言模型智能体谈判中的动态接地和通信修复问题。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "communication protocols between LLM-based agents",
+      "matched_requirement_id": "req-16",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.01758v1",
+      "title": "Catching the Infection Before It Spreads: Foresight-Guided Defense in Multi-Agent Systems",
+      "abstract": "Large multimodal model-based Multi-Agent Systems (MASs) enable collaborative complex problem solving through specialized agents. However, MASs are vulnerable to infectious jailbreak, where compromising a single agent can spread to others, leading to widespread compromise. Existing defenses counter this by training a more contagious cure factor, biasing agents to retrieve it over virus adversarial examples (VirAEs). However, this homogenizes agent responses, providing only superficial suppression rather than true recovery. We revisit these defenses, which operate globally via a shared cure factor, while infectious jailbreak arise from localized interaction behaviors. This mismatch limits their effectiveness. To address this, we propose a training-free Foresight-Guided Local Purification (FLP) framework, where each agent reasons over future interactions to track behavioral evolution and eliminate infections. Specifically, each agent simulates future behavioral trajectories over subsequent chat rounds. To reflect diversity in MASs, we introduce a multi-persona simulation strategy for robust prediction across interaction contexts. We then use response diversity as a diagnostic signal to detect infection by analyzing inconsistencies across persona-based predictions at both retrieval-result and semantic levels. For infected agents, we apply localized purification: recent infections are mitigated via immediate album rollback, while long-term infections are handled using Recursive Binary Diagnosis (RBD), which recursively partitions the image album and applies the same diagnosis strategy to localize and eliminate VirAEs. Experiments show that FLP reduces the maximum cumulative infection rate from over 95% to below 5.47%. Moreover, retrieval and semantic metrics closely match benign baselines, indicating effective preservation of interaction diversity.",
+      "authors": [
+        "Yue Ma",
+        "Ziyuan Yang",
+        "Yi Zhang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-03T07:38:42+00:00",
+      "link": "https://arxiv.org/pdf/2605.01758v1",
+      "tags": [
+        "keyword:MALM"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "multi-agent systems based on large multimodal models",
+      "llm_evidence_cn": "基于大型多模态模型的多智能体系统",
+      "llm_evidence": "基于大型多模态模型的多智能体系统",
+      "canonical_evidence": "基于大型多模态模型的多智能体系统",
+      "llm_tldr_en": "Proposes a defense mechanism for multi-agent systems against infectious jailbreak attacks.",
+      "llm_tldr_cn": "提出了一种针对多智能体系统传染性越狱攻击的防御机制。",
+      "llm_tldr": "提出了一种针对多智能体系统传染性越狱攻击的防御机制。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.02162v1",
+      "title": "AAFLOW: Scalable Patterns for Agentic AI Workflows",
+      "abstract": "Agentic workflows in large language model systems integrate retrieval, reasoning, and memory, but existing frameworks suffer from scalability and reproducibility limitations due to fragmented data orchestration, serialization overhead, and non-deterministic execution. Although these frameworks increase flexibility, they don't have a formal execution model that adheres to the principles of high-performance computing. We introduce AAFLOW, a unified distributed runtime that creates communication-efficient execution plans by modeling agentic workflows as an operator abstraction. Using Apache Arrow and Cylon, AAFLOW creates a zero-copy data plane that allows direct interoperability between preprocessing, embedding, and vector retrieval without the need for serialization overhead. To lower coordination costs, it uses resource-deterministic scheduling and asynchronous batching. While retaining comparable LLM generation throughput, experimental results demonstrate up to 4.64 times pipeline speedup and 2.8 times gains in embedding and upsert phases. Rather than LLM inference acceleration, these advantages result from enhanced data flow, batching, and communication efficiency.",
+      "authors": [
+        "Arup Kumar Sarker",
+        "Mills Staylor",
+        "Aymen Alsaadi",
+        "Gregor von Laszewski",
+        "Shantenu Jha",
+        "Geoffrey Fox"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC",
+        "cs.MA"
+      ],
+      "published": "2026-05-04T02:39:13+00:00",
+      "link": "https://arxiv.org/pdf/2605.02162v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "scalable patterns for agentic AI workflows and distributed runtime",
+      "llm_evidence_cn": "智能体AI工作流的可扩展模式与分布式运行时",
+      "llm_evidence": "智能体AI工作流的可扩展模式与分布式运行时",
+      "canonical_evidence": "智能体AI工作流的可扩展模式与分布式运行时",
+      "llm_tldr_en": "Introduces AAFLOW, a distributed runtime for communication-efficient and scalable agentic workflows.",
+      "llm_tldr_cn": "引入AAFLOW，一种用于高效通信和可扩展智能体工作流的分布式运行时。",
+      "llm_tldr": "引入AAFLOW，一种用于高效通信和可扩展智能体工作流的分布式运行时。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.02168v1",
+      "title": "Planner Matters! An Efficient and Unbalanced Multi-agent Collaboration Framework for Long-horizon Planning",
+      "abstract": "Language model (LM)-based agents have demonstrated promising capabilities in automating complex tasks from natural language instructions, yet they continue to struggle with long-horizon planning and reasoning. To address this, we propose an enhanced multi-agent framework that decomposes automation into three roles: a planner for high-level decision-making, an actor for task execution, and a memory manager for contextual reasoning. While this modular decomposition aligns with established design patterns, our core contribution lies in a systematic compute-allocation analysis, revealing that planning is the dominant factor influencing task performance. Execution and memory management require significantly less compute and model capacity to achieve competitive results. Building on these insights, we introduce a planner-centric reinforcement learning approach, which exclusively optimizes the planner using trajectory-level rewards from a VLM-as-judge, while freezing the other components. Extensive experiments on benchmarks spanning web navigation, OS control, and tool use demonstrate that concentrating model capacity and learning on high-level planning yields robust and compute-efficient improvements in long-horizon agent automation. Our code is publicly released.",
+      "authors": [
+        "Wenyi Wu",
+        "Sibo Zhu",
+        "Kun Zhou",
+        "Biwei Huang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.LG",
+        "cs.MA"
+      ],
+      "published": "2026-05-04T02:58:05+00:00",
+      "link": "https://arxiv.org/pdf/2605.02168v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "multi-agent collaboration framework for planning and reasoning",
+      "llm_evidence_cn": "用于规划和推理的多智能体协作框架",
+      "llm_evidence": "用于规划和推理的多智能体协作框架",
+      "canonical_evidence": "用于规划和推理的多智能体协作框架",
+      "llm_tldr_en": "Proposes a multi-agent framework with planner, actor, and memory roles to improve long-horizon task performance.",
+      "llm_tldr_cn": "提出了一种包含规划者、执行者和记忆管理角色的多智能体框架，以提升长程任务性能。",
+      "llm_tldr": "提出了一种包含规划者、执行者和记忆管理角色的多智能体框架，以提升长程任务性能。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.02289v1",
+      "title": "EngiAgent: Fully Connected Coordination of LLM Agents for Solving Open-ended Engineering Problems with Feasible Solutions",
+      "abstract": "Engineering problem solving is central to real-world decision-making, requiring mathematical formulations that not only represent complex problems but also produce feasible solutions under data and physical constraints. Unlike mathematical problem solving, which operates on predefined formulations, engineering tasks demand open-ended analysis, feasibility-driven modeling, and iterative refinement. Although large language models (LLMs) have shown strong capabilities in reasoning and code generation, they often fail to ensure feasibility, which limits their applicability to engineering problem solving. To address this challenge, we propose EngiAgent, a multi-agent system with a fully connected coordinator that simulates expert workflows through specialized agents for problem analysis, modeling, verification, solving, and solution evaluation. The fully connected coordinator enables flexible feedback routing, overcoming the rigidity of prior pipeline-based reflection methods and ensuring feasibility at every stage of the process. This design not only improves robustness to diverse failure cases such as data extraction errors, constraint inconsistencies, and solver failures, but also enhances the overall quality of problem solving. Empirical results across four representative domains demonstrate that EngiAgent achieves substantial improvements in feasibility compared to prior approaches, establishing a new paradigm for feasibility-oriented engineering problem solving with LLMs. Our source code and data are available at https://github.com/AI4Engi/EngiAgent.",
+      "authors": [
+        "Xiyuan Zhou",
+        "Ruixi Zou",
+        "Xinlei Wang",
+        "Yuheng Cheng",
+        "Yan Xu",
+        "Junhua Zhao",
+        "Jinjin Gu"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-04T07:26:12+00:00",
+      "link": "https://arxiv.org/pdf/2605.02289v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "multi-agent system with fully connected coordination",
+      "llm_evidence_cn": "具有全连接协作机制的多智能体系统",
+      "llm_evidence": "具有全连接协作机制的多智能体系统",
+      "canonical_evidence": "具有全连接协作机制的多智能体系统",
+      "llm_tldr_en": "Presents a multi-agent system for engineering problem solving using a fully connected coordination architecture.",
+      "llm_tldr_cn": "提出了一种用于解决工程问题的多智能体系统，采用了全连接的协作架构。",
+      "llm_tldr": "提出了一种用于解决工程问题的多智能体系统，采用了全连接的协作架构。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.02308v1",
+      "title": "Structural Dilemmas and Developmental Pathways of Legal Argument Mining in the Era of Artificial Intelligence",
+      "abstract": "Against the backdrop of rapid advances in artificial intelligence, legal argument mining has emerged as an important research area linking legal texts with intelligent analysis, carrying significant theoretical and practical implications. Existing studies have primarily developed along three dimensions: data, technology, and theory. At the data level, raw legal texts and annotated corpora constitute the foundational resources. At the technological level, research paradigms have evolved from rule-based systems and traditional machine learning to large language models (LLMs). At the theoretical level, argumentation theory and legal dogmatics provide important references for modeling argumentation structures. However, despite ongoing progress, the overall development of legal argument mining remains relatively slow. Building on a systematic review of existing research, this study conducts an in-depth analysis and finds that this is due not only to data scarcity or technical limitations, but more fundamentally to the lack of a structured representational approach that reconciles theoretical expressiveness with computational feasibility. Specifically, this challenge manifests in dilemmas in data standardization, obstacles to effective modeling, and limitations in domain adaptation. In response, the study proposes several key directions for future research. It aims to provide a reframing of key problems and a pathway for future development in legal argument mining, while leaving specific models and implementation schemes for further investigation.",
+      "authors": [
+        "Xianglei Liao",
+        "Chuanyi Li",
+        "Kun Chen"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-05-04T08:01:12+00:00",
+      "link": "https://arxiv.org/pdf/2605.02308v1",
+      "tags": [
+        "keyword:法律预测",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "legal argument mining using LLMs",
+      "llm_evidence_cn": "利用大语言模型进行法律论辩挖掘",
+      "llm_evidence": "利用大语言模型进行法律论辩挖掘",
+      "canonical_evidence": "利用大语言模型进行法律论辩挖掘",
+      "llm_tldr_en": "This paper explores legal argument mining evolution from rule-based systems to large language models.",
+      "llm_tldr_cn": "本文探讨了法律论辩挖掘从基于规则的系统到大语言模型的演变过程。",
+      "llm_tldr": "本文探讨了法律论辩挖掘从基于规则的系统到大语言模型的演变过程。",
+      "llm_tags": [
+        "query:profile-1:composite"
+      ],
+      "matched_query_tag": "query:profile-1:composite",
+      "matched_query_text": "Papers central to 帮我查找利用大语言模型进行法律判决预测的论文, especially work that connects or combines: legal judgment prediction using large language models; large language models in legal applications; predicting case outcomes with AI; judicial decision-making and artificial intelligence; artificial intelligence for legal analysis; computational models of legal reasoning; legal reasoning methods for court judgment prediction; retrieval augmented legal judgment prediction with large language models; large language models for predicting legal judgments; AI systems that forecast court decisions.",
+      "matched_requirement_id": "req-composite-profile-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.02379v1",
+      "title": "Fair Agents: Balancing Multistakeholder Alignment in Multi-Agent Personalization Systems",
+      "abstract": "LLM agents are increasingly used for personalization due to their ability to communicate directly with users in natural language, integrate external knowledge bases, and negotiate with other (possibly human) agents. Especially in multistakeholder AI systems with multiple distinct objectives, LLM agents are used to independently optimize for each stakeholder's goals. Here, stakeholder alignment is essential to identify and map these goals to provide LLM agents with quantifiable objectives. Plus, the way in which the outputs of the LLM agents are aggregated is fundamental to ensuring fair outcomes for all agents and, therefore, stakeholders. In this work, we identify open research challenges and propose a conceptual framework for designing fair multi-agent multistakeholder personalization systems that balance competing stakeholder objectives. Our framework integrates (i) methods to align stakeholder objectives and LLM agents, (ii) aggregation strategies, e.g., based on social choice theory, to form fair collective decisions, and (iii) stakeholder-centric evaluation procedures for both individual and collective agent behavior. We showcase our framework through a tourism use case and discuss possible applications in other domains, such as education and healthcare. Finally, we discuss domain-specific fairness tensions and review datasets for evaluating multistakeholder fairness and multi-agent personalization systems.",
+      "authors": [
+        "Andrea Forster",
+        "Peter Müllner",
+        "Denis Helic",
+        "Elisabeth Lex",
+        "Dominik Kowald"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR"
+      ],
+      "published": "2026-05-04T09:18:38+00:00",
+      "link": "https://arxiv.org/pdf/2605.02379v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Conceptual framework for balancing alignment in multi-agent personalization systems",
+      "llm_evidence_cn": "平衡多智能体个性化系统中对齐目标的概念框架",
+      "llm_evidence": "平衡多智能体个性化系统中对齐目标的概念框架",
+      "canonical_evidence": "平衡多智能体个性化系统中对齐目标的概念框架",
+      "llm_tldr_en": "Explores challenges and frameworks for ensuring fairness and stakeholder alignment in multi-agent systems.",
+      "llm_tldr_cn": "探讨了确保多智能体系统中公平性和利益相关者对齐的挑战与框架。",
+      "llm_tldr": "探讨了确保多智能体系统中公平性和利益相关者对齐的挑战与框架。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.02463v1",
+      "title": "When Stress Becomes Signal: Detecting Antifragility-Compatible Regimes in Multi-Agent LLM Systems",
+      "abstract": "Multi-agent LLM systems are increasingly used to solve complex tasks through decomposition, debate, specialization, and ensemble reasoning. However, these systems are usually evaluated in terms of robustness: whether performance is preserved under perturbation. This paper studies a different question: whether semantic stress exposes structured variation that could support future antifragile learning. We introduce CAFE, a statistical framework for detecting antifragility-compatible regimes in multi-agent architectures. CAFE models a controlled expected distribution of semantic stressors, reconstructs an architecture-specific observed effective stress distribution from multi-dimensional judge signals, and compares both distributions using a distributional Jensen Gap under a convex stress potential. A positive gap does not imply immediate performance improvement; instead, it indicates a convex-expansive deformation of the observed stress distribution, suggesting that the architecture exposes learnable stress structure. We evaluate CAFE on a banking-risk analysis benchmark with five multi-agent architectures: flat, hierarchical, debate, meta-adaptive, and ensemble. Across all architectures, semantic stress reduces average judged quality by roughly one third. Yet all architectures exhibit positive distributional Jensen Gaps with bootstrap confidence intervals above zero. These results show that immediate quality degradation can coexist with statistically detectable antifragility-compatible stress geometry. CAFE is therefore not an antifragile learner itself, but a measurement layer for identifying when and where antifragility learning may be worth applying.",
+      "authors": [
+        "Jose Manuel de la Chica",
+        "Juan Manuel Vera",
+        "Jairo Rodríguez"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.AI",
+        "cs.CE"
+      ],
+      "published": "2026-05-04T11:06:19+00:00",
+      "link": "https://arxiv.org/pdf/2605.02463v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Statistical framework for detecting antifragility in multi-agent LLM architectures",
+      "llm_evidence_cn": "检测多智能体大语言模型架构中反脆弱性的统计框架",
+      "llm_evidence": "检测多智能体大语言模型架构中反脆弱性的统计框架",
+      "canonical_evidence": "检测多智能体大语言模型架构中反脆弱性的统计框架",
+      "llm_tldr_en": "Introduces CAFE, a framework to detect antifragility-compatible regimes in multi-agent LLM systems under stress.",
+      "llm_tldr_cn": "引入 CAFE 框架，用于检测多智能体大语言模型系统在压力下的反脆弱兼容机制。",
+      "llm_tldr": "引入 CAFE 框架，用于检测多智能体大语言模型系统在压力下的反脆弱兼容机制。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.02801v1",
+      "title": "Reinforcement Learning for LLM-based Multi-Agent Systems through Orchestration Traces",
+      "abstract": "As large language model (LLM) agents evolve from isolated tool users into coordinated teams, reinforcement learning (RL) must optimize not only individual actions but also how work is spawned, delegated, communicated, aggregated, and stopped. This paper studies RL for LLM-based multi-agent systems through orchestration traces: temporal interaction graphs whose events include sub-agent spawning, delegation, communication, tool use, return, aggregation, and stopping decisions.   Using this lens, we identify three technical axes. First, reward design spans eight families, including orchestration rewards for parallelism speedup, split correctness, and aggregation quality. Second, reward and credit signals attach to eight credit- or signal-bearing units from token to team; explicit counterfactual message-level credit remains especially sparse in our curated pool. Third, orchestration learning decomposes into five sub-decisions: when to spawn, whom to delegate to, how to communicate, how to aggregate, and when to stop. In our curated pool as of May 4, 2026, we found no explicit RL training method for the stopping decision.   We connect academic methods to public industrial evidence from Kimi Agent Swarm, OpenAI Codex, and Anthropic Claude Code. The resulting scale gap is a gap between publicly reported deployment envelopes and open academic evaluation regimes, not independent verification of industrial training traces. We release the artifact at https://github.com/xxzcc/awesome-llm-mas-rl, including an 84-entry tagged paper pool, a 32-record exclusion log, scripted corpus statistics, and a minimal JSON schema for replayable orchestration traces.",
+      "authors": [
+        "Chenchen Zhang"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-05-04T16:42:18+00:00",
+      "link": "https://arxiv.org/pdf/2605.02801v1",
+      "tags": [
+        "keyword:MALM",
+        "query:MALM"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "reinforcement learning for LLM-based multi-agent systems",
+      "llm_evidence_cn": "基于LLM的多智能体系统强化学习",
+      "llm_evidence": "基于LLM的多智能体系统强化学习",
+      "canonical_evidence": "基于LLM的多智能体系统强化学习",
+      "llm_tldr_en": "Studies reinforcement learning for LLM-based multi-agent systems through orchestration traces.",
+      "llm_tldr_cn": "通过编排轨迹研究基于LLM的多智能体系统的强化学习。",
+      "llm_tldr": "通过编排轨迹研究基于LLM的多智能体系统的强化学习。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.23892v1",
+      "title": "Optimas: An Intelligent Analytics-Informed Generative AI Framework for Performance Optimization",
+      "abstract": "Large language models (LLMs) show promise for automated code optimization. However, without performance context, they struggle to produce correct and effective code transformations. Existing performance tools can identify bottlenecks but stop short of generating actionable code changes. Consequently, performance optimization continues to be a time-intensive and manual endeavor, typically undertaken only by experts with detailed architectural understanding. To bridge this gap, we introduce Optimas, a modular, fully automated, end-to-end generative AI framework built on a multi-agent workflow. Optimas uses LLMs to map performance diagnostics from multiple reports to established, literature-backed code transformations, while unifying insight extraction, code generation, execution, and validation within a single pipeline. Across 3,410 real-world experiments on 10 benchmarks and two HPC mini-applications, Optimas generates 100% correct code and improves performance in over 98.82% of those experiments, achieving average gains of 8.02%-79.09% on NVIDIA GPUs.",
+      "authors": [
+        "Mohammad Zaeed",
+        "Tanzima Z. Islam",
+        "Vladimir Indic"
+      ],
+      "primary_category": "cs.PF",
+      "categories": [
+        "cs.PF",
+        "cs.SE"
+      ],
+      "published": "2026-04-26T21:34:51+00:00",
+      "link": "https://arxiv.org/pdf/2604.23892v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "generative AI framework built on a multi-agent workflow",
+      "llm_evidence_cn": "基于多智能体工作流的生成式AI框架",
+      "llm_evidence": "基于多智能体工作流的生成式AI框架",
+      "canonical_evidence": "基于多智能体工作流的生成式AI框架",
+      "llm_tldr_en": "Introduces Optimas, a multi-agent framework that uses LLMs for automated code performance optimization.",
+      "llm_tldr_cn": "介绍Optimas，一个利用LLM进行自动代码性能优化的多智能体框架。",
+      "llm_tldr": "介绍Optimas，一个利用LLM进行自动代码性能优化的多智能体框架。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "frameworks for multi agent large language model systems",
+      "matched_requirement_id": "req-17",
+      "selection_source": "carryover_cache",
+      "paper_id": "2604.23892v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2604.23877v1",
+      "title": "Knowledge Vector of Logical Reasoning in Large Language Models",
+      "abstract": "Logical reasoning serve as a central capability in LLMs and includes three main forms: deductive, inductive, and abductive reasoning. In this work, we study the knowledge representations of these reasoning types in LLMs and analyze the correlations among them. Our analysis shows that each form of logical reasoning can be captured as a reasoning-specific knowledge vector in a linear representation space, yet these vectors are largely independent of each other. Motivated by cognitive science theory that these subforms of logical reasoning interact closely in the human brain, as well as our observation that the reasoning process for one type can benefit from the reasoning chain produced by another, we further propose to refine the knowledge representations of each reasoning type in LLMs to encourage complementarity between them. To this end, we design a complementary subspace-constrained refinement framework, which introduces a complementary loss that enables each reasoning vector to leverage auxiliary knowledge from the others, and a subspace constraint loss that prevents erasure of their unique characteristics. Through steering experiments along reasoning vectors, we find that refined vectors incorporating complementary knowledge yield consistent performance gains. We also conduct a mechanism-interpretability analysis of each reasoning vector, revealing insights into the shared and specific features of different reasoning in LLMs.",
+      "authors": [
+        "Zixuan Wang",
+        "Yuanyuan Lei"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-04-26T20:37:26+00:00",
+      "link": "https://arxiv.org/pdf/2604.23877v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "knowledge representations of logical reasoning in LLMs",
+      "llm_evidence_cn": "大语言模型中逻辑推理的知识表示",
+      "llm_evidence": "大语言模型中逻辑推理的知识表示",
+      "canonical_evidence": "大语言模型中逻辑推理的知识表示",
+      "llm_tldr_en": "Analyzes deductive, inductive, and abductive reasoning vectors in LLMs to improve logical capabilities.",
+      "llm_tldr_cn": "分析了大模型中的演绎、归纳和溯因推理向量，以提升其逻辑推理能力。",
+      "llm_tldr": "分析了大模型中的演绎、归纳和溯因推理向量，以提升其逻辑推理能力。",
+      "llm_tags": [
+        "query:q6"
+      ],
+      "matched_query_tag": "query:q6",
+      "matched_query_text": "computational models of legal reasoning",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.24175v1",
+      "title": "AdapTime: Enabling Adaptive Temporal Reasoning in Large Language Models",
+      "abstract": "Large language models have demonstrated strong reasoning capabilities in general knowledge question answering. However, their ability to handle temporal information remains limited. To address this limitation, existing approaches often involve external tools or manual verification and are tailored to specific scenarios, leading to poor generalizability. Moreover, these methods apply a fixed pipeline to all questions, overlooking the fact that different types of temporal questions require distinct reasoning strategies, which leads to unnecessary processing for simple cases and inadequate reasoning for complex ones. To this end, we propose AdapTime, an adaptive temporal reasoning method that dynamically executes reasoning steps based on the input context. Specifically, it involves three temporal reasoning actions: reformulate, rewrite and review, with an LLM planner guiding the reasoning process. AdapTime integrates seamlessly with state-of-the-art LLMs and significantly enhances their temporal reasoning capabilities without relying on external support. Extensive experiments demonstrate the effectiveness of our approach.",
+      "authors": [
+        "Yimin Deng",
+        "Yejing Wang",
+        "Zhenxi Lin",
+        "Zichuan Fu",
+        "Guoshuai Zhao",
+        "Derong Xu",
+        "Yefeng Zheng",
+        "Xiangyu Zhao",
+        "Xian Wu",
+        "Li Zhu",
+        "Xueming Qian"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-04-27T08:34:40+00:00",
+      "link": "https://arxiv.org/pdf/2604.24175v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "adaptive reasoning method for complex temporal questions",
+      "llm_evidence_cn": "针对复杂时间问题的自适应推理方法",
+      "llm_evidence": "针对复杂时间问题的自适应推理方法",
+      "canonical_evidence": "针对复杂时间问题的自适应推理方法",
+      "llm_tldr_en": "Proposes AdapTime for dynamic temporal reasoning in LLMs based on input context.",
+      "llm_tldr_cn": "提出了一种根据输入上下文动态执行推理步骤的自适应时间推理方法。",
+      "llm_tldr": "提出了一种根据输入上下文动态执行推理步骤的自适应时间推理方法。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "multi agent LLM frameworks for complex reasoning and decision making",
+      "matched_requirement_id": "req-19",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.23897v1",
+      "title": "MarketBench: Evaluating AI Agents as Market Participants",
+      "abstract": "Markets are a promising way to coordinate AI agent activity for similar reasons to those used to justify markets more broadly. In order to effectively participate in markets, agents need to have informative signals of their own ability to successfully complete a task and the cost of doing so. We propose MarketBench, a benchmark for assessing whether AI agents have these capabilities. We use a 93-task subset of SWE-bench Lite, a software engineering benchmark, with six recently released LLMs as a demonstration. These LLMs are miscalibrated on both success probability and token usage, and auctions built from these self-reports diverge from a full-information allocation. A follow-up intervention where we add information about capabilities from prior experiments to the context improves calibration, but only modestly narrows the gap to a full-information benchmark. We also document the performance of a market-based scaffolding with these LLMs. Our results point to self-assessment as a key bottleneck for market-style coordination of AI agents.",
+      "authors": [
+        "Andrey Fradkin",
+        "Rohit Krishnan"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "econ.GN"
+      ],
+      "published": "2026-04-26T21:48:01+00:00",
+      "link": "https://arxiv.org/pdf/2604.23897v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "evaluating AI agents as market participants",
+      "llm_evidence_cn": "评估作为市场参与者的AI智能体",
+      "llm_evidence": "评估作为市场参与者的AI智能体",
+      "canonical_evidence": "评估作为市场参与者的AI智能体",
+      "llm_tldr_en": "MarketBench evaluates the capability of AI agents to participate in markets and self-report abilities.",
+      "llm_tldr_cn": "MarketBench评估了AI智能体参与市场及自我报告能力的能力。",
+      "llm_tldr": "MarketBench评估了AI智能体参与市场及自我报告能力的能力。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "multi-agent large language model frameworks and systems",
+      "matched_requirement_id": "req-11",
+      "selection_source": "carryover_cache",
+      "paper_id": "2604.23897v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2604.23993v1",
+      "title": "EPM-RL: Reinforcement Learning for On-Premise Product Mapping in E-Commerce",
+      "abstract": "Product mapping, the task of deciding whether two e-commerce listings refer to the same product, is a core problem for price monitoring and channel visibility. In real marketplaces, however, sellers frequently inject promotional keywords, platform-specific tags, and bundle descriptions into titles, causing the same product to appear under many different names. Recent LLM-based and multi-agent frameworks improve robustness and interpretability on such hard cases, but they often rely on expensive external APIs, repeated retrieval, and complex inference-time orchestration, making large-scale deployment costly and difficult in privacy-sensitive enterprise settings. To address these issues, we present EPM-RL, a reinforcement-learning-based framework for building an accurate and efficient on-premise e-commerce product mapping model. Our central idea is to distill high-cost agentic reasoning into a trainable in-house model. Starting from a curated set of product pairs with LLM-generated rationales and human verification, we first perform parameter-efficient fine-tuning (PEFT) on a small student model using structured reasoning outputs. We then further optimize the model with Reinforcement Learning (RL) using an agent-based reward that jointly evaluates output-format compliance, label correctness, reasoning--preference scores from specially designed judge models. Preliminary results show that EPM-RL consistently improves over PEFT-only training and offers a stronger quality--cost trade-off than commercial API-based baselines, while enabling private deployment and lower operational cost. These findings suggest that reinforcement learning can turn product mapping from a high-latency agentic pipeline into a scalable, inspectable, and production-ready in-house system.",
+      "authors": [
+        "Minhyeong Yu",
+        "Wonduk Seo"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.DB",
+        "cs.LG",
+        "cs.MA"
+      ],
+      "published": "2026-04-27T03:18:00+00:00",
+      "link": "https://arxiv.org/pdf/2604.23993v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "multi-agent frameworks for e-commerce product mapping",
+      "llm_evidence_cn": "用于电子商务产品映射的多智能体框架",
+      "llm_evidence": "用于电子商务产品映射的多智能体框架",
+      "canonical_evidence": "用于电子商务产品映射的多智能体框架",
+      "llm_tldr_en": "EPM-RL uses reinforcement learning to optimize multi-agent LLM workflows for efficient product mapping.",
+      "llm_tldr_cn": "EPM-RL利用强化学习优化多智能体大模型工作流，实现高效的产品映射。",
+      "llm_tldr": "EPM-RL利用强化学习优化多智能体大模型工作流，实现高效的产品映射。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.24372v1",
+      "title": "SeaEvo: Advancing Algorithm Discovery with Strategy Space Evolution",
+      "abstract": "LLM-guided evolutionary search has emerged as a promising paradigm for automated algorithm discovery, yet most systems track search progress primarily through executable programs and scalar fitness. Even when natural-language reflection is used, it is often used locally in mutation prompts or stored without an explicit population-level organization of strategic directions. As a result, evolutionary search can struggle to distinguish syntactically different implementations of the same idea, preserve lower-fitness but strategically promising directions, or detect when an entire family of strategies has saturated.   We introduce \\model, a modular strategy-space layer that elevates natural-language strategy descriptions from transient prompt context to first-class population-level evolutionary state in LLM-driven program search. \\model augments each candidate program with an explicit natural language strategy description and uses this representation in three ways: Strategy Articulation turns mutation into a diagnose-direct-implement process; Stratified Experience Retrieval organizes the archive into strategy clusters and selects inspirations by behavioral complementarity; and Strategic Landscape Navigation periodically summarizes effective, saturated, and underexplored strategy families to guide future mutations. Across mathematical algorithm discovery, systems optimization, and agent-scaffold benchmarks, \\model improves the underlying evolutionary backbones in most settings, with particularly large gains (21% relative improvement) on open-ended system optimization tasks. These results suggest that persistent strategy representations provide a practical mechanism for improving the robustness and efficiency of LLM-guided evolutionary search, suggesting a path toward compound AI systems that accumulate algorithmic knowledge over time.",
+      "authors": [
+        "Sichun Luo",
+        "Yi Huang",
+        "Haochen Luo",
+        "Fengyuan Liu",
+        "Guanzhi Deng",
+        "Lei Li",
+        "Qinghua Yao",
+        "Zefa Hu",
+        "Junlan Feng",
+        "Qi Liu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.NE"
+      ],
+      "published": "2026-04-27T12:06:15+00:00",
+      "link": "https://arxiv.org/pdf/2604.24372v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "modular strategy-space layer for LLM-guided search",
+      "llm_evidence_cn": "大模型引导搜索的模块化策略空间层",
+      "llm_evidence": "大模型引导搜索的模块化策略空间层",
+      "canonical_evidence": "大模型引导搜索的模块化策略空间层",
+      "llm_tldr_en": "Introduces SeaEvo to advance algorithm discovery using a strategy-space layer for LLM agents.",
+      "llm_tldr_cn": "引入 SeaEvo，通过为大模型智能体构建策略空间层来推进算法发现。",
+      "llm_tldr": "引入 SeaEvo，通过为大模型智能体构建策略空间层来推进算法发现。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.24020v1",
+      "title": "Poster: ClawdGo: Endogenous Security Awareness Training for Autonomous AI Agents",
+      "abstract": "Autonomous AI agents deployed on platforms such as OpenClaw face prompt injection, memory poisoning, supply-chain attacks, and social engineering, yet existing defences address only the platform perimeter, leaving the agent's own threat judgement entirely untrained. We present ClawdGo, a framework for endogenous security awareness training: we teach the agent to recognise and reason about threats from the inside, at inference time, with no model modification. Four contributions are introduced: TLDT (Three-Layer Domain Taxonomy) organises 12 trainable dimensions across Self-Defence, Owner-Protection, and Enterprise-Security layers; ASAT (Autonomous Security Awareness Training) is a self-play loop where the agent alternates attacker, defender, and evaluator roles under weakest-first curriculum scheduling; CSMA (Cross-Session Memory Accumulation) compounds skill gains via a four-layer persistent memory architecture and Axiom Crystallisation Promotion (ACP); and SACP (Security Awareness Calibration Problem) formalises the precision-recall tradeoff introduced by endogenous training. Live experiments show weakest-first ASAT raises average TLDT score from 80.9 to 96.9 over 16 sessions, outperforming uniform-random scheduling by 6.5 points and covering 11 of 12 dimensions. CSMA retains the full gain across sessions; cold-start ablation recovers only 2.4 points, leaving a 13.6-point gap. E-mode generates 32 TLDT-conformant scenarios covering all 12 dimensions. SACP is observed when a heavily trained agent classifies a legitimate capability assessment as prompt injection (30/160).",
+      "authors": [
+        "Jiaqi Li",
+        "Yang Zhao",
+        "Bin Sun",
+        "Yang Yu",
+        "Jian Chang",
+        "Lidong Zhai"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR",
+        "cs.AI"
+      ],
+      "published": "2026-04-27T04:09:27+00:00",
+      "link": "https://arxiv.org/pdf/2604.24020v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "framework for autonomous AI agents security awareness",
+      "llm_evidence_cn": "自主AI智能体安全意识框架",
+      "llm_evidence": "自主AI智能体安全意识框架",
+      "canonical_evidence": "自主AI智能体安全意识框架",
+      "llm_tldr_en": "Presents a framework for training autonomous agents to recognize and reason about security threats at inference.",
+      "llm_tldr_cn": "提出了一个训练自主智能体在推理时识别和推理安全威胁的框架。",
+      "llm_tldr": "提出了一个训练自主智能体在推理时识别和推理安全威胁的框架。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "carryover_cache",
+      "paper_id": "2604.24020v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2604.24026v3",
+      "title": "From Skill Text to Skill Structure: The Scheduling-Structural-Logical Representation for Agent Skills",
+      "abstract": "LLM agents increasingly rely on reusable skills, capability packages that combine instructions, control flow, constraints, and tool calls. In most current agent systems, however, skills are still represented by text-heavy artifacts, including SKILL{.}md-style documents and structured records whose machine-usable evidence remains embedded largely in natural-language descriptions. This poses a challenge for skill-centered agent systems: managing skill collections and using skills to support agent both require reasoning over invocation interfaces, execution structure, and concrete side effects that are often entangled in a single textual surface. An explicit representation of skill knowledge may therefore help make these artifacts easier for machines to acquire and leverage. Drawing on Memory Organization Packets, Script Theory, and Conceptual Dependency from Schank and Abelson's classical work on linguistic knowledge representation, we introduce what is, to our knowledge, the first structured representation for agent skill artifacts that disentangles skill-level scheduling signals, scene-level execution structure, and logic-level action and resource-use evidence: the Scheduling-Structural-Logical (SSL) representation. We instantiate SSL with an LLM-based normalizer and evaluate it on a corpus of skills in two tasks, Skill Discovery and Risk Assessment, and superiorly outperform the text-only baselines: in Skill Discovery, SSL improves MRR from 0.573 to 0.707; in Risk Assessment, it improves macro F1 from 0.744 to 0.787. These findings reveal that explicit, source-grounded structure makes agent skills easier to search and review. They also suggest that SSL is best understood as a practical step toward more inspectable, reusable, and operationally actionable skill representations for agent systems, rather than as a finished standard or an end-to-end mechanism for managing and using skills.",
+      "authors": [
+        "Qiliang Liang",
+        "Hansi Wang",
+        "Zhong Liang",
+        "Yang Liu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-04-27T04:25:15+00:00",
+      "link": "https://arxiv.org/pdf/2604.24026v3",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "explicit representation of skill knowledge for agent systems",
+      "llm_evidence_cn": "智能体系统技能知识的显式表示",
+      "llm_evidence": "智能体系统技能知识的显式表示",
+      "canonical_evidence": "智能体系统技能知识的显式表示",
+      "llm_tldr_en": "Introduces a structural representation for LLM agent skills to improve reasoning over tool calls and execution.",
+      "llm_tldr_cn": "为大模型智能体技能引入结构化表示，以改进对工具调用和执行逻辑的推理。",
+      "llm_tldr": "为大模型智能体技能引入结构化表示，以改进对工具调用和执行逻辑的推理。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.24515v1",
+      "title": "SEARCH-R: Structured Entity-Aware Retrieval with Chain-of-Reasoning Navigator for Multi-hop Question Answering",
+      "abstract": "Multi-hop Question Answering (MHQA) aims to answer questions that require multi-step reasoning. It presents two key challenges: generating correct reasoning paths in response to the complex user queries, and accurately retrieving essential knowledge in the face of potential limitations in large language models (LLMs). Existing approaches primarily rely on prompt-based methods to generate reasoning paths, which are further combined with traditional sparse or dense retrieval to produce the final answer. However, the generation of reasoning paths commonly lacks effective control over the generative process, thus leading the reasoning astray. Meanwhile, the retrieval methods over-rely on knowledge matching or similarity scores rather than evaluating the practical utility of the information, resulting in retrieving homogeneous or non-useful information. Therefore, we propose a Structured Entity-Aware Retrieval with Chain-of-Reasoning Navigator framework named SEARCH-R. Specifically, SEARCH-R trains an end-to-end reasoning path navigator, which is able to provide a powerful sub-question decomposer by fine-tuning the Llama3.1-8B model. Moreover, a novel dependency tree-based retrieval is designed to evaluate the informational contribution of the document quantitatively. Extensive experiments on three challenging multi-hop datasets validate the effectiveness of the proposed framework. The code and dataset are available at: https://github.com/Applied-Machine-Learning-Lab/ACL2026_SEARCH-R.",
+      "authors": [
+        "Yuqing Fu",
+        "Yimin Deng",
+        "Wanyu Wang",
+        "Yuhao Wang",
+        "Yejing Wang",
+        "Hongshi Liu",
+        "Yiqi Wang",
+        "Xiao Han",
+        "Maolin Wang",
+        "Guoshuai Zhao",
+        "Yi Chang",
+        "Xiangyu Zhao"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-04-27T14:17:08+00:00",
+      "link": "https://arxiv.org/pdf/2604.24515v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "retrieval with chain-of-reasoning for multi-hop question answering",
+      "llm_evidence_cn": "结合推理链的检索方法用于多跳问答",
+      "llm_evidence": "结合推理链的检索方法用于多跳问答",
+      "canonical_evidence": "结合推理链的检索方法用于多跳问答",
+      "llm_tldr_en": "Introduces SEARCH-R for structured entity-aware retrieval in multi-hop reasoning tasks.",
+      "llm_tldr_cn": "引入了 SEARCH-R，用于多跳推理任务中的结构化实体感知检索。",
+      "llm_tldr": "引入了 SEARCH-R，用于多跳推理任务中的结构化实体感知检索。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "tool augmented and retrieval augmented multi agent LLM systems",
+      "matched_requirement_id": "req-20",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.24026v1",
+      "title": "From Skill Text to Skill Structure: The Scheduling-Structural-Logical Representation for Agent Skills",
+      "abstract": "LLM agents increasingly rely on reusable skills, capability packages that combine instructions, control flow, constraints, and tool calls. In most current agent systems, however, skills are still represented by text-heavy artifacts, including SKILL.md-style documents and structured records whose machine-usable evidence remains embedded largely in natural-language descriptions. This poses a challenge for skill-centered agent systems: managing skill collections and using skills to support agent both require reasoning over invocation interfaces, execution structure, and concrete side effects that are often entangled in a single textual surface. An explicit representation of skill knowledge may therefore help make these artifacts easier for machines to acquire and leverage. Drawing on Memory Organization Packets, Script Theory, and Conceptual Dependency from Schank and Abelson's classical work on linguistic knowledge representation, we introduce what is, to our knowledge, the first structured representation for agent skill artifacts that disentangles skill-level scheduling signals, scene-level execution structure, and logic-level action and resource-use evidence: the Scheduling-Structural-Logical (SSL) representation. We instantiate SSL with an LLM-based normalizer and evaluate it on a corpus of skills in two tasks, Skill Discovery and Risk Assessment, and superiorly outperform the text-only baselines: in Skill Discovery, SSL improves MRR from 0.573 to 0.707; in Risk Assessment, it improves macro F1 from 0.744 to 0.787. These findings reveal that explicit, source-grounded structure makes agent skills easier to search and review. They also suggest that SSL is best understood as a practical step toward more inspectable, reusable, and operationally actionable skill representations for agent systems, rather than as a finished standard or an end-to-end mechanism for managing and using skills.",
+      "authors": [
+        "Qiliang Liang",
+        "Hansi Wang",
+        "Zhong Liang",
+        "Yang Liu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-04-27T04:25:15+00:00",
+      "link": "https://arxiv.org/pdf/2604.24026v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "representation for agent skills involving tool calls and control flow",
+      "llm_evidence_cn": "涉及工具调用和控制流的智能体技能表示",
+      "llm_evidence": "涉及工具调用和控制流的智能体技能表示",
+      "canonical_evidence": "涉及工具调用和控制流的智能体技能表示",
+      "llm_tldr_en": "Proposes a structural representation for agent skills to improve reasoning and management.",
+      "llm_tldr_cn": "提出了一种智能体技能的结构化表示，以改进推理和管理。",
+      "llm_tldr": "提出了一种智能体技能的结构化表示，以改进推理和管理。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2604.24026v4",
+      "title": "From Skill Text to Skill Structure: The Scheduling-Structural-Logical Representation for Agent Skills",
+      "abstract": "Large language model (LLM) agents increasingly rely on reusable skills: capability packages that combine instructions, control flow, constraints, and tool calls. In current agent systems, however, skills are still represented by text-heavy artifacts, mainly SKILL{.}md-style documents whose machine-usable evidence remains embedded largely in natural-language descriptions. As a result, skill-centered agent systems face a representation problem: both managing skill collections and using skills during agent execution require reasoning over invocation interfaces, execution structure, and concrete side effects, but these signals are often entangled in a single textual surface. An explicit representation of skill knowledge may therefore help make these artifacts easier for machines to acquire and leverage. Drawing on Memory Organization Packets, Script Theory, and Conceptual Dependency from Schank and Abelson's classical work on cognitive linguistic representation, we introduce what is, to our knowledge, the first structured representation for agent skill artifacts that disentangles skill-level scheduling signals, scene-level execution structure, and logic-level action/resource-use evidence: the Scheduling-Structural-Logical (SSL) representation. We instantiate SSL with an LLM-based normalizer and evaluate SSL-derived representations in two tasks, Skill Discovery and Risk Assessment. The experiment shows that SSL significantly outperforms the text-only baselines: in Skill Discovery, MRR@50 improves from 0.649 to 0.729; in Risk Assessment, macro F1 improves from 0.409 to 0.509. These findings suggest that an explicit, source-grounded structure can make agent skills easier to search and review, positioning SSL as a practical step toward more inspectable, reusable, and operationally actionable skill representations, rather than a finished standard or end-to-end skill-management mechanism.",
+      "authors": [
+        "Qiliang Liang",
+        "Hansi Wang",
+        "Zhong Liang",
+        "Yang Liu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-04-27T04:25:15+00:00",
+      "link": "https://arxiv.org/pdf/2604.24026v4",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "representation for agent skills in LLM systems",
+      "llm_evidence_cn": "大语言模型智能体技能的表示方法",
+      "llm_evidence": "大语言模型智能体技能的表示方法",
+      "canonical_evidence": "大语言模型智能体技能的表示方法",
+      "llm_tldr_en": "Proposes a structural representation for LLM agent skills to improve reasoning and execution.",
+      "llm_tldr_cn": "提出了一种大语言模型智能体技能的结构化表示方法，以优化推理和执行过程。",
+      "llm_tldr": "提出了一种大语言模型智能体技能的结构化表示方法，以优化推理和执行过程。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.24623v1",
+      "title": "XGRAG: A Graph-Native Framework for Explaining KG-based Retrieval-Augmented Generation",
+      "abstract": "Graph-based Retrieval-Augmented Generation (GraphRAG) extends traditional RAG by using knowledge graphs (KGs) to give large language models (LLMs) a structured, semantically coherent context, yielding more grounded answers. However, GraphRAG reasoning process remains a black-box, limiting our ability to understand how specific pieces of structured knowledge influence the final output. Existing explainability (XAI) methods for RAG systems, designed for text-based retrieval, are limited to interpreting an LLM response through the relational structures among knowledge components, creating a critical gap in transparency and trustworthiness. To address this, we introduce XGRAG, a novel framework that generates causally grounded explanations for GraphRAG systems by employing graph-based perturbation strategies, to quantify the contribution of individual graph components on the model answer. We conduct extensive experiments comparing XGRAG against RAG-Ex, an XAI baseline for standard RAG, and evaluate its robustness across various question types, narrative structures and LLMs. Our results demonstrate a 14.81% improvement in explanation quality over the baseline RAG-Ex across NarrativeQA, FairyTaleQA, and TriviaQA, evaluated by F1-score measuring alignment between generated explanations and original answers. Furthermore, XGRAG explanations exhibit a strong correlation with graph centrality measures, validating its ability to capture graph structure. XGRAG provides a scalable and generalizable approach towards trustworthy AI through transparent, graph-based explanations that enhance the interpretability of RAG systems.",
+      "authors": [
+        "Zhuoling Li",
+        "Ha Linh Hong Tran Nguyen",
+        "Valeria Bladinieres",
+        "Maxim Romanovsky"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.IR",
+        "cs.LG"
+      ],
+      "published": "2026-04-27T15:52:20+00:00",
+      "link": "https://arxiv.org/pdf/2604.24623v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "retrieval augmented generation with graph-based context",
+      "llm_evidence_cn": "基于图上下文的检索增强生成",
+      "llm_evidence": "基于图上下文的检索增强生成",
+      "canonical_evidence": "基于图上下文的检索增强生成",
+      "llm_tldr_en": "Introduces XGRAG, a framework for explaining graph-based retrieval-augmented generation in LLMs.",
+      "llm_tldr_cn": "引入XGRAG，一个用于解释LLM中基于图的检索增强生成的框架。",
+      "llm_tldr": "引入XGRAG，一个用于解释LLM中基于图的检索增强生成的框架。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "tool augmented and retrieval augmented multi agent LLM systems",
+      "matched_requirement_id": "req-20",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
