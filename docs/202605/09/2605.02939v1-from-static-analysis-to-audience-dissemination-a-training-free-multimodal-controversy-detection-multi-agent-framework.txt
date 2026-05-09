@@ -1,0 +1,490 @@
+Title: From Static Analysis to Audience Dissemination: A Training-Free Multimodal Controversy Detection Multi-Agent Framework
+
+URL Source: https://arxiv.org/pdf/2605.02939v1
+
+Published Time: Wed, 06 May 2026 00:03:58 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+## From Static Analysis to Audience Dissemination: A Training-Free Multimodal Controversy Detection Multi-Agent Framework 
+
+Zihan Ding 1 and Ziyuan Yang 2 and Yi Zhang 1*1Sichuan University, Chengdu, Sichuan, China 
+
+2022141230168@stu.scu.edu.cn , yzhang@scu.edu.cn 
+
+> 2
+
+Nanyang Technological University, Singapore 
+
+cziyuanyang@gmail.com 
+
+Abstract 
+
+Multimodal controversy detection (MCD) de-tects controversies in videos and their associ-ated comments to support risk management on social video platforms. Prior work treats MCD as a static representation learning problem, di-rectly extracting features from videos and their associated comments. However, these meth-ods fail to capture diverse evaluations from dif-ferent audiences. Inspired by real-world au-dience dissemination, we propose a training-free multi-agent framework AuDisAgent that models MCD as a dynamic propagation pro-cess. Our framework explicitly models audi-ence dissemination through a structured multi-agent system. First, three Screening Agents ,including the Video , Comment , and Interaction Agents , perform initial assessments from visual, textual, and cross-modal perspectives, respec-tively. For samples where consensus cannot be reached, the Viewing Panel Agent is acti-vated to simulate a post-screening discussion among audiences with diverse backgrounds and stances. This mechanism models how different audience groups interpret and react to the same content, exposing latent controversy contents that may emerge during dissemination. Finally, the Arbitration Agent makes the final judgment based on the preceding reasoning chain. In addition, to address the “cold-start” scenario where newly released videos lack comments, we implement a Comment Bootstrapping Strat-egy that transfers similar historical public com-ments as the initial comment. Extensive ex-periments on the public dataset show that our framework significantly outperforms existing state-of-the-art (SOTA) methods in both rich-and limited-comment scenarios. 
+
+1 Introduction 
+
+The rapid rise of short-video platforms, such as TikTok and YouTube Shorts, has fundamentally 
+
+> **Corresponding author: yzhang@scu.edu.cn
+
+reshaped the information dissemination and so-cial interaction (Wang et al., 2022). While these platforms facilitate valuable content dissemination, they also serve as breeding grounds for online con-troversies where polarized views can rapidly es-calate into reputational damage or social conflicts (Wang et al., 2023c; Hessel and Lee, 2019). There-fore, Multimodal Controversy Detection (MCD), which aims to assess whether a video and its as-sociated comments are controversial, has become critical for content governance and risk manage-ment on social platforms (Cook et al., 2014). Existing MCD methods treat this task as a static representation learning problem, directly extract-ing features from videos and associated comments to detect controversy(Sanh et al., 2021). For ex-ample, MVCD (Xu et al., 2024) and TPC-GCN (Zhong et al., 2020) use graph neural networks to statically encode the features for controversy detection. Moreover, recent works utilize Large Language Models (LLMs) (Ma et al., 2024b; Tah-masebi et al., 2024) to align visual and textual fea-tures from videos and comments for MCD. Despite recent progress, mainstream methods treat contro-versy as a static content attribute (Tsai et al., 2019; Garimella et al., 2016). However, in practice, con-troversy is not a static property but a dynamic social phenomenon emerging from the interactions and opinion conflicts among audiences. Hence, static learning-based models often remain limited to cap-ture the underlying controversy. To address these issues, it is essential to move beyond “ static feature modeling ” toward “ dynamic simulation of audience dissemination ”. Only by simulating the dynamic process can we uncover how controversies are shaped by complex inter-actions among diverse audiences. Motivated by this, we propose a training-free and interpretable multi-agent framework AuDisAgent for MCD that simulates audience dissemination to reveal how controversies emerge from complex interactions 1      
+
+> arXiv:2605.02939v1 [cs.LG] 1 May 2026 Fixed Vector
+> Embedding
+> Static Feature Extraction
+> & Multi -model Fusion Input Data
+> Dynamic Simulation of
+> Audience Dissemination
+> simula te Audience Dissemination
+> Final Output
+> Controversial
+> Yes No
+> Videos
+> Comments
+> Input Data
+> Videos
+> Comments
+> Final Output
+> Controversial
+> Yes No
+> Reasons
+> Ours
+> Existing methods
+
+Figure 1: Pipeline comparison between existing MCD methods and our proposed approach. 
+
+among diverse audiences. Specifically, AuDisAgent explicitly models the audience dissemination process through a struc-tured multi-agent system. First, three Screening Agents , including the Video , Comment , and Inter-action Agents , perform initial assessments from vi-sual, textual, and cross-modal perspectives, respec-tively. For ambiguous samples where consensus cannot be reached, the Viewing Panel Agent will be activated to simulate a post-screening discus-sion among audiences with diverse backgrounds. Instead of only producing a decision, each agent also provides the rationale behind it, and these jus-tifications collectively form the reasoning chain. Finally, the Arbitration Agent integrates the preced-ing reasoning chain to make the final controversy judgment and provides an interpretable decision basis. To clarify our method and its differences from previous work, we illustrate the concept with an example in Fig. 1. Furthermore, to address the “ cold-start ” scenario where newly released videos lack comments, we in-troduce a Comment Bootstrapping Strategy . By se-lecting the comments from the semantically similar videos as initial comments, this strategy constructs a preliminary corpus to guide agents in simulating potential future public opinion (Xu et al., 2024, 2025). Extensive experiments on the public dataset demonstrate that AuDisAgent significantly outper-forms existing baseline methods in both rich- and limited-comment scenarios. In summary, our main contributions are as follows: • We introduce a training-free multi-agent framework AuDisAgent to reformulate the MCD task from static feature modeling to dy-namic simulation of audience dissemination. • We propose a Comment Bootstrapping Strat-egy to resolve the cold-start scenario that re-trieves historical public comments from se-mantically similar videos. • Extensive experiments on the public dataset demonstrate that our method outperforms state-of-the-art (SOTA) methods. 
+
+2 Related Work 
+
+2.1 Controversy Detection 
+
+Driven by the proliferation of user-generated con-tent, MCD has become crucial for risk management and content moderation (Zhong et al., 2020; Hessel and Lee, 2019; Linmans et al., 2018). Early stud-ies rely on manually constructed dictionaries or rules to identify predefined topics (Garimella et al., 2018), which struggle to capture the evolving and context-dependent nature of controversies. Sub-sequent research addressed this by incorporating multi-dimensional features like semantics and so-cial background (Linmans et al., 2018; Zhong et al., 2020), while application scenarios expanded to complex, dynamic multimodal environments such as social media (Linmans et al., 2018; Xu et al., 2025). Methodologically, approaches evolved from statistical rules (Popescu and Pennacchiotti, 2010; Hamad et al., 2018) to graph-based analysis (Men-doza et al., 2020) and, recently, pre-trained neural networks for multimodal detection (Xu et al., 2024). However, existing models focus on binary classifi-cation and lack interpretability. 
+
+2.2 Multi-Agent Framework 
+
+LLMs have gained extensive attention as au-tonomous agents due to their strong planning and reasoning capabilities (Yao et al., 2022; Shen et al., 2023; Mu et al., 2023; Zhao et al., 2024; Sun et al., 2023). They effectively handle complex tasks under weakly supervised conditions, reduc-ing reliance on labeled data. Building on this, multi-agent frameworks (Qian et al., 2024; Tao et al., 2024; Hong et al., 2024; Ma et al., 2024a) enable interactive collaboration, proving more ef-fective than single-agent systems for collective problem-solving. However, their application in MCD remains scarce. For instance, AgentMCD (Xu et al., 2024) applies multi-agent technology to multimodal detection, but it lacks deep interac-tive reasoning and fails to leverage simulated social interactions to uncover core controversies. 2Input Data Video Agent 
+
+> Detect video
+> content
+> Uncontroversial
+
+Comment Agent 
+
+> Detect
+> comments
+> Controversial
+
+Interaction Agent  
+
+> Detect videos
+> & comments Controversial
+
+Final result 
+
+# + +
+
+> Result
+> Arbitration Agent
+> Reasoning
+> Controversial
+
+# +
+
+> Viewing
+> Panel Agent
+
+Create audiences 
+
+> Role, Motivation, Stance
+
+Audiences discuss 
+
+> Fact -check, Absorb, Rebuttal
+
+Express opinions   
+
+> According to …I think …
+
+Generate opinion -pool 
+
+> After discuss, I think...
+
+Comment Bootstrapping 
+
+> Target Sample
+> Target Sample
+> Migrat e
+> comment s
+> Find similar
+> Samples
+> Comments
+> Metadata
+
+…
+
+Visual -Semantic Alignment  
+
+> Raw video
+> Comments
+> Publish Time
+> ASR Text Title Figure 2: Overview of the proposed AuDisAgent.
+
+3 Methodology 
+
+3.1 Overview 
+
+Given a short video post, MCD methods aim to determine whether the content poses a potential risk of public opinion conflict. Formally, a sample is represented as S = {v, Tmeta , C }, where v denotes the video, Tmeta contains textual metadata (e.g., title, keywords, publisher information), and C =
+
+{c1, c 2, ..., c n} denotes the comment set. We aim to design an interpretable framework that provides both the reasoning process and the final prediction. In this paper, we propose a novel training-free multi-agent framework AuDisAgent that reformu-lates the MCD task from static feature modeling to dynamic simulation of audience dissemination. The overview of AuDisAgent is shown in Fig. 2. Specifically, three Screening Agents (Video, Com-ment, and Interaction) first conduct assessments and generate distinct reasoning chains. For am-biguous cases, the Viewing Panel Agent simulates discussions among diverse audiences to uncover latent controversies. Then, the Arbitration Agent 
+
+integrates these rationales to produce the reason-ing process and the final prediction. Furthermore, to address the “cold-start” videos, we introduce a Comment Bootstrapping Strategy that leverages relevant historical data to simulate the potential audience dissemination. 
+
+3.2 Visual-Semantic Alignment 
+
+To enable semantic reasoning , we first align vi-sual information with textual representations. We employ mPLUG-Video (Xu et al., 2023) as our vi-sual encoder F, which is pretrained on large-scale corpus of paired video–text data. We construct a comprehensive prompt Pdesc to generate a refined video description Tv, which can be formulated as: 
+
+Tv = F(v, Tmeta , Pdesc ). (1) The metadata is introduced to avoid relying solely on visual content, which may yield coarse or underspecified descriptions. Hence, Tv integrates the visual representation of the video with its tex-tual metadata. 
+
+3.3 Screening Agents 
+
+To model diverse first impressions and capture modality-specific controversy cues, we deploy three specialized Screening Agents to perform preliminary judgments from different modal per-spectives: 1) Video Agent Av operates exclusively on the video to assess the intrinsic semantic infor-mation indicating potential controversy. 2) Com-ment Agent Ac processes the comments to iden-tify strong disagreements or conflicting viewpoints among the past audiences. 3) Interaction Agent 
+
+Ai analyzes the joint context of the video and the comments to detect cross-modal controversy be-tween the video and the audience’s reaction. Each agent independently evaluates its input and predicts whether the content is controversial. Then, 3AuDisAgent utilizes a consistency gating mech-anism to detect controversial content: if all three screening agents provide the same decision, the rea-soning process concludes and gives the consensus decision. However, if the agents do not reach a con-sensus, the sample is treated as an ambiguous case and moves forward to the next agent to model the dynamic dissemination process for further analysis. 
+
+3.4 Viewing Panel Agent 
+
+For ambiguous samples, static content alone is of-ten insufficient to determine whether a video is con-troversial. In such cases, controversy may emerge from interactions among opposing viewpoints dur-ing audience dissemination. Hence, we design the 
+
+Viewing Panel Agent Ap to simulate the discus-sions among audiences with diverse backgrounds. Specifically, we first extract diverse audience personas P from the video representation Tv and the filtered comment set C′. To reduce noise, we only retain the most liked comments for each video; the top 30 liked comments are empirically selected to balance performance and efficiency. Each per-sona is characterized by three attributes: social role ,
+
+motivation , and core stance . Then, each persona ex-presses the initial opinion O and engages in discus-sion to simulate audience dissemination. During the discussion, personas may perform three opera-tions: 1) Fact-checking: Correcting hallucinations using video evidence; 2) Absorption: Adopting rea-sonable logic from others; 3) Rebuttal: Refuting unreasonable viewpoints to maintain a stance. Af-ter the discussion, each persona updates its opinion to O′, which is added to the opinion pool H′.
+
+3.5 Arbitration Agent 
+
+Once the simulated audience dissemination is com-pleted, the Arbitration Agent Aj produces the final decision. Instead of relying solely on raw in-puts, it integrates Tv, C′, and the final evolved opin-ion pool H′. Based on these, the Arbitration Agent produces the controversy score and the correspond-ing explanation. This process can be formulated as follows: 
+
+S, E = Aj (Tv, C′, H′), (2) where S denotes the predicted controversy score, and E is the interpretable decision reasoning chain. Then, the final controversy prediction is obtained as ˆy = I(S ≥ τ ), where τ is the decision thresh-old, which is set to the median of the scoring range (0–25) specified in the prompt. 
+
+3.6 Comment Bootstrapping Strategy 
+
+The above process assumes the availability of an initial comment set to support audience dissemina-tion simulation. However, in real-world scenarios, newly published videos may face a cold-start situa-tion where few or no comments are available (i.e., 
+
+Cq ≈ ∅ ). In such cases, the Viewing Panel Agent lacks sufficient audience feedback, making it dif-ficult to simulate opinion evolution and dissem-ination dynamics. To address this, we design a 
+
+Comment Bootstrapping Strategy . Specifically, for a target sample Sq without comments, a pretrained model bge-large-zh-1.5 (Xiao et al., 2024), denoted as H(·)), is utilized to encode the “title” within the corresponding Tmeta to get Eq. The same encoding process is applied to all samples in the reference database Dref as follows: 
+
+Eiref = H(Siref ), Siref ∈ D ref , (3) where Eiref denotes the feature of Siref .Then, we compute the cosine similarity between the query embedding Eq and each reference embed-ding in the database to retrieve the top-3 most sim-ilar samples. For each sample, the 10 most-liked comments are selected to construct a proxy com-ment set Cproxy for newly posted videos without comments. This proxy set serves as prior feedback to guide our framework in simulating potential fu-ture audience reactions. 
+
+4 Experiments 
+
+4.1 Experiment Setup Datasets : We evaluate the performance on the pub-lic MMCD dataset (Xu et al., 2024). It is a large-scale MCD Dataset consisting of over 10,000 Chi-nese videos, each accompanied by extensive social context information. 
+
+Baselines : We compare AuDisAgent against 13 advanced baselines, encompassing various reason-ing and multi-agent paradigms. These include Standard Prompting (GLM et al., 2024), Zero-shot Chain of Thought (Kojima et al., 2022), Plan-and-Solve(Wang et al., 2023b), Self-Consistency (Wang et al., 2023a), Self-Reflect (Shinn et al., 2023), Sel-fRefine (Madaan et al., 2023), Tree of Thoughts (Yao et al., 2023), Cumulative Reasoning (Zhang et al., 2023), RECITE (Jiang et al., 2023), AutoA-gents (Chen et al., 2023), Multi-Agent (Liu et al., 2023), MAD (Liang et al., 2024), and AgentMCD (Xu et al., 2025). 4with rich comments with limited comments Method F1 Rec. Prec. Acc. F1 Rec. Prec. Acc. Standard Prompting 67.91 67.93 67.98 67.93 64.39 64.40 64.42 64.40 Zero-shot CoT (Kojima et al., 2022) 69.15 69.17 69.22 69.17 64.02 64.05 64.09 64.05 Plan-and-Solve (Wang et al., 2023b) 68.11 68.11 68.12 68.11 62.87 63.25 63.81 63.25 Self-Consistency (Wang et al., 2023a) 65.76 65.83 65.95 65.83 61.75 61.75 61.75 61.78 Self-Reflect (Shinn et al., 2023) 69.13 69.26 69.58 69.26 63.96 63.96 63.96 63.96 Self-Refine (Madaan et al., 2023) 62.08 63.96 67.41 63.96 61.78 63.25 65.66 63.25 Cumulative Reasoning (CR) (Zhang et al., 2023) 50.16 57.42 67.78 57.42 58.22 59.72 61.34 59.72 RECITE (Jiang et al., 2023) 61.89 63.03 64.82 63.04 53.14 57.42 61.69 57.42 Tree of Thoughts (ToT) (Yao et al., 2023) 68.41 68.46 68.58 68.46 60.81 61.61 62.66 61.63 AutoAgents (Chen et al., 2023) 64.17 65.20 65.93 64.39 60.14 60.28 60.42 60.27 Multi-Agent (Debate) (Liu et al., 2023) 63.44 64.27 65.68 64.25 60.46 60.75 61.07 60.74 MAD (Liang et al., 2024) 61.84 61.84 61.85 61.85 62.58 62.63 62.71 62.63 AgentMCD (Xu et al., 2025) 69.98 70.14 70.60 70.14 66.29 66.45 66.78 66.46 AuDisAgent (Ours) 71.64 72.08 71.20 71.47 68.29 69.75 66.89 67.56 
+
+Table 1: Performance comparison among different methods on MMCD.                                                                                                               
+
+> Method AvAiAcApwith rich comments with limited comments
+> F1 Rec. Prec. Acc. F1 Rec. Prec. Acc.
+> Av-only ✓63.27 61.48 65.17 64.31 63.10 61.48 64.80 64.05
+> Ai-only ✓65.36 64.66 66.06 65.72 60.03 63.43 56.98 57.77
+> Ac-only ✓68.64 67.67 69.64 69.08 63.38 68.20 59.20 60.60
+> Ap-only ✓70.03 69.96 70.09 70.05 64.69 65.37 64.01 64.31 w/o Av✓✓✓70.01 69.08 70.96 70.41 63.14 65.37 61.06 61.84 w/o Ai✓✓✓70.63 70.32 70.94 70.76 66.37 66.78 65.97 66.17 w/o Ac✓✓✓70.16 71.02 69.31 69.79 65.20 65.37 65.03 65.11 w/o Ap✓✓✓68.12 66.25 70.09 68.99 63.55 67.14 60.32 61.48
+> AuDisAgent ✓✓✓✓71.64 72.08 71.20 71.47 68.29 69.75 66.89 67.56
+
+Table 2: Experimental results of the ablation study. 
+
+Implementation Details : Our proposed frame-work is implemented using a Python script, utiliz-ing GLM4-9B (GLM et al., 2024) as the backbone LLM, which supports long-text reasoning up to 128K tokens. In the process of similar video re-trieval, we employ the bge-large-zh model (Xiao et al., 2024) for encoding. All experiments are conducted in one-shot or few-shot settings without additional training or fine-tuning steps. For all ex-perimental cases, the binary classification decision threshold is set to the median of the model’s output controversy score range. 
+
+Metrics : Precision, recall, accuracy, and F1-score are adopted as evaluation metrics, where higher values indicate better performance. 
+
+4.2 Main Result 
+
+We compare AuDisAgent with several existing methods on the public MMCD dataset under both rich- and limited-comment scenarios. As shown in Table 1, AuDisAgent consistently outperforms all baseline models in both scenarios. Specif-ically, compared with the second-best method AgentMCD, AuDisAgent improves accuracy by 1.33% and F1-score by 1.68% in the rich-comment scenario. In the limited-comment scenario, it fur-ther achieves gains of 1.10% in accuracy and 2.00% in F1-score. These results demonstrate the effec-tiveness of our framework, which stems from re-framing MCD from static feature modeling to dy-namic simulation of audience dissemination. 
+
+4.3 Ablation Study 
+
+To evaluate the contribution of each component, we conduct ablation experiments, and the results are shown in Table 2. The results show that all agents in AuDisAgent play critical roles in MCD. Removing any single agent leads to a noticeable performance degradation, which highlights the ef-fectiveness of each component. Moreover, the syn-ergy among these agents significantly enhances the framework’s robustness in detecting controversial content. 5Models with rich comments                                                    
+
+> F1 Rec. Prec. Acc. GLM4-9B (GLM et al., 2024) Baseline 67.91 67.93 67.98 67.93 AgentMCD 69.98 (+2.07) 70.14 (+2.21) 70.60 (+2.62) 70.14 (+2.21) AuDisAgent 71.64 (+3.73) 72.08 (+4.15) 71.20 (+3.22) 71.47 (+3.54)
+> Qwen2.5-7B (Qwen et al., 2025) Baseline 65.76 68.37 63.34 64.40 AgentMCD 64.50 (-1.26) 63.25 (-5.12) 65.81 (+2.47) 65.19 (+0.79) AuDisAgent 67.78 (+2.02) 69.11 (+0.74) 66.50 (+3.14) 66.58 (+2.18)
+> DeepSeek-R1-Distill-Llama-8B(DeepSeek-AI et al., 2025; Team and AI@Meta, 2024) Baseline 63.73 66.43 61.24 62.19 AgentMCD 64.37 (+0.64) 63.07 (-3.36) 66.48 (+5.24) 65.64 (+3.45) AuDisAgent 67.66 (+3.93) 68.32 (+1.89) 67.01 (+5.77) 67.40 (+5.21)
+> gpt-4o (OpenAI et al., 2024) Baseline 67.75 66.43 69.12 68.37 AgentMCD 69.20 (+1.45) 67.49 (+1.06) 71.00 (+1.88) 69.96 (+1.59) AuDisAgent 70.84 (+3.09) 69.96 (+3.53) 71.74 (+2.62) 71.20 (+2.83)
+
+Table 3: Generation Performance of our proposed method. 
+
+Strategy k value with rich comments 
+
+F1 Rec. Prec. Acc. 
+
+Top-k 20 70.23 70.85 69.62 69.96 25 69.78 68.55 71.06 70.32 
+
+30 71.64 72.08 71.20 71.47 
+
+35 69.33 69.08 69.57 69.43 
+
+Random-k 20 68.24 66.61 69.94 68.99 25 68.73 68.55 68.92 68.82 30 70.40 70.23 70.85 69.98 35 71.16 70.49 72.79 69.59 
+
+Full set - 69.81 70.67 68.97 69.43 
+
+Table 4: Results of different comment sampling strategy. 
+
+4.4 Generalization Experiments 
+
+To evaluate the generalization ability of Au-DisAgent, we integrate it with several main-stream LLMs, including GLM-4-9B (GLM et al., 2024), Qwen2.5-7B (Qwen et al., 2025), deepseek (DeepSeek-AI et al., 2025), and GPT-4o (Ope-nAI et al., 2024). We compare AuDisAgent with AgentMCD, a leading zero-shot multi-agent frame-work in this field. As shown in Table 3, AuDis-Agent achieves performance gains across all base models, demonstrating strong adaptability to dif-ferent LLMs. Notably, the largest improvement is observed on GLM-4-9B, where the F1-score in-creased by 3.73%, Recall by 4.15%, Precision by 3.22%, and Accuracy by 3.54%. Overall, AuDis-Agent outperforms the current SOTA framework AgentMCD in the majority of scenarios. 
+
+4.5 Comment Sampling Strategy 
+
+The construction of the reference database in the Viewing Panel Agent relies on the analysis of video and comment content. Therefore, sampling strat-egy is important. To study this effect, we con-
+
+Figure 3: Runtime Comparison under Different Com-ment Settings. 
+
+duct experiments with different sampling settings. Given that the MMCD dataset contains about 40 valid comments per video on average, we test four sampling sizes ( k = 20 , 25 , 30 , 35 ) under two sam-pling strategies: Top -k (selecting the most liked comments) and Random -k (randomly sampling), and we treat the full comment set as the baseline. The results are shown in Table 4. The results in-dicate that the “Top - 30" strategy achieves the best overall performance. This suggests that increas-ing the number of comments does not necessarily improve performance: insufficient sampling may miss key opinions, while excessive sampling tends to introduce noise. 
+
+4.6 Audience Dissemination Simulation 
+
+To further analyze the Viewing Panel Agent, we design two variants of AuDisAgent: 1) No Discus-sion: Directly construct the initial opinions gener-ated by each audience into the final opinion pool without any discussion. 2) Generic Roles: Discard the diverse audience persona design and uniformly use three generic roles: supporters, opponents, and neutrals. As shown in Table 5, both variants per-form worse than the original design. The “No Dis-cussion" variation lacks opinion refinement nad thus fails to construct a high-quality opinion pool. The “Generic Roles" variant oversimplifies audi-ence diversity, producing generic viewpoints that cannot capture core controversies. These results further velidate the effectiveness of the Viewing Panel Agent. 
+
+4.7 Comment Bootstrapping Strategy 
+
+To investigate the impact of different hyperparame-ters and strategies in the Comment Bootstrapping Strategy, we conduct sufficient experiments, and the results are shown in Table 6. 
+
+Reference Database Scale: Under limited-comment conditions, we evaluate the impact of 6(a) (b) Figure 4: Token Cost under Different Comment Settings: (a) Rich-comment scenario; (b) Limited-comment scenario. 
+
+Method F1 Rec. Prec. Acc. 
+
+with rich comments AuDisAgent 71.64 72.08 71.20 71.47 
+
+No Discussion 70.34 72.08 68.69 69.61 Generic Roles 69.72 71.38 68.13 68.99 
+
+with limited comments AuDisAgent 68.29 69.75 66.89 67.56 
+
+No Discussion 66.27 68.55 64.13 65.11 Generic Roles 65.24 67.14 63.44 64.22 
+
+Table 5: Performance comparison among different meth-ods. 
+
+different reference database scales by randomly sampling 10% to 70% of the full database. The results show a clear positive correlation between database scale and performance. As the database grows, the retrieval module is more likely to iden-tify similar historical samples, resulting in higher-quality migrated comments. 
+
+Encoding Weight: We study the impact of en-coding strategies on AuDisAgent during similar-sample matching process by varying the fusion weight between title and keywords. The results show that relying solely on title (title : keywords = 1:0) achieves the best performance, because ti-tle often contains more specific information, while keywords are frequently generic and provide lim-ited discriminative information. 
+
+Comment Migration: We evaluate different com-ment migration strategies in the Comment Boot-strapping Strategy, extracting the most liked com-ments from the most similar samples. To ensure fairness, we keep the total number of selected com-ments fixed at 30. Results show that selecting the top-10 most-liked comments from top-3 similar samples (Top3–10) achieves the best performance. This is because insufficient samples limit com-ment diversity and increase the risk of overfitting to single-video contexts, while excessive samples introduce noise or too few comments per sample, hindering the simulation of complete discussions.                                                                                              
+
+> Parameter Category Setting F1 Rec. Prec. Acc. Reference Database Scale
+> 10% 61.75 63.60 63.05 63.16 30% 63.85 62.72 65.02 64.49 50% 64.09 63.07 65.15 64.66 70% 65.02 65.19 64.85 64.93
+> 100% 68.29 69.75 66.89 67.56 Encoding Weight (title : keywords)
+> 0:1 67.36 68.37 66.38 66.87 0.25:0.75 67.30 68.37 66.27 66.78 0.5:0.5 66.49 67.14 65.86 66.17 0.75:0.25 67.25 68.02 66.49 66.87
+> 1:0 68.29 69.75 66.89 67.56 Comment Migration (sample - comments)
+> top1-30 64.69 63.60 65.81 65.28 top2-15 65.43 65.55 65.32 65.37
+> top3-10 68.29 69.75 66.89 67.56
+> top5-6 66.08 65.57 66.61 65.81 top6-5 66.02 65.62 66.43 65.81
+> Embedding Model
+> all-MiniLM-L6 63.95 65.61 62.37 64.84 e5-large 63.16 64.93 61.48 64.13 GPT-3 63.58 66.47 60.95 65.11
+> bge-large-zh 68.29 69.75 66.89 67.56 Overall
+> Baseline 64.39 64.40 64.42 64.40 AgentMCD 66.29 66.45 66.78 66.46
+> AuDisAgent 68.29 69.75 66.89 67.56
+
+Table 6: Performance comparison of different hyperpa-rameters under the limited comments condition. 
+
+Embedding Model: We compare several pre-trained embedding models, including all-MiniLM-L6-v2 (Wang et al., 2020), e5-large-v2 (Wang et al., 2024) bge-large-zh-1.5 (Xiao et al., 2024), and GPT-3 (Brown et al., 2020) (used as the text en-coder in mPLUG-Video). Results show that bge-large-zh-1.5 achieves the best performance, be-cause it is optimized for Chinese semantic scenar-ios. Therefore, when extending the framework to other languages, we recommend using language-specific encoders as the base model. 
+
+4.8 Computational Overhead 
+
+To evaluate the computational efficiency, we report the average results over 100 randomly sampled in-stances using a single NVIDIA RTX 4090D GPU. The results are shown in Figs. 3 and 4. Under the rich comment scenario, although AuDisAgent con-sumes more tokens than AgentMCD, it acheives faster runtime. This is because AgentMCD adopts more time-consuming scoring strategies at each stage and applies the same workflow to both simple and ambiguous samples. Under the lim-ited comment scenario, AuDisAgent is also faster than AgentMCD. This efficiency advantage mainly stems from AuDisAgent’s comment bootstrap-ping strategy, which avoids the heavy overhead of AgentMCD’s agent-based comment simulation. 7Video content : No Controversy 
+
+The video mainly focuses on education reforms under the Double Reduction Policy, 
+
+exploring how ordinary families can respond and adapt, as well as how to help children 
+
+achieve personal growth and upward social mobility. The content is relatively neutral, with 
+
+no strong emotional expressions, mentions of high -profile figures, or direct harm to the 
+
+interests of any particular group. 
+
+Video Agent 
+
+Video and Comment content : Controversial 
+
+The video ’s comment section contains doubts about the video content, discussions on 
+
+education policies, as well as diverse opinions and strong emotional expressions regarding 
+
+the current state of education. The comments include both approval and criticism of the 
+
+video content, and even expressions of anger and dissatisfaction with the current 
+
+educational situation. 
+
+Interaction Agent 
+
+Aspect 3: Controversial 
+
+Judging from the comments, there are multiple opposing viewpoints in the comment 
+
+section. Commenters have discussed topics such as the allocation of educational resources, 
+
+teachers ’ salaries, the necessity of training classes, and happiness -oriented education, 
+
+expressing diverse opinions on these issues. Some commenters argue that educational 
+
+resources are unevenly distributed and that training classes are necessary, while others 
+
+believe that ... 
+
+Comment Agent Comment Agent 
+
+Name : "Anxious Parents", 
+
+Des c: "Worried that their children will lose their academic advantages due to the Double 
+
+Reduction Policy", 
+
+Stance : "Support children in improving through alternative means, such as self -directed 
+
+learning or online courses." 
+
+Name : "Rational Passers -by", Des c: "... ", Stance : " ... "
+
+Name : "Educators ", Des c: "... ", Stance : " ... "
+
+Name : "Ordinary Parents", Des c: "... ", Stance : " ... "
+
+…
+
+Characters 
+
+1. Under the Double Reduction Policy, the key lies in cultivating children ’s ability to learn 
+
+independently, so that they can stand out in the new educational environment. 
+
+2. Under the Double Reduction Policy, focusing on the balanced allocation of educational 
+
+resources is crucial to helping children from ordinary families achieve upward mobility. 
+
+…
+
+7. Under the Double Reduction Policy, to support the educational advancement of 
+
+children from ordinary families, it is necessary to face the issue of balancing educational 
+
+equity and quality 
+
+Opinions 
+
+1. Under the Double Reduction Policy, the key lies in cultivating children ’s ability to learn 
+
+independently, so that they can stand out in the new educational environment. 
+
+2. Under the Double Reduction Policy, focusing on the balanced allocation of educational 
+
+resources is crucial to helping children from ordinary families achieve upward mobility. 
+
+…
+
+7. Under the Double Reduction Policy, to support the educational advancement of 
+
+children from ordinary families, it is necessary to face the issue of balancing educational 
+
+equity and quality 
+
+Opinions 
+
+1. Under the Double Reduction Policy, in addition to cultivating children ’s independent 
+
+learning ability, we also need to focus on the balanced allocation of educational resources 
+
+and social support to help children from ordinary families achieve upward mobility and 
+
+growth in the new educational environment. 
+
+2. Under the Double Reduction Policy, focusing on the balanced allocation of educational 
+
+resources and developing children ’s independent learning ability is the key to helping 
+
+children from ordinary families achieve upward mobility, with support from all sectors of 
+
+society also being essential. 
+
+…
+
+7. Under the Double Reduction Policy, the educational upward mobility of children from 
+
+ordinary families requires a balanced approach to cultivating independent learning ability, 
+
+allocating educational resources equitably, providing social support, and upholding 
+
+educational equity, so as to achieve all -round development and greater opportunities for 
+
+upward mobility. 
+
+Opinions(after discussion) 
+
+Reason: "The video content addresses the impact of the Double Reduction Policy on the 
+
+education of children from ordinary families, triggering discussions among various groups 
+
+including parents, educators, ordinary parents, and former off -campus tutoring teachers. 
+
+Comments include doubts about the effectiveness of the Double Reduction Policy, 
+
+concerns over the unequal allocation of educational resources, discussions on educational 
+
+equity, and emphasis on cultivating independent learning abilities. .. "
+
+Score : 18 
+
+Arbitration Agent Figure 5: The complete process of a correctly predicted instance 
+
+Metric Baseline AudisAgent RC LC RC LC 
+
+Faithfulness 7.28 6.97 7.93 7.61 Inference Coherence 7.13 6.92 7.71 7.38 Inference Depth 5.84 5.75 6.93 6.74 Judgment Rationality 6.69 6.46 7.37 7.06 Expression Clarity 8.01 7.89 8.23 8.05 
+
+Table 7: Interpretability Evaluation 
+
+4.9 Case Study 
+
+To illustrate the reasoning chain of AuDisAgent, we present a representative case in Figure 5. Au-DisAgent first performs a preliminary assessment through three screening agents. When consensus cannot be reached, the Viewing Panel Agent is activated to further analyze the controversial con-tent and facilitate the final classification. Each step in the reasoning process is rigorous and log-ical. Through this structured reasoning process, the model ultimately assigns a reasonable contro-versy score to the example and produces the correct judgment, demonstrating the interpretability of Au-DisAgent’s decision-making. 
+
+4.10 Interpretability Evaluation 
+
+Following recent works (Chiang et al., 2023), we evaluate the interpretability of AuDisAgent’s rea-soning chains. Specifically, we randomly sample 100 chains and use Qwen3.5-flash (Qwen Team, Alibaba Cloud, 2026) to score five dimensions: 1) Faithfulness: whether the output is faithful to the input and free of hallucinations; 2) Inference Coherence: the logical rationality of the model’s reasoning chain; 3) Inference Depth: whether the output can address the core controversial points 4) 
+
+Judgment Rationality: the reasonableness of the model’s decision; 5) Expression Clarity: the lin-guistic quality and fluency of the generated text. Each of them are scored on a 0-10 scale, and the results are reported in Table 7. The results show that AuDisAgent outperforms all baselines under both Rich Comment (RC) and Limited Comment (LC) settings, with notable gains in Inference Depth and Judgment Rationality, demonstrating its high interpretability across all dimensions. 
+
+5 Conclusion 
+
+In this paper, we introduce AuDisAgent, a training-free multi-agent framework that overcomes the lim-itations of static feature modeling in MCD. To ad-dress challenges such as dynamic public opinion evolution and the cold-start problem for newly re-leased videos, we design a dynamic audience dis-semination simulation combined with a Comment Bootstrapping Strategy. Comprehensive experi-ments on the public MMCD dataset demonstrate the effectiveness of our framework in both rich-8and limited-comment scenarios. In future work, we plan to extend AuDisAgent to other reasoning-based multimodal tasks, exploring its broader ap-plicability in content understanding. 
+
+6 Limitations 
+
+Although our proposed achieved satisfactory per-formance, there are several ways to further improve this work: 1) The original design of AudisAgent is mainly targeted at controversy detection for short - form video content such as TikTok and YouTube Shorts. To extend this method to the long - form video do-main, more sophisticated visual - semantic align-ment modules and keyframe extraction techniques may be required to accurately locate controversial segments in long sequential timelines. 2) Limited by the inherent constraints of the dataset, AudisAgent performs retrieval using title information from sample metadata. While it has already achieved decent performance, with more comprehensive datasets available in the future, Au-disAgent could adopt additional information or re-trieval strategies to further boost detection accu-racy. 3) Although AudisAgent integrates multiple strategies to deeply mine core controversies and enhance model understanding, its final detection performance is still constrained by the capability bottlenecks of the underlying foundation models. In the future, adopting models with stronger capa-bilities in capturing socio-cultural differences or more superior performance is expected to further improve the accuracy of detection. 
+
+7 Ethics Statement 
+
+This study aims to combat online controversies and public opinion conflicts through training-free mul-timodal detection methods, contributing to building a safer online space for social video platforms. The types of controversial content focused on in this study are core issues that are critical for content governance and risk management on short-video platforms such as TikTok and YouTube Shorts. Our work concentrates on detecting potential risks of public opinion conflict and polarized views that can rapidly escalate into reputational damage or social conflicts. However, we also recognize that malicious actors may use reverse engineering tech-niques to craft video content or manipulate com-ments in order to evade detection by AI systems like AuDisAgent or cause them to make misjudg-ments. We firmly condemn such behaviors and emphasize that this study is solely for the purposes of scientific research and controversial content pre-vention. The relevant framework and supporting resources are strictly prohibited from being used for commercial profit or malicious abuse. To en-sure the responsible development and evaluation of the framework, we have implemented a num-ber of protective measures: 1) All experiments use publicly available research datasets and fully com-ply with the usage agreements of each dataset; 2) No personal user data has been independently col-lected for this study; We believe that the benefits of improving multimodal controversy detection capa-bilities far outweigh the potential risks—especially at a time when short-video platforms can serve as breeding grounds for online controversies. It should also be noted that the views, stances, and diverse opinions contained in the video and com-ment samples do not represent the positions of the study’s authors. The framework we designed is intended to assist rather than replace human con-tent moderation work, maintaining a healthy online community environment through collaborative ef-forts. 
+
+References                 
+
+> Tom B. Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared Kaplan, Prafulla Dhariwal, Arvind Neelakantan, Pranav Shyam, Girish Sastry, Amanda Askell, Sandhini Agarwal, Ariel Herbert-Voss, Gretchen Krueger, Tom Henighan, Rewon Child, Aditya Ramesh, Daniel M. Ziegler, Jeffrey Wu, Clemens Winter, and 12 others. 2020. Language models are few-shot learners. arXiv preprint ,arXiv:2005.14165. Guangyao Chen, Siwei Dong, Yu Shu, Ge Zhang, Jaward Sesay, Börje F. Karlsson, Jie Fu, and Yemin Shi. 2023. Autoagents: A framework for automatic agent generation. arXiv preprint , arXiv:2309.17288. Wei-Lin Chiang, Joseph Gonzalez, Dacheng Li, Zhuo-han Li, Zi Lin, Ying Sheng, Ion Stoica, Zhanghao Wu, Eric Xing, Hao Zhang, Lianmin Zheng, Siyuan Zhuang, and Yonghao Zhuang. 2023. Judging llm-as-a-judge with mt-bench and chatbot arena. In Ad-vances in Neural Information Processing Systems 36 ,page 46595–46623. Neural Information Processing Systems Foundation, Inc. (NeurIPS). Chad Cook, Gwendolen Jull, and Ann Moore. 2014. Manual therapy adopts mandatory report-ing guidelines for publishing. Manual Therapy ,19(5):365–366.
+
+9DeepSeek-AI, Daya Guo, Dejian Yang, Haowei Zhang, Junxiao Song, Ruoyu Zhang, Runxin Xu, Qihao Zhu, and 1 others. 2025. Deepseek-r1: Incentivizing rea-soning capability in llms via reinforcement learning. 
+
+Preprint , arXiv:2501.12948. Kiran Garimella, Gianmarco De Francisci Morales, Aristides Gionis, and Michael Mathioudakis. 2016. Quantifying controversy in social media. In Proceed-ings of the Ninth ACM International Conference on Web Search and Data Mining , page 33–42. ACM. Kiran Garimella, Gianmarco De Francisci Morales, Aristides Gionis, and Michael Mathioudakis. 2018. Quantifying controversy on social media. ACM Transactions on Social Computing , 1(1):1–27. Team GLM, Aohan Zeng, Bin Xu, Bowen Wang, Chen-hui Zhang, Da Yin, Diego Rojas, Guanyu Feng, and 1 others. 2024. Chatglm: A family of large language models from glm-130b to glm-4 all tools. Preprint ,arXiv:2406.12793. Mhd Mousa Hamad, Marcin Skowron, and Markus Schedl. 2018. Regressing controversy of music artists from microblogs. In 2018 IEEE 30th Interna-tional Conference on Tools with Artificial Intelligence (ICTAI) , page 548–555. IEEE. Jack Hessel and Lillian Lee. 2019. Something’s brew-ing! early prediction of controversy-causing posts from discussion features. In Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers) , pages 1648–1659, Minneapolis, Minnesota. Association for Computational Linguistics. Shixin Hong, Yu Liu, Zhi Li, Shaohui Li, and You He. 2024. Multi-agent collaborative perception via motion-aware robust communication network. In 
+
+Proceedings of the IEEE/CVF Conference on Com-puter Vision and Pattern Recognition (CVPR) , pages 15301–15310. Zhengbao Jiang, Frank Xu, Luyu Gao, Zhiqing Sun, Qian Liu, Jane Dwivedi-Yu, Yiming Yang, Jamie Callan, and Graham Neubig. 2023. Active retrieval augmented generation. In Proceedings of the 2023 Conference on Empirical Methods in Natural Lan-guage Processing , page 7969–7992. Association for Computational Linguistics. Takeshi Kojima, Shixiang Shane Gu, Machel Reid, Yu-taka Matsuo, and Yusuke Iwasawa. 2022. Large lan-guage models are zero-shot reasoners. arXiv preprint ,arXiv:2205.11916. Tian Liang, Zhiwei He, Wenxiang Jiao, Xing Wang, Yan Wang, Rui Wang, Yujiu Yang, Shuming Shi, and Zhaopeng Tu. 2024. Encouraging divergent think-ing in large language models through multi-agent debate. In Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing ,page 17889–17904. Association for Computational Linguistics. Jasper Linmans, Bob van de Velde, and Evangelos Kanoulas. 2018. Improved and robust controversy detection in general web pages using semantic ap-proaches under large scale conditions. In Proceed-ings of the 27th ACM International Conference on Information and Knowledge Management , page 1647–1650. ACM. Nan Liu, Yilun Du, Shuang Li, Joshua B. Tenenbaum, and Antonio Torralba. 2023. Unsupervised composi-tional concepts discovery with text-to-image genera-tive models. In 2023 IEEE/CVF International Con-ference on Computer Vision (ICCV) , page 2085–2095. IEEE. Feipeng Ma, Yizhou Zhou, Yueyi Zhang, Siying Wu, Zheyu Zhang, Zilong He, Fengyun Rao, and Xiaoyan Sun. 2024a. Task navigator: Decomposing complex tasks for multimodal large language models. In Pro-ceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops ,pages 2248–2257. Junxia Ma, Changjiang Wang, Hanwen Xing, Dong-ming Zhao, and Yazhou Zhang. 2024b. Chain of stance: Stance detection with large language models. 
+
+arXiv preprint , arXiv:2408.04649. Aman Madaan, Niket Tandon, Prakhar Gupta, Skyler Hallinan, Luyu Gao, Sarah Wiegreffe, Uri Alon, Nouha Dziri, Shrimai Prabhumoye, Yiming Yang, Shashank Gupta, Bodhisattwa Prasad Majumder, Katherine Hermann, Sean Welleck, Amir Yazdan-bakhsh, and Peter Clark. 2023. Self-refine: Itera-tive refinement with self-feedback. arXiv preprint ,arXiv:2303.17651. Marcelo Mendoza, Denis Parra, and Álvaro Soto. 2020. Gene: Graph generation conditioned on named en-tities for polarity and controversy detection in so-cial media. Information Processing & Management ,57(6):102366. Yao Mu, Qinglong Zhang, Mengkang Hu, Wenhai Wang, Mingyu Ding, Jun Jin, Bin Wang, Jifeng Dai, Yu Qiao, and Ping Luo. 2023. Embodiedgpt: Vision-language pre-training via embodied chain of thought. 
+
+arXiv preprint , arXiv:2305.15021. OpenAI, Aaron Hurst, Adam Lerer, Adam P. Goucher, Adam Perelman, and 1 others. 2024. Gpt-4o system card. Preprint , arXiv:2410.21276. Ana-Maria Popescu and Marco Pennacchiotti. 2010. Detecting controversial events from twitter. In Pro-ceedings of the 19th ACM international conference on Information and knowledge management , page 1873–1876. ACM. Chen Qian, Zihao Xie, YiFei Wang, Wei Liu, Kun-lun Zhu, Hanchen Xia, Yufan Dang, Zhuoyun Du, Weize Chen, Cheng Yang, Zhiyuan Liu, and Maosong Sun. 2024. Scaling large language model-based multi-agent collaboration. arXiv preprint ,arXiv:2406.07155. 
+
+10 Qwen, An Yang, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen Yu, Chengyuan Li, Dayiheng Liu, Fei Huang, Haoran Wei, Huan Lin, Jian Yang, Jianhong Tu, Jianwei Zhang, Jianxin Yang, Jiaxi Yang, Jingren Zhou, Junyang Lin, and 24 others. 2025. Qwen2.5 technical report. Preprint ,arXiv:2412.15115. Qwen Team, Alibaba Cloud. 2026. Qwen3.5: Towards native multimodal agents. Qwen3.5-Flash is the pro-duction hosted version of Qwen3.5-35B-A3B. Victor Sanh, Albert Webson, Colin Raffel, Stephen H. Bach, Lintang Sutawika, Zaid Alyafeai, Antoine Chaffin, Arnaud Stiegler, Teven Le Scao, Arun Raja, Manan Dey, M Saiful Bari, Canwen Xu, Urmish Thakker, Shanya Sharma Sharma, Eliza Szczechla, Taewoon Kim, Gunjan Chhablani, Nihal Nayak, and 22 others. 2021. Multitask prompted training en-ables zero-shot task generalization. arXiv preprint ,arXiv:2110.08207. Yongliang Shen, Kaitao Song, Xu Tan, Dongsheng Li, Weiming Lu, and Yueting Zhuang. 2023. Hugging-gpt: Solving ai tasks with chatgpt and its friends in hugging face. arXiv preprint , arXiv:2303.17580. Noah Shinn, Federico Cassano, Edward Berman, Ash-win Gopinath, Karthik Narasimhan, and Shunyu Yao. 2023. Reflexion: Language agents with verbal reinforcement learning. arXiv preprint ,arXiv:2303.11366. Haotian Sun, Yuchen Zhuang, Lingkai Kong, Bo Dai, and Chao Zhang. 2023. Adaplanner: Adaptive plan-ning from feedback with language models. arXiv preprint , arXiv:2305.16653. Sahar Tahmasebi, Eric Müller-Budack, and Ralph Ew-erth. 2024. Multimodal misinformation detection using large vision-language models. arXiv preprint ,arXiv:2407.14321. Wei Tao, Yucheng Zhou, Yanlin Wang, Wenqiang Zhang, Hongyu Zhang, and Yu Cheng. 2024. Magis: Llm-based multi-agent framework for github issue resolution. arXiv preprint , arXiv:2403.17927. Llama Team and AI@Meta. 2024. The llama 3 herd of models. Preprint , arXiv:2407.21783. Yao-Hung Hubert Tsai, Shaojie Bai, Paul Pu Liang, J. Zico Kolter, Louis-Philippe Morency, and Rus-lan Salakhutdinov. 2019. Multimodal transformer for unaligned multimodal language sequences. In 
+
+Proceedings of the 57th Annual Meeting of the Asso-ciation for Computational Linguistics , pages 6558– 6569, Florence, Italy. Association for Computational Linguistics. Jinyuan Wang, Junlong Li, and Hai Zhao. 2023a. Self-prompted chain-of-thought on large language mod-els for open-domain multi-hop reasoning. In Find-ings of the Association for Computational Linguis-tics: EMNLP 2023 , page 2717–2731. Association for Computational Linguistics. Lei Wang, Wanyu Xu, Yihuai Lan, Zhiqiang Hu, Yunshi Lan, Roy Ka-Wei Lee, and Ee-Peng Lim. 2023b. Plan-and-solve prompting: Improving zero-shot chain-of-thought reasoning by large language models. In Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Vol-ume 1: Long Papers) , page 2609–2634. Association for Computational Linguistics. Liang Wang, Nan Yang, Xiaolong Huang, Binx-ing Jiao, Linjun Yang, Daxin Jiang, Rangan Ma-jumder, and Furu Wei. 2024. Text embeddings by weakly-supervised contrastive pre-training. Preprint ,arXiv:2212.03533. Wenhui Wang, Furu Wei, Li Dong, Hangbo Bao, Nan Yang, and Ming Zhou. 2020. Minilm: Deep self-attention distillation for task-agnostic com-pression of pre-trained transformers. Preprint ,arXiv:2002.10957. Xiao Wang, Tian Gan, Yinwei Wei, Jianlong Wu, Dai Meng, and Liqiang Nie. 2022. Micro-video tagging via jointly modeling social influence and tag rela-tion. In Proceedings of the 30th ACM International Conference on Multimedia , page 4478–4486. ACM. Xiao Wang, Yaoyu Li, Tian Gan, Zheng Zhang, Jingjing Lv, and Liqiang Nie. 2023c. Rtq: Rethinking video-language understanding based on image-text model. In Proceedings of the 31st ACM International Con-ference on Multimedia , page 557–566. ACM. Shitao Xiao, Zheng Liu, Peitian Zhang, Niklas Muen-nighoff, and Jian-Yun Nie. 2024. C-pack: Packed resources for general chinese embeddings. In Pro-ceedings of the 47th International ACM SIGIR Con-ference on Research and Development in Information Retrieval , pages 2932–2936. Haiyang Xu, Qinghao Ye, Xuan-Wei Wu, Ming Yan, Yuan Miao, Jiabo Ye, Guohai Xu, Anwen Hu, Yaya Shi, Guangwei Xu, Chenliang Li, Qingfang Qian, Maofei Que, Ji Zhang, Xiaoyan Zeng, Song-fang Huang, Fei Huang, and Jingren Zhou. 2023. Youku-mplug: A 10 million large-scale chinese video-language pre-training dataset and benchmarks. 
+
+Preprint , arXiv:2306.04362. Tianjiao Xu, Aoxuan Chen, Yuxi Zhao, Jinfei Gao, and Tian Gan. 2024. A chinese multimodal social video dataset for controversy detection. In Proceedings of the 32nd ACM International Conference on Multime-dia , page 2898–2907. ACM. Tianjiao Xu, Jinfei Gao, Keyi Kong, Jianhua Yin, Tian Gan, and Liqiang Nie. 2025. Generative agents for multimodal controversy detection. In Proceedings of the Thirty-Fourth International Joint Conference on Artificial Intelligence, IJCAI-25 , pages 9963–9971. International Joint Conferences on Artificial Intelli-gence Organization. AI and Social Good. Shunyu Yao, Dian Yu, Jeffrey Zhao, Izhak Shafran, Thomas L. Griffiths, Yuan Cao, and Karthik Narasimhan. 2023. Tree of thoughts: Deliberate 
+
+11 problem solving with large language models. arXiv preprint , arXiv:2305.10601. Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. 2022. React: Synergizing reasoning and acting in language models. arXiv preprint , arXiv:2210.03629. Yifan Zhang, Jingqin Yang, Yang Yuan, and An-drew Chi-Chih Yao. 2023. Cumulative reason-ing with large language models. arXiv preprint ,arXiv:2308.04371. Andrew Zhao, Daniel Huang, Quentin Xu, Matthieu Lin, Yong-Jin Liu, and Gao Huang. 2024. Expel: Llm agents are experiential learners. Proceedings of the AAAI Conference on Artificial Intelligence ,38(17):19632–19642. Lei Zhong, Juan Cao, Qiang Sheng, Junbo Guo, and Ziang Wang. 2020. Integrating semantic and struc-tural information with graph convolutional network for controversy detection. In Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics . Association for Computational Linguis-tics. 
+
+12

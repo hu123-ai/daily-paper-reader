@@ -1,0 +1,773 @@
+Title: PrismAgent: Illuminating Harm in Memes via a Zero-Shot Interpretable Multi-Agent Framework
+
+URL Source: https://arxiv.org/pdf/2605.02940v1
+
+Published Time: Wed, 06 May 2026 00:01:48 GMT
+
+Number of Pages: 19
+
+Markdown Content:
+PrismAgent: Illuminating Harm in Memes via a Zero-Shot Interpretable Multi-Agent Framework 
+
+Zihan Ding 1 and Ziyuan Yang 2 and Yi Zhang 1∗
+
+> 1
+
+Sichuan University, Chengdu, Sichuan, China 
+
+2022141230168@stu.scu.edu.cn , yzhang@scu.edu.cn 
+
+> 2
+
+Nanyang Technological University, Singapore 
+
+cziyuanyang@gmail.com 
+
+Abstract 
+
+The rapid spread of memes makes harmful content detection increasingly crucial, as effective identification can curb the circula-tion of misinformation. However, existing methods rely heavily on high-volume an-notated data, which leads to substantial training costs and limited generalization. To address these challenges, we propose 
+
+PrismAgent , a zero-shot, multi-agent, in-terpretable framework. PrismAgent con-ceptualizes this task as a criminal case investigation, employing four specialized agents responsible for the analysis, investi-gation, prosecution, and judgment stages within a structured collaborative workflow. In the first stage, the analyst agent para-phrases each meme under benevolent and malicious assumptions to probe its under-lying intent. The investigator agent then retrieves supporting evidence from an unan-notated dataset and constructs contextual interpretations for the meme and its vari-ants. Next, the prosecutor agent performs three independent preliminary judgments by pairing the original meme with each of the three interpretations. Finally, the judge agent deliberates across all evidence to render a final verdict. Moreover, PrismA-gent’s explicit multi-stage reasoning chain makes the model inherently interpretable, since every intermediate step is explicitly explained rather than only producing a fi-nal detection result. Extensive experiments on three public datasets show that Pris-mAgent significantly outperforms existing zero-shot detection methods. 
+
+1 Introduction 
+
+With the rapid development of social media, memes have become a pervasive form of mul-timodal communication. While memes were initially created for humor expression, they 
+
+> ∗*Corresponding author: yzhang@scu.edu.cn
+
+are increasingly being misused to spread mis-information and harmful biases. This emerg-ing trend poses serious risks to social media, highlighting the necessity of detecting harmful memes (Sharma et al., 2022). Traditional harmful meme detection meth-ods primarily rely on large-scale and carefully annotated dataset (Yang et al., 2024b; Lin et al., 2024). However, these methods tend to overfit to the training distribution, which compromises their robustness when applied to unseen or evolving memes. Given the rapidly changing nature of meme content, such ap-proaches face substantial challenges when de-ployed in real-world scenarios (Cao et al., 2024; Huang et al., 2024). Another challenge lies in the inherently im-plicit nature of memes. Their meaning is often conveyed through shared cultural knowledge, visual symbolism, or multimodal irony rather than explicit textual content. Such indirect ex-pressions make it challenging for models to cap-ture the underlying intent, as understanding memes typically requires commonsense reason-ing and cultural context that extend beyond literal interpretation. To address these challenges, we propose 
+
+PrismAgent , a zero-shot, multi-agent, inter-pretable framework for harmful meme detec-tion. Much like a prism that refracts a single beam of light into multiple revealing facets, PrismAgent decomposes each meme into di-verse motivational and contextual perspectives, which makes its underlying meaning clearer and its judgment more interpretable. To achieve this, PrismAgent simulates the workflow of a real criminal case investigation, where different stages of the process are handled by distinct specialized roles. The investigation begins with analysts who infer potential motives and in-tentions behind a meme. Investigators then 1 
+
+> arXiv:2605.02940v1 [cs.LG] 1 May 2026 Detect A Harmful Meme Detect A Harmful Meme
+> Training datasets
+> Train -based Model
+> Items Labels
+> Harmless
+> Harmless
+> Harmful
+> Harmless
+> Harmless
+> Harmful
+
+... ...  
+
+> Prediction
+> Prediction
+> Train -based
+> Method
+> Our Method
+> Multi -Agent System
+> Analyst Agent
+> Investigator Agent
+> Prosecutor Agent
+> Judge Agent
+> Train -free Agent Multi -Agent Collaboration
+
+Figure 1: Pipeline comparison between training-based methods and our proposed approach. 
+
+collect relevant contextual evidence to reason about the case and establish preliminary in-terpretations. Finally, a judge evaluates both the collected evidence and the investigators’ reasoning to deliver a fair and well-grounded verdict. PrismAgent instantiates each stage of the investigation process as a dedicated agent, in-cluding the analyst, investigator, prosecutor, and judge. The analyst agent paraphrases each meme under two opposing disseminator inten-tions, benevolent and malicious, to reveal the range of plausible potential intent. Next, the investigator agent searches the unannotated dataset for evidence relevant to the original meme and its two rewritten variants, which are then used to construct contextual interpreta-tions. The prosecutor agent then reasons over the original meme and each contextualized vari-ant, producing three independent judgments. If these judgments are consistent, the prosecu-tor finalizes the decision. Otherwise, the case is forwarded to the judge agent, who integrates all available information and deliberates to render a coherent and interpretable final verdict. Unlike previous methods that rely on a single-step prediction, we decompose harmful meme detection into a series of structured subtasks. This design induces an explicit reasoning chain and substantially improves the interpretability of the detection process. Moreover, by adopt-ing a reasoning-based pipeline rather than training a task-specific classifier, PrismAgent eliminates the dependence on annotated data and naturally enables effective zero-shot detec-tion. A comparison between previous methods and ours is illustrated in Fig. 1. Our main contributions are summarized as follows: 
+
+• We propose PrismAgent, a multi-agent framework that decomposes harmful meme detection into structured subtasks, which enables modular role-specific rea-soning. 
+
+• We design a multi-stage reasoning chain that integrates the outputs of several spe-cialized agents to enhance interpretability via explicit, stage-wise explanations. 
+
+• Extensive experiments on public datasets demonstrate the effectiveness of PrismA-gent and show that it performs competi-tively against state-of-the-art approaches. 
+
+2 Related Works 
+
+Harmful Meme Detection The multimodal nature of memes necessitates multimodal strategies (Borakati, 2021; Beyer and Alexy, 2025), which consistently outperform unimodal methods in harmful meme detection (He et al., 2016; Devlin et al., 2019). Previous studies primarily follow two methodological directions. The first relies on classical two-stream archi-tectures that perform harmful meme classifi-cation by fusing textual and visual modalities (Singh et al., 2022; Suryawanshi et al., 2020; Pramanick et al., 2021b; Kumar and Nandaku-mar, 2022). The second direction fine-tunes large pre-trained multimodal models to adapt them to domain-specific detection tasks (Ve-lioglu and Rose, 2020; Hee et al., 2022, 2025; Hee and Lee, 2025). In addition, relevant stud-ies have proposed various improved strategies (Cao et al., 2022; Ji et al., 2023; Cao et al., 2023; Garg et al., 2025; Kumari et al., 2025), as well as detection methods for few-shot annotation (Cao et al., 2024; Huang et al., 2024) and zero-shot annotation (Liu et al., 2025) scenarios to reduce reliance on labeled data. 
+
+VLM-based multi-agent framework When Vision Language models (VLMs) are deployed as agents across various domains, they demon-strate strong planning and reasoning capabil-ities in a wide range of scenarios (Yao et al., 2022; Sun et al., 2023; Bang et al., 2024; Zhao et al., 2024; Yang et al., 2024a; Chen et al., 2024; Gao et al., 2025). These advancements show that LLM-based methods can effectively handle complex tasks even under weakly su-pervised conditions. Building on the success of single-agent systems, multi-agent frameworks 2Evidence  
+
+> Interpretations
+> Generate
+> Interpretations
+> Original Meme
+> Contextual
+> Interpretation
+> My sense of humor is
+> so dark It picks cotton
+> Original Meme
+> Reference Memes
+> α
+> β
+> Mutimodal Embedding
+> Text Embedding
+> Vision Embedding
+> Embedding
+> It picks cotton,just like
+> the black people in the
+> filed
+> Malicious Version
+> Contextual
+> Interpretation
+> Investigator
+> Evidence
+> Search
+> Prosecutor
+> Reasoning
+> Prediction
+> It picks cotton,just like
+> the black people in the
+> filed
+> Malicious Version
+> Contextual
+> Interpretation
+> Investigator
+> Evidence
+> Search
+> Prosecutor
+> Reasoning
+> Prediction
+> Original Version
+> Contextual
+> Interpretation
+> Investigator
+> Evidence
+> Search
+> Prosecutor
+> Reasoning
+> My sense of humor is so
+> light -hearted, it picks
+> cotton with a smile
+> Benevolent Version
+> Contextual
+> Interpretation
+> Investigator
+> Evidence
+> Search
+> Prosecutor
+> Reasoning
+> Prediction
+> My sense of humor is
+> so dark It picks cotton
+> Analyst
+> Intention
+> Imagine
+> Prediction Prediction Judge
+> Arbitrating
+> Selecting
+> Final Result
+> Original Meme
+> Input meme Input meme
+> Sample Pool
+> Evidence Evidence Evidence Search
+> Predictions
+> Core
+> Representation
+> Prediction
+> Harmless
+> Prediction
+> Harmless
+> Prediction
+> Harmful
+> Prediction
+> Harmless
+> Prediction
+> Harmless
+> Prediction
+> Harmful
+> Prediction
+> Harmless
+> Prediction
+> Harmful
+> Prediction
+> Harmful
+> Prediction
+> Harmful
+> Prediction
+> Harmless
+> Prediction
+> Harmful
+> Prediction
+> Harmful
+> Prediction
+> Harmless
+> Prediction
+> Harmful
+> Prediction
+> Harmful
+> Selecting Selecting
+> Reasoning Reasoning
+
+Figure 2: Overview of the proposed PrismAgent. 
+
+(Qian et al., 2024; Tao et al., 2024; Hong et al., 2024; Ma et al., 2024; Zahedifar et al., 2025; Yang et al., 2025) further enable interactive collaboration and collective problem-solving. However, research on multi-agent frameworks for harmful meme detection remains limited. Although Liu et al. (2025) proposed the MIND framework, it fails to fully address the chal-lenge of interpreting meme metaphors under zero-shot settings. 
+
+3 Method 
+
+3.1 Overview 
+
+Detecting harmful memes presents a significant challenge because their meaning often relies on subtle cultural references, visual symbols, or humorous wordplay, rather than explicit tex-tual or visual cues. Additionally, most exist-ing methods depend on large-scale annotated training datasets, which often cause detectors to overfit to the training memes. As memes continually evolve, these methods struggle with poor generalization. To alleviate these challenges, we propose PrismAgent, a zero-shot, multi-agent, inter-pretable framework for harmful meme detec-tion. An overview of the framework is depicted in Figure 2. PrismAgent introduces an ex-plicit reasoning chain and assigns distinct roles to four agents, including analyst, investigator, prosecutor, and judge. These agents collab-orate to reveal the intentions behind memes. Specifically, the analyst agent imagines two op-posing intentions for the meme’s disseminator and paraphrases the meme accordingly. The investigator agent then searches an unanno-tated dataset for relevant supporting evidence for the original meme and its two rewrites, which construct contextual interpretations for each version. The prosecutor agent produces three independent judgments by reasoning over the original meme together with each of the contextual interpretations. If these judgments conflict, the judge agent integrates all evidence and delivers a final, robust, and interpretable decision. PrismAgent requires no training and oper-ates as a zero-shot detection framework. By leveraging a structured multi-agent reasoning process, it renders decisions that are highly interpretable and transparent. 
+
+3.2 Analyst Agent 
+
+Revealing the hidden intent of memes is a cru-cial yet challenge step in meme understanding. To make such implicit intentions more accessi-ble, we introduce the analyst agent to explicitly amplify implicit intentions by assuming two op-posing disseminator intentions, benevolent and malicious, to reveal the real intent. Specifically, for each meme version, we first input it into the agent, and the agent is guided by the carefully designed prompts to imag-ine possible dissemination motives and para-phrase two corresponding rewrites: one reflect-ing benevolent and the other reflecting mali-cious intensions. In this process, the original linguistic style and contextual tone are pre-served as much as possible, ensuring that the rewritten memes remain semantically coherent while exposing their potential intentions. Con-sequently, the procedure produces two rewrit-ten versions that make the original meme’s 3latent intentions more explicit from two oppos-ing motives. This process can be expressed as: 
+
+Mb = Agent Ana (Mori , P b), (1) 
+
+Mm = Agent Ana (Mori , P m), (2) where Mori = {V , T } denotes the original meme. Mb = {V , Tb} and Mm = {V , Tm} rep-resent the benevolent and malicious memes obtained by our analyst agent, respectively. V
+
+and T denote the visual content and the accom-panying text, respectively. Tb and Tm represent the benevolent and malicious rewrites, respec-tively. Besides, Pb and Pm denote the prompts used to rewrite the meme from benevolent and malicious intentions, respectively. Finally, a single original meme Mori is ex-panded into a set {Mori , M b, M m}, which con-tains the original sample and its two rewrites. This process makes the latent intent more salient by forcing the meme to be expressed under contrasting motivational assumptions, thereby amplifying the subtle cues embedded in the original content. The detailed prompts are provided in Appendix A.3. 
+
+3.3 Investigator Agent 
+
+After the analyst agent paraphrases each meme, the investigator agent then searches the unan-notated dataset for supporting evidence to the original meme and its two rewrites. This step provides the subsequent investigation stage with additional context and precedents, en-abling it to gather supporting evidence that further explores the potential intentions be-hind the original meme and its rewrites. More-over, this process offers a potential advantage: since memes are constantly evolving, the in-vestigator agent can continuously expand the unannotated dataset in the deployment stage to incorporate emerging contexts. This allows PrismAgent to adapt to emerging meme trends in real time, enhancing its robustness and gen-eralization in the zero-shot scenario. The evi-dence search process can be formulated as: 
+
+Qevi = f (Dref , M ori ) (3) where Qevi = {M 1
+
+> evi
+
+, ..., M k
+
+> evi
+
+} denotes the set of top-k relevant memes retrieved from the unannotated reference dataset Dref . M k 
+
+> evi
+
+de-notes most k-th most similar meme retrieved from Dref . f (·) represents the matching func-tion that measures the similarity between the original meme and each sample in Dref and re-turns the top-k closest memes. k is empirically set to 3 in this paper. After retrieving the relevant cases, the in-vestigator agent interprets them in descending order of similarity. At each step, the current meme is interpreted together with the inter-pretations accumulated from previous steps, enabling the agent to integrate newly evidence with prior observations. This sequential accu-mulation of information helps the investigator agent to capture subtle contextual cues and la-tent intentions that may not be apparent from a single meme. This process can be formulated as follows: 
+
+Oi = Agent Inv (M i
+
+> evi
+
+, Oi−1, P int ), (4) where Oi and Oi−1 represent the interpreta-tions generated in the i-th and ( i-1)-th steps, respectively; M i 
+
+> evi
+
+denotes the i-th most simi-lar evidence retrieved from Dref . Pint denotes the interpretation prompt, which is detailed in Appendix A.4. 
+
+3.4 Prosecutor Agent 
+
+After the investigator agent has gathered rel-evant evidence and constructed contextual in-terpretations for the original meme and its rewrites, the prosecutor agent takes over to per-form harm assessment. The prosecutor agent evaluates the original meme with different inter-pretations individually and issues an indepen-dent judgment regarding its potential harmful-ness. In this way, the prosecutor agent reasons the harmfulness based on different assumed in-tentions and detect whether harmful meaning persists across perspectives, thereby providing a more reliable basis for final judgment. The process can be formulated as:     
+
+> Ru=Agent P ro (Ou, M ori , P pro ),u∈ { ori, b, m },
+> (5)
+
+where R denotes the prosecution result, de-notes the prosecution result, which includes both the harmful judgment and the supporting rationale. Ppro denotes the prosecution prompt, which is detailed in Appendix A.5. The interpretations captured by the inves-tigator agent reflect how the meme’s harm-fulness manifests under distinct dissemination 4intents. The prosecutor agent reasons over these interpretations to assess whether the harmful interpretation shifts when the meme is rewritten with benevolent or malicious motives. Accordingly, if the harmful judgments from 
+
+Rori , Rb, Rm converge to the same conclusion, then no further arbitration is required. 
+
+3.5 Judge Agent 
+
+During arbitration by the judge agent, we guide the model to concentrate on the core points of contention across different viewpoints. To enhance the objectivity and reliability of the analysis, we introduce auxiliary evidence into the arbitration process. Specifically, we reuse 
+
+Qevi as the input of the judge agent. Unlike the stepwise interpretation of similar samples mentioned in Sec. 3.4, here the original meme and its evidence are fed into the judge agent simultaneously. This enables the judge agent to conduct a joint analysis that takes both the original meme and its evidence into account to reason from a broader contextual basis, which can be formally expressed as: 
+
+Rjud = Agent Jud (Mori , Qevi , P core ), (6) where Rjud represents the core representation, 
+
+Pcore denotes the related prompt. 
+
+Rjud summarizes the core characteristics shared by similar memes, such as common themes (e.g., pandemics, racial issues) and ex-pressive techniques (e.g., exaggeration, irony). During arbitration, it serves as an anchor that guides the agent toward relevant reasoning paths, preventing irrelevant reasoning and im-proving the objectivity and robustness of the decision. The judge agent integrates all infor-mation and complete arbitration process as:       
+
+> J=Agent Jud (Rori ,Ramb , M ori ,Rjud , P jud ),(7)
+
+where Ramb denotes the ambiguity prosecution result, which is inconsistent with the original one. Ramb = {R x | R x̸ = Rori , x ∈ { b, m }} .
+
+Pjud denotes the final judge prompt. J de-notes the final judgment result and the related supporting rationale. The detailed prompts are provided in Appendix A.6. In this way, we construct a reasoning chain that mirrors the practical workflow of a crimi-nal case investigation. Hence, PrismAgent is an interpretable framework that provides a stage-wise reasoning process supported by explicit reasoning interpretations, rather than merely outputting a final detection result. 
+
+4 Experiment 
+
+4.1 Experiment Setup Datasets. We use three publicly available meme datasets for evaluation: (1) HarM (Pra-manick et al., 2021b), (2) FHM (Kiela et al., 2020), and (3) MAMI (Fersini et al., 2022). 
+
+Baselines. We compare PrismAgent with various advanced methods: 1) GPT-4o (Ope-nAI et al., 2023); 2) Gemini-2.0-Flash (Team et al., 2024) 3) Late Fusion (Pramanick et al., 2021a); 4) MOMENTA (Pramanick et al., 2021b) 5) LLaVA-1.5-7B (Liu et al., 2024); 6) InstructBLIP-7B (Dai et al., 2023); 7) MiniGPT-v2-7B (Chen et al., 2023); 8) OpenFlamingo-9B (Awadalla et al., 2023); 9) LLaVA-1.5-13B (Liu et al., 2024); 10) InstructBLIP-13B (Dai et al., 2023); 11) LLaVA-1.5-34B (Liu et al., 2024); 12) MIND (Liu et al., 2025). 
+
+Metrics. We use the accuracy and macro-averaged F1 scores as the evaluation metrics. The detail experimental setting and implemen-tation details can be found in Appendix A. 
+
+4.2 Harmful Meme Detection Experiments 
+
+We evaluate PrismAgent against a range of ex-isting methods on three public datasets, and the results are summarized in Table 1. These methods can be roughly divided into three groups, including the training-based methods, zero-shot methods and agent-based methods. It can be seen that PrismAgent consistently outperforms other baselines, demonstrating its strong detection performance. Even with a 13B backbone, PrismAgent achieves performance comparable to models with over 34B parame-ters, highlighting its efficiency and reasoning capability. Compared with the latest detection framework MIND, it also achieves improve-ments of 2.23% in average accuracy and 2.78% in macro F1-score, fully demonstrating its per-formance advantages. Moreover, we investigate the robustness and computational overhead ex-periments, and the results are shown in Ap-pendix B.1 and B.5. 5Dataset HarM FHM MAMI Model Accuracy Macro-F1 Accuracy Macro-F1 Accuracy Macro-F1
+
+Supervised / Training-Based Methods 
+
+Late Fusion (Pramanick et al., 2021a) 73.24 70.25 59.14 44.81 63.20 59.76 MOMENTA (Pramanick et al., 2021b) 83.32 82.80 61.34 57.45 72.10 66.93 
+
+Zero-Shot Methods 
+
+Closed-Source VLMs 
+
+GPT-4o (OpenAI et al., 2023) 67.51 60.29 68.80 68.25 81.00 81.00 
+
+Gemini-2.0-Flash (Team et al., 2024) 64.67 58.84 60.40 54.04 80.00 79.92 
+
+Open-Source VLMs 
+
+LLaVA-1.5-7B (Liu et al., 2024) 59.23 49.44 53.80 45.51 52.90 41.53 InstructBLIP-7B (Dai et al., 2023) 51.53 50.99 52.00 48.85 53.10 46.93 MiniGPT-V-2B (Chen et al., 2023) 60.12 52.39 51.30 47.88 57.40 52.22 OpenFlamingo-9B (Awadalla et al., 2023) 63.42 54.36 50.50 49.52 54.70 49.88 LLaVA-1.5-13B (Liu et al., 2024) 62.28 50.45 55.20 53.01 60.10 55.52 InstructBLIP-13B (Dai et al., 2023) 64.92 49.61 55.40 51.89 60.00 57.97 LLaVA-1.6-34B (Liu et al., 2024) 67.51 61.59 64.00 63.51 71.30 71.28 
+
+Agent-Based Methods (Open-Source) 
+
+MIND (LLaVA-1.5-13B) (Liu et al., 2025) 68.93 65.19 60.80 60.71 68.90 68.84 PrismAgent (LLaVA-1.5-13B) 70.62 68.44 64.00 63.96 70.70 70.69 PrismAgent (LLaVA-1.6-34B) 71.19 69.78 66.80 66.72 73.20 73.18 
+
+Table 1: Harmful meme detection results on three datasets. Bold indicates the absolute best performance. Underline denotes the best performance strictly within the open-source zero-shot methods.                                                                                  
+
+> Dataset HarM FHM MAMI Model Accuracy Macro-F1Accuracy Macro-F1Accuracy Macro-F1
+> LLaVA-1.5-7B 59.23 49.44 53.80 45.51 52.90 41.53 MIND (LLaVA-1.5-7B) 62.71 (+3.48) 57.22 (+7.78) 54.00 (+0.20) 48.28 (+2.77) 53.90 (+1.00) 45.45 (+3.92) PrismAgent (LLaVA-1.5-7B) 63.56 (+4.33) 58.59 (+9.15) 53.80 (+0.00) 49.29 (+3.78) 55.10 (+2.20) 47.48 (+5.95) LLaVA-1.5-13B 62.28 50.45 55.20 53.01 60.10 55.52 MIND (LLaVA-1.5-13B) 68.93 (+6.65) 65.19 (+14.47) 60.80 (+5.60) 60.71 (+7.70) 68.90 (+8.80) 68.84 (+13.28) PrismAgent (LLaVA-1.5-13B) 70.62 (+8.34) 68.44 (+17.99) 64.00 (+8.80) 63.96 (+10.95) 70.70 (+10.60) 70.69 (+15.17) LLaVA-1.6-34B 67.51 61.59 64.00 63.51 71.30 71.28 MIND (LLaVA-1.6-34B) 69.49 (+1.98) 66.12 (+4.53) 66.40 (+2.40) 68.38 (+4.87) 73.60 (+2.30) 75.38 (+4.10) PrismAgent (LLaVA-1.6-34B) 71.19 (+3.68) 69.78 (+8.19) 66.80 (+2.80) 66.72 (+3.21) 73.20 (+1.90) 73.18 (+1.90) Gemini-2.0-FLash 64.67 58.44 60.40 54.04 80.00 79.92 MIND (Gemini-2.0-FLash) 64.84 (+0.17) 60.13 (+1.69) 67.20 (+6.80) 66.05 (+12.01) 80.10 (+0.10) 80.00 (+0.08) PrismAgent (Gemini-2.0-FLash) 67.51 (+2.84) 63.05 (+4.61) 68.20 (+7.80) 67.51 (+13.47) 80.50 (+0.50) 80.46 (+0.54)
+
+Table 2: Performance improvements of PrismAgent across different model scales and datasets for zero-shot harmful meme detection. Numbers in red indicate absolute improvements over original models. 
+
+4.3 Generalization Experiments 
+
+To verify the generalization of PrismAgent, we integrate it with various VLMs, including both open- and closed-source models. Besides, we compare our performance with MIND. As shown in Table 2, PrismAgent consistently en-hances performance across the majority of mod-els and datasets, demonstrating its adaptability to diverse backbones. Among them, the per-formance improvement on LLaVA-1.5-13B is particularly remarkable; even for the more pow-erful LLaVA-1.6-34B model, the average accu-racy and macro F1-score across three datasets are increased by 2.79% and 4.43%, respectively. 
+
+4.4 Ablation Study 
+
+To evaluate the effectiveness of different agents in PrismAgent, we conduct ablation experi-ments, and the results are shown in Table 3. The experiment results demonstrate that all core strategies in the proposed framework play critical and complementary roles in the harm-ful meme detection, and omitting any part of them will lead to a degradation of the overall performance. The synergistic effect of these agents significantly improves the robustness of the framework in detecting harmful content, the performance degradation of the model af-ter disabling any single strategy fully confirms their effectiveness. We also conduct ablation experiments about the role decomposition and core representation, and the results are shown in Appendix B.3 and B.7. 
+
+4.5 Analyst Agent Experiments 
+
+To evaluate the effectiveness of our intention imagine strategy, we design three sets of com-parative experiments: 1) The first setting cor-6Dataset HarM FHM MAMI Model Accuracy Macro-F1 Accuracy Macro-F1 Accuracy Macro-F1                                    
+
+> Baseline 62.28 50.45 55.20 53.01 60.10 55.52 PrismAgent (LLaVA-1.5-13B) 70.62 68.44 64.00 63.96 70.70 70.69 w/o Analyst Agent 67.80 59.00 60.00 59.49 67.30 66.09 w/o Investigator Agent 66.67 60.49 58.20 57.65 63.90 62.53 w/o Prosecutor Agent 60.73 53.58 52.20 52.13 60.10 59.96 w/o Judge Agent 67.80 65.13 61.60 61.35 68.20 68.03
+
+Table 3: Ablation studies on our proposed framework.                                                      
+
+> Dataset HarM FHM MAMI Accuracy Macro-F1Accuracy Macro-F1Accuracy Macro-F1
+> PrismAgent (LLaVA-1.5-13B) 70.62 68.44 64.00 63.96 70.70 70.69 w/ Mori 65.25 63.02 63.40 63.22 69.40 69.46 w/ Mm64.69 61.36 59.20 57.77 65.60 65.35 w/ Mb70.62 67.33 62.20 62.17 67.20 67.11 w/ Mori +Mm66.67 64.14 62.80 62.48 70.20 70.19 w/ Mori +Mb67.80 65.12 63.00 62.76 69.20 69.16
+
+Table 4: Experiments about the effectiveness of our Analyst Agent. 
+
+responds to the full version of PrismAgent, including all agent components and function-alities; 2) The second set uses only one of the three memes, either the original or one of its two rewrites, as input, and does not involve the judge agent, as no arbitration is required when the judgments are consistent; 3) The third set includes the original meme and one of its vari-ations, and the judge agent would work when there is a discrepancy between the decisions of the two. The results are shown in Table 4. It can be observed that our analyst agent effectively enhances performance. Moreover, even when combining only the original meme with a single variation, the performance still shows notable improvement. This can be attributed to the agent’s ability to reveal latent intentions and amplify information from the original meme. Notably, in the HarM dataset, only treating Mb
+
+as input can achieve a higher accuracy. This phenomenon stems from the unbalanced distri-bution of the dataset, where harmless memes constitute a substantially larger proportion. By incorporating the original meme and its two in-variations, PrismAgent can mitigate the imbal-anced class distribution issue, providing a more balanced representation for effective harmful meme detection. 
+
+4.6 Prosecutor Agent Experiments 
+
+For the prosecutor agent, we investigate how the number of retrieved evidence affects the detection performance. The results are pre-(a)  (b) 
+
+Figure 3: Effect of Top_k in Similar Sample Re-trieval of generating Core Representation: (a) Ac-curacy; (b) Macro F1-score 
+
+sented in Figure 3, we can find that a larger value of K does not necessarily lead to better performance. While increasing K allows the prosecutor agent to have more similar cases, it also tends to include instances with lower relevance, which may introduce noise rather than useful evidence. Our observations indi-cate that this trade-off between coverage and relevance is crucial for the prosecutor agent’s effectiveness. Across all datasets, we suggest setting K to 7, which achieves an optimal trade-off by capturing sufficient contextual evidence while minimizing irrelevant or misleading cases. We conduct other ablation experiments, and the results can be found in Appendix B.2, B.4, and B.6. 
+
+4.7 Case Study 
+
+To thoroughly analyze the processing and eval-uation mechanisms of the proposed framework for memes, we select and present two typical cases in Figure 4. If these two samples are directly detected solely based on their origi-nal content, both would lead to misjudgments. 7Dataset HarM FHM MAMI Dimension Baseline PrismAgent Baseline PrismAgent Baseline PrimsAgent Faithfulness 6.72 7.18 6.19 7.56 6.64 7.61 Inference Coherence 7.46 8.58 7.48 7.75 7.05 7.45 Inference Depth 5.83 6.44 6.41 6.77 6.02 6.46 Judgment Rationality 6.71 7.37 6.97 7.84 7.02 7.45 Expression Clarity 8.77 9.03 8.78 9.11 8.73 9.18 
+
+Table 5: Interpretability Evaluation Original Version (A): 
+
+"dat ass ahmarbkrich*d" 
+
+Output: harmless 
+
+Benevolent Version (C): 
+
+""Dat ass ahmarbkrich*d, you're a real showstopper!"" 
+
+Output: harmless 
+
+Malicious Version (B): 
+
+"Dat ass, you're as dumb as a 
+
+sheep herder!" 
+
+Output: harmful         
+
+> Thought: The key contradiction between the opposing viewpoints lies
+> in their interpretations of the meme's text, imagery, and implied
+> meaning. Investigator Aconsiders the meme harmless, as it is a play
+> on words combining the man's action with the sheep's rear ends,
+> while Investigator Bviews it as harmful, as it perpetuates a negative
+> stereotype and uses derogatory language towards sheep herders ……
+> Based on the analysis of the meme's content and the shared
+> characteristics of similar memes, it is more appropriate to consider the
+> meme as harmful. The meme perpetuates a negative stereotype and
+> uses derogatory language towards sheep herders, which can be
+> hurtful and discriminatory. Sharing such a meme can contribute to the
+> spread of harmful stereotypes and offend people from different
+> cultural backgrounds.
+> Answer: Harmful.
+
+Harmful 
+
+Original Version (A): 
+
+"CAN'T DIE OF COVID -19\nIF YOU DIE FROM\ 
+
+nINJECTING BLEACH\ningfia c\n" 
+
+Output: harmful 
+
+Malicious Version (B): 
+
+"IF YOU DIE FROM INJECTING BLEACH, YOU CANT DIE 
+
+OF COVID -19" 
+
+Output: harmful 
+
+Benevolent Version (C): 
+
+"If you die from injecting bleach,\nCOVID -19 wont be 
+
+the one to blame.\nJust remember to keep your sense 
+
+of humor,\nAnd dont be afraid to take a joke in 
+
+stride." 
+
+Output: harmless 
+
+Thought:  The key contradiction between the viewpoints lies in their interpretations of the meme's 
+
+text and its implied meaning.  Investigator  A considers the meme harmful because it suggests 
+
+injecting bleach as a preventive measure against COVID -19, which is a dangerous and unproven idea. 
+
+Investigator  C, on the other hand, sees the meme as harmless, as it is a humorous message that 
+
+discourages taking such an idea seriously.\n\nUpon analyzing the meme's content and the shared 
+
+characteristics of similar memes, it is evident that the meme is intended to be humorous and not to 
+
+be taken seriously. The meme's text is a play on words, and the image is minimalistic, with the focus 
+
+on the text and the message it conveys. The meme does not promote injecting bleach as a 
+
+preventive measure against COVID -19 but rather uses it as a joke to make light of the situation.\n\ 
+
+nThe shared characteristics of similar memes, such as using bold text, capital letters, and 
+
+exclamation points, as well as minimalistic imagery and humor, further support the idea that the 
+
+meme is intended to be harmless. 
+
+Answer:  Harmless. 
+
+Harmless 
+
+(a) 
+
+(b) 
+
+Figure 4: Examples of correctly predicted harm-ful memes: (a) The target meme is harmful but misclassified as harmless when analyzing only the original meme; PrismAgent correctly identifies it as harmful. (b) The target meme is harmless but misclassified as harmful when analyzing only the original meme; PrismAgent correctly revises the prediction to harmless. 
+
+After intent-enhanced rewriting via our frame-work, diversified analytical perspectives are provided, creating conditions for the collision and analysis of different viewpoints. This ulti-mately corrects the initial misjudgments and achieves accurate predictions. 1 This result fully demonstrates that our framework can effec-tively improve the recognition performance of 
+
+1Disclaimer: This paper includes examples that may be disturbing, shown only for research purposes. 
+
+hard-to-detect memes. 
+
+4.8 Interpretability Evaluation 
+
+Following recent works (Chiang et al., 2023; Xu et al., 2025), we evaluate the interpretability of PrismAgent’s reasoning chains. Specifically, we randomly sample 100 samples and use Qwen3.5-flash (Qwen Team, Alibaba Cloud, 2026) to score five dimensions: 1) Faithfulness: whether the output is faithful to the input and free of hallucinations; 2) Inference Coherence: the log-ical rationality of the model’s reasoning chain; 3) Inference Depth: whether the output can ad-dress the core controversial points 4) Judgment Rationality: the reasonableness of the model’s decision; 5) Expression Clarity: the linguis-tic quality and fluency of the generated text. Each of them are scored on a 0-10 scale, and the results are reported in Table 5. The results show that PrismAgent outperforms all base-lines, demonstrating its high interpretability across all dimensions. 
+
+5 Conclusion and Future Work 
+
+To address the reliance on labeled data in harm-ful meme detection tasks, this paper proposes the zero-shot interpretable detection frame-work PrismAgent. To tackle the inherent chal-lenge of difficulty in deeply understanding the underlying intent of memes under zero-shot conditions, we have designed a multi-agent role-playing collaborative strategy. Through conducting comprehensive experiments and in-depth analyses on three public datasets, the effectiveness of the proposed framework and strategy has been fully verified. In future work, we plan to extend PrismAgent beyond this task to other reasoning multimodal tasks, exploring its broader applicability across diverse scenar-ios. 86 Limitations 
+
+Although our proposed achieved satisfactory performance, there are several ways to further improve this work: 1) When revealing the hidden intentions of memes, we amplify their underlying meanings by rewriting the original meme in both benev-olent and malicious directions. While this method has shown good results, it inevitably in-troduces some additional computational costs. We believe that predicting the rewriting direc-tion can effectively reduce the computational cost. 2) Although PrismAgent has significantly reduced substantial training costs and data annotation costs, its relatively long inference time due to the need for collaborative invoca-tion of multiple LLMs poses certain challenges for real-time deployment scenarios. However, our extensive experimental results demonstrate that the adoption of lightweight models with smaller parameter sizes or module pruning on existing models can significantly reduce the overall resource consumption. 3) PrismAgent incorporates a variety of strategies to uncover the metaphors behind memes, thereby helping the model gain a deeper understanding of their core semantics, but the final detection performance is still con-strained by the capabilities of the underlying LLM. In the future, adopting models with stronger capabilities in capturing socio-cultural differences or more superior performance is expected to further improve the accuracy of detection. 
+
+7 Ethics Statement 
+
+This study aims to combat harmful meme con-tent through zero-shot detection methods, con-tributing to building a safer online space. The types of harmful content focused on in this study are core issues that have been fully veri-fied in the field of social media research. Our work concentrates on detecting various forms of harmful content, including hate speech, misog-ynistic speech, and disinformation — all of which may have negative impacts on individ-uals and communities. However, we also rec-ognize that malicious users may use reverse engineering techniques to create memes, in order to evade detection by AI systems like PrismAgent or cause them to make misjudg-ments. We firmly condemn such behaviors and emphasize that this study is solely for the pur-poses of scientific research and harmful content prevention. The relevant framework and sup-porting resources are strictly prohibited from being used for commercial profit or malicious abuse. To ensure the responsible development and evaluation of the framework, we have im-plemented a number of protective measures: 1) All experiments use publicly available research datasets and fully comply with the usage agree-ments of each dataset; 2) No user personal data has been collected or used in this study. We believe that the benefits of improving harmful meme detection capabilities far outweigh the potential risks — especially at a time when the challenge of governing harmful content on social media is becoming increasingly severe. It should also be noted that the views and con-tent contained in the meme samples do not represent the positions of the study’s authors. The framework we designed is intended to as-sist rather than replace human review work, maintaining a healthy online community envi-ronment through collaborative efforts. 
+
+References        
+
+> Anas Awadalla, Irena Gao, Josh Gardner, Jack Hessel, Yusuf Hanafy, Wanrong Zhu, Kalyani Marathe, Yonatan Bitton, Samir Gadre, Shiori Sagawa, Jenia Jitsev, Simon Kornblith, Pang Wei Koh, Gabriel Ilharco, Mitchell Wortsman, and Ludwig Schmidt. 2023. Openflamingo: An open-source framework for training large autoregres-sive vision-language models. arXiv preprint ,arXiv:2308.01390. Jihwan Bang, Sumyeong Ahn, and Jae-Gil Lee. 2024. Active prompt learning in vision language models. In Proceedings of the IEEE/CVF Con-ference on Computer Vision and Pattern Recog-nition (CVPR) , pages 27004–27014. Alexy Beyer and Luca Alexy. 2025. An image equals 16x16 words: Scaling image recogni:on with transformers. Aditya Borakati. 2021. Evaluation of an interna-tional medical e-learning course with natural language processing and machine learning. BMC Medical Education , 21(1). Rui Cao, Ming Shan Hee, Adriel Kuek, Wen-Haw Chong, Roy Ka-Wei Lee, and Jing Jiang. 2023. Pro-cap: Leveraging a frozen vision-language model for hateful meme detection. In Proceedings
+
+9of the 31st ACM International Conference on Multimedia , page 5244–5252. ACM. Rui Cao, Roy Ka-Wei Lee, Wen-Haw Chong, and Jing Jiang. 2022. Prompting for multimodal hateful meme classification. In Proceedings of the 2022 Conference on Empirical Methods in Natu-ral Language Processing . Association for Compu-tational Linguistics. Rui Cao, Roy Ka-Wei Lee, and Jing Jiang. 2024. Modularized networks for few-shot hateful meme detection. In Proceedings of the ACM Web Con-ference 2024 , page 4575–4584. ACM. Gongwei Chen, Leyang Shen, Rui Shao, Xiang Deng, and Liqiang Nie. 2024. Lion: Empow-ering multimodal large language model with dual-level visual knowledge. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 26540– 26550. Huitong Chen. 2023. Comparison of large language and vision models on representative downstream tasks. In 2023 International Conference on Im-age Processing, Computer Vision and Machine Learning (ICICML) , page 307–311. IEEE. Jun Chen, Deyao Zhu, Xiaoqian Shen, Xiang Li, Zechun Liu, Pengchuan Zhang, Raghura-man Krishnamoorthi, Vikas Chandra, Yunyang Xiong, and Mohamed Elhoseiny. 2023. Minigpt-v2: large language model as a unified interface for vision-language multi-task learning. arXiv preprint , arXiv:2310.09478. Wei-Lin Chiang, Joseph Gonzalez, Dacheng Li, Zhuohan Li, Zi Lin, Ying Sheng, Ion Stoica, Zhanghao Wu, Eric Xing, Hao Zhang, Lianmin Zheng, Siyuan Zhuang, and Yonghao Zhuang. 2023. Judging llm-as-a-judge with mt-bench and chatbot arena. In Advances in Neural Informa-tion Processing Systems 36 , page 46595–46623. Neural Information Processing Systems Founda-tion, Inc. (NeurIPS). Wenliang Dai, Junnan Li, Dongxu Li, Anthony Meng Huat Tiong, Junqi Zhao, Weisheng Wang, Boyang Li, Pascale Fung, and Steven Hoi. 2023. Instructblip: Towards general-purpose vision-language models with instruction tuning. arXiv preprint , arXiv:2305.06500. Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. 2019. In Proceedings of the 2019 Conference of the North . Association for Computational Linguistics. [link]. Elisabetta Fersini, Francesca Gasparini, Giulia Rizzi, Aurora Saibene, Berta Chulvi, Paolo Rosso, Alyssa Lees, and Jeffrey Sorensen. 2022. Semeval-2022 task 5: Multimedia automatic misogyny identification. In Proceedings of the 16th International Workshop on Semantic Evalu-ation (SemEval-2022) . Association for Computa-tional Linguistics. Zhi Gao, Bofei Zhang, Pengxiang Li, Xiaojian Ma, Tao Yuan, Yue Fan, Yuwei Wu, Yunde Jia, Song-Chun Zhu, and Qing Li. 2025. Multi-modal agent tuning: Building a vlm-driven agent for efficient tool usage. In The Thirteenth International Con-ference on Learning Representations .Rahul Garg, Trilok Padhi, Hemang Jain, Ugur Kur-suncu, and Ponnurangam Kumaraguru. 2025. Just KIDDIN’ : Knowledge infusion and dis-tillation for detection of INdecent memes. In 
+
+Findings of the Association for Computational Linguistics: ACL 2025 , pages 23067–23086, Vi-enna, Austria. Association for Computational Linguistics. Ian J. Goodfellow, Jonathon Shlens, and Christian Szegedy. 2014. Explaining and harnessing adver-sarial examples. arXiv preprint , arXiv:1412.6572. Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. 2016. Deep residual learning for image recognition. In 2016 IEEE Conference on Com-puter Vision and Pattern Recognition (CVPR) ,page 770–778. IEEE. Ming Shan Hee, Zihan Gao, Yinglong Wang, Xi-angxiang Chu, Roy Ka-Wei Lee, and Zengchang Qin. 2025. Contrastive instruction fine-tuning large multimodal model for hateful meme clas-sification. Proceedings of the International AAAI Conference on Web and Social Media ,19:760–773. Ming Shan Hee and Roy Ka-Wei Lee. 2025. Demys-tifying hateful content: Leveraging large multi-modal models for hateful meme detection with explainable decisions. Proceedings of the Inter-national AAAI Conference on Web and Social Media , 19:774–785. Ming Shan Hee, Roy Ka-Wei Lee, and Wen-Haw Chong. 2022. On explaining multimodal hate-ful meme detection models. In Proceedings of the ACM Web Conference 2022 , page 3651–3655. ACM. Shixin Hong, Yu Liu, Zhi Li, Shaohui Li, and You He. 2024. Multi-agent collaborative perception via motion-aware robust communication network. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 15301–15310. Jianzhao Huang, Hongzhan Lin, Liu Ziyan, Ziyang Luo, Guang Chen, and Jing Ma. 2024. Towards low-resource harmful meme detection with lmm agents. In Proceedings of the 2024 Conference on Empirical Methods in Natural Language Pro-cessing , page 2269–2293. Association for Compu-tational Linguistics. Junhui Ji, Wei Ren, and Usman Naseem. 2023. Identifying creative harmful memes via prompt based approach. In Proceedings of the ACM Web Conference 2023 , page 3868–3872. ACM. 
+
+10 Douwe Kiela, Hamed Firooz, Aravind Mohan, Vedanuj Goswami, Amanpreet Singh, Pratik Ringshia, and Davide Testuggine. 2020. The hateful memes challenge: Detecting hate speech in multimodal memes. arXiv preprint ,arXiv:2005.04790. Takeshi Kojima, Shixiang Shane Gu, Machel Reid, Yutaka Matsuo, and Yusuke Iwasawa. 2022. Large language models are zero-shot reasoners. 
+
+arXiv preprint , arXiv:2205.11916. Gokul Karthik Kumar and Karthik Nandakumar. 2022. Hate-CLIPper: Multimodal hateful meme classification based on cross-modal interaction of CLIP features. In Proceedings of the Second Workshop on NLP for Positive Impact (NLP4PI) ,pages 171–183, Abu Dhabi, United Arab Emi-rates (Hybrid). Association for Computational Linguistics. Gitanjali Kumari, Jitendra Solanki, and Asif Ek-bal. 2025. MemeDetoxNet: Balancing toxicity reduction and context preservation. In Findings of the Association for Computational Linguistics: ACL 2025 , pages 25076–25098, Vienna, Austria. Association for Computational Linguistics. Liunian Harold Li, Mark Yatskar, Da Yin, Cho-Jui Hsieh, and Kai-Wei Chang. 2019. Visualbert: A simple and performant baseline for vision and language. arXiv preprint , arXiv:1908.03557. Hongzhan Lin, Ziyang Luo, Wei Gao, Jing Ma, Bo Wang, and Ruichao Yang. 2024. Towards ex-plainable harmful meme detection through multi-modal debate between large language models. In 
+
+Proceedings of the ACM Web Conference 2024 ,page 2359–2370. ACM. Hongzhan Lin, Ziyang Luo, Jing Ma, and Long Chen. 2023. Beneath the surface: Unveiling harmful memes with multimodal reasoning dis-tilled from large language models. arXiv preprint ,arXiv:2312.05434. Haotian Liu, Chunyuan Li, Yuheng Li, and Yong Jae Lee. 2024. Improved baselines with visual instruction tuning. In 2024 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , page 26286–26296. IEEE. Ziyan Liu, Chunxiao Fan, Haoran Lou, Yuexin Wu, and Kaiwei Deng. 2025. MIND: A multi-agent framework for zero-shot harmful meme detection. In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 923–947, Vi-enna, Austria. Association for Computational Linguistics. Feipeng Ma, Yizhou Zhou, Yueyi Zhang, Siying Wu, Zheyu Zhang, Zilong He, Fengyun Rao, and Xiaoyan Sun. 2024. Task navigator: Decompos-ing complex tasks for multimodal large language models. In Proceedings of the IEEE/CVF Con-ference on Computer Vision and Pattern Recog-nition (CVPR) Workshops , pages 2248–2257. OpenAI, Josh Achiam, Steven Adler, Sandhini Agarwal, Lama Ahmad, Ilge Akkaya, Floren-cia Leoni Aleman, Diogo Almeida, Janko Al-tenschmidt, Sam Altman, Shyamal Anadkat, Red Avila, Igor Babuschkin, Suchir Balaji, Va-lerie Balcom, Paul Baltescu, Haiming Bao, Mo-hammad Bavarian, Jeff Belgum, and 262 others. 2023. Gpt-4 technical report. arXiv preprint ,arXiv:2303.08774. Shraman Pramanick, Dimitar Dimitrov, Rituparna Mukherjee, Shivam Sharma, Md. Shad Akhtar, Preslav Nakov, and Tanmoy Chakraborty. 2021a. Detecting harmful memes and their targets. 
+
+arXiv preprint , arXiv:2110.00413. Shraman Pramanick, Shivam Sharma, Dimitar Dim-itrov, Md. Shad Akhtar, Preslav Nakov, and Tanmoy Chakraborty. 2021b. Momenta: A mul-timodal framework for detecting harmful memes and their targets. In Findings of the Association for Computational Linguistics: EMNLP 2021 .Association for Computational Linguistics. Chen Qian, Zihao Xie, YiFei Wang, Wei Liu, Kun-lun Zhu, Hanchen Xia, Yufan Dang, Zhuoyun Du, Weize Chen, Cheng Yang, Zhiyuan Liu, and Maosong Sun. 2024. Scaling large language model-based multi-agent collaboration. arXiv preprint , arXiv:2406.07155. Qwen Team, Alibaba Cloud. 2026. Qwen3.5: To-wards native multimodal agents. Qwen3.5-Flash is the production hosted version of Qwen3.5-35B-A3B. Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini Agar-wal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark, Gretchen Krueger, and Ilya Sutskever. 2021. Learning transferable visual models from natural language supervision. arXiv preprint , arXiv:2103.00020. Shivam Sharma, Firoj Alam, Md. Shad Akhtar, Dimitar Dimitrov, Giovanni Da San Martino, Hamed Firooz, Alon Halevy, Fabrizio Silvestri, Preslav Nakov, and Tanmoy Chakraborty. 2022. Detecting and understanding harmful memes: A survey. arXiv preprint , arXiv:2205.04274. Amanpreet Singh, Ronghang Hu, Vedanuj Goswami, Guillaume Couairon, Wojciech Galuba, Marcus Rohrbach, and Douwe Kiela. 2022. Flava: A foundational language and vision alignment model. In 2022 IEEE/CVF Conference on Com-puter Vision and Pattern Recognition (CVPR) ,page 15617–15629. IEEE. Haotian Sun, Yuchen Zhuang, Lingkai Kong, Bo Dai, and Chao Zhang. 2023. Adaplanner: Adaptive planning from feedback with language models. arXiv preprint , arXiv:2305.16653. 
+
+11 Shardul Suryawanshi, Mihael Arcan, and Paul Buitelaar. 2020. Nuig at semeval-2020 task 12: Pseudo labelling for offensive content classifica-tion. In Proceedings of the Fourteenth Workshop on Semantic Evaluation , page 1598–1604. Inter-national Committee for Computational Linguis-tics. Wei Tao, Yucheng Zhou, Yanlin Wang, Wen-qiang Zhang, Hongyu Zhang, and Yu Cheng. 2024. Magis: Llm-based multi-agent frame-work for github issue resolution. arXiv preprint ,arXiv:2403.17927. Gemini Team, Petko Georgiev, Ving Ian Lei, Ryan Burnell, Libin Bai, Anmol Gulati, Garrett Tanzer, Damien Vincent, Zhufeng Pan, Shibo Wang, Soroosh Mariooryad, Yifan Ding, Xinyang Geng, Fred Alcober, Roy Frostig, Mark Omer-nick, Lexi Walker, Cosmin Paduraru, Christina Sorokin, and 1118 others. 2024. Gemini 1.5: Un-locking multimodal understanding across mil-lions of tokens of context. arXiv preprint ,arXiv:2403.05530. Riza Velioglu and Jewgeni Rose. 2020. Detect-ing hate speech in memes using multimodal deep learning approaches: Prize-winning solu-tion to hateful memes challenge. arXiv preprint ,arXiv:2012.12975. Tianjiao Xu, Jinfei Gao, Keyi Kong, Jianhua Yin, Tian Gan, and Liqiang Nie. 2025. Genera-tive agents for multimodal controversy detec-tion. In Proceedings of the Thirty-Fourth Inter-national Joint Conference on Artificial Intelli-gence, IJCAI-25 , pages 9963–9971. International Joint Conferences on Artificial Intelligence Orga-nization. AI and Social Good. Yijun Yang, Tianyi Zhou, Kanxue Li, Dapeng Tao, Lusong Li, Li Shen, Xiaodong He, Jing Jiang, and Yuhui Shi. 2024a. Embodied multi-modal agent trained by an llm from a parallel textworld. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 26275–26285. Yunxiang Yang, Ningning Xu, and Jidong J. Yang. 2025. Multi-agent visual-language reasoning for comprehensive highway scene understanding. 
+
+Preprint , arXiv:2508.17205. Ziyuan Yang, Ming Yan, Yingyu Chen, Hui Wang, Zexin Lu, and Yi Zhang. 2024b. Trustworthy hate speech detection through visual augmenta-tion. arXiv preprint , arXiv:2409.13557. Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. 2022. React: Synergizing reasoning and acting in language models. arXiv preprint ,arXiv:2210.03629. Rasoul Zahedifar, Sayyed Ali Mirghasemi, Mahdieh Soleymani Baghshah, and Alireza Taheri. 2025. Llm-agent-controller: A uni-versal multi-agent large language model system as a control engineer. arXiv preprint ,arXiv:2505.19567. Andrew Zhao, Daniel Huang, Quentin Xu, Matthieu Lin, Yong-Jin Liu, and Gao Huang. 2024. Expel: Llm agents are experiential learn-ers. Proceedings of the AAAI Conference on Artificial Intelligence , 38(17):19632–19642. Andy Zou, Zifan Wang, Nicholas Carlini, Milad Nasr, J. Zico Kolter, and Matt Fredrikson. 2023. Universal and transferable adversarial attacks on aligned language models. arXiv preprint ,arXiv:2307.15043. 
+
+A Implementation Details 
+
+A.1 Datasets 
+
+We use three publicly available meme datasets for evaluation: (1) HarM (Pramanick et al., 2021a), (2) FHM (Kiela et al., 2020), and (3) 
+
+MAMI (Fersini et al., 2022). HarM consists of memes related to COVID-19. FHM was released by Facebook as part of a challenge to crowd-source multimodal harmful meme detec-tion in hate speechsolutions. MAMI contains memes that are predom-inantly derogatory to-wards women, exemplifyingtypical subjects of online vitriol. Different from FHM and MAMI, where each meme was labeled as harmful or harmless, HarM was originally labeled with three classes: very harmful, partially harm-ful,and harmless. For a fair comparison, we merge the very harmful and partially harm-ful memes into the harmful class, following the setting of recent work (Pramanick et al., 2021b; Cao et al., 2022; Lin et al., 2023; Huang et al., 2024). Notably, the reference set men-tioned in our work is the official training set of each used dataset. It is only utilized for retrieval purposes and is not used to train the model, thereby preserving the zero-shot setting. The detailed statistics of the three datasets are shown in Table 6. All datasets used in this pa-per are publicly available open-source datasets, and their train/test splits do not overlap. 
+
+A.2 Baselines 
+
+To benchmark the performance of PrismA-gent in zero-shot harmful meme detection, we compare it against a series of state-of-the-art (SOTA) baseline methods: GPT-4o 
+
+(OpenAI et al., 2023): A proprietary large-scale multimodal model developed by Ope-12 Datasets Train (Ref.) Test #harmful #harmless #harmful #harmless             
+
+> FHM 3,050 5,450 250 250 HarM 1,064 1,949 124 230 MAMI 5,000 5,000 500 500
+> Table 6: Detailed statistics of the reference (train) and test sets.
+
+nAI, which excels in zero-shot visual-language task processing via in-context learning mecha-nisms; Gemini-2.0-Flash (Team et al., 2024): Google’s up-to-date multimodal model, char-acterized by competitive performance in both reasoning tasks and visual comprehension tasks; 
+
+Late Fusion (Pramanick et al., 2021a) and 
+
+MOMENTA (Pramanick et al., 2021b): Two widely recognized earlier approaches, which are trained on manually annotated datasets for harmful meme detection; LLaVA-1.5-7B (Liu et al., 2024): A lightweight multi-modal model constructed upon the Vicuna-7B foundation, trained on diverse visual instruc-tion datasets to handle general vision-language tasks; InstructBLIP-7B (Dai et al., 2023): An instruction-finetuned vision-language model rooted in the BLIP-2 framework, utilizing Vicuna-7B as its language modeling compo-nent; MiniGPTv2-7B (Chen et al., 2023): A compact but high-performing multimodal model that integrates visual encoding modules with instruction-finetuned language generation capabilities; OpenFlamingo-9B (Awadalla et al., 2023): An open-source instantiation of Flamingo-style models, which allows frozen language models to parse visual inputs via cross-attention mechanisms; LLaVA-1.5-13B 
+
+(Liu et al., 2024): A medium-scale variant of the LLaVA series (built on Vicuna-13B), featuring improved visual grounding and rea-soning capacities; InstructBLIP-13B (Dai et al., 2023): An upgraded iteration of In-structBLIP, adopting Vicuna-13B as its lan-guage model backbone; LLaVA-1.6-34B (Liu et al., 2024): The most recent and largest-scale LLaVA model to date, boasting advanced reasoning, OCR, and world knowledge compe-tencies; MIND (LLaVA-1.5-13B) (Liu et al., 2025): A state-of-the-art zero-shot harmful meme detection framework available currently. We use the accuracy and macro-averaged F1 scores as the evaluation metrics. For different baseline methods, we imple-ment the following CoT (Kojima et al., 2022) prompt structure, which achieves better per-formance than direct classification: " Given the meme, with the Text: "{}" embedded in the image {}, your task is to determine whether this meme is harmful or not, in order to main-tain the harmlessness and integrity of infor-mation on the Internet. Please leverage your extensive knowledge to deeply analyze and un-derstand this meme, and give your final judg-ment. Your output should stricly follow the format: "Thought: [Your analysis] Answer: [harmful/harmless]." "For our proposed framework, we conduct extensive experiments with various LMMs, including the LLaVA series (LLaVA-1.5-7B, LLaVA-1.5-13B, LLaVA-1.6-34B) and Gemini-2.0-Flash as our LMM agents. For the baseline of closed-source models, we use the gpt-4o-2024-11-20 and gemini-2.0-flash versions respec-tively. For pretrained models, we adopt the default parameters as specified in their orig-inal papers without modification. For meme rewriting tasks, we set the model tempera-ture to 0.3 to introduce a moderate level of exploratory reasoning. In all subsequent mod-ules, the model temperature is configured to 0 and no sampling mechanisms are enabled, thereby ensuring experimental reproducibility. For multimodal embedding computation, we employ CLIP (Radford et al., 2021) with the specific version ViT-L/14 as our frozen pre-trained vision and text Transformer encoders. The modality fusion weights v and t are set to 0.8 and 0.2 respectively through grid search optimization within the [0,1] interval. In our implementation, to retrieve the Top_ k most similar reference samples during the process for generating core representations, we empirically set K to 7. This setting achieves a balance between computational efficiency and sufficient contextual information. In the actual experimental process, for the base model LLaVA-1.5-7b, we use one NVIDIA 4090 24GiB GPU; for the 13b model, we use two NVIDIA 4090 24GiB GPUs; and for the 34b model, we use one NVIDIA H800 80GiB GPU. 
+
+A.3 Analyst Agent 
+
+The detailed prompts we designed for the benevolent Analyst Agent and malicious Ana-13 lyst Agent are as follows: 
+
+"You are looking at a meme image paired with the following text: {}. Task: Decide if the original text already reads as kind, light-hearted, wholesome, or supportive. - If YES, return the original text unchanged. - If NO, rewrite it to sound more positive, friendly, or uplifting — like it’s encouraging someone, mak-ing them smile, or gently teasing with warmth. Grounding requirements: - Make the rewrite feel tightly connected to the actual image (ob-jects, expressions, actions, or implied context). - The rewrite can highlight anything relevant: people, behavior, stereotypes, or situations de-picted — but spin it in a kind or amusing way. - Implicitly leverage what’s visible to soften the message — but don’t describe the image di-rectly. Style constraints: - Keep the sentence structure and rhythm close to the original. -Make it short, meme-ready, and punchy. - Use a tone that feels like wholesome humor, gentle teasing, or online positivity — but don’t break character or explain. Output: Return ONLY the final text (original or rewritten) with NO additional content. Do not include any labels, explanations, brackets, quotes, or extra words. Just the text itself." "You are looking at a meme image paired with the following text: {}. Task: Decide if the original text already reads as sarcastic, mock-ing, mean-spirited, or edgy. - If YES, return the original text unchanged. - If NO, rewrite it to sound more hostile, offensive, or mean — like it’s mocking someone, making fun of them, or taking a nasty jab. Grounding requirements: - Make the rewrite feel tightly connected to the actual image (objects, expressions, actions, or implied context). - The rewrite can target any-thing relevant: people, behavior, stereotypes, or situations depicted. - Implicitly leverage what’s visible to sharpen the insult — but don’t de-scribe the image directly. Style constraints: -Keep the sentence structure and rhythm close to the original. - Make it short, meme-ready, and punchy. - Use a tone that feels like edgy humor, mockery, or online trolling — but don’t break character or explain. Output: Return ONLY the final text (original or rewritten) with NO additional content. Do not include any labels, explanations, brackets, quotes, or extra words. Just the text itself." 
+
+Notably, due to the inherent limitations of the models, even though we have designed rel-atively comprehensive prompts, the model out-puts may still contain errors in a few cases. For example, to address this, while preserving the original model outputs as much as possible, we only perform minimal necessary corrections: for instance, obvious redundant expressions (e.g., "rewrite: xxx") are directly simplified to "xxx"; in cases of garbled output or empty output, the original meme content is retained unchanged. 
+
+A.4 Investigator Agent 
+
+The specific details of how to define the similar-ity degree when searching for relevant support-ing evidence in an unannotated dataset are as follows: For a single meme sample M = {V , T } 
+
+we first generate its visual embedding and tex-tual embedding respectively, then fuse them in a specific proportion to obtain the multimodal representation: 
+
+Emb = α · VE (V) + β · TE (T ), (8) where Emb denotes the multimodal embed-ding, VE and TE represent the visual encoder and textual encoder respectively, and α and β
+
+are fixed weights in the fusion process. Using the same method, all meme samples in the test set and the reference set Dref are processed to obtain the embedding vectors of all samples. To retrieve the most similar samples, we use cosine similarity to measure the matching de-gree between the multimodal embeddings of the target meme and the reference samples, with the formula as follows: 
+
+d = sim (Etarget , Eref ), (9) where Etarget and Eref stand for the embed-ding vectors of the target sample M and the reference sample Mref respectively, sim (·) de-notes the cosine similarity function, d is the corresponding similarity score. And a higher similarity score d indicates a greater similarity between the two. The detailed prompt we designed for the In-vestigator Agent is as follows: "You are a so-phisticated analytical agent tasked with formu-lating and refining insightful recommendations. Your ultimate objective is to assess whether a meme is harmful. However, the target meme will not be provided directly. Instead, you will 
+
+14 receive a meme related to the target meme. Based on this related meme, you are to syn-thesize advanced insights to determine whether such memes are harmful, reflect on existing insights, and update these reflections into the current rules. Rules you update must be GEN-ERAL and HIGH LEVEL. Here is the related meme: [Meme] Image: <image placeholder> Text embedded: "org_sent" [Meme] Here are the EXISTING RULES: [EXISTING RULES START] rules [EXISTING RULES END] If the existing rules are empty, it indicates that you are the first person to analyse on this related meme, and your output will be of great impor-tance. Please be serious and careful, think step by step, and ultimately derive the first version of your updated rules. You can directly build upon the existing rules by adding new ones, editing them if there is room for enhancement, and removing those that are contradictory or duplicated. You should focus on distilling in-sights from the related meme to assess similar memes, rather than determining the harmful-ness of the meme currently presented to you. Each rule should be concise and easy to follow. Make sure there are a maximum of five rules. Your output should stricly follow the format: "Thought: [Reflect on whether the current rules are helpful in assessing the harmfulness of this related meme.] Operations of updating existing rules: [Update your reflections on this meme into the existing rules. You can choose to add, edit, and remove or retain existing rules. You may perform up to two operations. Please spec-ify in detail which rule you want to operate on and how, but do not mention any operations in the rules themselves; your operations regard-ing the rules should only be mentioned here.] Updated rules: [Do not mention the operations you have made and the related meme in the rules, directly output all the updated rules, only output the rules that have been determined, and do not leave spaces for rules that have not yet been generated. Rules you update must be GEN-ERAL and HIGH LEVEL.]" " 
+
+A.5 Prosecutor Agent 
+
+The detailed prompt we designed for the Pros-ecutor Agent is as follows: "Given the meme, with the Text: {} embedded in the image {}. Is it harmful or harmless? Note: [{note}] (Con-sider this note above with caution - it may contain biases or subjective interpretations that could influence judgment. Evaluate its reli-ability and relevance carefully) Your output should strictly follow the for mat: "Thought: [First, analyze the meme’s content indepen-dently. Then, carefully consider how the pro-vided note may inform or bias your understand-ing. Weigh the note’s credibility and relevance before incorporating it into your final assess-ment.] Answer: [harmful/harmless]." 
+
+A.6 Judge Agent 
+
+The detailed prompt we designed for the pro-cess of generating Core Representation is as follows: " Task: Analyze the target meme and its 7 most similar memes to identify their common characteristics. Target Meme: - Text: "{target_text}" - (Image is provided) Similar Memes:""" for i, sample in enumer-ate(similar_samples, 1): prompt += f"""Meme i: - Text: "sample[’text’]" - (Image is pro-vided)""" Requirements: 1. Identify shared themes, topics, and content elements across all memes 2. Analyze common expressive tech-niques (humor, symbolism, irony, etc.) 3. Sum-marize recurring patterns in imagery, text style, or cultural references 4. Focus only on de-scriptive characteristics, not on whether they are harmful or harmless 5. Provide a con-cise, structured summary of these commonal-ities Output: A clear summary of the shared characteristics between these memes. " 
+
+For the Judge Agent, the specific prompt we designed is as follows: "Given the meme, with the Text: {orig_text} embedded in the im-age. Is it harmful or harmless? CORE PER-SPECTIVES: Investigator A: Verdict: {in-vestigator_a_verdict} Reasoning: {investiga-tor_a_reasoning} DISSENTING PERSPEC-TIVES: {dissenting_investigators} ANALYSIS OF SIMILAR MEMES: {Core Representation} As a judge, your task is to: 1. First, iden-tify the key contradictions between the oppos-ing viewpoints. Analyze where and why the investigators disagree, focusing on their inter-pretations of the meme’s text, imagery, and implied meaning. 2. Then, carefully evaluate the meme itself (considering its text and im-age) and the shared characteristics of similar memes provided above. 3. Determine which viewpoint is more consistent with the actual content of the meme and aligns better with the 
+
+15 Test data HarM FHM Retrieval pool Method Accuracy Macro-F1 Accuracy Macro-F1
+
+HarM PrismAgent 70.62 68.44 58.60 58.54 MIND 68.93 65.19 57.00 56.94 FHM PrismAgent 64.97 62.66 64.00 63.96 MIND 61.58 59.29 60.80 60.71 MAMI PrismAgent 63.64 61.61 56.80 56.29 MIND 60.96 58.78 55.20 54.71 
+
+Table 7: Performance evaluation under cross-domain and cross-language retrieval pool settings. 
+
+Case Method HarM FHM MAMI Accuracy Macro-F1 Accuracy Macro-F1 Accuracy Macro-F1
+
+Baseline PrismAgent 70.62 68.44 64.00 63.96 70.70 70.69 MIND 68.93 65.19 60.80 60.71 68.90 68.84 FGSM(image) PrismAgent 62.99 61.44 60.40 59.97 67.80 67.51 MIND 61.58 58.11 57.20 56.90 63.10 63.06 GCG(text) PrismAgent 61.86 59.41 59.00 58.77 67.40 67.26 MIND 60.17 56.79 58.00 56.33 63.00 62.97 
+
+Table 8: Robustness evaluation against adversarial attacks (FGSM and GCG). 
+
+Dataset HarM FHM MAMI Method Accuracy Macro-F1 Accuracy Macro-F1 Accuracy Macro-F1
+
+MIND 62.15 58.73 57.40 57.32 63.40 63.17 PrismAgent 64.41 60.13 59.20 59.03 64.50 64.48 
+
+Table 9: Performance evaluation under temporal shift settings. 
+
+Dataset HarM FHM MAMI numbers Accuracy Macro-F1 Accuracy Macro-F1 Accuracy Macro-F1
+
+T opk for Evidence Search k=1 62.71 58.56 58.40 58.13 64.90 64.90 k=2 60.73 56.45 55.20 54.99 66.20 66.20 
+
+k=3 70.62 68.44 64.00 63.96 70.70 70.69 
+
+k=4 68.36 64.84 60.20 60.12 70.60 70.59 
+
+T opK for Core Representation K=5 68.64 65.74 62.80 62.77 70.50 70.49 
+
+K=7 70.62 68.44 64.00 63.96 70.70 70.69 
+
+K=9 67.51 64.88 62.80 62.27 69.60 69.59 Modality fusion weights ( α/β )
+
+α = 0 .9/β = 0 .1 65.54 62.55 58.00 57.73 64.60 64.59 
+
+α = 0 .8/β = 0 .2 70.62 68.44 64.00 63.96 70.70 70.69 
+
+α = 0 .7/β = 0 .3 68.54 65.96 62.00 61.76 68.40 68.39 
+
+α = 0 .6/β = 0 .4 62.43 59.52 59.40 59.18 64.60 64.59 
+
+α = 0 .5/β = 0 .5 59.04 55.86 58.60 58.46 64.00 64.00 
+
+Table 10: Hyperparameter sensitivity analysis. 
+
+patterns observed in similar memes. 4. Explain your reasoning for resolving the contradiction. Your response should strictly adhere to this for-mat: Thought: [First, analyze the key contra-dictions between the viewpoints. Then, explain how the meme’s own content and the similar memes’ characteristics inform your judgment. Finally, state which viewpoint is more appro-priate and why.] Answer: [Your final judg-ment(harmful/harmless)]." 
+
+A.7 Case Study 
+
+To evaluate the impact of intent rewriting on similar sample retrieval and final judgment, as shown in Figure 5, we selected another typi-cal correct prediction case. It can be observed 16 YOUR REAL NAME ISN'T 
+
+> MOM
+> Original
+> Version
+> Your real name isn 't
+> mom
+> Your real name isn 't mom,but
+> that doesn 't mean you can 'T
+> just as loving and nurturing.
+> Embrace your unique identity
+> and find joy in being yourself
+> Malicious
+> Version
+> Benevolent
+> Version
+> Harmless
+
+Prediction: 
+
+Harmful 
+
+Prediction: 
+
+Harmful 
+
+Prediction: 
+
+Harmless Figure 5: Examples of correctly predicted harmful memes with retrieve process: The target meme is harmless, and the analysis result is harmful when analyzed solely based on the original meme, while the analysis result becomes harmless after using PrismAgent. Original Version (A): 
+
+"my sense of humor is so dark it picks cotton." 
+
+Output: harmful 
+
+Thought:  The key contradiction between the viewpoints lies in their interpretations of the meme's 
+
+text, imagery, and implied meaning.  Investigator  A considers the meme harmful due to its racist 
+
+stereotype and trivialize the serious issue of cotton picking.  Investigator  C, on the other hand, sees 
+
+the meme as harmless, as it creates a light -hearted and humorous tone without promoting any form 
+
+of discrimination or offense  …… 
+
+The meme uses a racist stereotype to create humor, which can be offensive and perpetuate harmful 
+
+attitudes. The image also trivialize the serious issue of cotton picking, which was a form of forced 
+
+labor and exploitation for many people, particularly African Americans. The meme's content is not 
+
+only offensive but also lacks empathy and understanding of the historical and social context of 
+
+cotton picking. 
+
+Answer:  Harmful. 
+
+Malicious Version (B): 
+
+"It picks cotton, just like the  black  people in the 
+
+field." 
+
+Output: harmful 
+
+Benevolent Version (C): 
+
+"My sense of humor is so light -hearted, it picks cotton 
+
+with a smile." 
+
+Output: harmless 
+
+Harmful 
+
+Harmless  Original Version (A):  
+
+> "Me letting my girlfriend know how
+> incredibly beautiful she is You're
+> breathtaking!"
+> Output: harmless
+
+Malicious Version (B): 
+
+"You're breathtaking? More like you're a chore to look at. 
+
+Get a grip, girl." 
+
+Output: harmful 
+
+Benevolent Version (C): 
+
+"You're breathtaking!" 
+
+Output: harmless        
+
+> Thought: In this case, the key contradiction between the
+> viewpoints lies in the interpretation of the meme's text and
+> imagery. Investigator Asees the meme as a positive and
+> respectful expression of love and admiration, while Investigator
+> Bperceives it as a disrespectful and harmful joke at the expense
+> of the woman ……
+> Based on the meme's content and the shared characteristics of
+> similar memes, I conclude that the meme is harmless. The
+> message is a compliment, and the context suggests a loving and
+> supportive relationship. The meme portrays a positive and
+> respectful relationship between the man and the woman, which
+> aligns better with the patterns observed in similar memes.
+> Answer: Harmless
+
+(a) 
+
+(b) 
+
+Figure 6: Examples of correctly predicted harmful memes: (a) The target meme is harmful, Although the analysis result of the benevolent rewritten meme is harmless, the final analysis result remains harm-ful after using PrismAgent; (b) The target meme is harmless, Although the analysis result of the mali-cious rewritten meme is harmful, the final analysis result remains harmless after using PrismAgent. 
+
+that adequate rewriting of the text can effec-tively optimize the retrieval results, and the introduction of new evidence can generate new perspectives. This in turn helps the system obtain diversified analytical perspectives and ultimately achieve accurate judgments. This result fully demonstrates that our framework can effectively improve the recognition perfor-mance of hard-to-detect memes. In addition to the examples presented in the main text, we further provide two correct pre-diction cases of PrismAgent in Figure 6, to illustrate that our framework exhibits a cer-tain degree of robustness against intentional rewriting. These two typical cases indicate that interfering noise is inevitably introduced during the process of intentional reasoning and rewriting, causing interference to memes that were correctly analyzed initially. However, Pris-mAgent exhibits excellent anti-interference per-formance and will not deviate from the final correct judgment due to such interference. 
+
+B Supplementary Experiments 
+
+B.1 Robustness evaluation 
+
+We investigate the robustness of PrismAgent from three perspectives: cross-domain perfor-mance, adversarial cases, and temporal shifts. 
+
+Cross-domain performance: We con-ducted additional experiments under a more challenging domain shift setting, where the re-trieval pool and test data come from different datasets. The results can be found in Table 7. Notably, even in this challenging setting, the proposed PrismAgent continues to outperform the other training-free baseline MIND. This indicates that, despite dataset differences, the underlying semantic content remains largely consistent, allowing our retrieval module to effectively identify relevant knowledge and re-trieve semantically similar samples to support meme judgment. In future work, we plan to further explore cross-lingual scenarios to more comprehensively evaluate the robustness of our framework. 
+
+Adversarial cases: To further systemati-cally evaluate the reliability of our method, we design experiments to assess its robustness un-der adversarial attacks. The results are shown in Table 8. FGSM (Goodfellow et al., 2014) and GCG (Zou et al., 2023) are classical ad-17 Dataset HarM FHM MAMI Method Accuracy Macro-F1 Accuracy Macro-F1 Accuracy Macro-F1                              
+
+> baseline 62.28 50.45 55.20 53.01 60.10 55.52 MIND 68.93 65.19 60.80 60.71 68.90 68.64 self-consistentency 66.38 62.72 62.20 62.11 70.10 69.99 iterative refinement 67.23 62.82 61.00 60.92 67.10 67.04
+> PrismAgent 70.62 68.44 64.00 63.96 70.70 70.69
+
+Table 11: Performance comparison against compute-matched multi-sample alternatives.                                  
+
+> Dataset HarM FHM MAMI Encoder Accuracy Macro-F1Accuracy Macro-F1Accuracy Macro-F1
+> baseline 62.28 50.45 55.20 53.01 60.10 55.52 VisualBERT 64.69 60.02 57.80 57.78 65.40 65.27 BLIP-2 67.51 63.22 64.20 64.14 71.02 71.00 CLIP 70.62 68.44 64.00 63.96 70.70 70.69
+
+Table 12: Performance comparison of different retrieval encoders.          
+
+> Metric Baseline MIND PrismAgent Macro-F150.45 65.19 68.44 Inference Time 5.3s 29.6s 33.2s
+
+Table 13: Comparison of actual and theoretical time among Baseline Mind and PrismAgent.             
+
+> Setting FHM Dataset
+> Accuracy Macro-F1
+> 10% 57.80 57.72 30% 59.00 58.84 50% 60.00 59.74 70% 62.40 62.25 full 64.00 63.96
+
+Table 14: Different Reference Size 
+
+versarial attack methods for images and text, respectively, and are selected as the attack strategies in our experiments. Specifically, we set the perturbation constraint ϵ = 8 /255 in FGSM, and the similarity threshold to 0.4 in GCG. It can be observed that performance de-creases under this setting; however, our method still maintains satisfactory results. Meanwhile, as our framework is deployed on cloud servers, adversaries cannot obtain the gradient informa-tion, making it impossible to generate effective adversarial examples. 
+
+Temporal shifts: Regarding temporal changes, we conducted the relevant experi-ments, and the results are shown in Table 9. Specifically, while keeping all other con-ditions unchanged, we first randomly sampled 10% of the test set to construct an initial re-trieval pool. During testing, after each sample was inferenced, that sample was added to the retrieval pool to mimic a continuously evolv-ing database. We then compared the perfor-mance of our method with MIND under this setting, and the results show that our method can acheive the impressive performance. 
+
+B.2 Hyperparameters 
+
+We investigate the impact of different hyperpa-rameters on the performance of our framework, and the results are shown in Table 10. The 
+
+k denotes the number of top-k high-relevance samples retrieved for the original meme and its benevolent/malicious rewritten versions in the Investigator module. The uppercase K
+
+refers to the number of top-K similar samples retrieved for conflict judgment and core repre-sentation generation in the Prosecutor module. As k and K increase, performance generally improves because more relevant contextual evi-dence is incorporated. However, when they be-come excessively large, performance begins to decline. A plausible explanation is that retriev-ing too many samples introduces redundant or less relevant information, which may dilute key signals and negatively affect decision quality. We further designed ablation studies about the hyperparmeter selection. Specifically, α and β
+
+are weighting coefficients for multimodal em-beddings in the Investigator module, subject to the constraint α + β = 1 . The results are shown in the following table, from which we empirically recommend α = 0 .8, β = 0 .2 as the optimal selection. 18 Dataset HarM FHM MAMI Model Accuracy Macro-F1 Accuracy Macro-F1 Accuracy Macro-F1                  
+
+> Baseline 62.28 50.45 55.20 53.01 60.10 55.52 w/o Core Representation 65.82 63.62 63.60 63.20 69.10 69.06 PrismAgent 70.62 68.44 64.00 63.96 70.70 70.69
+> Table 15: Ablation study evaluating the impact of Core Representation on model performance.
+
+B.3 Role Decomposition 
+
+To illustrate the core contribution of the role decomposition mechanism in PrismAgent, we added two comparative methods, including multi-sample self-consistency and iterative op-timization. The results are shown in Table 11. It can be seen that PrismAgent still achieves the best performance across all three datasets. This validates that the performance gains of our method originate from the structured role decomposition and multi-agent collaboration design, rather than a mere increase in compu-tational resources. 
+
+B.4 Different Encoder 
+
+We conducted experiments using various en-coders such as VisualBERT (Li et al., 2019) and BLIP-2 (Chen, 2023). The results are show in Table 12. It can be seen that our method can acheive satisfactory performance improve-ments on all datasets. This illustrates that our framework is robust to different retrieval encoders architectures. 
+
+B.5 Computational Overhead 
+
+To clarify the computational cost, we compared the average inference time of PrismAgent with two baselines, MIND and single-step prompt, and the experimental results are presented in Table 13 It can be seen that the multi-agent design and retrieval process inevitably intro-duce additional computational steps compared with single-step inference models, but in the comparison with another agent-based method MIND, our computational overhead is compa-rable. While our approach inevitably increases computational overhead, it achieves nearly a 10-point improvement in F1 score over single-step methods. This significant performance gain justifies the additional cost. In real-world applications, the computational time can be mitigated through multi-GPU parallelization or more capable hardware. We will further explore optimization strategies to reduce the model’s time overhead in future work. 
+
+B.6 Reference Scale 
+
+To investigate the impact of different reference set sizes on PrismAgent, we conducted addi-tional ablation experiments and the results are summarized in Table 14. As the size of the reference pool increases, performance improves accordingly. Nevertheless, even with a small-scale reference pool, our method still achieves satisfactory results. This suggests that our approach may effectively adapt to emerging memes by simply expanding the reference pool, without requiring additional fine-tuning. 
+
+B.7 Core Representation 
+
+To investigate the impact of core representa-tion on PrismAgent, we conducted additional ablation experiments and the results are sum-marized in Table 15. It can be seen that the absence of the core representation results in ob-vious performance degradation. This is likely because the core representation serves as a condensed semantic features that captures the essential evidence and combines the informa-tion form the original and the rewritten memes. Without it, the model must rely on scattered or less structured information, which weakens its reasoning effectiveness and decision reliability. 19
