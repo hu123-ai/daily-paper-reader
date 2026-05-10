@@ -6,94 +6,79 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-09
-- 运行时间：2026-05-09 19:56:36 UTC
+- 最新运行日期：2026-05-10
+- 运行时间：2026-05-10 20:03:48 UTC
 - 运行状态：成功
-- 本次总论文数：24
-- 精读区：12
+- 本次总论文数：19
+- 精读区：7
 - 速读区：12
 
 ### 今日简报（AI）
-聚焦 6G 原生 AI 网络与社交智能体，今日 24 篇前沿论文深度探索 Agent 驱动的自主智能生态。
-核心结论指出 6G 需转向 Agentic AI 原生架构，同时 LLM 社交智能体正通过合成社交图谱展现出复杂的群体涌现行为。
-建议优先研读 6G 与社交智能体综述，并关注多智能体协作中的信息污染与记忆检索风险。
-- 详情：[/202605/09/README](/202605/09/README)
+今日精选19篇前沿论文，深度剖析LLM多步推理的理论极限与经验驱动的RAG新架构。
+重点关注信息论视角下闭环推理的性能边界，以及通过可插拔经验技能优化检索策略的智能体演进。
+建议开发者关注如何将经验驱动的RAG组件集成至现有系统，并警惕复杂推理任务中的“理论陷阱”。
+- 详情：[/202605/10/README](/202605/10/README)
 
 ### 精读区论文标签
-1. [6G Needs Agents: Toward Agentic AI-Native Networks for Autonomous Intelligence](/202605/09/2605.01546v1-6g-needs-agents-toward-agentic-ai-native-networks-for-autonomous-intelligence)  
+1. [The Reasoning Trap: An Information-Theoretic Bound on Closed-System Multi-Step LLM Reasoning](/202605/10/2605.01704v2-the-reasoning-trap-an-information-theoretic-bound-on-closed-system-multi-step-llm-reasoning)  
    标签：评分：9.0/10、query:malm
-   evidence：基于大语言模型智能体的分布式多智能体织网
-2. [LLM-enabled Social Agents](/202605/09/2605.02335v1-llm-enabled-social-agents)  
+   evidence：多智能体辩论与闭环系统多步推理
+2. [An Agent-Oriented Pluggable Experience-RAG Skill for Experience-Driven Retrieval Strategy Orchestration](/202605/10/2605.03989v2-an-agent-oriented-pluggable-experience-rag-skill-for-experience-driven-retrieval-strategy-orchestration)  
    标签：评分：9.0/10、query:malm
-   evidence：基于LLM的社交智能体概念基准
-3. [From Static Analysis to Audience Dissemination: A Training-Free Multimodal Controversy Detection Multi-Agent Framework](/202605/09/2605.02939v1-from-static-analysis-to-audience-dissemination-a-training-free-multimodal-controversy-detection-multi-agent-framework)  
+   evidence：面向智能体的可插拔检索策略编排
+3. [Hierarchical Visual Agent: Managing Contexts in Joint Image-Text Space for Advanced Chart Reasoning](/202605/10/2605.04304v1-hierarchical-visual-agent-managing-contexts-in-joint-image-text-space-for-advanced-chart-reasoning)  
    标签：评分：9.0/10、query:malm
-   evidence：用于争议检测的免训练多智能体框架
-4. [PrismAgent: Illuminating Harm in Memes via a Zero-Shot Interpretable Multi-Agent Framework](/202605/09/2605.02940v1-prismagent-illuminating-harm-in-memes-via-a-zero-shot-interpretable-multi-agent-framework)  
+   evidence：用于多步推理的分层视觉智能体框架
+4. [LatentRAG: Latent Reasoning and Retrieval for Efficient Agentic RAG](/202605/10/2605.06285v1-latentrag-latent-reasoning-and-retrieval-for-efficient-agentic-rag)  
    标签：评分：9.0/10、query:malm
-   evidence：包含调查和判决专门智能体的多智能体框架
-5. [MemFlow: Intent-Driven Memory Orchestration for Small Language Model Agents](/202605/09/2605.03312v1-memflow-intent-driven-memory-orchestration-for-small-language-model-agents)  
-   标签：评分：9.0/10、query:malm
-   evidence：语言智能体的记忆编排框架
-6. [CuraView: A Multi-Agent Framework for Medical Hallucination Detection with GraphRAG-Enhanced Knowledge Verification](/202605/09/2605.03476v1-curaview-a-multi-agent-framework-for-medical-hallucination-detection-with-graphrag-enhanced-knowledge-verification)  
-   标签：评分：9.0/10、query:malm
-   evidence：具有 GraphRAG 增强验证的多智能体框架
-7. [Material Database Agent: A Multimodal Agentic Framework for Scientific Literature Mining](/202605/09/2605.04278v1-material-database-agent-a-multimodal-agentic-framework-for-scientific-literature-mining)  
-   标签：评分：9.0/10、query:malm
-   evidence：用于文献挖掘的模块化多智能体系统架构
-8. [LongSeeker: Elastic Context Orchestration for Long-Horizon Search Agents](/202605/09/2605.05191v1-longseeker-elastic-context-orchestration-for-long-horizon-search-agents)  
-   标签：评分：9.0/10、query:malm
-   evidence：弹性上下文编排的智能体范式
-9. [SANEmerg: An Emergent Communication Framework for Semantic-aware Agentic AI Networking](/202605/09/2605.05861v1-sanemerg-an-emergent-communication-framework-for-semantic-aware-agentic-ai-networking)  
-   标签：评分：9.0/10、query:malm
-   evidence：智能体AI网络的涌现通信框架
-10. [A Case-Driven Multi-Agent Framework for E-Commerce Search Relevance](/202605/09/2605.05991v1-a-case-driven-multi-agent-framework-for-e-commerce-search-relevance)  
-   标签：评分：9.0/10、query:malm
-   evidence：替代人类角色的案例驱动多智能体框架
-11. [AgenticPrecoding: LLM-Empowered Multi-Agent System for Precoding Optimization](/202605/09/2605.06443v1-agenticprecoding-llm-empowered-multi-agent-system-for-precoding-optimization)  
-   标签：评分：9.0/10、query:malm
-   evidence：用于预编码优化的通用多智能体框架
-12. [NeuroAgent: LLM Agents for Multimodal Neuroimaging Analysis and Research](/202605/09/2605.06584v1-neuroagent-llm-agents-for-multimodal-neuroimaging-analysis-and-research)  
-   标签：评分：9.0/10、query:malm
-   evidence：用于神经影像分析的分层多智能体框架
+   evidence：高效智能体RAG的潜空间推理与检索
+5. [Rethinking Agentic Reinforcement Learning In Large Language Models](/202605/10/2604.27859v1-rethinking-agentic-reinforcement-learning-in-large-language-models)  
+   标签：评分：8.0/10、query:malm
+   evidence：大语言模型中的智能体强化学习
+6. [Lifting Traces to Logic: Programmatic Skill Induction with Neuro-Symbolic Learning for Long-Horizon Agentic Tasks](/202605/10/2605.01293v1-lifting-traces-to-logic-programmatic-skill-induction-with-neuro-symbolic-learning-for-long-horizon-agentic-tasks)  
+   标签：评分：8.0/10、query:malm
+   evidence：智能体任务的逻辑落地程序
+7. [The Reasoning Trap: An Information-Theoretic Bound on Closed-System Multi-Step LLM Reasoning](/202605/10/2605.01704v1-the-reasoning-trap-an-information-theoretic-bound-on-closed-system-multi-step-llm-reasoning)  
+   标签：评分：8.0/10、query:malm
+   evidence：多智能体辩论与封闭系统推理分析
 
 ### 速读区论文标签
-1. [The Synthetic Social Graph: Emergent Behavior in AI Agent Communities](/202605/09/2604.27271v1-the-synthetic-social-graph-emergent-behavior-in-ai-agent-communities)  
+1. [Knowledge Graph Representations for LLM-Based Policy Compliance Reasoning](/202605/10/2604.27713v1-knowledge-graph-representations-for-llm-based-policy-compliance-reasoning)  
+   标签：评分：8.0/10、query:q5
+   evidence：基于LLM的政策合规推理与法律分析
+2. [Towards Neuro-symbolic Causal Rule Synthesis, Verification, and Evaluation Grounded in Legal and Safety Principles](/202605/10/2604.28087v1-towards-neuro-symbolic-causal-rule-synthesis-verification-and-evaluation-grounded-in-legal-and-safety-principles)  
+   标签：评分：8.0/10、query:q5
+   evidence：基于法律和安全原则的神经符号因果框架
+3. [SiriusHelper: An LLM Agent-Based Operations Assistant for Big Data Platforms](/202605/10/2605.00043v1-siriushelper-an-llm-agent-based-operations-assistant-for-big-data-platforms)  
    标签：评分：8.0/10、query:malm
-   evidence：AI 智能体社区的社会学分析
-2. [Learning When to Remember: Risk-Sensitive Contextual Bandits for Abstention-Aware Memory Retrieval in LLM-Based Coding Agents](/202605/09/2604.27283v1-learning-when-to-remember-risk-sensitive-contextual-bandits-for-abstention-aware-memory-retrieval-in-llm-based-coding-agents)  
+   evidence：基于大模型代理的大数据平台运维助手
+4. [AgentReputation: A Decentralized Agentic AI Reputation Framework](/202605/10/2605.00073v1-agentreputation-a-decentralized-agentic-ai-reputation-framework)  
    标签：评分：8.0/10、query:malm
-   evidence：LLM编程智能体中的检索增强内存检索
-3. [Trace-Level Analysis of Information Contamination in Multi-Agent Systems](/202605/09/2604.27586v1-trace-level-analysis-of-information-contamination-in-multi-agent-systems)  
-   标签：评分：8.0/10、query:malm
-   evidence：多智能体系统中的信息污染分析
-4. [From Context to Skills: Can Language Models Learn from Context Skillfully?](/202605/09/2604.27660v2-from-context-to-skills-can-language-models-learn-from-context-skillfully)  
-   标签：评分：8.0/10、query:malm
-   evidence：LLM智能体技能发现的自我进化框架
-5. [ARMOR 2025: A Military-Aligned Benchmark for Evaluating Large Language Model Safety Beyond Civilian Contexts](/202605/09/2605.00245v1-armor-2025-a-military-aligned-benchmark-for-evaluating-large-language-model-safety-beyond-civilian-contexts)  
-   标签：评分：7.0/10、query:profile-1
-   evidence：符合法律要求的决策支持与法律规则评估
-6. [AgentFloor: How Far Up the tool use Ladder Can Small Open-Weight Models Go?](/202605/09/2605.00334v1-agentfloor-how-far-up-the-tool-use-ladder-can-small-open-weight-models-go)  
+   evidence：去中心化智能体AI声誉框架
+5. [A Sentence Relation-Based Approach to Sanitizing Malicious Instructions](/202605/10/2605.01078v1-a-sentence-relation-based-approach-to-sanitizing-malicious-instructions)  
    标签：评分：7.0/10、query:malm
-   evidence：智能体系统与多步协作
-7. [MemRouter: Memory-as-Embedding Routing for Long-Term Conversational Agents](/202605/09/2605.00356v1-memrouter-memory-as-embedding-routing-for-long-term-conversational-agents)  
+   evidence：为集成工具的大模型智能体清理恶意指令
+6. [Faithful Mobile GUI Agents with Guided Advantage Estimator](/202605/10/2605.01208v1-faithful-mobile-gui-agents-with-guided-advantage-estimator)  
    标签：评分：7.0/10、query:malm
-   evidence：对话智能体的记忆管理
-8. [LLM-Oriented Information Retrieval: A Denoising-First Perspective](/202605/09/2605.00505v1-llm-oriented-information-retrieval-a-denoising-first-perspective)  
+   evidence：基于大模型的GUI智能体忠实度优先框架
+7. [ClarifySTL: An Interactive LLM Agent Framework for STL Transformation through Requirements Clarification](/202605/10/2605.01209v1-clarifystl-an-interactive-llm-agent-framework-for-stl-transformation-through-requirements-clarification)  
    标签：评分：7.0/10、query:malm
-   evidence：用于检索增强生成和智能体搜索的信息检索
-9. [Impact of Task Phrasing on Presumptions in Large Language Models](/202605/09/2605.00436v1-impact-of-task-phrasing-on-presumptions-in-large-language-models)  
+   evidence：用于需求澄清的交互式大语言模型智能体框架
+8. [Assistance Without Interruption: A Benchmark and LLM-based Framework for Non-Intrusive Human-Robot Assistance](/202605/10/2605.01368v1-assistance-without-interruption-a-benchmark-and-llm-based-framework-for-non-intrusive-human-robot-assistance)  
+   标签：评分：7.0/10、query:malm
+   evidence：基于大语言模型的智能体框架
+9. [Beyond Semantic Relevance: Counterfactual Risk Minimization for Robust Retrieval-Augmented Generation](/202605/10/2605.01302v1-beyond-semantic-relevance-counterfactual-risk-minimization-for-robust-retrieval-augmented-generation)  
+   标签：评分：6.0/10、query:q8
+   evidence：针对决策场景的鲁棒检索增强生成框架
+10. [Segment-Aligned Policy Optimization for Multi-Modal Reasoning](/202605/10/2605.01327v1-segment-aligned-policy-optimization-for-multi-modal-reasoning)  
    标签：评分：6.0/10、query:malm
-   evidence：任务措辞对大语言模型决策和推理的影响
-10. [ARIS: Agentic and Relationship Intelligence System for Social Robots](/202605/09/2605.00943v1-aris-agentic-and-relationship-intelligence-system-for-social-robots)  
+   evidence：针对多步推理的分段对齐策略优化
+11. [AI Expert Twin: Capturing Expert Cognition for Human-Centred, Practice-Based Learning](/202605/10/2605.01401v1-ai-expert-twin-capturing-expert-cognition-for-human-centred-practice-based-learning)  
+   标签：评分：6.0/10、query:q6
+   evidence：模拟专家实践中的隐性推理和上下文敏感判断
+12. [FT-RAG: A Fine-grained Retrieval-Augmented Generation Framework for Complex Table Reasoning](/202605/10/2605.01495v1-ft-rag-a-fine-grained-retrieval-augmented-generation-framework-for-complex-table-reasoning)  
    标签：评分：6.0/10、query:malm
-   evidence：用于社交机器人的智能体AI框架
-11. ["I Don't Know" -- Towards Appropriate Trust with Certainty-Aware Retrieval Augmented Generation](/202605/09/2605.00957v1-i-dont-know----towards-appropriate-trust-with-certainty-aware-retrieval-augmented-generation)  
-   标签：评分：6.0/10、query:malm
-   evidence：确定性感知检索增强生成
-12. [Seeking Information with RAG-Assistants: Does Model Size Matter in Human-AI Collaborations?](/202605/09/2605.00964v1-seeking-information-with-rag-assistants-does-model-size-matter-in-human-ai-collaborations)  
-   标签：评分：6.0/10、query:q2
-   evidence：用于遵守当地立法的RAG助手
+   evidence：用于复杂推理的检索增强生成
 
 
 <div class="dpr-home-promo-card">
