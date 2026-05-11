@@ -1,0 +1,262 @@
+Title: SkillCom: Decomposing LLM-based Semantic Communication into Task and Channel Aware Skills
+
+URL Source: https://arxiv.org/pdf/2605.02333v1
+
+Published Time: Tue, 05 May 2026 01:44:55 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# SkillCom: Decomposing LLM-based Semantic Communication into Task and Channel Aware Skills 
+
+Jingwen Fu, Ming Xiao, Mikael Skoglund KTH Royal Institute of Technology E-mail: {jingwenf, mingx, skoglund }@kth.se 
+
+Abstract —Large language models (LLMs) are increasingly used as semantic encoders and decoders in semantic commu-nication. However, current LLM based systems mostly remain monolithic: a single prompted model, or a tightly coupled trans-mitter/receiver pair, must jointly perform semantic encoding, channel adaptation, and semantic decoding. Such coupling makes intermediate decisions difficult to control, diagnose, or replace, and may cause channel corruption to propagate through acompressed source representation. To address the limitations, we propose SkillCom, a modular framework that decomposes LLM-based semantic communication into four explicit skills: semantic abstraction skill, channel-adaptive transmission skill, receiver-side repair skill, and task execution skill. These skills are interconnected through typed semantic-unit interfaces. Thus, transmission operates on structured unit-level representations rather than on one monolithic text block. This design localizes channel impairment, enables targeted repair from successfully received units, and supports stage-wise ablation and single-skill replacement under matched communication constraints. Experiments on multi-hop question answering and dialogue state tracking show that SkillCom consistently outperforms the mono-lithic LLM baseline, remains more robust under varying channel conditions, and exhibits task-dependent preferences over skill realizations. The results suggest that explicit skill decomposition provides a more robust and diagnosable foundation for LLM-based semantic communication than monolithic methods. 
+
+Index Terms —Semantic communication, large language mod-els, modular decomposition, task-oriented communication, agent skills 
+
+I. I NTRODUCTION 
+
+Classical communication theory primarily optimizes reli-able bit-level transmission and recovery under channel con-straints [1]. In many artificial intelligence (AI)-driven ap-plications, however, the receiver does not require a faithful copy of the source text; it only requires sufficient task-relevant meanings to produce the correct downstream output [2]. This motivates semantic communication , which transmits meaning rather than raw symbols and can provide a better task-performance/communication-cost tradeoff [3]. Represen-tative semantic and task-oriented communication systems have demonstrated the promise of this paradigm. However they are typically end-to-end trained and have a monolithic structure, which makes individual processing stages difficult to isolate, replace, and diagnose [4], [9]–[11]. Large language models (LLMs) have recently emerged as powerful semantic encoders and decoders because of their abilities in abstraction, compression, reasoning, and context regeneration [5], [6]. Most current LLM-based semantic com-munication systems, however, remain monolithic, where a single prompted model or a tightly coupled transmitter/receiver LLM pair jointly handles the stages of semantic abstraction, channel encoding, and downstream decoding without explicit stage separation (Fig. 1(a)) [6]–[8]. The process creates three limitations. First, the model must simultaneously handle source compression, channel encoding, and task fidelity within a single prompt, creating conflicting optimization objectives. Second, the transmitted representation is usually a single text block. Thus, localized channel impairment can disrupt global semantic coherence, leading to catastrophic failure. Third, because intermediate processing decisions remain black box inside the prompt, failures cannot be attributed to specific stages. Thus, the systems are difficult to diagnose and improve. These limitations are not caused by the capability of LLMs themselves, but by their monolithic deployment. Recent work on LLM agents likewise argues that complex behaviors should be organized as explicit and reusable modules at inference time, rather than being left implicit inside a single LLM call [12], [13]. The same principle applies naturally to semantic communication, where semantic abstraction, channel-aware transmission, receiver-side recovery, and task execution are distinct operations with different roles. Motivated by this observation, we propose SkillCom . To the best of our knowledge, SkillCom is the first framework that decomposes LLM-based semantic communication into four explicit and independently replaceable skills with typed interfaces: semantic abstraction skill, channel-adaptive trans-mission skill, receiver-side repair skill, and task execution skill. A central design principle of SkillCom is independent semantic-unit transmission : the source is first abstracted into structured semantic units, and the selected units are transmitted independently rather than as one text block. This converts channel impairment from whole-message failure into localized unit-level erasures, thereby enabling targeted receiver-side repair, stage-wise diagnosis, and modular replacement while the rest of the processing chain remains fixed (Fig. 1(b)). The main contributions of this work are summarized as follows: 1) We propose SkillCom, to the best of our knowledge the first framework that decomposes LLM-based semantic communication into four explicit and independently replaceable skills, namely semantic abstraction skill, channel-adaptive transmission skill, receiver-side repair skill, and task execution skill, connected through typed                              
+
+> arXiv:2605.02333v1 [eess.SY] 4 May 2026 (A) M ONOLITHIC LLM Source x
+> + Task T
+> LLM
+> (compress + adapt + decode)
+> Noisy Channel
+> LLM
+> (reconstruct + execute) Output ˆy
+> compressed text degraded text
+> ×Black-box design ×No per-stage control ×Cannot diagnose
+> (B) S KILL COM Source x
+> + Task T
+> Noisy Channel Output ˆy
+> Semantic Abstraction Skill
+> Channel-Adaptive Transmission Skill
+> Receiver Repair Skill
+> Task Execution Skill
+> typed Uselected Srepaired ˆU
+> ✓Ablatable ✓Replaceable ✓Diagnosable ✓Reusable
+
+Fig. 1. Comparison between monolithic semantic communication and SkillCom. The monolithic paradigm treats compression, channel adaptation, and task execution as a single black-box process, whereas SkillCom decomposes the pipeline into four typed skills with explicit interfaces. 
+
+interfaces. This formulation enables stage-wise ablation, single-skill replacement, and targeted diagnosis that are difficult to achieve in monolithic semantic systems. 2) We introduce independent semantic-unit transmission, in which typed semantic units are transmitted individually rather than as a single compressed text block. This localizes channel impairment at the unit level so that packet loss affecting one unit does not invalidate the others, enabling receiver-side repair from successfully received units. 3) We conduct evaluations on multi-hop question answer-ing (QA) and dialogue state tracking (DST) tasks under channel constraints and varying noise regimes. The results show that SkillCom outperforms monolithic LLM models and that the preferred skill realization depends on different tasks. II. S YSTEM MODEL AND SEMANTIC REPRESENTATION 
+
+A. Problem Formulation 
+
+We consider an end-to-end semantic communication system in which the transmitter observes source text x and a task descriptor T , and sends task-relevant meaning over a noisy channel to a receiver that produces the output ˆy. Transmission is constrained by a communication budget B, and the channel state is denoted by c, which we assume is available to both the transmitter and the receiver. Task performance is measured by a utility function m(ˆ y, y ⋆), where y⋆ is the reference output. The design goal is to maximize task utility under the communication budget: 
+
+max E[m(ˆ y, y ⋆)] s.t. cost( US ) ≤ B, (1) where US = {uj }j∈S denotes the transmitted semantic repre-sentation and cost( ·) is its communication cost. Within this formulation, SkillCom decomposes the transmitter–receiver processing chain into four sequential skills (Fig. 1(b)). The transmitter first abstracts and then selects: 
+
+U = ABS (x, T ), (2) where U = {u1, . . . , u N } is the semantic-unit set, and 
+
+S = TRANS (U, c, B, T ), (3) where S ⊆ { 1, . . . , N } is the subset selected for transmission. The transmitted semantic representation US = {uj }j∈S is sent through the channel, yielding the corrupted received representation ˜US . The receiver then repairs and executes: 
+
+ˆU = REPAIR ( ˜US , T ), (4) 
+
+ˆy = EXEC ( ˆU, T ), (5) where ˆU is the repaired semantic context and ˆy is the final task output. 
+
+B. Channel Model 
+
+The channel state c introduced in Section II-A is instantiated as the operating signal-to-noise ratio (SNR). Following the coded packet erasure model over additive white Gaussian noise (AWGN) [14], each selected semantic unit is treated as an independently coded packet protected by an error-detecting code (e.g., CRC). For binary phase-shift keying (BPSK) modulation, the bit error rate is given by 
+
+pb = 12 erfc  p
+
+10 SNR /10 . (6) For a unit uj , let Lj denote its byte length and gj denote its robustness score. Its coded length is then 
+
+nj = Lj · 8 · (2 − gj ) / R  (7) bits, where R is the code rate that accounts for the error-detection overhead. The factor (2 − gj ) adjusts the coded length according to unit robustness. Because the code detects but does not correct bit errors, the packet is declared erased whenever any bit error is detected. The resulting packet erasure probability (PER) of uj is therefore 
+
+PER j = 1 − (1 − pb)nj , (8) and the unit is delivered intact otherwise [14]. The received representation therefore factorizes as 
+
+p
+
+ ˜US | U S , SNR 
+
+
+
+= Y
+
+> j∈S
+
+p(˜ uj | uj , SNR) , (9) Semantic Abstraction          
+
+> Source x, Task TTask-Aware Extraction
+> Keyword
+> Entity
+> Evidence
+> Slot-Val
+> (i) Heuristic (0 LLM) (ii) LLM-Enriched (iii) Structured LLM
+> U={uj}
+> (ξ, τ, r, s, g, κ )
+
+Channel-Adaptive Transmission             
+
+> Priority Scoring Greedy Selection
+> LLM Dedup Budget Enforce
+> wj=αr r j+αss j+αg g j−αcκ j,
+> st. |S|≤ Bu, Σκ≤Bκ, Σ|ξ|≤ Bc
+> SNR
+> S⊆{ 1. . .N }
+> Erasure Channel
+> PER j=1 −(1 −pb)nj
+> ˜US
+> successfully received units
+
+Receiver Repair     
+
+> Erasure Detection
+> (i) Generative: synthesize units
+> (ii) Guided: context guidance
+> S∅=S\Srx
+> ˆU
+
+Task Execution   
+
+> LLM Decoder
+> QA: answer DST: slots
+> Output ˆy
+> SENDER RECEIVER
+
+Fig. 2. One realization of the proposed SkillCom processing chain. The transmitter abstracts the source into typed semantic units and selects units under budget constraints, the channel independently erases transmitted units, and the receiver repairs the received units before task execution. 
+
+where p(˜ uj | uj , SNR) is the packet-level transition distribu-tion induced by PER j . In particular, p(˜ uj = ∅ | uj , SNR) = PER j and p(˜ uj = uj | uj , SNR) = 1 − PER j .
+
+C. Semantic Unit Representation 
+
+In a monolithic system, the transmitter sends a single compressed text block. This design has a clear limitation: a single packet error can corrupt the entire message. To address this problem, we propose a semantic unit representation for transmission. Each unit is typed and can be selected, transmit-ted, and repaired independently. Formally, one unit is defined as 
+
+ui =  ξi, τ i, r i, s i, g i, κ i
+
+, (10) where ξi is the semantic payload, i.e., the text content carried by the unit, τi ∈ V is the unit type, ri ∈ [0 , 1] is task relevance, si ∈ [0 , 1] is source importance, gi ∈ [0 , 1] is channel robustness, and κi > 0 is the token cost. In the transmission stage, ( rj , sj , gj , κj ) will be used to form the priority score in (12). Although the type set V may vary across tasks, the six-field interface is fixed and shared by all downstream skills. This fixed interface enables composability across tasks and implementations. This representation provides two advantages. First, each unit carries both semantic value and transmission cost, so the transmission skill can perform selection under explicit rate constraints. Second, this representation supports a unit-level transmission model rather than a single monolithic text block. As a result, erasure of one unit does not invalidate the remaining received units, which can still support downstream repair and task execution. III. S KILL MODULES AND REALIZATIONS 
+
+Building on the system design in Section II, this section describes representative realizations of the four skills in this paper. Fig. 2 shows one realization of these skills. 
+
+A. Semantic Abstraction Skill 
+
+The abstraction skill A BS (x, T ) → U maps raw source text to typed semantic units in (10). Because SkillCom is task-aware, the abstraction stage should adapt to different task needs, such as precise evidence extraction or broader contextual coverage. We therefore design three realizations of the abstraction skill. Although they differ in LLM involvement, all produce the same six-field interface (ξi, τ i, r i, s i, g i, κ i) and are interchangeable for downstream skills. 
+
+a) Heuristic Abstraction: This realization relies on deter-ministic extraction heuristics. Candidate spans are scored using term frequency-inverse document frequency (TF-IDF) salience and entity cues and are then mapped to task-appropriate unit types. For QA, it emphasizes evidence-bearing spans; for DST, it emphasizes domain–slot–value structure. 
+
+b) LLM-Enriched Abstraction: This realization augments heuristic extraction with LLM-generated keywords, entities, and concise summaries. It broadens coverage for implicit or paraphrased information while preserving the same typed interface for downstream skills. 
+
+c) Structured LLM Extraction: This realization performs abstraction through a JSON-schema-constrained LLM call that directly outputs the target unit types, providing an LLM-driven abstraction process while preserving the shared semantic-unit interface. As we will show in Section IV, different tasks favor different abstraction modes, further motivating the task-aware design of the abstraction skill. B. Channel-Adaptive Transmission Skill 
+
+The transmission skill T RANS (U, c, B, T ) → S selects a subset of semantic units for transmission under channel and budget constraints. In the channel model of Section II-B, the channel state c is instantiated by SNR . Because different units contribute differently to task success, communication efficiency, and robustness, the selector should prioritize in-formation that is both semantically useful and economical to transmit. We therefore formulate transmission as the following constrained utility maximization problem: 
+
+max  
+
+> S⊆{ 1,...,N }
+
+X
+
+> j∈S
+
+wj
+
+s.t. |S| ≤ Bu, X
+
+> j∈S
+
+κj ≤ Bκ, X
+
+> j∈S
+
+|ξj | ≤ Bc
+
+(11) where |ξj | denotes the character length of unit uj . The unit priority score is defined as 
+
+wj = αr rj + αs sj + αg gj − αc κj , (12) with non-negative weights (αr , α s, α g , α c) for task relevance 
+
+rj , source importance sj , channel robustness gj , and trans-mission cost κj . This score favors units that are task-relevant, source-important, and robust to channel impairment, while penalizing transmission cost. We consider two realizations of the transmission skill. 
+
+a) Greedy Selection: Units are ranked by wj in descend-ing order and added to S until adding another unit would exceed one of the budget constraints in (11). 
+
+b) Greedy Selection with LLM Deduplication: This re-alization augments greedy selection with a semantic dedupli-cation and reranking step to reduce redundancy before final budget enforcement. The resulting selected set still satisfies the constraints in (11). 
+
+C. Receiver Repair Skill 
+
+The repair skill R EPAIR ( ˜US , T ) → ˆU reconstructs a seman-tically usable representation from the successfully received units. Let Srx ⊆ S denote the indices of successfully received units and S∅ = S \ Srx the erased ones. From the received unit IDs, the repair skill identifies the missing set S∅ and uses the successfully received units {uj }j∈Srx together with the task descriptor T to recover missing information or provide structured support for downstream inference. We consider two task-dependent realizations of the repair skill. 
+
+a) Generative Repair: This strategy synthesizes replace-ment units through an LLM conditioned on the successfully received units and the task query. It is suited to tasks in which partial recovery of missing evidence can still improve downstream inference. 
+
+b) Guided Repair: This strategy does not synthesize new units. Instead, it derives structured guidance from the surviving context, such as active domains and confirmed slot– value pairs, and passes this guidance to the execution stage. It is better suited to tasks that require conservative structured outputs and are sensitive to hallucinated content. In both cases, the repaired output ˆU remains in the semantic-unit space, so communication recovery and task inference remain separately diagnosable. 
+
+D. Task Execution Skill 
+
+The execution skill E XEC ( ˆU, T ) → ˆy maps the repaired semantic representation to the final task output through a task-conditioned LLM decoder. It is the final stage of the pipeline and the only stage that commits to the downstream output space. For the QA task, the decoder takes the repaired units together with the query and generates a short answer. For the DST task, it takes the repaired dialogue representation and outputs canonical slot–value pairs. Because the execution skill always takes the same repaired-unit interface as input, changes in abstraction, transmission, or repair do not require changing the execution stage. IV. N UMERICAL RESULTS 
+
+A. Experimental Setup 1) Tasks: We evaluate on HotpotQA [15], a multi-hop question answering benchmark, and MultiWOZ 2.4 [16], a multi-domain DST benchmark. 
+
+2) Methods Under Comparison: We compare SkillCom with a monolithic baseline. The monolithic baseline com-presses the full source into a single text block at the trans-mitter and performs task decoding at the receiver without explicit stage decomposition. We also instantiate SkillCom in four variants to examine which skill configurations are more effective for different tasks. SkillCom-Heuristic uses heuristic abstraction only, SkillCom-Enrich augments heuristic abstraction with LLM-generated keywords, entities, and sum-maries, SkillCom-Struct uses a structured LLM call to extract semantic units directly, and SkillCom-Struct+Dedup further adds channel-aware LLM deduplication before transmission. 
+
+3) Channel and Budget: All comparisons use the coded packet erasure channel in Section II-B with coding rate 
+
+R=0 .5 and matched budgets across methods. HotpotQA uses 
+
+(Bu, B κ, B c) = (4 , 48 , 300) , and MultiWOZ uses (5 , 56 , 350) .
+
+4) Metrics and Implementation: For HotpotQA we report exact match (EM) and token-level F1; for MultiWOZ we report joint goal accuracy (JGA) and slot-level F1. We also report the number of LLM calls per sample and transmitted tokens. For each task, we evaluate 100 sampled examples with a fixed seed. All LLM calls use DeepSeek-Chat with temperature 0 and caching for reproducibility. The repair skill uses the generative strategy for HotpotQA and the guided strategy for MultiWOZ. 
+
+B. Main Comparison 
+
+Tables I and II present the main comparison at SNR=7 dB. First, SkillCom consistently outperforms the monolithic base-line. On HotpotQA, SkillCom-Struct+Dedup improves EM from 0.42 to 0.56 and F1 from 0.51 to 0.68 . On Multi-WOZ, the monolithic baseline attains only 0.02 JGA and 
+
+0.03 Slot F1, whereas all SkillCom variants recover meaning-ful dialogue state; SkillCom-Enrich achieves 0.08 JGA and TABLE I MAIN COMPARISON ON HOTPOT QA ( SNR=7 DB).                                                   
+
+> Method EM ↑F1 ↑LLM Calls ↓Tx Tokens ↓
+> Monolithic 0.42 0.51 224.0 SkillCom-Heuristic 0.42 0.52 227.9 SkillCom-Enrich 0.45 0.57 530.0 SkillCom-Struct 0.49 0.59 319.4 SkillCom-Struct+Dedup 0.56 0.68 46.8
+> TABLE II MAIN COMPARISON ON MULTI WOZ DST ( SNR=7 DB).
+> Method JGA ↑Slot F1 ↑LLM Calls ↓Tx Tokens ↓
+> Monolithic 0.02 0.03 226.8 SkillCom-Heuristic 0.05 0.36 217.5 SkillCom-Enrich 0.08 0.42 515.9 SkillCom-Struct 0.07 0.33 38.3 SkillCom-Struct+Dedup 0.01 0.25 45.4
+
+0.42 Slot F1. Second, the preferred skill realization is task-dependent: structured abstraction with deduplication performs best on HotpotQA, whereas the LLM-enriched variant per-forms best on MultiWOZ, suggesting that DST benefits more from broad contextual coverage than from aggressive structural compression. These results show that skill decomposition en-ables not only modularity but also task-dependent optimization of individual skill implementations. 
+
+C. Noise Robustness 
+
+Fig. 3 summarizes performance over SNR values ranging from 4 to 14 dB for the monolithic baseline and three rep-resentative SkillCom variants on HotpotQA and MultiWOZ. First, SkillCom degrades more gracefully than the monolithic baseline as noise increases. Across both tasks, the monolithic baseline exhibits severe performance degradation as SNR de-creases, whereas the SkillCom variants maintain substantially higher utility over the full sweep. This contrast is especially visible in HotpotQA, where SkillCom-Struct+Dedup remains effective even at low SNR while the monolithic baseline suf-fers catastrophic degradation near the SNR=7 –8 dB regime. Second, at SNR=4 dB the monolithic baseline drops to near-zero performance, while SkillCom still preserves meaningful task performance on both tasks, confirming the structural ad-vantage of unit-level transmission in which erasure of one unit does not invalidate the others. The task-dependent preference over skill realizations also persists across all noise levels. 
+
+D. Skill Ablation 
+
+To quantify the contribution of individual skills, we ablate one component at a time from the best-performing SkillCom variant on each task while keeping all other skills fixed, using the same SNR=7 dB setting as the main comparison. Tables III and IV summarize the results. On HotpotQA (Table III), the full model is SkillCom-Struct+Dedup. Removing channel-aware transmission causes the largest drop ( ∆F1 =−0.20 ), followed by removing LLM                                                                             
+
+> TABLE III SKILL ABLATION ON HOTPOT QA ( SNR=7 DB). F ULL MODEL :SKILL COM -S TRUCT +D EDUP .
+> LLM Abs. Dedup Ch-Aware Repair EM ↑F1 ↑∆EM ∆F1
+> ✓✓✓✓0.56 0.68 ——
+> ✓✓✓✗0.51 0.61 −0.05 −0.07
+> ✓✓✗✓0.36 0.48 −0.20 −0.20
+> ✓✗✓✓0.49 0.59 −0.07 −0.09
+> ✗✗✓✓0.42 0.52 −0.14 −0.16
+> TABLE IV SKILL ABLATION ON MULTI WOZ DST ( SNR=7 DB). F ULL MODEL :SKILL COM -E NRICH .
+> LLM Abs. Ch-Aware Repair JGA ↑Slot F1 ↑∆JGA ∆Slot F1
+> ✓✓✓0.08 0.42 ——
+> ✗✓✓0.05 0.36 −0.03 −0.06
+> ✓✗✓0.08 0.41 ±0.00 −0.01
+> ✓✓✗0.07 0.43 −0.01 +0 .01
+
+abstraction ( −0.16 ) and deduplication ( −0.09 ). This indicates that channel-aware unit prioritization is the most critical skill for QA at this operating point. On MultiWOZ (Table IV), the full model is SkillCom-Enrich. The dominant factor is LLM-enriched abstraction: removing it reduces Slot F1 from 0.42 to 
+
+0.36 and JGA from 0.08 to 0.05 , whereas removing channel-aware transmission or repair has only minor effect. Overall, the performance-limiting skill varies with the task: channel-aware transmission is most critical for QA, whereas LLM-enriched abstraction is most critical for DST. This kind of targeted diagnosis is difficult to obtain from a monolithic system and illustrates the analytical value of explicit skill decomposition. 
+
+E. Budget Sensitivity 
+
+To examine how performance varies with the communi-cation budget, we evaluate the monolithic baseline and two representative SkillCom variants across four budget levels at SNR=7 dB (Tables V and VI). For each task, the best-performing variant from Section IV-B is included alongside the best variant from the other task for cross-comparison. Budgets are scaled proportionally from a tight setting (Bu=2) to a generous setting (Bu=6 –7) .SkillCom maintains a clear advantage at every budget level: on HotpotQA, SkillCom-Struct+Dedup attains F1 = 0 .65 even under the tightest budget (Bu=2) , compared with 0.48 for the monolithic baseline. Moreover, SkillCom converts additional budget into task performance more effectively; on MultiWOZ, the Slot F1 of SkillCom-Enrich grows from 0.33 to 0.47 as the budget increases, while the monolithic baseline remains nearly flat ( 0.04 –0.09 ), confirming that unit-level transmission makes each additional unit independently useful for downstream inference. V. C ONCLUSION 
+
+We presented SkillCom, a framework that decomposes LLM-based semantic communication into four independently replaceable skills connected through typed semantic-unit in-terfaces. Experiments on HotpotQA and MultiWOZ show that Fig. 3. Noise robustness of the monolithic baseline and SkillCom variants across SNR levels on HotpotQA and MultiWOZ. TABLE V BUDGET SENSITIVITY ON HOTPOT QA ( SNR=7 DB). B UDGET FORMAT :
+
+(Bu, B κ, B c).                                      
+
+> EM ↑Token F1 ↑
+> Method Tight Med. Def. Gen. Tight Med. Def. Gen.
+> Monolithic 0.39 0.37 0.41 0.42 0.48 0.47 0.51 0.52 SkillCom-Struct+Dedup 0.51 0.50 0.56 0.52 0.65 0.67 0.68 0.67
+> SkillCom-Enrich 0.42 0.42 0.45 0.43 0.55 0.56 0.57 0.53 Tight (2 ,24 ,150) Med. (3 ,36 ,225) Def. (4 ,48 ,300) Gen. (6 ,72 ,450)
+
+TABLE VI BUDGET SENSITIVITY ON MULTI WOZ DST ( SNR=7 DB).                                       
+
+> JGA ↑Slot F1 ↑
+> Method Tight Med. Def. Gen. Tight Med. Def. Gen.
+> Monolithic 0.05 0.03 0.04 0.04 0.09 0.04 0.05 0.05 SkillCom-Enrich 0.08 0.08 0.08 0.09 0.33 0.36 0.42 0.47
+> SkillCom-Struct+Dedup 0.01 0.03 0.03 0.03 0.14 0.23 0.27 0.27 Tight (2 ,28 ,175) Med. (3 ,42 ,260) Def. (5 ,56 ,350) Gen. (7 ,84 ,525)
+
+SkillCom consistently outperforms a monolithic baseline in task accuracy, noise robustness, and budget efficiency, while skill ablation reveals task-dependent bottlenecks that are diffi-cult to diagnose in monolithic systems. These results suggest that explicit skill decomposition and unit-level transmission provide a more robust and diagnosable foundation for LLM-based semantic communication. REFERENCES [1] C. E. Shannon and W. Weaver, The Mathematical Theory of Communi-cation . Urbana, IL, USA: Univ. Illinois Press, 1949. [2] J. Bao, P. Basu, M. Dean, C. Partridge, A. Swami, W. Leland, and J. A. Hendler, “Towards a theory of semantic communication,” in Proc. IEEE Netw. Sci. Workshop , 2011, pp. 110–117. [3] H. Xie, Z. Qin, G. Y. Li, and B.-H. Juang, “Deep learning enabled semantic communication systems,” IEEE Trans. Signal Process. , vol. 69, pp. 2663–2675, 2021. [4] T. M. Getu, G. Kaddoum, and M. Bennis, “Semantic communication: A survey on research landscape, challenges, and future directions,” Proc. IEEE , vol. 112, no. 11, pp. 1649–1685, Nov. 2024. [5] H. Zhou, C. Hu, Y. Yuan, Y. Cui, Y. Jin, C. Chen, H. Wu, D. Yuan, L. Jiang, D. Wu, X. Liu, C. Zhang, X. Wang, and J. Liu, “Large language model (LLM) for telecommunications: A comprehensive survey on principles, key techniques, and opportunities,” IEEE Commun. Surveys Tuts. , vol. 27, pp. 1955–2005, 2024. [6] S. R. Pokhrel and A. Walid, “On large language model-based joint source channel coding for semantic communication,” in Proc. 2024 2nd Int. Conf. Found. Large Lang. Models (FLLM) , Dubai, United Arab Emirates, 2024, pp. 322–329, doi: 10.1109/FLLM63129.2024.10852431. [7] Y. Wang, Z. Sun, J. Fan, and H. Ma, “On the uses of large language models to design end-to-end learning semantic communication,” in Proc. IEEE Wireless Commun. Netw. Conf. (WCNC) , 2024, pp. 1–6, doi: 10.1109/WCNC57260.2024.10570717. [8] Y. Zhao, Y. Yue, S. Hou, B. Cheng, and Y. Huang, “LaMoSC: Large language model-driven semantic communication system for visual trans-mission,” IEEE Trans. Cogn. Commun. Netw. , vol. 10, no. 6, pp. 2005– 2018, Dec. 2024, doi: 10.1109/TCCN.2024.3401712. [9] Y. Shao, S. C. Liew, and D. G¨ und¨ uz, “Task-oriented communication for multi-device cooperative edge inference,” IEEE Trans. Wireless Commun. , vol. 22, no. 1, pp. 73–87, Jan. 2023. [10] J. Fu, M. Xiao, C. Ren, and M. Skoglund, “Computation-resource-efficient task-oriented communications,” IEEE Trans. Commun. , early access, 2025, doi: 10.1109/TCOMM.2025.3587076. [11] J. Fu, M. Xiao, Z. Lyu, M. Skoglund, and C. Wu, “Robust multi-modal task-oriented communications with redundancy-aware representations,” 
+
+arXiv preprint arXiv:2511.08642 , 2025. [12] Y. Wang, Y. Pan, Z. Su, Y. Deng, Q. Zhao, L. Du, T. H. Luan, J. Kang, and D. Niyato, “Large model-based agents: State-of-the-art, cooperation paradigms, security and privacy, and future trends,” IEEE Commun. Surveys Tuts. , vol. 28, pp. 1906–1949, 2025. [13] X. Li et al. , “SkillsBench: Benchmarking how well agent skills work across diverse tasks,” arXiv preprint arXiv:2602.12670 , 2026. [14] J. G. Proakis and M. Salehi, Digital Communications , 5th ed. New York, NY, USA: McGraw-Hill, 2008. [15] Z. Yang, P. Qi, S. Zhang, Y. Bengio, W. Cohen, R. Salakhutdinov, and C. D. Manning, “HotpotQA: A dataset for diverse, explainable multi-hop question answering,” in Proc. EMNLP , 2018, pp. 2369–2380. [16] P. Budzianowski, T.-H. Wen, B.-H. Tseng, I. Casanueva, S. Ultes, O. Ramadan, and M. Gaˇ si´ c, “MultiWOZ – A large-scale multi-domain Wizard-of-Oz dataset for task-oriented dialogue modelling,” in Proc. EMNLP , 2018, pp. 5016–5026.

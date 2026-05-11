@@ -1,0 +1,493 @@
+Title: MASPrism: Lightweight Failure Attribution for Multi-Agent Systems Using Prefill-Stage Signals
+
+URL Source: https://arxiv.org/pdf/2605.07509v1
+
+Published Time: Mon, 11 May 2026 01:11:48 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+# MASPrism : Lightweight Failure Attribution for Multi-Agent Systems Using Prefill-Stage Signals 
+
+# Yang Liu 
+
+Sun Yat-sen University Zhuhai, China liuy2355@mail2.sysu.edu.cn 
+
+# Hongjiang Feng 
+
+Sun Yat-sen University Zhuhai, China fenghj5@mail2.sysu.edu.cn 
+
+# Junsong Pu 
+
+Sun Yat-sen University Zhuhai, China pujs@mail2.sysu.edu.cn 
+
+# Zhuangbin Chen ∗
+
+Sun Yat-sen University Zhuhai, China chenzhb36@mail.sysu.edu.cn 
+
+## Abstract 
+
+Failure attribution in LLM-based multi-agent systems aims to iden-tify the steps that contribute to a failed execution. This task remains difficult because a single execution can contain many agent actions and tool calls, failure evidence can appear many steps after the original mistake, and existing methods often rely on costly agent workflows, replay, or training on synthetic failure logs. To address these challenges, we propose MASPrism , a lightweight framework that performs failure attribution using prefill-stage signals from a small language model (SLM). MASPrism first extracts token-level negative log-likelihood and attention weights during a prefill pass to identify symptom-like steps and earlier candidate sources, without decoding. It then reconstructs a focused diagnostic prompt and per-forms a second prefill pass to rank failure-source candidates. Using Qwen3-0.6B as the SLM, MASPrism achieves the best performance on three of the four evaluated subsets across Who&When and TRAIL, improving Top-1 accuracy on Who&When-HC by 33.41% over the best baseline. On TRAIL, MASPrism outperforms strong proprietary LLMs, including Gemini-2.5-Pro, with up to 89.50% relative improvement. MASPrism processes each trace in 2.66 sec-onds on average, achieving a 6.69 × speedup over the single-pass prompting baseline, with zero output tokens. These results show that MASPrism provides an effective and practical framework for failure attribution in long multi-agent execution logs. 
+
+## Keywords 
+
+Multi-agent systems, Failure attribution, Trace diagnosis 
+
+ACM Reference Format: 
+
+Yang Liu, Hongjiang Feng, Junsong Pu, and Zhuangbin Chen. 2026. MASPrism :Lightweight Failure Attribution for Multi-Agent Systems Using Prefill-Stage  
+
+> ∗Zhuangbin Chen is the corresponding author. Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and the full citation on the first page. Copyrights for components of this work owned by others than the author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or republish, to post on servers or to redistribute to lists, requires prior specific permission and/or a fee. Request permissions from permissions@acm.org.
+> ASE ’26, Munich, Germany
+> ©2026 Copyright held by the owner/author(s). Publication rights licensed to ACM. ACM ISBN 978-1-4503-XXXX-X/2018/06 https://doi.org/XXXXXXX.XXXXXXX
+
+Signals. In Proceedings of The IEEE/ACM International Conference on Auto-mated Software Engineering (ASE ’26). ACM, New York, NY, USA, 12 pages. https://doi.org/XXXXXXX.XXXXXXX 
+
+## 1 Introduction 
+
+LLM-based multi-agent systems increasingly solve complex tasks through coordinated agent actions, inter-agent messages, and tool calls [ 44 ]. During execution, these systems produce traces that record the actions taken by different agents and the results re-turned by external environments [ 5 ]. When the final output fails to satisfy the user request, developers need to inspect these traces to identify the steps that contributed to the failure [16]. This attri-bution process provides the basis for debugging agent workflows, revising prompts, correcting tool-use logic, and improving agent coordination. Therefore, failure attribution over multi-agent exe-cution traces has become an important problem for maintaining reliable LLM-based multi-agent systems. Failure attribution over these traces is difficult because the struc-ture of a failed execution often obscures where the failure starts. First, a trace may contain many agent actions, inter-agent messages, and tool calls [ 43 ], creating a large search space for developers to inspect. Second, the step where a mistake is introduced is often not the step where the failure becomes visible. An early wrong action may appear locally plausible, but its effect can propagate through later agents and tools before causing an observable error or an incorrect final response. Third, in realistic debugging settings, developers only have the failed trace and the user request, without access to the correct answer as an oracle for judging each interme-diate step. These properties make failure attribution different from simply detecting an abnormal step: the diagnosis must connect visible symptoms to earlier steps that may have triggered them. Existing approaches have made failure attribution automated, but they often rely on assumptions that are difficult to satisfy in long-trace and oracle-free debugging settings. Agent-based meth-ods use a diagnostic agent or workflow to inspect the failed trace and produce an attribution judgment, ranging from direct prompt-ing with a diagnostic agent to multi-step workflows. These methods require decoding over long contexts, which increases latency and token cost for long traces [ 40 ]. Replay-based methods collect attri-bution evidence from repeated executions or trajectory replays to estimate which steps are responsible, which can incur high cost  
+
+> arXiv:2605.07509v1 [cs.SE] 8 May 2026 ASE ’26, October 12–16, 2026, Munich, Germany Yang Liu, Hongjiang Feng, Junsong Pu, and Zhuangbin Chen
+
+when traces are long or involve tool calls and external environ-ments. Training-based methods construct annotated or synthetic failure logs to train diagnostic models, which introduces depen-dence on the coverage and representativeness of the constructed failures. These approaches provide useful attribution mechanisms, but they often obtain diagnostic evidence through generated rea-soning, repeated execution, or task-specific training data, making attribution costly or condition-dependent for long failed traces. We take a different view: failure attribution can be supported by signals that a language model already computes while reading the failed trace. In particular, prefill-stage signals from an SLM provide complementary evidence for failure attribution. Step-level negative log-likelihood (NLL), computed by averaging token-level NLL within each trace step, highlights symptom-like steps where the failure becomes observable, because explicit errors, inconsistent actions, or abnormal outputs often appear less predictable under the preceding context. However, these symptom-like steps are not always the earlier sources that triggered the failure. Attention from these high-NLL steps provides a routing signal that helps prior-itize earlier candidate sources. Our preliminary analysis shows that attention-based ranking from high-NLL steps substantially improves the top-5 coverage of annotated failure-relevant loca-tions, suggesting that these two prefill-stage signals can support symptom-to-source attribution without generating diagnostic text. 
+
+MASPrism operationalizes this observation as a two-stage rank-ing pipeline that uses only prefill passes of an SLM. In the Filtering stage, MASPrism preserves global trace coverage by constructing a truncated trace in which each step is represented by a fixed-length prefix. It then performs the first prefill pass on this truncated trace, using step-level NLL to identify symptom steps and attention from these symptoms to select earlier candidate sources for diagnosis. In the Diagnosis stage, MASPrism reconstructs a focused prompt by restoring the full content of symptom and candidate steps while replacing other steps with brief prefixes and omission markers, and then performs a second prefill pass to rank candidate failure sources. The framework outputs a ranked list of failure-source candidates with symptom-to-source links, using internal prefill signals rather than decoded explanations or diagnostic judgments. We evaluate MASPrism in an oracle-free setting on two com-plementary benchmarks, Who&When and TRAIL. Who&When evaluates single-step root-cause identification, while TRAIL evalu-ates localization over multiple annotated error spans in long agent traces. Using Qwen3-0.6B as the SLM, MASPrism achieves the best performance on three of the four evaluated subsets, improving Top-1 accuracy on Who&When-HC from 20.68% to 27.59% over the best baseline. On TRAIL, MASPrism achieves higher Location Ac-curacy than Gemini-2.5-Pro, the best baseline that completes both GAIA and SWE-bench, with relative improvements of 8.24% and 89.50%, respectively. At the same time, MASPrism processes each Who&When-HC trace in 2.66 seconds on average with 7,066 input tokens and zero output tokens, compared with 17.82 seconds, 17,748 input tokens, and 620 output tokens for A2P. These results sug-gest that prefill-stage signals can support competitive attribution accuracy while reducing the cost profile of trace diagnosis. In summary, this paper makes the following contributions: 
+
+• We present MASPrism , an oracle-free failure attribution framework that uses prefill-stage signals from an SLM to diagnose multi-agent execution traces without generated diagnostic text, execution replay, or task-specific training. 
+
+• We design a staged ranking method that retains trace cover-age while enabling fine-grained attribution with fewer input tokens. Filtering identifies symptom steps and upstream can-didates from a step-level truncated trace, while Diagnosis selectively restores these steps to recover details for final ranking. The framework outputs ranked failure-source can-didates with symptom-to-source links, providing inspectable alternatives beyond a single top prediction. 
+
+• We evaluate MASPrism on Who&When and TRAIL, covering both single-step root-cause identification and multi-span error localization. Compared with existing state-of-the-art baselines, the results show higher attribution accuracy on long traces and lower latency and token cost. 
+
+## 2 Background and Motivation 2.1 Failure Attribution in Multi-agent Systems 
+
+2.1.1 Multi-agent System and Its Tracing. A multi-agent system solves complex tasks by dividing work among several language models [ 15 , 25 ]. Instead of relying on a single model to process a large amount of information, the system distributes the reasoning process across multiple agents [ 18 , 38 ]. These agents communicate through messages and interact with external environments by ex-ecuting tools [ 14 , 45 ]. Through this continuous exchange of data, the system filters intermediate information and refines the working context over time [ 29 ]. The system aggregates outputs from indi-vidual agents to gradually construct the final response to the user query [ 10 ]. Specifically, the activity record of a multi-agent system can be serialized as a trace 𝐿 = {𝑠 1, 𝑠 2, . . . , 𝑠 𝑁 }, where 𝑁 is the total number of steps. Each step 𝑠 𝑖 represents a single operation by a specific agent, recording the action it took and the result it received from the environment. However, the final output of a multi-agent system sometimes fails to meet user expectations. When a fail-ure occurs, developers often need to examine the trace to identify failure-relevant steps, so that they can optimize the system [27]. 
+
+2.1.2 Problem Statement. To formally describe this diagnostic pro-cess, we establish the following definition. Failure attribution in multi-agent systems is the process of analyzing a failed trace 𝐿 
+
+to identify the steps that caused the entire system to fail the user query [ 9, 17 , 41 , 48 ]. Automating this process is challenging. Agents in these systems do not operate in isolation [ 38 ]. The output of one agent’s action often serves as the input for another, creating long and intricate causal chains throughout the trace [ 9 ]. An error made in an early step can therefore propagate through many subsequent actions before the final output reveals a failure [ 45 , 48 ]. This makes tracing the failure back to its original source a difficult task. 
+
+2.1.3 Limitations of Existing Approaches. Recent studies attempt to automate this failure attribution process through several directions. We refer to the first direction as agent-based failure attribution, where researchers design a diagnostic agent or workflow to reason over the failed trace 𝐿 and identify the root cause [ 3 , 36 , 48 , 50 ]. Such methods range from direct prompting with a single diagnostic agent MASPrism ASE ’26, October 12–16, 2026, Munich, Germany 
+
+to multi-step workflows that repeatedly review the trace or refine intermediate judgments [ 22 ]. However, to accurately diagnose a failure, the diagnostic agent or workflow [ 4, 39 ] must thoroughly analyze the long context and the complex interactions between the original agents. This process often requires expensive language model calls, which makes the financial and computational cost of analyzing a single trace high. Since real-world applications generate a large number of failed traces, this high cost can make agent-based attribution difficult to deploy at scale. Another direction is replay-based failure attribution , where re-searchers rerun or perturb executions to estimate which steps are responsible for the failure [ 13 ]. This reliance on repeated replays can incur high attribution cost, especially for long agent traces [ 35 ]. We refer to the next direction as training-based failure attribution ,where researchers inject artificial errors into system executions to create synthetic datasets with known root causes and train a diag-nostic model [ 24 , 47 ]. The problem with this approach is that fault injection may capture only a limited set of failure patterns [ 9, 17 ]. In the real world, multi-agent systems fail in many different ways [ 7], so models trained on synthetic failures may face generalization risks when applied to unseen agent logs [35]. Therefore, to make automated failure attribution more practical, we need a new approach. Such a method must be computationally efficient enough to handle the large volume of traces generated by real-world systems, by reducing reliance on costly agent work-flows [ 49 ] and repeated execution replay. It should also avoid de-pending on synthetic error injection to better support diagnosis for diverse and unpredictable failures in new multi-agent systems. 
+
+## 2.2 Language Model Prefill Stage 
+
+Instead of designing costly agent workflows, replaying system exe-cutions, or training models on synthetic failure logs, we investigate the internal computations of language models. We explore whether the signals naturally computed during the initial text reading phase can support failure diagnosis. In the following sections, we first explain these mathematical signals. We then present two empiri-cal studies to observe if these signals could help developers locate abnormal actions and trace causal links within system executions. 
+
+2.2.1 Internal Prefill Signals. Language models generally process text in two phases [ 8, 23 ]. The prefill stage reads the entire input sequence at once to build an internal representation of the text [ 30 ]. After that, the decode stage generates the response one token at a time. During the prefill stage, the model calculates internal states that might be helpful to analyze the system trace. One such calcu-lation is the attention mechanism [ 34 ]. The attention weight 𝛼 𝑖,𝑗 
+
+between a current token 𝑖 and a preceding token 𝑗 is computed as 
+
+𝛼 𝑖,𝑗 = softmax ( 𝑞 𝑖 ·𝑘 𝑗  
+
+> √𝑑
+
+) [ 34 ], where 𝑞 𝑖 is the query vector of token 
+
+𝑖 , 𝑘 𝑗 is the key vector of token 𝑗 , and 𝑑 represents the vector di-mension. This operation determines how much information token 𝑖 
+
+extracts from token 𝑗 . Since these weights indicate how later tokens attend to earlier ones, they can provide a signal for estimating the relevance between different events in the execution trace [ 19 , 37 ]. This information can assist in identifying relevant relationships. Another useful signal from the prefill stage is the negative log-likelihood (NLL) [ 31 ]. For a specific token 𝑥 𝑖 appearing after a se-quence of previous tokens 𝑥 <𝑖 , this value is computed as NLL (𝑥 𝑖 ) =
+
+− log 𝑃 (𝑥 𝑖 |𝑥 <𝑖 ). This equation calculates the negative logarithm of the probability that the model assigns to the actual token. When a token has a high negative log-likelihood, it indicates that the model finds the token highly unlikely to appear given the context. Therefore, this calculation might offer a natural way to identify abnormal actions or surprising errors within the system trace. 
+
+2.2.2 Empirical Observation of System Anomalies. To analyze sys-tem traces at the action level, we aggregate token-level NLL within each step by averaging token scores over the step. We apply this aggregated signal to the Who&When [ 48 ] and TRAIL [ 9] bench-marks, which provide failed multi-agent traces with annotated failure-relevant locations. In Who&When, the annotation is a sin-gle root-cause step, whereas in TRAIL it is a set of error spans. For each trace, we rank steps by this aggregated NLL signal in descending order. Since this preliminary analysis computes pre-fill signals over full traces, we report results only on traces that can be processed within the model’s context and memory budget. The SWE-bench subset of TRAIL is excluded from this observation because its traces are too long for this full-trace analysis. 
+
+Observation 1: Higher average token-level NLL tends to high-light symptom-like steps where failure becomes observable. 
+
+As shown by the bars for direct per-step average NLL ranking in Fig. 1, among analyzable traces, direct ranking by this signal places the annotated root-cause step within the top-5 in 26.67% of cases on the Hand-Crafted (HC) subset of Who&When and 53.60% on the Algorithm-Generated (AG) subset. These modest hit rates indicate that NLL alone is not sufficient for directly identifying the earlier root-cause step in Who&When. On the analyzable GAIA subset of TRAIL, where annotations mark error spans rather than a sin-gle decisive source step, at least one annotated error span appears within the top-5 in 87.50% of cases. This pattern likely arises because an initial mistake may appear locally plausible when it first occurs. As the execution continues, its downstream effects can accumulate and become more visible in later steps. This suggests that token-level surprise, when averaged within each step, is useful for identifying symptom-like steps where failure becomes observable, but may be insufficient for tracing the failure back to its earlier source. 
+
+2.2.3 Empirical Motivation: Local Anomaly is Not Enough. We ex-amine whether attention from high-NLL steps tends to point toward earlier steps that are relevant to the failure. We take the top-ranked NLL steps as symptom-like steps. For each earlier step, we aggregate the attention it receives from these high-NLL steps. We then rank earlier steps by the aggregated attention signal and test whether annotated root-cause steps or error spans move closer to the top. 
+
+Observation 2: Attention from high-NLL steps helps route diagnosis toward earlier failure sources. As shown by the attention-ranking bars in Fig. 1, ranking earlier steps by the atten-tion they receive from the top-5 high-NLL steps increases the Top-5 hit rate to 64.70% on Who&When-HC, 96.40% on Who&When-AG, and 100.00% on the analyzable GAIA subset of TRAIL. Taken together, these observations suggest that prefill-time sig-nals provide two complementary cues. Average token-level NLL within each step helps identify where a failure becomes observable, while attention from these high-NLL steps helps route the search ASE ’26, October 12–16, 2026, Munich, Germany Yang Liu, Hongjiang Feng, Junsong Pu, and Zhuangbin Chen 
+
+toward earlier candidate sources. This symptom-to-source use of prefill signals motivates the attribution design described next. Who&When-HC Who&When-AG TRAIL-GAIA  
+
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> Top-5 hit rate (%)
+> 26.67
+> 53.60
+> 87.50
+> 64.70
+> 96.40 100.00
+> Direct per-step average NLL ranking
+> Top-5 high-NLL steps + attention ranking
+
+Figure 1: Top-5 hit rates of direct NLL ranking and attention-based ranking from high-NLL steps. 
+
+## 3 Methodology 3.1 Overview 
+
+MASPrism addresses failure attribution in long multi-agent traces, where each trace consists of a sequence of agent steps. Given such a trace, the pipeline aggregates LLM-internal signals from the prefill pass output, namely NLL and attention weights, at the step level. It uses these signals to screen and rank the earlier steps that likely caused the failure and link them to the symptom steps where the er-rors manifest. MASPrism performs this process without the decode phase, relying on two prefill passes of the same SLM. The pipeline carries out this process in two stages, as illustrated in Fig. 2. 
+
+Filtering narrows the search space for Diagnosis by identify-ing symptom steps and earlier candidate failure-source steps. It reconstructs the trace into a compact prompt by retaining only a fixed-length prefix of each step, which removes redundant details while preserving high-level behavior. From the prefill pass output of this prompt, the framework aggregates NLL at the step level to identify symptom steps and uses attention weights to select the earlier steps that likely caused the failure. 
+
+Diagnosis performs the final attribution by focusing on the re-gions identified during Filtering . It first rebuilds the trace into a prompt where the symptom and candidate steps are restored to their full content, while all other steps are reduced to brief pre-fixes. Because these key steps retain their full content, the NLL and attention signals recomputed from a second prefill pass carry richer information than those from Filtering . For each symptom, 
+
+Diagnosis scores each earlier step by combining the attention the symptom places on it with the NLL contrast between the two steps. It then aggregates and ranks these scores across all symptoms to produce a final ordered list of candidate failure sources, linking each candidate to its associated symptoms. 
+
+## 3.2 Filtering: Symptom-Guided Candidate Screening 
+
+The Filtering stage identifies a small number of steps as symptoms and candidate failure sources to narrow the search space for Di-agnosis. To ensure the entire trace fits within the model’s context window, this stage reconstructs the sequence into a compact prompt by retaining only a fixed-length prefix of each step. This approach removes redundant details while preserving the high-level behavior of every step, enabling the model to observe the global execution flow. By analyzing internal signals from a single prefill pass, the framework uses negative log-likelihood (NLL) to locate symptom steps and attention weights to identify the earlier steps that these symptoms attend to. These steps form the symptom set M and the candidate set C, which define the scope of the detailed analysis performed in the subsequent Diagnosis stage (Sec. 3.3). 
+
+3.2.1 Step-level Truncation. Filtering constructs a truncated ver-sion ˜𝐿 of the original trace 𝐿 = {𝑠 1, . . . , 𝑠 𝑁 } to ensure the entire sequence fits within the model’s context window. Each step 𝑠 𝑖 is allocated an equal token budget, and any content exceeding this limit is replaced with an omission marker [...] , resulting in a truncated step ˜𝑠 𝑖 . This approach prioritizes the breadth of the trace over the depth of individual steps, ensuring that the model can access the entire execution history in a single prefill pass. If a long trace is truncated from one end to fit the context limit, the model often loses either the early steps that contain the root causes or the late steps where symptoms manifest. By retaining a prefix for every step, the framework preserves the global causal chain while avoiding the computational cost of generating summaries for each step. This method relies on the observation that the beginning of an agent’s step usually contains its core intent or action, which is often sufficient for preserving the high-level behavior of steps [ 45 ]. A system prompt (Fig. 3) is prepended to inform the model that each step has been truncated and that omission markers repre-sent omitted content. This brief instruction clarifies the formatting, helping the model process the truncated sequence without misin-terpreting missing text as errors in the agent’s logic [6]. 
+
+3.2.2 Step-level Signal Extraction. Using the truncated trace ˜𝐿 , Fil-tering extracts two internal signals during a single prefill pass to identify the symptom set M and the candidate set C, following the motivation in Sec. 2.2.3. The first signal, step-level negative log-likelihood (NLL), helps locate the symptom steps where the failure becomes visible. The second signal, step-to-step attention, measures how strongly these symptoms attend to earlier steps, which helps select the upstream candidate sources. The step-level NLL for a truncated step ˜𝑠 𝑖 is defined as the average token-level negative log-likelihood within that step. Specifically, we compute 𝑁 𝑖 = 1 
+
+> |𝑇 𝑖 |
+
+Í𝑡 ∈𝑇 𝑖 ℓ𝑡 , where 𝑇 𝑖 is the set of tokens in ˜𝑠 𝑖 
+
+and ℓ𝑡 = − log 𝑝 (𝑥 𝑡 | 𝑥 <𝑡 ) represents the negative log-likelihood of token 𝑡 conditioned on its preceding context. A higher step-level NLL indicates that the step is less predictable to the model, serving as a symptom signal that often coincides with anomalous or error-related behavior, as observed in Sec. 2.2.2. The second signal is step-to-step attention, which aggregates the token-level weights defined in Sec. 2.2 to estimate how strongly one step attends to another. For each token pair, we first average its attention weights uniformly across all heads and selected layers. Let ¯𝛼 𝑡 𝑖 ,𝑡 𝑗 denote this averaged attention weight from token 𝑡 𝑖 in a truncated step ˜𝑠 𝑖 to token 𝑡 𝑗 in an earlier truncated step ˜𝑠 𝑗 . The MASPrism ASE ’26, October 12–16, 2026, Munich, Germany Stage 2: Diagnosis Input 
+
+Trace  L
+
+# ⋮
+
+s1
+
+s2
+
+sN
+
+s3
+
+s4 
+
+> Symptom Identification
+> Step-level NLL
+
+Stage 1: Filtering   
+
+> Candidate Selection
+> Step-to-step Attention
+> Earlier Steps Symptoms
+> ...
+> Full Step Content
+
+si […] si                   
+
+> Prefix + […]
+> Step-level Truncation
+> SLM
+> Prefill Pass 1
+> Symptoms M
+> m1m2m3
+> …
+> Candidates C
+> c1c2
+> …
+> ...
+> SLM
+> Prefill
+> Pass 2
+> Candidate Scoring
+> & Consensus
+> Per-Symptom
+> Candidate Scoring
+> Step-to-step
+> Attention NLL
+> Contrast
+> Earlier Step Symptom
+> Prompt Reconstruction
+> s1Brief Prefix + [...]
+> s2Brief Prefix + [...]
+> ...
+> sc1 Full Content (Candidate)
+> skBrief Prefix + [...]
+> ...
+> sm1 Full Content (Symptom)
+> sm2 Full Content (Symptom)
+> sm3 Full Content (Symptom)
+> ...
+> sNBrief Prefix + [...]
+> Next step is anomalous.
+> Trace backward.
+> sc2 Full Content (Candidate)
+> ...
+> Multi-Symptom Consensus
+> m′ 1m′ 2m′ 3
+> c′ 1
+
+Σ Consensus 
+
+> Weighting
+
+Output 
+
+> Ranked Failure Sources
+
+⋮   
+
+> 1Candidate c′ 1
+> 2Candidate c′ 2
+> 3Candidate c′ 3
+> Symptom-to-Cause
+> Attribution Links
+> m′ 1
+> m′ 2
+> m′ 3
+> c′ 1
+> c′ 2
+
+⋮ ⋮
+
+Figure 2: Overview of the MASPrism framework. Filtering Prompt 
+
+[System] This trace has been truncated. Each step shows a bounded prefix of key content. [...] marks omitted text. Focus on error patterns and causal chains. Omissions are expected. 
+
+Figure 3: Prompt prepended to the truncated trace in the Filtering stage. 
+
+step-to-step attention is then defined as: 
+
+𝐴 𝑖 →𝑗 = 1
+
+|𝑇 𝑖 |∑︁ 𝑡 𝑖 ∈𝑇 𝑖 ∑︁ 𝑡 𝑗 ∈𝑇 𝑗 
+
+¯𝛼 𝑡 𝑖 ,𝑡 𝑗 . (1) This normalization yields the average attention mass that each token in ˜𝑠 𝑖 assigns to the earlier step ˜𝑠 𝑗 .
+
+3.2.3 Symptom Identification. Symptom identification produces a symptom set M by locating steps where the failure becomes visible to the model. This process builds on the principle that NLL measures the degree to which the model finds a specific sequence of tokens unlikely given the preceding context. Because anomalous behaviors or explicit error messages typically represent surprising events that deviate from standard execution, they often result in elevated NLL scores during the prefill pass. Identifying these points of high model surprise helps the framework locate symptoms that may be distributed across multiple steps of the trace. To rank potential symptoms, the framework evaluates the NLL scores and applies a post-processing refinement to prioritize steps containing explicit failure markers such as error or exception .This prioritization helps move steps with clear indicators of failure to the front of the ranking by combining internal model signals with observable lexical evidence. The framework then selects the top-ranked steps to form the symptom set M. The size of this set is proportional to the total number of steps 𝑁 , with ratios specified in Sec. 4.1.3. This design is intended to provide sufficient coverage of the trace while avoiding an excessive number of symptoms that might otherwise complicate the subsequent analysis. 
+
+3.2.4 Candidate Selection. Candidate selection identifies poten-tial failure sources by aggregating the attention weights from the symptom set M to all earlier steps. This approach uses attention weights as a routing signal, since they indicate how later tokens draw information from earlier tokens during the prefill pass. Atten-tion from symptom steps provides an empirical cue for prioritizing earlier steps, as shown in Sec. 2.2.3. For each symptom 𝑚 ∈ M , the framework examines the step-to-step attention values 𝐴 𝑚 →𝑘 for all earlier steps 𝑘 < 𝑚 . To identify steps that are consistently linked to the observed failure, the framework computes a global candidate score 𝐻 𝑘 by summing these weights across all symptoms: 
+
+𝐻 𝑘 =∑︁ 
+
+𝑚 ∈ M , 𝑘 <𝑚 
+
+𝐴 𝑚 →𝑘 . (2) This aggregation highlights steps that are frequently attended to by multiple symptoms, suggesting they are likely to contain infor-mation related to the root cause. The top-𝐾 steps ranked by 𝐻 𝑘 
+
+form the candidate set C. As shown by the empirical evidence in Sec. 2.2.3, this process supports a high probability that the selected steps include the actual failure source by tracing the connections between visible symptoms and earlier steps. Together, the symptom set M and the candidate set C define the relevant steps that are preserved in full detail for the subsequent diagnosis stage. 
+
+## 3.3 Diagnosis: Multi-Symptom Failure-Source Ranking 
+
+The Diagnosis stage performs the second prefill pass to evaluate the candidate steps and rank candidate failure sources. Instead of operating on the uniformly truncated trace, this stage first recon-structs the prompt by restoring the full content of the symptom and candidate steps identified during Filtering. These steps determine ASE ’26, October 12–16, 2026, Munich, Germany Yang Liu, Hongjiang Feng, Junsong Pu, and Zhuangbin Chen 
+
+which parts of the trace are preserved in detail for the second prefill pass. Diagnosis then recomputes NLL and step-to-step attention on the reconstructed prompt, re-identifies symptom steps under the richer context, scores candidate steps for each updated symptom, and applies multi-symptom consensus to produce the final ranking. 
+
+3.3.1 Prompt Reconstruction. To build this new prompt, the frame-work constructs a modified trace 𝐿 ′ by restoring the full content of the steps in the symptom set M and the candidate set C identi-fied during Filtering. All other steps are reduced to a brief prefix followed by an omission marker [...] . This process helps ensure that the relevant steps are available for detailed analysis while the overall sequence remains within the context window of the model. The final prompt for this second prefill pass consists of a system prompt and the modified trace 𝐿 ′. As shown in Fig. 4, the system prompt informs the model that the trace has been reconstructed and that omissions are intentional. To further assist the model, the framework inserts an instructional cue into 𝐿 ′ immediately before the earliest step of the symptom set M [ 26 ]. This enhancement frames the surrounding context as a task of tracing the failure back to its source. The reconstruction preserves the original step ordering to maintain the temporal logic of the execution. 
+
+Diagnosis Prompt    
+
+> [System] This execution trace has been reconstructed. Key steps retain full content; other steps are compressed with [...] placeholders. Analyze which earlier step or location is most responsible for the observed failure.
+> [Inserted before the earliest symptom step]
+> [Note] : The next step shows anomalous behavior. Trace backward to identify which earlier step caused it.
+
+Figure 4: Prompt prepended to the reconstructed trace in the Diagnosis stage. 
+
+3.3.2 Signal Recomputation. During the second prefill pass, the framework recomputes the step-level NLL and step-to-step atten-tion on the reconstructed prompt with restored key steps to extract richer diagnostic information. It calculates 𝑁 𝑖 and 𝐴 𝑖 →𝑗 for the steps in the modified trace 𝐿 ′ using the same definitions established in Sec. 3.2.2. Because the candidate and symptom steps now retain their full content, these recomputed signals capture detailed execu-tion logic and error manifestations that were previously omitted. The framework then reapplies the symptom identification process in Sec. 3.2.3 to the new NLL scores to form an updated symptom set 
+
+M′. These refined signals and the updated symptom set provide the basis for the final candidate scoring. 
+
+3.3.3 Candidate Scoring. Candidate scoring evaluates the poten-tial of each earlier step to be the root cause by combining the step-to-step attention it receives from a symptom with the rela-tive difference in their uncertainty levels. For each symptom step 
+
+𝑚 ∈ M ′, the framework assigns a score 𝑠 𝑘 |𝑚 to every earlier step 
+
+𝑘 < 𝑚 . This score integrates the normalized step-to-step attention with a directional NLL contrast: 
+
+𝑠 𝑘 |𝑚 = 𝐴 𝑚 →𝑘 
+
+¯𝐴 𝑚 
+
+· ( 1 + max (0, 𝑁 𝑚 − 𝑁 𝑘 )) , (3) where 𝐴 𝑚 →𝑘 is the step-to-step attention from symptom 𝑚 to candi-date step 𝑘 , and ¯𝐴 𝑚 represents the average attention from symptom 
+
+𝑚 to all steps earlier than 𝑚 .The NLL contrast term max (0, 𝑁 𝑚 − 𝑁 𝑘 ) serves as a directional weight that enhances the attention signal by considering the in-crease in model surprise. While attention identifies general rel-evance between steps, this term further emphasizes candidates where the uncertainty increases significantly from the candidate to the symptom. This design is based on the observation that in multi-agent systems, a root cause may appear relatively normal to the model, whereas its downstream impact often results in a clear anomaly. By increasing the score only when the symptom is more surprising than the candidate, this term favors attention links that follow the expected pattern from a less anomalous earlier step to a more anomalous downstream symptom. In practice, the max (0, ·) 
+
+operation is intended to ensure that this term only provides pos-itive enhancement when a clear difference in uncertainty exists, avoiding any penalty when the candidate and symptom steps show similar levels of model surprise. 
+
+3.3.4 Multi-Symptom Consensus. Diagnosis aggregates signals across multiple symptoms to produce a final ranking of candidate failure sources. Since failures in long traces often manifest through several symptoms, a candidate that is consistently attended to by multiple symptoms is more likely to be the failure source than a candidate linked to one symptom. The framework first computes a base score 
+
+Fuse (𝑘 ) = Í𝑚 ∈ M ′ 𝑠 𝑘 |𝑚 by summing the individual scores across all symptoms. To prioritize candidates that are consistently identi-fied, the framework applies a consensus factor to steps that appear frequently in the top results of different symptoms: 
+
+Score (𝑘 ) = Fuse (𝑘 ) · ( 1 + 𝜆 · |V 𝑘 |) , (4) where V𝑘 ⊆ M ′ is the set of symptoms that rank step 𝑘 among their top five earlier steps and 𝜆 is a constant weight. This mechanism rewards candidates that are identified across multiple symptoms, rather than by one symptom alone, which helps prioritize steps that are more likely to be the actual failure source. The final output is an ordered list of candidate failure sources, where each candidate is associated with the specific symptoms that led to its identification. This mapping provides a rationale for the results by showing how a specific candidate relates to the observed symptoms across the trace. The framework identifies the top-ranked step as the predicted failure source while providing the full list as a set of alternatives for further inspection. 
+
+## 4 Evaluation 
+
+We conduct a comprehensive evaluation to demonstrate the effec-tiveness and efficiency of MASPrism . Our evaluation is designed to answer the following research questions: 
+
+• RQ1: How effective is MASPrism in performing end-to-end trace diagnosis? 
+
+• RQ2: How valid is attention from symptom steps as a diagnos-tic signal for tracing failures to upstream source steps? 
+
+• RQ3: What are the individual contributions of the filtering and diagnosis stages to the overall performance of MASPrism ?
+
+• RQ4: How efficient is MASPrism , and how robust is its perfor-mance across different language models? MASPrism ASE ’26, October 12–16, 2026, Munich, Germany 
+
+## 4.1 Experiment Settings 
+
+4.1.1 Datasets. We evaluate MASPrism on two complementary benchmarks, Who&When [ 48 ] and TRAIL [ 9], to assess its diag-nostic capability across different trace lengths, task domains, and annotation structures. The Who&When benchmark comprises a handcrafted subset derived from Magentic-One [ 12 ] and an auto-mated subset generated with CaptainAgent [ 33 ]. It provides anno-tations of the decisive error step, making it suitable for evaluating single-step root-cause identification in failed multi-agent execu-tions. The handcrafted (HC) subset contains longer execution traces with an average of 51.60 steps, while the automated (AG) subset contains shorter traces with an average of 8.72 steps, allowing us to examine whether the two-stage design of MASPrism remains effective as the candidate search space changes. The TRAIL bench-mark focuses on long, structured agentic executions collected as OpenTelemetry traces with the agent-compatible OpenInference format [ 9 ], covering open-world search in GAIA [ 28 ] and software bug fixing in SWE-bench-Lite [ 20 ]. Unlike Who&When, which an-notates a single root-cause step for each failed trace, TRAIL provides multiple annotated error spans, with an average of 5.68 annotated errors per trace. These traces are generated by diverse architectures, including hierarchical and single-agent systems. Therefore, TRAIL evaluates whether a method can recover multiple failure-relevant locations from long traces that often exceed the context limits of standard models. This setting complements Who&When and tests the robustness of our two-stage design under long-context and multi-span localization scenarios. Throughout all experiments, we follow the w/o G setting [ 48 ], where the system performs failure at-tribution without access to the final ground truth of the user query. This configuration appears to be more challenging and particularly valuable for realistic debugging [47]. 
+
+4.1.2 Evaluation Metrics. We utilize benchmark-specific metrics to align with the distinct annotation structures of each dataset. For the Who&When benchmark, where each failed trace is mapped to a unique root-cause step, we report Top-1 root-cause identification accuracy. This metric represents the percentage of traces where the predicted step exactly matches the annotated cause, providing a direct measure of single-step attribution precision. For the TRAIL benchmark, where each trace may contain multiple failure-relevant locations, we follow the official TRAIL scorer and report Location Accuracy (Loc. Acc.). Loc. Acc. measures recall over unique an-notated error locations with exact span-ID matching. MASPrism 
+
+represents each predicted location with its OpenInference span iden-tifier and submits up to 10 highest-ranked locations to the scorer. For context, the original traces contain 30.59 spans per GAIA trace and 33.77 spans per SWE-bench trace on average. By employing these complementary metrics, we evaluate the framework’s capac-ity for both precise point-of-failure identification and the robust recovery of complex failure spans across long traces. 
+
+4.1.3 Implementation. We implement MASPrism with Qwen3-0.6B and run it on a server equipped with an NVIDIA GeForce RTX 5090 GPU (Driver 580.76.05, PyTorch 2.7.0+cu128). We keep the main diagnostic parameters fixed across benchmarks, except for the symptom ratio, which follows the annotation structure of each evaluation task. The symptom set contains 20% of steps for Who&When and 50% of steps for TRAIL. The larger ratio for TRAIL reflects its multi-span annotations, which require broader symp-tom coverage than the single-step labels in Who&When. Candidate selection keeps the top 𝐾 = 5 earlier steps, and Diagnosis uses consensus weight 𝜆 = 0.3. For attention extraction, we uniformly average attention over all heads and the last 20% of transformer layers, since higher layers tend to capture more task-level and con-textual relations than lower lexical layers. MASPrism does not use sampling, decoding, or randomized search during attribution. Given the same model, prompts, and diagnostic parameters, the attribu-tion scores are computed by fixed prefill passes and deterministic aggregation rules. In repeated checks under the same configuration, minor numerical variation, if any, did not change the final rankings or benchmark scores. We therefore report the scores directly rather than confidence intervals over stochastic repeated runs. 
+
+4.1.4 Baselines. We compare MASPrism against a broad spectrum of baselines, including specialized attribution tools and frontier large language models acting as diagnostic judges. Specialized base-lines include A2P, which utilizes GLM-5.1 for trace analysis, and AgenTracer, which employs a Qwen3-8B model fine-tuned via rein-forcement learning. To ensure a consistent basis for the efficiency and resource consumption analysis in RQ4, we re-implement A2P under the same oracle-free w/o G setting using its released imple-mentation and original configuration. For other baselines, we use results from peer-reviewed benchmark papers or official benchmark reports to maintain a standardized and reproducible comparison. For the Who&When benchmark, we include results for GPT-4o across three judgment strategies, including all-at-once, step-by-step, and binary search. For the TRAIL benchmark, we utilize the offi-cial results reported in the original study, which evaluates frontier models such as OpenAI o3, Claude-3.7-Sonnet, and Gemini-2.5-Pro through a standardized prompting judge. This comparison exam-ines whether MASPrism can remain competitive with prompted judge models in long-trace settings by using prefill-stage inter-nal signals and a two-stage filtering-diagnosis design to mitigate context-length and token-cost bottlenecks. 
+
+## 4.2 RQ1: Effectiveness in End-to-End Diagnosis 
+
+Table 1 presents the results of the effectiveness evaluation. The results show that MASPrism achieves the highest performance in three out of the four evaluated subsets. On the Who&When dataset, MASPrism achieves a Top-1 accuracy of 27.59% in the HC subset. This represents a 33.41% relative improvement over the state-of-the-art A2P and more than triples the accuracy of the best GPT-4o baseline, which reaches only 8.77%. This subset is more challenging than the AG subset because it involves significantly longer execution traces, with an average of 51.60 steps compared to 8.72 steps in AG. This performance gap suggests that the filtering-diagnosis design helps identify critical steps within long traces by narrowing the search space. While A2P shows a higher score of 43.65% on the AG subset, MASPrism remains competitive at 36.51% despite using a significantly smaller language model. These results indicate that internal signals from the prefill stage can effectively identify failure sources without the need for generating tokens or relying on larger language models. ASE ’26, October 12–16, 2026, Munich, Germany Yang Liu, Hongjiang Feng, Junsong Pu, and Zhuangbin Chen 
+
+Table 1: End-to-end diagnosis results on Who&When and TRAIL. CLE denotes insufficient context length. 
+
+Who&When Dataset (Root Cause Identification %) 
+
+Method Model HC Top-1 AG Top-1 
+
+MASPrism Qwen3-0.6B 27.59 36.51 All-at-Once GPT-4o 3.51 13.53 Step-by-Step GPT-4o 8.77 15.31 Binary Search GPT-4o 6.90 16.59 A2P GLM-5.1 20.68 43.65 
+
+AgenTracer Qwen3-8B+RL 20.68 37.30 
+
+TRAIL Dataset (Location Accuracy) 
+
+Method Model GAIA SWE-bench 
+
+MASPrism Qwen3-0.6B 0.591 0.451 
+
+TRAIL Prompted LLM Judge OpenAI o3 0.535 CLE 
+
+TRAIL Prompted LLM Judge Claude-3.7-Sonnet 0.204 CLE 
+
+TRAIL Prompted LLM Judge Gemini-2.5-Pro 0.546 0.238 
+
+On TRAIL, MASPrism further shows effectiveness on complex traces. It achieves the highest Location Accuracy on both GAIA and SWE-bench. In the GAIA subset, MASPrism reaches a score of 0.591, outperforming OpenAI o3 and Gemini-2.5-Pro by 10.47% and 8.24%, respectively. The advantage is even more apparent on the SWE-bench subset, where MASPrism achieves a score of 0.451, representing an 89.50% relative improvement over Gemini-2.5-Pro. This result is notable because MASPrism uses a 0.6B model while achieving higher Loc. Acc. than much larger models in this setting. On the SWE-bench subset, several judge models fail to produce results because the execution traces exceed their context limits. In contrast, MASPrism remains executable through its two-stage trace reduction design. This stability suggests that the two-stage approach helps improve robustness when analyzing extensive ex-ecution traces where standard models often fail. By performing well in both single-step identification and locating multiple error spans, MASPrism shows potential to meet various diagnostic re-quirements in complex multi-agent system traces. 
+
+## 4.3 RQ2: Signal Validity of Attention from Symptom Steps 
+
+Following the identification of symptoms via NLL, RQ2 evaluates whether attention from symptom steps provides useful guidance for prioritizing upstream failure-relevant steps. As shown in Fig-ure 5(a) and Table 2, annotated source steps receive higher attention mass from symptom steps than both neighboring source steps and randomly sampled earlier steps across both Who&When splits. In the Hand-Crafted (HC) split, which contains longer traces with 51.60 steps on average, the difference is statistically significant against both GT-neighbor ( 𝑝 = 1.90 × 10 −9) and random earlier-step (𝑝 = 9.82 × 10 −9) baselines, with a mean difference of 5.24 × 10 −3.These results indicate that attention from symptom steps provides an empirical routing signal for upstream candidate prioritization. The same trend appears in the Algorithm-Generated (AG) split. The comparison against GT-neighbor steps remains significant (𝑝 = 3.31 × 10 −5), while the separation from random earlier steps is GT source step Neighbor of      
+
+> GT source
+> Random
+> earlier step
+> 0.00
+> 0.01
+> 0.02
+> 0.03
+> 0.04
+> 0.05
+> 0.06
+> 0.07
+> Attention mass from symptom steps
+> (a) Attention mass by step type
+> HC
+> AG
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> Normalized GT rank (lower is better)
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> ECDF
+> (b) Rank of GT source among earlier steps
+> HC
+> AG
+
+Figure 5: Attention from symptom steps on Who&When. Left: attention mass received by GT source steps, GT-source neighbors, and random earlier steps. Right: ECDF of the nor-malized rank of the GT source step among earlier candidates, where lower is better. Table 2: Paired one-sided Wilcoxon signed-rank tests for attention mass. Δ is the per-chain difference between the GT source step and the comparison step.                                                   
+
+> Split Comparison 𝑛 Mean ΔMed. ΔWin 𝑝 -value (10 −3)(10 −3)Rate HC GT source >GT neighbor 191 5.24 1.92 0.686 1.90 ×10 −9
+> HC GT source >Random earlier 189 5.15 1.81 0.640 9.82 ×10 −9
+> AG GT source >GT neighbor 141 7.32 5.74 0.603 3.31 ×10 −5
+> AG GT source >Random earlier 86 3.74 1.99 0.558 4.98 ×10 −2
+
+weaker but still positive ( 𝑝 = 4.98 × 10 −2). This weaker separation is expected because AG traces are shorter on average, which reduces the number of earlier alternatives and makes random earlier steps more likely to be near the annotated source. Figure 5(b) further shows that annotated source steps are often ranked near the top among earlier steps. Together, these results support the use of attention from symptom steps as a practical signal for selecting and ranking upstream candidates in the diagnosis pipeline. 
+
+## 4.4 RQ3: Ablation of the Two-Stage Pipeline 
+
+The structural ablation results in Table 3 suggest that filtering and diagnosis provide complementary benefits, especially on long and complex traces. On the challenging HC split, MASPrism achieves a Top-1 accuracy of 27.59%, which is much higher than the 5.17% observed for the w/o Diagnosis variant. This performance gap indicates that while the first stage successfully narrows the search space, the truncated prefixes used in the compact prompt lack the fine-grained details required for precise diagnosis. Furthermore, the w/o Prompt Restoration variant also remains at 5.17% on HC traces, suggesting that restoring the full content of candidate steps is important for attribution in extended execution traces. Although the w/o Diagnosis variant performs reasonably well on simpler AG and TRAIL traces where the execution sequences appear to be shorter, the advantages of the second diagnosis pass become increasingly apparent as the complexity of the agent behavior increases. The comparison with the w/o Filtering variant, which performs direct single-pass attribution on the raw trace, further demonstrates that the staged narrowing architecture is critical for maintaining operational stability and signal clarity. When attempting to pro-cess entire raw traces in a single pass, the Loc. Acc. on the GAIA MASPrism ASE ’26, October 12–16, 2026, Munich, Germany 
+
+Table 3: Ablation of the two-stage pipeline on Who&When and TRAIL.                     
+
+> Variant HC Top-1 (%) AG Top-1 (%) GAIA Loc. Acc. SWE Loc. Acc.
+> MASPrism 27.59 36.51 0.591 0.451
+> w/o Diagnosis 5.17 33.33 0.511 0.381 w/o Prompt Restoration 5.17 35.71 0.575 0.397 w/o Filtering 6.90 33.33 0.222 0.384
+
+subset drops significantly to 0.222 compared to the 0.591 achieved by MASPrism . This decline is partly explained by execution fail-ures: the w/o Filtering variant produces 73 out-of-memory failures among the 117 GAIA samples and 11 failures on the HC split. For the remaining executable cases, directly processing raw traces may also weaken signal concentration because the model must distribute attention over substantially longer contexts. By utilizing the filter-ing stage as an information bottleneck to prevent context overflow, 
+
+MASPrism ensures that the diagnosis stage can operate on fine-grained yet context-efficient prompt structures, which indicates potential for robust end-to-end attribution in multi-agent systems. 
+
+## 4.5 RQ4: Execution Efficiency and Performance Robustness across Language Models 
+
+Execution Efficiency. We compare MASPrism with A2P because A2P is the strongest reproducible baseline on Who&When under the same w/o G setting. To make per-trace latency comparable, we run A2P serially, matching the sequential execution of MASPrism 
+
+on a single GPU. As shown in Table 4, MASPrism achieves a mean latency of 2.66 seconds per trace on an RTX 5090 GPU, while A2P requires 17.82 seconds through hosted-API calls in our reproduced setting. This corresponds to a 6.69 × lower observed end-to-end latency in this deployment setting. The latency reduction is consis-tent with the Filtering-Diagnosis workflow, which extracts NLL and attention during prefill and avoids the costly decode phase [ 2 , 8 ]. 
+
+MASPrism also processes fewer input tokens than A2P (7,066 vs. 17,748), because it uses fixed-length prefixes in Filtering and re-stores only selected symptom and candidate steps in Diagnosis. This selective expansion keeps the diagnostic prompt compact, and 
+
+MASPrism completes the full attribution process with only two prefill passes and zero output tokens. 
+
+Model Robustness. The performance of MASPrism appears con-sistent across diverse model architectures and scales, suggesting that internal prefill-stage signals can support failure attribution be-yond a single model family. As shown in Table 5, MASPrism works across both Qwen and Llama models. For localization tasks in GAIA and SWE-bench, increasing the model scale generally improves ac-curacy, with Llama-3.2-3B achieving the highest SWE-bench score of 0.5116. This trend suggests that larger models may capture more detailed diagnostic patterns in long traces. In contrast, results on Who&When show that some diagnostic patterns can already be captured by smaller models. Qwen3-0.6B achieves a hit count of 16 on the HC subset, which is competi-tive with its larger 1.7B and 3B counterparts. This result indicates that NLL and attention signals remain informative across model sizes, without requiring a large diagnostic model in every setting. Such findings support a decoupled deployment strategy, where a lightweight SLM serves as a dedicated diagnostic layer for a more expensive primary agent under constrained computational budgets. 
+
+Table 4: Execution efficiency on Who&When-HC.             
+
+> Method Model Latency (s) Input Tokens Output Tokens
+> MASPrism Qwen3-0.6B 2.66 7,066 0A2P GLM-5.1 17.82 17,748 620
+
+## 5 Discussion 5.1 Practical Deployment Scenario 
+
+The current evaluation validates MASPrism as a failed-trace at-tribution method. In realistic debugging settings, developers of-ten inspect an execution trace after a failure has been observed, without a correct trajectory or a ground-truth answer for judg-ing each intermediate step. In this setting, MASPrism can serve as a lightweight diagnostic layer for traces submitted for analy-sis, since it extracts NLL and attention signals through two prefill passes without decoded diagnostic judgments, execution replay, or task-specific training. This use case assumes an open-weight SLM whose prefill-stage outputs, including token-level NLL and atten-tion weights, can be accessed during inference. Closed API-only services that do not expose these internals are outside the direct deployment target of MASPrism . Within this deployment scope, the capability evaluated in this paper is step-level attribution over traces that have already been identified as failed. MASPrism ranks candidate failure-source steps and links them to the symptoms that motivated the ranking. In an online setting, these step-level scores could be further aggregated into a trace-level suspiciousness score, where high-scoring traces are escalated for inspection and the Top-
+
+𝑘 ranked steps guide developers to likely failure sources. Because the evaluated benchmarks consist of failed traces, calibrating this trace-level score and controlling false positives on mixed successful and failed runs remain future deployment questions. 
+
+## 5.2 Using Ranked Candidates in Debugging Workflows 
+
+The ranked output of MASPrism should be interpreted as a step-level attribution result. Instead of only producing a single pre-dicted root cause, MASPrism returns an ordered list of candidate failure-source steps with symptom-to-source links. This output bet-ter matches practical debugging workflows, where developers may need to inspect several plausible steps before confirming the source of a failure [ 42 ]. The ranked candidates narrow the inspection scope, while the symptom-to-source links provide an inspectable path from visible failure evidence to earlier suspicious steps. This design follows the role separation in the two-stage pipeline: Filter-ing preserves global trace coverage and selects relevant steps from a compact prompt, while Diagnosis restores these steps and recom-putes prefill-stage signals for final ranking. Thus, MASPrism auto-mates the initial attribution step by ranking likely failure-source candidates, helping developers decide where to inspect first. ASE ’26, October 12–16, 2026, Munich, Germany Yang Liu, Hongjiang Feng, Junsong Pu, and Zhuangbin Chen 
+
+Table 5: Diagnostic performance and robustness across dif-ferent model families and scales.                          
+
+> Model Params HC (#) AG (#) GAIA Loc. Acc. SWE-bench Loc. Acc. Qwen3-0.6B 0.6B 16 44 0.591 0.451 Qwen3-1.7B 1.7B 13 42 0.621 0.482 Llama-3.2-1B 1B 11 47 0.660 0.489 Llama-3.2-3B 3B 12 50 0.643 0.512
+
+## 5.3 Claim Boundaries and Future Validation 
+
+The internal signals used by MASPrism should be interpreted as diagnostic routing and ranking evidence, not as formal causal es-timators. Step-level NLL helps identify where a failure becomes visible to the model, and attention from symptom steps helps prior-itize earlier candidate sources. A high-ranked candidate therefore indicates a likely failure-source step for early inspection, rather than a confirmed cause, and should be reviewed in context. Future validation should study score calibration, false-positive control, and the effect of ranked candidates on manual inspection effort in mixed successful and failed production traces. 
+
+## 6 Related Work 6.1 LLM-based Multi-Agent Systems 
+
+LLM-based multi-agent systems have emerged as an effective para-digm for solving complex tasks by coordinating multiple specialized agents and tool interactions [ 15 , 29 , 38 ]. However, this orchestra-tion introduces complex inter-agent dependencies, where errors can propagate across multiple steps before they become visible in the final outcome. As a result, debugging multi-agent execu-tions becomes more challenging, which makes automated failure attribution an important downstream problem [7, 48]. 
+
+## 6.2 Failure Attribution in LLM-based Agent Systems 
+
+Failure attribution has recently emerged as an important task for debugging LLM-based agent systems. Who&When [ 48 ] formulates this task as identifying the agent and decisive step responsible for a failed execution, while TRAIL [ 9] broadens the setting to long traces with multiple annotated error spans. Existing methods obtain attribution evidence through several mechanisms. Agent-based methods use diagnostic agents or work-flows to inspect the trace and predict the responsible step. Early methods rely on direct prompting strategies such as all-at-once, step-by-step, and binary-search diagnosis [ 48 ]. A2P further strength-ens the all-at-once setting with an abduct-act-predict scaffold for counterfactual reasoning [ 36 ]. Other methods introduce more struc-tured diagnostic workflows, such as hierarchical context and con-sensus analysis [ 3] or iterative judge-evaluator procedures [ 50 ]. These methods remain dependent on decoded diagnostic judgments over long traces, and multi-step workflows can further increase latency and token cost. Replay-based methods, such as spectrum-based FAMAS [ 13 ], estimate failure responsibility through repeated replays and suspiciousness scoring, which can be costly when exe-cutions involve tool calls or external environments. Training-based methods, such as AgenTracer [ 47 ] and Aegis [ 24 ], construct anno-tated or synthetic failure trajectories to train specialized attribution models, requiring additional data construction and model training. Beyond method mechanisms, recent benchmark studies suggest that failure attribution may not always reduce to a single determinis-tic root cause, since multiple steps can be diagnostically informative under complex inter-agent dependencies [17]. This suggests that single-step prediction may be too restrictive for traces with intricate causal chains. In contrast, our work treats attribution as a staged ranking task over language-based traces. It uses prefill-stage signals from an SLM to route from visible symp-toms to earlier candidate sources, without relying on costly agent workflows, execution replay, or trained tracers during attribution. 
+
+## 6.3 Software Fault Localization and Trace Diagnosis 
+
+A common paradigm in software debugging and fault localization is to rank suspicious entities based on failure evidence. A prominent example is traditional fault localization, where spectrum-based tech-niques such as Tarantula [ 21 ] and Ochiai [ 1 ] rank code statements or branches by analyzing execution patterns from test cases. This ranking perspective extends to trace-level diagnosis in complex software systems, where root cause analysis is performed on struc-tured execution traces. For instance, RepTrace [ 32 ] analyzes system call traces through causality analysis, while TraceContrast [ 46 ] uses sequential pattern mining on distributed telemetry. These meth-ods demonstrate the effectiveness of symptom to source reasoning, but they typically rely on structured execution artifacts such as coverage information, telemetry, or dependency traces [ 11 ]. Such artifacts are often insufficient for multi-agent traces, where the crucial causal logic is embedded in free form natural language in-teractions rather than directly exposed as system native diagnostic dependencies. Our work adopts the same ranking paradigm but operates on language-based agent traces using diagnostic signals extracted during a lightweight model’s prefill analysis, instead of de-pending on system native instrumentation or explicit dependency reconstruction during attribution. 
+
+## 7 Conclusion 
+
+This paper tackles failure attribution in LLM-based multi-agent systems, where long traces and delayed failure evidence make it dif-ficult to identify failure-relevant steps without an oracle. To address this challenge, we presented MASPrism , a lightweight framework that uses prefill-stage NLL and attention signals from a small lan-guage model to diagnose failures without generated diagnostic text, execution replay, or task-specific training. MASPrism identifies symptom-like steps and earlier candidate sources from a compact prompt, then reconstructs a focused prompt for a second prefill pass to rank failure-source candidates. Evaluated on Who&When and TRAIL, MASPrism achieves the best performance on three of the four evaluated subsets, improves Top-1 accuracy on Who&When-HC by 33.41% over the best baseline, and achieves a 6.69 × speedup over the single-pass prompting baseline. Overall, these results show that MASPrism provides an effective and practical framework for failure attribution in long multi-agent execution logs. 
+
+## Data Availability 
+
+Code and data are available at https://github.com/Lycc42/MASPrism. MASPrism ASE ’26, October 12–16, 2026, Munich, Germany 
+
+## References 
+
+[1] Rui Abreu, Peter Zoeteweij, Rob Golsteijn, and Arjan J. C. van Gemund. 2009. A practical evaluation of spectrum-based fault localization. J. Syst. Softw. 82, 11 (2009), 1780–1792. doi:10.1016/J.JSS.2009.06.035 [2] Amey Agrawal, Nitin Kedia, Ashish Panwar, Jayashree Mohan, Nipun Kwa-tra, Bhargav S. Gulavani, Alexey Tumanov, and Ramachandran Ramjee. 2024. Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve. In 
+
+18th USENIX Symposium on Operating Systems Design and Implementation, OSDI 2024, Santa Clara, CA, USA, July 10-12, 2024 , Ada Gavrilovska and Douglas B. Terry (Eds.). USENIX Association, 117–134. https://www.usenix.org/conference/ osdi24/presentation/agrawal [3] Adi Banerjee, Anirudh Nair, and Tarik Borogovac. 2025. Where Did It All Go Wrong? A Hierarchical Look into Multi-Agent Error Attribution. In NeurIPS 2025 Workshop on Evaluating the Evolving LLM Lifecycle: Benchmarks, Emergent Abilities, and Scaling . https://openreview.net/forum?id=0MyUdq7wLe [4] Islem Bouzenia, Premkumar T. Devanbu, and Michael Pradel. 2025. RepairAgent: An Autonomous, LLM-Based Agent for Program Repair. In 47th IEEE/ACM In-ternational Conference on Software Engineering, ICSE 2025, Ottawa, ON, Canada, April 26 - May 6, 2025 . IEEE, 2188–2200. doi:10.1109/ICSE55347.2025.00157 [5] Islem Bouzenia and Michael Pradel. 2025. Understanding Software Engineering Agents: A Study of Thought-Action-Result Trajectories. In 40th IEEE/ACM Inter-national Conference on Automated Software Engineering, ASE 2025, Seoul, Korea, Republic of, November 16-20, 2025 . IEEE, 2846–2857. doi:10.1109/ASE63991.2025. 00234 [6] Tom B. Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared Kaplan, Prafulla Dhariwal, Arvind Neelakantan, Pranav Shyam, Girish Sastry, Amanda Askell, Sandhini Agarwal, Ariel Herbert-Voss, Gretchen Krueger, Tom Henighan, Rewon Child, Aditya Ramesh, Daniel M. Ziegler, Jeffrey Wu, Clemens Winter, Christopher Hesse, Mark Chen, Eric Sigler, Mateusz Litwin, Scott Gray, Benjamin Chess, Jack Clark, Christopher Berner, Sam McCandlish, Alec Radford, Ilya Sutskever, and Dario Amodei. 2020. Language Models are Few-Shot Learners. In Advances in Neural Information Processing Systems 33: Annual Conference on Neural Information Processing Systems 2020, NeurIPS 2020, December 6-12, 2020, virtual , Hugo Larochelle, Marc’Aurelio Ranzato, Raia Hadsell, Maria-Florina Balcan, and Hsuan-Tien Lin (Eds.). https://proceedings.neurips.cc/paper/2020/ hash/1457c0d6bfcb4967418bfb8ac142f64a-Abstract.html [7] Mert Cemri, Melissa Z Pan, Shuyi Yang, Lakshya A Agrawal, Bhavya Chopra, Rishabh Tiwari, Kurt Keutzer, Aditya Parameswaran, Dan Klein, Kannan Ram-chandran, Matei Zaharia, Joseph E. Gonzalez, and Ion Stoica. 2026. Why Do Multi-Agent LLM Systems Fail?. In The Thirty-ninth Annual Conference on Neu-ral Information Processing Systems Datasets and Benchmarks Track . https: //openreview.net/forum?id=fAjbYBmonr [8] Esha Choukse, Pratyush Patel, Chaojie Zhang, Aashaka Shah, Íñigo Goiri, Saeed Maleki, Rodrigo Fonseca, and Ricardo Bianchini. 2025. Splitwise: Efficient Gen-erative LLM Inference Using Phase Splitting. IEEE Micro 45, 4 (2025), 54–59. doi:10.1109/MM.2025.3575361 [9] Darshan Deshpande, Varun Gangal, Hersh Mehta, Jitin Krishnan, Anand Kan-nappan, and Rebecca Qian. 2025. TRAIL: Trace Reasoning and Agentic Issue Localization. CoRR abs/2505.08638 (2025). arXiv:2505.08638 doi:10.48550/ARXIV. 2505.08638 [10] Yilun Du, Shuang Li, Antonio Torralba, Joshua B. Tenenbaum, and Igor Mordatch. 2024. Improving Factuality and Reasoning in Language Models through Multia-gent Debate. In Forty-first International Conference on Machine Learning, ICML 2024, Vienna, Austria, July 21-27, 2024 (Proceedings of Machine Learning Research) ,Ruslan Salakhutdinov, Zico Kolter, Katherine A. Heller, Adrian Weller, Nuria Oliver, Jonathan Scarlett, and Felix Berkenkamp (Eds.). PMLR / OpenReview.net, 11733–11763. https://proceedings.mlr.press/v235/du24e.html [11] Qiong Feng, Xiaotian Ma, Jiayi Sheng, Ziyuan Feng, Wei Song, and Peng Liang. 2024. Integrating Various Software Artifacts for Better LLM-based Bug Local-ization and Program Repair. CoRR abs/2412.03905 (2024). arXiv:2412.03905 doi:10.48550/ARXIV.2412.03905 [12] Adam Fourney, Gagan Bansal, Hussein Mozannar, Cheng Tan, Eduardo Salinas, Erkang Zhu, Friederike Niedtner, Grace Proebsting, Griffin Bassman, Jack Ger-rits, Jacob Alber, Peter Chang, Ricky Loynd, Robert West, Victor Dibia, Ahmed Awadallah, Ece Kamar, Rafah Hosn, and Saleema Amershi. 2024. Magentic-One: A Generalist Multi-Agent System for Solving Complex Tasks. CoRR abs/2411.04468 (2024). arXiv:2411.04468 doi:10.48550/ARXIV.2411.04468 [13] Yu Ge, Linna Xie, Zhong Li, Yu Pei, and Tian Zhang. 2025. Who is Introducing the Failure? Automatically Attributing Failures of Multi-Agent Systems via Spectrum Analysis. CoRR abs/2509.13782 (2025). arXiv:2509.13782 doi:10.48550/ARXIV. 2509.13782 [14] Shanshan Han, Qifan Zhang, Yuhang Yao, Weizhao Jin, Zhaozhuo Xu, and Chaoyang He. 2024. LLM Multi-Agent Systems: Challenges and Open Problems. 
+
+CoRR abs/2402.03578 (2024). arXiv:2402.03578 doi:10.48550/ARXIV.2402.03578 [15] Sirui Hong, Mingchen Zhuge, Jonathan Chen, Xiawu Zheng, Yuheng Cheng, Jinlin Wang, Ceyao Zhang, Zili Wang, Steven Ka Shing Yau, Zijuan Lin, Liyang Zhou, Chenyu Ran, Lingfeng Xiao, Chenglin Wu, and Jürgen Schmidhuber. 2024. MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework. In 
+
+The Twelfth International Conference on Learning Representations, ICLR 2024, Vienna, Austria, May 7-11, 2024 . OpenReview.net. https://openreview.net/forum? id=VtmBAGCN7o [16] Robert Hutter and Michael Pradel. 2026. AgentStepper: Interactive Debugging of Software Development Agents. CoRR abs/2602.06593 (2026). arXiv:2602.06593 doi:10.48550/ARXIV.2602.06593 [17] Yeonjun In, Mehrab Tanjim, Jayakumar Subramanian, Sungchul Kim, Uttaran Bhattacharya, Wonjoong Kim, Sangwu Park, Somdeb Sarkhel, and Chany-oung Park. 2026. Rethinking Failure Attribution in Multi-Agent Systems: A Multi-Perspective Benchmark and Evaluation. CoRR abs/2603.25001 (2026). arXiv:2603.25001 doi:10.48550/ARXIV.2603.25001 [18] Md. Ashraful Islam, Mohammed Eunus Ali, and Md. Rizwan Parvez. 2024. Map-Coder: Multi-Agent Code Generation for Competitive Problem Solving. In Pro-ceedings of the 62nd Annual Meeting of the Association for Computational Lin-guistics (Volume 1: Long Papers), ACL 2024, Bangkok, Thailand, August 11-16, 2024 , Lun-Wei Ku, Andre Martins, and Vivek Srikumar (Eds.). Association for Computational Linguistics, 4912–4944. doi:10.18653/V1/2024.ACL-LONG.269 [19] Sarthak Jain and Byron C. Wallace. 2019. Attention is not Explanation. In Pro-ceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, NAACL-HLT 2019, Minneapolis, MN, USA, June 2-7, 2019, Volume 1 (Long and Short Papers) , Jill Burstein, Christy Doran, and Thamar Solorio (Eds.). Association for Computa-tional Linguistics, 3543–3556. doi:10.18653/V1/N19-1357 [20] Carlos E. Jimenez, John Yang, Alexander Wettig, Shunyu Yao, Kexin Pei, Ofir Press, and Karthik R. Narasimhan. 2024. SWE-bench: Can Language Models Resolve Real-world Github Issues?. In The Twelfth International Conference on Learning Representations, ICLR 2024, Vienna, Austria, May 7-11, 2024 . OpenReview.net. https://openreview.net/forum?id=VTF8yNQM66 [21] James A. Jones and Mary Jean Harrold. 2005. Empirical evaluation of the tarantula automatic fault-localization technique. In 20th IEEE/ACM International Conference on Automated Software Engineering (ASE 2005), November 7-11, 2005, Long Beach, CA, USA , David F. Redmiles, Thomas Ellman, and Andrea Zisman (Eds.). ACM, 273–282. doi:10.1145/1101908.1101949 [22] Sungmin Kang, Gabin An, and Shin Yoo. 2024. A Quantitative and Qualitative Evaluation of LLM-Based Explainable Fault Localization. Proc. ACM Softw. Eng. 
+
+1, FSE (2024), 1424–1446. doi:10.1145/3660771 [23] Woojeong Kim, Junxiong Wang, Jing Nathan Yan, Mohamed S. Abdelfattah, and Alexander M Rush. 2025. Overfill: Two-Stage Models for Efficient Language Model Decoding. In Second Conference on Language Modeling . https://openreview. net/forum?id=e112iu5ssg [24] Fanqi Kong, Ruijie Zhang, Huaxiao Yin, Guibin Zhang, Xiaofei Zhang, Ziang Chen, Zhaowei Zhang, Xiaoyuan Zhang, Song-Chun Zhu, and Xue Feng. 2026. Aegis: Automated Error Generation and Attribution for Multi-Agent Systems. In The Fourteenth International Conference on Learning Representations . https: //openreview.net/forum?id=zqcYoxXiN3 [25] Xinyi Li, Sai Wang, Siqi Zeng, Yu Wu, and Yi Yang. 2024. A survey on LLM-based multi-agent systems: workflow, infrastructure, and challenges. Vicinagearth 1, 1 (2024), 9. [26] Nelson F. Liu, Kevin Lin, John Hewitt, Ashwin Paranjape, Michele Bevilacqua, Fabio Petroni, and Percy Liang. 2024. Lost in the Middle: How Language Models Use Long Contexts. Trans. Assoc. Comput. Linguistics 12 (2024), 157–173. doi:10. 1162/TACL_A_00638 [27] Jiaying Lu, Bo Pan, Jieyi Chen, Yingchaojie Feng, Jingyuan Hu, Yuchen Peng, and Wei Chen. 2025. AgentLens: Visual Analysis for Agent Behaviors in LLM-Based Autonomous Systems. IEEE Trans. Vis. Comput. Graph. 31, 8 (2025), 4182–4197. doi:10.1109/TVCG.2024.3394053 [28] Grégoire Mialon, Clémentine Fourrier, Thomas Wolf, Yann LeCun, and Thomas Scialom. 2024. GAIA: a benchmark for General AI Assistants. In The Twelfth International Conference on Learning Representations, ICLR 2024, Vienna, Austria, May 7-11, 2024 . OpenReview.net. https://openreview.net/forum?id=fibxvahvs3 [29] Chen Qian, Wei Liu, Hongzhang Liu, Nuo Chen, Yufan Dang, Jiahao Li, Cheng Yang, Weize Chen, Yusheng Su, Xin Cong, Juyuan Xu, Dahai Li, Zhiyuan Liu, and Maosong Sun. 2024. ChatDev: Communicative Agents for Software Development. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), ACL 2024, Bangkok, Thailand, August 11-16, 2024 , Lun-Wei Ku, Andre Martins, and Vivek Srikumar (Eds.). Association for Computational Linguistics, 15174–15186. doi:10.18653/V1/2024.ACL-LONG.810 [30] Ruoyu Qin, Weiran He, Yaoyu Wang, Zheming Li, Xinran Xu, Yongwei Wu, Weimin Zheng, and Mingxing Zhang. 2026. Prefill-as-a-Service: KVCache of Next-Generation Models Could Go Cross-Datacenter. arXiv:2604.15039 [cs.DC] https://arxiv.org/abs/2604.15039 [31] Alec Radford, Jeffrey Wu, Rewon Child, David Luan, Dario Amodei, Ilya Sutskever, et al . 2019. Language models are unsupervised multitask learners. OpenAI blog 
+
+1, 8 (2019), 9. [32] Zhilei Ren, Changlin Liu, Xusheng Xiao, He Jiang, and Tao Xie. 2019. Root Cause Localization for Unreproducible Builds via Causality Analysis Over System Call Tracing. In 34th IEEE/ACM International Conference on Automated Software ASE ’26, October 12–16, 2026, Munich, Germany Yang Liu, Hongjiang Feng, Junsong Pu, and Zhuangbin Chen 
+
+Engineering, ASE 2019, San Diego, CA, USA, November 11-15, 2019 . IEEE, 527–538. doi:10.1109/ASE.2019.00056 [33] Linxin Song, Jiale Liu, Jieyu Zhang, Shaokun Zhang, Ao Luo, Shijian Wang, Qingyun Wu, and Chi Wang. 2024. Adaptive In-conversation Team Building for Language Model Agents. CoRR abs/2405.19425 (2024). arXiv:2405.19425 doi:10.48550/ARXIV.2405.19425 [34] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2017. Attention is All you Need. In Advances in Neural Information Processing Systems 30: An-nual Conference on Neural Information Processing Systems 2017, December 4-9, 2017, Long Beach, CA, USA , Isabelle Guyon, Ulrike von Luxburg, Samy Bengio, Hanna M. Wallach, Rob Fergus, S. V. N. Vishwanathan, and Roman Garnett (Eds.). 5998–6008. https://proceedings.neurips.cc/paper/2017/hash/ 3f5ee243547dee91fbd053c1c4a845aa-Abstract.html [35] Yawen Wang, Wenjie Wu, Junjie Wang, and Qing Wang. 2026. From Flat Logs to Causal Graphs: Hierarchical Failure Attribution for LLM-based Multi-Agent Systems. CoRR abs/2602.23701 (2026). arXiv:2602.23701 doi:10.48550/ARXIV. 2602.23701 [36] Alva West, Yixuan Weng, Minjun Zhu, Zhen Lin, Zhiyuan Ning, and Yue Zhang. 2025. Abduct, Act, Predict: Scaffolding Causal Inference for Automated Failure At-tribution in Multi-Agent Systems. CoRR abs/2509.10401 (2025). arXiv:2509.10401 doi:10.48550/ARXIV.2509.10401 [37] Sarah Wiegreffe and Yuval Pinter. 2019. Attention is not not Explanation. In 
+
+Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Process-ing, EMNLP-IJCNLP 2019, Hong Kong, China, November 3-7, 2019 , Kentaro Inui, Jing Jiang, Vincent Ng, and Xiaojun Wan (Eds.). Association for Computational Linguistics, 11–20. doi:10.18653/V1/D19-1002 [38] Qingyun Wu, Gagan Bansal, Jieyu Zhang, Yiran Wu, Shaokun Zhang, Erkang Zhu, Beibin Li, Li Jiang, Xiaoyun Zhang, and Chi Wang. 2023. AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation Framework. CoRR 
+
+abs/2308.08155 (2023). arXiv:2308.08155 doi:10.48550/ARXIV.2308.08155 [39] Chunqiu Steven Xia, Yinlin Deng, Soren Dunn, and Lingming Zhang. 2025. De-mystifying LLM-Based Software Engineering Agents. Proc. ACM Softw. Eng. 2, FSE (2025), 801–824. doi:10.1145/3715754 [40] Chunqiu Steven Xia and Lingming Zhang. 2024. Automated Program Repair via Conversation: Fixing 162 out of 337 Bugs for $0.42 Each using ChatGPT. In 
+
+Proceedings of the 33rd ACM SIGSOFT International Symposium on Software Testing and Analysis, ISSTA 2024, Vienna, Austria, September 16-20, 2024 , Maria Christakis and Michael Pradel (Eds.). ACM, 819–831. doi:10.1145/3650212.3680323 [41] Junjielong Xu, Qinan Zhang, Zhiqing Zhong, Shilin He, Chaoyun Zhang, Qing-wei Lin, Dan Pei, Pinjia He, Dongmei Zhang, and Qi Zhang. 2025. OpenRCA: Can Large Language Models Locate the Root Cause of Software Failures?. In 
+
+The Thirteenth International Conference on Learning Representations, ICLR 2025, Singapore, April 24-28, 2025 . OpenReview.net. https://openreview.net/forum?id= M4qNIzQYpd [42] Aidan Z. H. Yang, Claire Le Goues, Ruben Martins, and Vincent J. Hellendoorn. 2024. Large Language Models for Test-Free Fault Localization. In Proceedings of the 46th IEEE/ACM International Conference on Software Engineering, ICSE 2024, Lisbon, Portugal, April 14-20, 2024 . ACM, 17:1–17:12. doi:10.1145/3597503.3623342 [43] John Yang, Carlos E. Jimenez, Alexander Wettig, Kilian Lieret, Shunyu Yao, Karthik Narasimhan, and Ofir Press. 2024. SWE-agent: Agent-Computer Inter-faces Enable Automated Software Engineering. In Advances in Neural Information Processing Systems 38: Annual Conference on Neural Information Processing Systems 2024, NeurIPS 2024, Vancouver, BC, Canada, December 10 - 15, 2024 , Amir Glober-sons, Lester Mackey, Danielle Belgrave, Angela Fan, Ulrich Paquet, Jakub M. Tomczak, and Cheng Zhang (Eds.). http://papers.nips.cc/paper_files/paper/2024/ hash/5a7c947568c1b1328ccc5230172e1e7c-Abstract-Conference.html [44] Shunyu Yao, Noah Shinn, Pedram Razavi, and Karthik Narasimhan. 2024. 𝜏 -bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains. 
+
+CoRR abs/2406.12045 (2024). arXiv:2406.12045 doi:10.48550/ARXIV.2406.12045 [45] Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik R. Narasimhan, and Yuan Cao. 2023. ReAct: Synergizing Reasoning and Acting in Language Models. In The Eleventh International Conference on Learning Representations, ICLR 2023, Kigali, Rwanda, May 1-5, 2023 . OpenReview.net. https://openreview. net/forum?id=WE_vluYUL-X [46] Chenxi Zhang, Zhen Dong, Xin Peng, Bicheng Zhang, and Miao Chen. 2024. Trace-based Multi-Dimensional Root Cause Localization of Performance Issues in Microservice Systems. In Proceedings of the 46th IEEE/ACM International Con-ference on Software Engineering, ICSE 2024, Lisbon, Portugal, April 14-20, 2024 .ACM, 110:1–110:12. doi:10.1145/3597503.3639088 [47] Guibin Zhang, Junhao Wang, Junjie Chen, Wangchunshu Zhou, Kun Wang, and Shuicheng YAN. 2026. AgenTracer: Who Is Inducing Failure in the LLM Agentic Systems?. In The Fourteenth International Conference on Learning Representations .https://openreview.net/forum?id=l05DseqvuD [48] Shaokun Zhang, Ming Yin, Jieyu Zhang, Jiale Liu, Zhiguang Han, Jingyang Zhang, Beibin Li, Chi Wang, Huazheng Wang, Yiran Chen, and Qingyun Wu. 2025. Which Agent Causes Task Failures and When? On Automated Failure Attribution of LLM Multi-Agent Systems. In Forty-second International Conference on Machine Learning, ICML 2025, Vancouver, BC, Canada, July 13-19, 2025 (Proceedings of Machine Learning Research) , Aarti Singh, Maryam Fazel, Daniel Hsu, Simon Lacoste-Julien, Felix Berkenkamp, Tegan Maharaj, Kiri Wagstaff, and Jerry Zhu (Eds.). PMLR / OpenReview.net. https://proceedings.mlr.press/v267/zhang25cq. html [49] Yuntong Zhang, Haifeng Ruan, Zhiyu Fan, and Abhik Roychoudhury. 2024. Au-toCodeRover: Autonomous Program Improvement. In Proceedings of the 33rd ACM SIGSOFT International Symposium on Software Testing and Analysis, ISSTA 2024, Vienna, Austria, September 16-20, 2024 , Maria Christakis and Michael Pradel (Eds.). ACM, 1592–1604. doi:10.1145/3650212.3680384 [50] Chenyang Zhu, Spencer Hong, Jingyu Wu, Kushal Chawla, Yuhui Tang, Youbing Yin, Nathan Wolfe, Erin Babinsky, and Daben Liu. 2025. RAFFLES: Reasoning-based Attribution of Faults for LLM Systems. In First Workshop on Multi-Turn Inter-actions in Large Language Models . https://openreview.net/forum?id=0oxelK4W6c

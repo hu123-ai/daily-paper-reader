@@ -1,0 +1,1227 @@
+Title: GASim: A Graph-Accelerated Hybrid Framework for Social Simulation
+
+URL Source: https://arxiv.org/pdf/2605.07692v1
+
+Published Time: Mon, 11 May 2026 01:11:12 GMT
+
+Number of Pages: 19
+
+Markdown Content:
+## GASim: A Graph-Accelerated Hybrid Framework for Social Simulation 
+
+Xuan Zhou 1, Yanhui Sun 1, Hantao Yao 1, Allen He 2,Yongdong Zhang 1, Wu Liu 1*1University of Science and Technology of China, 
+
+> 2
+
+BASIS International School Park Lane Harbour 
+
+{xuanzhou0201, yanhuis1999}@mail.ustc.edu.cn , allenhethis@outlook.com ,
+
+{yaohantao, zhyd73, liuwu}@ustc.edu.cn 
+
+Abstract 
+
+Large-scale social simulators are essential for studying complex social patterns. Prior work explores hybrid methods to scale up sim-ulations, combining large language models (LLM)-based agents with numerical agent-based models (ABM). However, this incurs high latency due to expensive memory re-trieval and sequential ABM execution. To ad-dress this challenge, we propose GASim, a graph-accelerated hybrid multi-agent frame-work for large-scale social simulations. For core agents driven by LLM, GASim intro-duces Graph-Optimized Memory (GOM) to re-place intensive LLM-based retrieval pipelines with lightweight propagation over a sparse memory graph. For the majority of ordinary agents, GASim employs Graph Message Pass-ing (GMP), substituting sequential ABM ex-ecution with parallel updates by fine-grained feature aggregation and Graph Attention Net-work. We further introduce Entropy-Driven Grouping (EDG) that coordinates this hybrid partitioning, leveraging information entropy to dynamically identify emergent core agents situated in information-diverse neighborhoods. Extensive experiments show that GASim not only delivers a substantial 9.94× end-to-end speedup over the traditional hybrid framework but also consumes less than 20% of baseline tokens, significantly reducing costs while pre-serving strong alignment with real-world pub-lic opinion trends. Our code is available at 
+
+https://github.com/Jasmine0201/GASim .
+
+1 Introduction 
+
+Large Language Models (LLMs) have demon-strated remarkable human-like performance in per-ception and reasoning (Xiang et al., 2026; Liu et al., 2025a; Xu et al., 2025; Liu et al., 2025b). Conse-quently, the LLM-based multi-agent systems pro-vide a powerful paradigm for simulating complex 
+
+> *Corresponding author Sequential ABM
+> LLM-based Retrieval
+> Memory
+> Graph-Parallel ABM
+
+Slow Fast 
+
+> …
+> Graph Propagation
+> Graph Retrieval
+
+…
+
+> LLM
+> Processing
+> …
+
+Figure 1: Comparison between the traditional hybrid framework for social simulation and our approach. Our method accelerates simulation with lightweight graph memory retrieval for core agents and parallel Agent-Based Model (ABM) execution for ordinary agents. 
+
+social dynamics (Park et al., 2023), where large-scale agent populations are crucial for high-fidelity simulations and have attracted growing research interest (Liu et al., 2026; Zhang et al., 2025). Scaling social simulations to thousands or mil-lions of agents often requires great computation cost of heavy distributed LLM workloads (Yang et al., 2024; Chen et al., 2025), which constrains further scalability. To mitigate this cost, hybrid frameworks, exemplified by HiSim (Mou et al., 2024), adopt few LLM-driven core agents to model opinion leaders, while simulating the remaining ordinary agents with numerical agent-based mod-els (ABM) (Lorenz et al., 2021; Hegselmann and Krause, 2002; Deffuant et al., 2002). In this setting, core agents handle perception, memory retrieval, and opinion generation via LLMs, whereas ordi-nary agents update opinion values with rule-based ABMs (Sun et al., 2025). However, such hybrid frameworks fail to meet the low-latency demands of large-scale social sim-ulation due to two key bottlenecks, as illustrated in Figure 1. First, core agents incur substantial mem-
+
+> arXiv:2605.07692v1 [cs.AI] 8 May 2026
+
+ory retrieval overhead, as many designs rely on LLM-in-the-loop processing over large volumes of memory items (Chen et al., 2024; Xu et al., 2025; Chhikara et al., 2025) during simulations, which dominates runtime at scale. Lightweight memory methods such as vector similarity search (Douze et al., 2024) have been explored, but they often collapse into unstructured memory as storage grows. In contrast, graph-based approaches (Xu et al., 2025; Chhikara et al., 2025) preserve struc-ture but incur costly LLM-driven edge construction overhead. Second, ordinary agents are constrained by the sequential execution of ABMs, causing run-time to scale linearly. For instance, updating one million agents would take over 100 hours for a 30-step rollout based on the experiment. To address these challenges, we propose GASim ,a graph-accelerated hybrid multi-agent framework for large-scale social simulations. a) For core agents, to avoid costly LLM-based processing in memory retrieval, we introduce Graph-Optimized Memory (GOM) that bridges lightweight similar-ity matching and structured memory. GOM first constructs a sparse memory graph for each agent based on similarity over perceived content, key-words, and opinion values. To enable fast and accurate retrieval, GOM casts retrieval as an opti-mization problem and solves it with a lightweight graph propagation algorithm, eliminating network and decoding overhead. b) For ordinary agents, to eliminate the sequential bottleneck of ABM, we design Graph Message Passing (GMP) to parallel agents’ opinion updates. GMP computes agents’ dynamic stance features and static profile features in batched tensor operations, and leverages a Graph Attention Network (Brody et al., 2022) to update agents’ opinion scores in a single forward pass. c) Moreover, noting that the traditional degree-based agent grouping fails to capture dynamically emerg-ing opinion leaders, we propose Entropy-Driven Grouping (EDG) , which adaptively distinguishes opinion-leading core agents from ordinary agents based on neighborhood opinion diversity, capturing the temporal evolution of social influence. Extensive experiments demonstrate that GASim significantly outperforms the traditional hybrid framework in efficiency. It achieves a 9.94× end-to-end speedup , with 16.39× and 27.49× acceler-ation in the core- and ordinary-agent stages while cutting token consumption to less than 20% of the baseline. Beyond efficiency, GASim achieves superior geometric alignment with real-world pub-lic opinion trends. We also validate GOM on the memory retrieval benchmark LoCoMo (Maharana et al., 2024), where it sets a new state-of-the-art with 71.56% accuracy. Our contributions can be summarized as follows: • We introduce GASim, a graph-accelerated hy-brid multi-agent framework for large-scale so-cial simulations, with EDG as a hybrid coor-dinator that dynamically partitions agents into core and ordinary types. • We propose GOM for core agents to rapidly retrieve memories with a lightweight graph-based memory model, alleviating the heavy latency in LLM-based retrieval process. • We design GMP for ordinary agents to update opinion in parallel with fine-grained features and Graph Attention Network, resolving the sequential execution bottlenecks of ABMs. 
+
+2 Related Work 
+
+2.1 Costly Memory Design in Simulation 
+
+Recent LLM-based multi-agent frameworks are highly expressive for large-scale social simulation, but suffer from severe latency due to memory de-signs that rely on heavy LLM-based processing. For example, keyword and contextual extraction in A-Mem (Xu et al., 2025), memory rewriting in Mem0 (Chhikara et al., 2025), and importance or immediacy scoring in AgentVerse (Mou et al., 2024) introduce substantial latency at scale. Vector similarity search methods such as FAISS (Douze et al., 2024) improve efficiency, but treat memo-ries independently without explicit relationships, making it difficult to support coherent retrieval as memory grows. To balance efficiency and accu-racy, we propose GOM for LLM-driven core agents. It builds sparse memory graphs using similarity over content, keywords, and opinion values, and re-trieves memories via lightweight graph propagation without LLM-generated edges. 
+
+2.2 Latency in Agent-Based Models 
+
+Traditional ABMs rely on sequential execution, leading to severe latency as the simulation scale increases (Hegselmann and Krause, 2002; Def-fuant et al., 2002). Recently, neural network–based ABMs have been proposed to parallelize agent up-dates and learn interaction dynamics (Min et al., 2024; Vargas-Pérez et al., 2025). Although these models exhibit more limited reasoning ability com-Parallel Update 
+
+…
+
+…Memories Retrieval Query 
+
+> Static
+> Profile
+> Ordinary Agent Core Agent
+
+speedup 
+
+(1) Entropy-Driven Grouping 
+
+Graph-Optimized Memory (GOM)  
+
+> w/o GOM
+> Core Agent Ordinary Agent
+
+(4) Simulation 
+
+State Update 𝐀   
+
+> Public Opinion
+> +1
+> -1
+> w/ GOM w/ GMP w/o GMP
+
+Graph Message Passing (GMP) 
+
+> Sparse Memory
+> Graph
+> Individual and Neighbor Stance
+> Graph Attention Network
+
+𝐀 𝐀 𝐀 New  
+
+> Messages Opinion
+
+GOM     
+
+> Content
+> Keywords
+> Opinion Value
+> +0.5
+> -0.2
+> 𝐀 =𝐀 𝐀 =
+> K
+
+…  
+
+> Graph Propagation Retrieval
+> Smoothing Relevance
+> +0.01
+> -0.2
+> Historical
+> Neighbor Messages
+> Coherence
+> +0.8
+> cos 𝐀
+> 𝐀 2𝐀 𝐀 𝐀 𝐀 𝐀 3𝐀 𝐀 𝐀𝐀 ++
+
+𝐀 𝐀 : 𝐀 1 𝐀 − 𝐀 𝐀 2
+
+> min
+> Memory Retrieval Objective
+> 𝐀
+
+Dynamic Feature 
+
+𝐀 𝐀 𝐀 +𝐀  
+
+> Topology
+> 𝐀 𝐀
+> 𝐀 𝐀
+> 𝐀 𝐀
+> 𝐀 𝐀
+> 𝐀 𝐀
+> 𝐀 𝐀
+> 𝐀 𝐀
+> 𝐀 𝐀
+> 𝐀 𝐀
+> 𝐀 𝐀 ′
+
+…  
+
+> 𝐀 𝐀
+> 𝐀 𝐀 𝐀 𝐀
+> 𝐀 𝐀 𝐀
+> MLP MLP
+
+# 𝐀 
+
+(2) (3) Figure 2: Overall Pipeline of GASim. At each step, Entropy Driven Grouping (EDG) identifies emergent core and ordinary agents. Graph-Optimized Memory (GOM) accelerates LLM-driven core agents by updating a sparse memory graph and optimizing the retrieval vector f by a lightweight graph propagation. Graph Message Passing (GMP) updates agents’ opinion values in parallel via a Graph Attention Network with fine-grained features. 
+
+pared to LLMs, they offer valuable insights for our hybrid acceleration paradigm: for the majority of ordinary agents representing the general crowd, we design GMP to parallelize agents’ opinion up-dates by leveraging fine-grained opinion features and a Graph Attention Network, speeding up the simulation process. 
+
+3 Proposed Framework: GASim 
+
+The overall pipeline of GASim is illustrated in Fig-ure 2. GASim first employs an EDG module as a hybrid coordinator to distinguish core and ordinary agent types. Based on the grouping, a lightweight memory model GOM accelerates the core-agent stage, while a parallel updating model GMP effi-ciently speeds up the ordinary-agent stage. 
+
+3.1 Entropy Driven Grouping 
+
+To better model the dynamic emergence of opin-ion leaders, the EDG module is executed at the start of each simulation step. It dynamically identi-fies LLM-driven core agents, while the remaining agents function as general crowd agents driven by numerical models. According to The People’s Choice (Lazarsfeld et al., 2021), opinion leadership is an emergent be-havior, not a fixed status. Traditional methods rely-ing on static network degrees (Mou et al., 2024) fail to capture this fluidity. In contrast, EDG employs dynamic entropy-based grouping to identify core agents who are embedded in information-diverse neighborhoods. Specifically, when categorizing agent ai for time step t0 + 1 , we compute the information entropy value et0 
+
+> i
+
+of its neighborhood at time step t0. Here, information entropy quantifies the diversity of opin-ions in an agent’s local environment, with higher values indicating broader viewpoint exposure, 
+
+et0 
+
+> i
+
+= − X 
+
+> j
+
+pt0 
+
+> ij
+
+· log 2pt0 
+
+> ij
+
+, (1) where pij denotes the proportion of the j-th opinion value in agent ai neighborhood, and all et0 
+
+> i
+
+form the entropy vector et0 to group agents. Following the Pareto principle (Jinbo and Hongbo, 2019), we se-lect a small set of K agents as core agents from the complete set I based on the information entropy, 
+
+It0+1  
+
+> c
+
+= ai ∈ I i ∈ TopK  et0  , (2) where TopK (·) returns indices with K largest val-ues. Then the ordinary agents can be denoted by 
+
+It0+1  
+
+> o
+
+= I −I t0+1  
+
+> c
+
+. With this design, the model dy-namically captures the evolving role of core agents as opinion leader, while the general crowd as ordi-nary agents. 
+
+3.2 Graph-Optimized Memory 
+
+The memory of core agents is sped up by GOM, which replaces costly LLM-based retrieval pipelines with a lightweight graph-based memory model. Unlike isolated similarity matching, the model encodes memory relations in a graph struc-ture, amplifying coherent retrieval signals. The complete behavior of a core agent is illus-trated in Figure 2. The agent first receives new messages from its neighbors. To simulate the hu-man Observe–Recall–Act decision cycle, agents must retrieve memories of previously observed neighbors’ messages before performing personal-ized LLM-based social reasoning (e.g., posts, com-ments, retweets). Accordingly, we generate a high-level retrieval query q from the incoming neigh-bor messages, then GOM a) constructs a memory graph, b) formulates memory retrieval as an opti-mization problem, and c) retrieves memories via a lightweight graph propagation algorithm. 
+
+a) Memory Graph Construction. We encode the agent’s memory as an opinion-aware, sparse weighted graph Gmem = ( V, E, W), where V, E
+
+and W respectively represent node set, edge set, and adjacency matrix. It prioritizes strongly opin-ionated memories, which are more influential than neutral experiences in shaping agent interactions in social simulations. Specifically, each node Vi repre-sents a historical neighbor message with content ci,content embedding mi, keyword embedding ki and an opinion value oi ∈ [−1, +1] where −1 denotes extremely negative and +1 denotes extremely sup-portive stances. Given n memories, W ∈ Rn×n is a sparse symmetric adjacency matrix that connects each memory i to its top-k most similar memories, with the edge weight 
+
+wij = oi · oj · cos( mi, mj ). (3) This graph design encodes stance and semantic consistency, prioritizing strongly opinionated mem-ories over neutral ones. 
+
+b) Retrieval Objective. Rather than selecting memories independently based on query similarity, GOM treats the retrieval as a global optimization problem over the memory graph. Our goal is to optimize a retrieval probability vector f , with ele-ment fi ∈ [0 , 1] denoting the retrieval probability of memory i. The retrieval objective is designed to balance three competing objectives: • Relevance. Maintain the initial similarity be-tween the query and memories. • Consistency. Leverage the graph structure to encourage semantically and stance-consistent memories connected by high-weight edges to receive similar retrieval scores. • Smoothing. Penalize solutions that concentrate probability mass on only few memories, encour-aging a smoother distribution. Consequently, we formulate the objective as 
+
+min Q(f ) = λ1∥f −f0∥2 +λ2f TLf +λ3f TIf , (4) where λ1, λ 2, λ 3 weight the respective terms: • The first term anchors f to the initial relevance scores f0 based on the query q. It is defined as (f0)i = 12 (cos (q, mi) + Hτ (cos (q, ki))) ,where H τ (x) = 1 if x ≥ τ and 0 otherwise. • The second term employs the normalized graph Laplacian L = I − D− 12 WD − 12 to penalize differences between connected nodes, ensuring that memories with high edge weights receive similar scores. In this formulation, I is the iden-tity matrix and D is the diagonal degree matrix of the graph, where dii = P 
+
+> j
+
+wij .• The third term regularizes the magnitude of f to encourage a smoother distribution. Since Gmem may contain negative weights (oioj < 0), the objective can be non-convex and difficult to optimize, with more details in Ap-pendix A.1.2. While Softmax is typically used to map inputs to positive probabilities, it is unsuit-able here as opinion values carry specific seman-tic interpretations mentioned in the memory graph construction. To ensure convexity, we introduce a correction term ∆, whose diagonal elements are defined as ∆ii = ν( P 
+
+> j
+
+|wij | − dii ), ν ≥ 1. We can then rewrite the objective function in (4), 
+
+L′ = L + D− 12 ∆D − 12 ,
+
+eQ(f ) = λ1∥f − f0∥2 + λ2f TL′f + λ3f TIf . (5) The convexity of eQ(f ) is proven in Appendix A.1.1. By letting ∇ eQ(f ) = 0 , we can obtain the closed form f ∗ = λ1
+
+ (λ1 + λ3)I + λ2L′ −1 f0, where each element f ∗ 
+
+> i
+
+represents the optimal retrieval possibility of memory i under the query q, with the proof in Appendix A.1.2. 
+
+c) Graph Propagation Retrieval. We note that explicitly computing f ∗ requires matrix inver-sion, which is prohibitively expensive for large-scale memory graphs. Therefore, we introduce a lightweight graph propagation algorithm to ap-proximate the optimal retrieval vector f ∗ via the designed iterative update, 
+
+fk+1 = μ(−L′) · fk + (1 − μ) · f ′
+
+> 0
+
+, (6) where μ = λ2 
+
+> 1−λ2+λ3
+
+and f ′ 
+
+> 0
+
+= λ1 
+
+> 2λ1+λ3−1
+
+f0 under the assumption λ1 + λ2 = 1 . After K iterations, the optimal retrieved set of R memories is given by C = {ci | i ∈ TopR (fK )}. The detailed proof is provided in the Appendix A.1.3. This algorithm avoids inverting the large matrix in the closed-form 
+
+f ∗, reducing complexity from O(n3) to O(Knr ),where K is the iteration count, n the number of memory nodes, r the number of nonzero edges in the sparse graph ( K ≪ n, r ≪ n). As a result, GOM significantly mitigates the la-tency of LLM-heavy memory frameworks while preserving high retrieval accuracy, enabling core agents to perform efficient, human-like memory re-trieval without excessive computational overhead. 
+
+3.3 Graph Message Passing 
+
+Traditional ABMs rely on sequential execution and global synchronization, leading to substantial la-tency at scale. In contrast, GMP speeds up ordinary agents by modeling the opinion evolution as paral-lel message passing on a social graph. To preserve the interpretability of rule-based ABMs, GMP integrates dynamic opinion states with static agent attributes, thereby capturing fine-grained interaction dynamics. This formulation naturally motivates the adoption of a Graph Atten-tion Network (GAT) (Brody et al., 2022), which adaptively weights neighbor influence through the attention mechanism via a fully parallelized for-ward pass. The complete behavior of ordinary agents is il-lustrated in Figure 2. At a given time step t0, GMP takes the historical opinions of all agents to encode dynamic opinion features Xt0 
+
+> d
+
+, which captures in-dividual and neighborhood stances. These are then concatenated with static agent profile features Xs
+
+to form the unified representation Xt0 . The GAT propagates these features over the agent interac-tion graph E′, simultaneously updating all agents’ opinions ot0+1 in a single forward pass 
+
+ot0+1 = fGAT (Xt0 , E′). (7) The predicted opinions ot0+1 are appended to the opinion histories, which serves as the recursive in-put to GMP for the subsequent time step. Training details are provided in the Appendix A.2.4. The following details the construction of the uni-fied representation Xt0 . For a population of N
+
+agents at time step t0, GMP organizes raw opinion histories into global tensors to enable parallel pro-cessing: a global opinion tensor St0 ∈ RN ×t0 con-taining all agents’ opinion histories, and a global neighbor opinion tensor N t0 ∈ RN ×M ×t0 . N t0 is constructed by gathering the corresponding history vectors from St0 based on the interaction topol-ogy, followed by padding to the maximum degree 
+
+M . Based on these two tensors, we extract two groups of dynamic features via parallel operations, including the individual stance feature φt0 
+
+> I
+
+and the neighbor stance feature φt0 
+
+> C
+
+,
+
+φt0 
+
+> I
+
+= μt0 , σt0 , ot0
+
+> max
+
+, ot0
+
+> min
+
+, ot0
+
+> last
+
+ 
+
+> St0
+
+,
+
+φt0 
+
+> C
+
+= ˆμt0 , ˆσt0 , sim t0 , ech t0   
+
+> Nt0
+
+, (8) where detailed operations are provided in the Ap-pendix A.2.1. Specifically, φt0 
+
+> I
+
+∈ RN ×5 sum-marizes each agent’s individual opinion history (mean, deviation, max, min and the lastest value) to characterize personal tendency. φt0 
+
+> C
+
+∈ RN ×4 ag-gregates neighborhood statistics (mean, deviation, pearson correlation and echo-chamber score) to quantify collective pressure and homophily. We concatenate the two feature groups in formula (8) to obtain the dynamic stance representation 
+
+φt0 
+
+> d
+
+= φt0 
+
+> I
+
+φt0
+
+> C
+
+ ∈ RN ×9. Meanwhile, to pro-vide contextual background (e.g., values, identity, and interests) beyond observable opinion histories, we encode agents’ profile text with a BERT encoder to obtain static social attribute embeddings, de-noted by φs = bert (Tokenizer (text )) ∈ RN ×db .To learn higher-order, nonlinear interactions among agents, two multi-layer perceptrons (MLPs) are applied to perform nonlinear transformations on the dynamic and static features. The MLPs project 
+
+φt0 
+
+> d
+
+and φs into a higher dimensional latent space, 
+
+Xt0 
+
+> d
+
+=W 2
+
+ ReLU  W 1φt0 
+
+> d
+
++ b1
+
+ + b2,
+
+Xs = ˆW 2
+
+
+
+ReLU 
+
+ ˆW 1φs + ˆb1
+
+ 
+
++ ˆb2, (9) where W and b represent learnable weights and biases. We then concatenate these features to form the unified representation Xt0 = Xt0 
+
+> d
+
+Xs
+
+. As shown in formula (7) , this representation serves as the input to the GAT—along with the agent inter-action graph—to update opinions in parallel. In summary, to replace sequentially executed ABM, GMP adopts parallel feature aggregation with one-shot GAT updating. This accelerates sim-ulation while modeling fine-grained inter-agent de-pendencies at scale. See Appendix A.2 for details. 
+
+3.4 Simulation State Update 
+
+While LLM-driven core agents generate textual opinions via GOM-retrieved memories, ordinary agents directly output numeric opinion values based on GMP. To align these heterogeneous out-puts, we map each core agent’s generated text to a scalar in [−1, 1] using an LLM-based scorer (see Appendix A.6). These quantified scores are then aggregated with the ordinary agents’ values to up-date the simulated opinion trend curve. The details of agent heterogeneity designs are clarified in Ap-pendix A.4. 
+
+4 Experiment 
+
+4.1 Datasets and Metrics 
+
+To evaluate GASim, we constructed three topic-based datasets from popular social media platforms using open-source crawlers Apify and WeiboSpider ,with statistical details reported in Table 1.             
+
+> Dataset Users Tweets Time Span
+> Politics 9,135 12,404 May 10 - Dec 06, 2017 Business 9,150 14,494 March 01 - July 29, 2021 Education 11,454 135,528 June 13 - Nov 10, 2024
+
+Table 1: Statistics of the dataset. 
+
+Specifically, each processed data contains anonymized user id, user description, follower count, following count, tweet content, posting time and an opinion value. The Politics dataset covers discussions on Donald Trump and alleged Russian interference in the 2016 U.S. election, and the Busi-ness dataset covers global controversies surround-ing Xinjiang-produced cotton, both collected from X (formerly Twitter). The Education dataset covers Sina Weibo discussions on alleged cheating in the Alibaba Global Math Competition. For alignment, all datasets are standardized to 30 time steps. See Appendix A.6 for details.             
+
+> Metric HiSim GASim Speedup
+> Tcore 316.33 19.30 16.39 ×
+> Tordi 84.13 3.06 27.49 ×
+> Ttotal 401.84 40.43 9.94 ×
+
+Table 2: Latency Analysis (min), where Tcore , Tordi and 
+
+Ttotal denote the runtime of core, ordinary agents and the total simulation (including other overheads). 1k 2.5k 5k 10k  
+
+> Agent Number
+> 10 4
+> 10 5
+> 10 6
+> 10 7
+> Total Tokens (log scale)
+> 1,378,168
+> 3,954,909
+> 16,460,461 24,339,044
+> 15,856
+> 50,581
+> 123,884
+> 316,944
+> 5,917
+> 14,748
+> 28,227
+> 61,771
+> Non-Hybrid (all LLM)
+> HiSim
+> GASim
+
+Figure 3: Total token consumption across agent scales. 
+
+To evaluate simulation quality, we leverage four metrics comparing simulated and ground-truth pub-lic opinion curves from complementary perspec-tives. Statistical metrics assess macro-level trend consistency, where ∆Bias measures the average deviation, ∆Div captures the temporal stability, and Corr. computes the Pearson correlation coeffi-cient for linear alignment. The Geometric metric F. (Fréchet distance), measures global curve sim-ilarity. Detailed mathematical definitions of the above metrics are provided in Appendix A.7. 
+
+4.2 Experimental Setting 
+
+The agent population is set to 10,000, with the top-K (K = 100 ) agents selected as core type and driven by a locally deployed Llama-3.1-8B-Instruct (256 tokens, temperature 1). Bge-small-en-v1.5 is used to embed the memory contents. The GOM update parameter μ to 0.5 (i.e., λi = 0 .5, 1 ≤ i ≤ 3
+
+) to balance graph-based memory propagation and initialization, with ν = 1 in correction term ∆ and 
+
+τ = 0 .9 in Hτ (x). All evaluation and scoring are performed using gpt-4o-mini API. Experiments run on a server with 40 vCPUs (Intel Xeon Platinum 8481C), two NVIDIA vGPU-48GB, and 180 GB RAM. 
+
+4.3 Latency and Cost Analysis 
+
+Table 2 demonstrates the acceleration performance of GASim on a large-scale simulation compris-Methods Politics Business Education                                                                                                
+
+> ∆Bias ↓∆Div ↓Corr. ↑F. ↓∆Bias ↓∆Div ↓Corr. ↑F. ↓∆Bias ↓∆Div ↓Corr. ↑F. ↓
+> HK 0.2003 0.0089 0.0581 0.3367 0.1081 0.0074 0.1214 0.2369 0.4828 0.0140 0.6498 0.6293 RA 0.1629 0.0886 0.2692 0.3346 0.1046 0.0073 0.4522 0.2438 0.4822 0.0130 0.2011 0.6242 Lorenz 0.2339 0.1074 -0.0637 0.4199 0.1298 0.0082 -0.1228 0.2555 0.565 0.0199 -0.3216 0.7579 SOD 0.1084 0.0086 0.1277 0.2464 0.1672 0.0105 0.068 0.3027 0.2716 0.0137 0.4013 0.3174 HiSim 0.1069 0.0167 -0.003 0.1622 0.2302 0.0103 -0.3532 0.3390 0.2475 0.0167 0.388 0.2237 GASim (Ours) 0.0700 0.0074 0.4261 0.1349 0.0807 0.0060 0.4707 0.1390 0.0716 0.0058 0.7686 0.1081
+
+Table 3: Trend alignment results in large-scale social simulation, where ↓ indicates that lower values are better, while ↑ indicates that higher is preferable. Bold and underline indicate the best and second-best results. 
+
+ing 10,000 agents over 30 time steps. Com-pared to the traditional hybrid framework that re-lies on LLM-based memory retrieval and sequen-tial ABMs, GASim achieves substantial efficiency gains. Specifically, adding GOM yields a 16.39 ×
+
+speedup (from 316.33 to 19.30 minutes) by replac-ing multi-stage LLM processing with lightweight graph-based memory retrieval. Similarly, integrat-ing GMP accelerates the ordinary-agent stage by 
+
+27.49 × (reducing time from 84.13 to 3.06 minutes) by parallelizing opinion updates via batched tensor processing in a single graph attention forward pass. Although Ttotal includes minor I/O overheads for persisting historical embeddings and keywords for driving GOM, this cost is negligible compared to the computational gains. Consequently, the overall simulation time is reduced from 6.69 to 0.67 hours, representing a significant 9.94 × acceleration .In addition to faster simulation speeds, GASim dramatically lowers operational costs. As shown in Figure 3, GASim dramatically reduces total token consumption compared to HiSim and the non-hybrid framework, with the efficiency advan-tage increasing as the number of agents grows. At 10,000 agents, GASim consumes only 61,771 to-kens, corresponding to approximately 1/5 of HiSim (316,944 tokens) and 1/400 of the non-hybrid base-line (24.3M tokens). This efficiency gain arises not only from the hybrid design but also from the intro-duction of GOM for core agents, which avoids in-voking LLMs during memory storage and retrieval. 
+
+4.4 Trend Alignment Evaluation 
+
+To assess the fidelity of GASim, we evaluate trend alignment by comparing the simulated and real opinion curve using metrics in Section 4.1. See Appendix A.8.1 for baseline methods. As detailed in Table 3, GASim demonstrates superior performance across all metrics on di-verse domain events. Regarding statistical met-rics, GASim maintains a remarkably low ∆Bias ,staying below 1% across all domains. Meanwhile, GASim achieves an average reduction of 29.05% in ∆Div and an average improvement of 26.89% in 
+
+Corr. compared to the second-best method. It also achieves the lowest F. across datasets, indicating superior geometric similarity. 0 5 10 15 20 25 30 
+
+> Epoch
+> 0.1
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> Public Opinion Value
+> Real Trend
+> Event
+> HK
+> RA
+> Lorenz
+> SOD
+> HiSim
+> GASim
+
+Figure 4: Visualization of trend alignment results across different methods on the Politics dataset 
+
+To provide a qualitative comparison, Figure 4 visualizes simulation results on the Politics dataset. Consistent with Table 3, GASim produces a trajec-tory that closely aligns with the real-world opinion trend, whereas baseline methods fail to capture opinion evolution over long durations. Specifically, traditional ABMs (HK, RA, and Lorenz) tend to fluctuate merely around the initial opinion value, constrained by their rigid and predefined mathe-matical update rules. Among LLM-based methods, SOD better approximates real trends than ABMs due to semantic reasoning and agent bias design, but its random one-to-one communication limits its ability to capture dynamic opinion fluctuations. In contrast, the hybrid framework HiSim exhibits ex-treme and one-sided shifts caused by static degree-based agent grouping. GASim outperforms both by leveraging GOM for accurate memory retrieval, Method Chunk Size Accuracy (%, LLM-as-a-Judge) Single Hop Multi-Hop Open Domain Temporal Overall                                                                                                 
+
+> A-Mem 2520 39 .79 ±0.38 18 .85 ±0.31 54 .05 ±0.22 49 .91 ±0.31 48 .38 ±0.15
+> LangMem 127 62 .23 ±0.75 47 .92 ±0.47 71 .12 ±0.223 .43 ±0.39 58 .10 ±0.21
+> Zep 3911 61 .7±0.32 41 .35 ±0.48 76 .6±0.13 49 .31 ±0.50 65 .99 ±0.16
+> Mem0 1764 67 .13 ±0.65 51 .15 ±0.31 72 .93 ±0.11 55 .51 ±0.34 66 .8±0.15
+> Mem0g 3616 65 .71 ±0.45 47 .19 ±0.67 75 .71 ±0.21 58 .13 ±0.44 68 .44 ±0.17
+> GOM (Ours) 2492 75 .39 ±0.51 59 .6±0.53 74 .96 ±0.18 70 .7±0.47 71 .56 ±0.20
+
+Table 4: Evaluation of memory retrieval performance: GOM vs. baselines on LoCoMo dataset (Maharana et al., 2024), where Chunk Size indicates the average context length, including retrieved contents and the answer prompt. 
+
+GMP for fine-grained neighbor-aware opinion rea-soning, EDG for dynamically coordinating agents via entropy-based partitioning to model emergent opinion leadership. 
+
+4.5 Memory Architecture Evaluation 
+
+We further evaluate GOM on the LoCoMo dataset (Maharana et al., 2024), a benchmark for long-term conversational memory. LoCoMo contains 10 long conversations, with question–answer pairs spanning single-hop, multi-hop, temporal and open-domain categories. For the evaluation, instead of using F1 and BLEU that rely on lexical overlap and often fail to reflect factual correctness, we adopt LLM-as-a-Judge to verify answer accuracy, assess-ing semantic and factual quality in a way that better aligns with human judgment. The judge prompt is provided in Appendix A.9.3. As shown in Table 4, GOM achieves state-of-the-art performance compared to a suite of competitive memory-based baselines, reaching an overall ac-curacy of 71.56%. In particular, GOM shows sub-stantial improvements on Single-Hop, Multi-Hop, and Temporal question types, outperforming the strongest existing models by approximately 10%. These three categories respectively require locat-ing a single factual span within one dialogue turn, synthesizing information dispersed across multiple conversation sessions, and accurate modeling of event sequences and their temporal ordering, all of which directly benefit from GOM’s graph-guided memory retrieval mechanism. In GOM, by formu-lating memory selection as a convex optimization problem over a structured memory graph, it is able to jointly consider semantic relevance, stance coher-ence, and smoothness of memory retrieval, rather than relying on isolated similarity matching. While GOM underperforms on Open-Domain questions, this category primarily favors LLM-based memory baselines that leverage extensive                         
+
+> Models ∆Bias ↓∆Div ↓Corr. ↑F. ↓
+> GASim 0.0700 0.0074 0.4261 0.1349
+> w/o GOM 0.0771 0.0089 0.2942 0.1406 w/o GMP 0.1027 0.1346 -0.0989 0.2291 w/o EDG 0.0872 0.0109 0.2528 0.1391
+
+Table 5: Ablation study of trend alignment on Politics dataset, where "w/o" denotes the removal of the module. 
+
+prior knowledge. However, in social simulation, an over-reliance on such generic external knowledge can homogenize agent responses, thereby reducing personality diversity. Given that these questions constitute only 5% of the dataset, the impact on overall results is negligible. 
+
+4.6 Ablation Study 
+
+To evaluate the specific contributions of each mod-ule to simulation fidelity, we conducted the ablation study focusing on public opinion trend alignment. As shown in Table 5, removing any component leads to performance degradation across all met-rics. Specifically, we first remove GOM by replacing our designed memory mechanism with HiSim’s (Mou et al., 2024) LLM-in-the-loop memory scheme, where the memory retrieval is guided by LLM-based assessments of importance and ur-gency. Under this setting, ∆Bias increases to 0.0771 (a 10% rise), ∆Div increases to 0.0089 (a 20% rise), and Corr. drops to 0.2942 (a 30.96% reduction). These results confirm that GOM’s lightweight graph propagation is an effective al-ternative for agent’s memory retrieval compared to computationally expensive multi-stage LLM pro-cessing. We then remove GMP by substituting the learned opinion update mechanism with a tra-ditional agent-based model (Lorenz model by de-fault), which causes significant deterioration across all metrics. This underscores the necessity of mod-eling the general crowd via fine-grained neural networks trained on real dynamic opinion data, rather than relying solely on LLMs which may be restricted by inherent training data biases. We also remove EDG by reverting the system to a static degree-based core assignment strategy, where core agents are selected solely based on in-degree (number of followers) rather than dynamic entropy-driven criteria. This results in a 47.3% increase in 
+
+∆Div and highlights the critical role of EDG in dy-namically coordinating agents to stabilize the sim-ulation’s performance. Moreover, we conduct an additional experiment that verifies EDG-selected core agents correspond to empirically influential users. The experiment details are provided in Ap-pendix A.3. 
+
+5 Conclusion 
+
+This paper introduces GASim, a graph-accelerated hybrid multi-agent framework for large-scale so-cial simulations. By designing a lightweight graph-based memory model for core agents and a paral-lelized fine-grained neural network module for or-dinary agents, GASim effectively addresses the la-tency challenges faced by traditional hybrid frame-works. Extensive experiments confirm both the efficiency and accuracy of our framework. We an-ticipate that GASim will offer a new perspective on meeting low-latency requirements in the social simulation community. 
+
+Limitations 
+
+Despite the effectiveness of GASim, our work has two key limitations. (1) The LLM-generated text lacks authenticity, and synthetic opinion value la-bels may reflect the inherent biases of the LLM itself. (2) Our simulation primarily focuses on textual interactions, while ignoring multimodal in-formation (e.g., images and videos) that may also play a crucial role in public opinion dynamics. 
+
+Ethical Considerations 
+
+GASim is designed as a research instrument for analyzing offline social dynamics rather than for active intervention. We acknowledge the potential dual-use risk associated with misuse in generating or amplifying harmful content. To mitigate this risk, all simulations are conducted in isolated and offline sandboxed environments with no connectivity to real-world platforms. Regarding data usage, we adhere to the follow-ing protocols: (1) Privacy & Content: We pseudo-anonymize user identities by mapping public IDs to numerical indices. While the datasets contain con-troversial topics, such content is retained strictly to maintain the statistical fidelity of opinion dy-namics. (2) Consent: Due to the dataset scale, obtaining individual consent was infeasible. We utilized only voluntarily public data in compliance with platform terms. (3) IRB Status: As this study analyzes existing public data without direct human intervention, it is exempt from formal IRB review. 
+
+Acknowledgments 
+
+This work was supported by the National Key Research and Development Program of China (NO. 2024YFE0203200), the National Nature Sci-ence Foundation of China (NO. U24A20329, NO. 62527810), the Fundamental and Interdisciplinary Disciplines Breakthrough Plan of the Ministry of Education of China (NO. JYB2025XDXM103), and the Science Fund for Creative Research Groups (No.62121002). 
+
+References       
+
+> Shaked Brody, Uri Alon, and Eran Yahav. 2022. How attentive are graph attention networks? In The Tenth International Conference on Learning Representa-tions , pages 1– 26. Jinyuan Chen, Jiuchen Shi, Quan Chen, and Minyi Guo. 2025. Kairos: Low-latency multi-agent serving with shared llms and excessive loads in the public cloud.
+> CoRR , abs/2508.06948. Weize Chen, Yusheng Su, Jingwei Zuo, Cheng Yang, Chenfei Yuan, Chi-Min Chan, Heyang Yu, Yaxi Lu, Yi-Hsin Hung, Chen Qian, Yujia Qin, Xin Cong, Ruobing Xie, Zhiyuan Liu, Maosong Sun, and Jie Zhou. 2024. Agentverse: Facilitating multi-agent collaboration and exploring emergent behaviors. In
+> The Twelfth International Conference on Learning Representations , pages 20094–20136. Prateek Chhikara, Dev Khant, Saket Aryan, Taranjeet Singh, and Deshraj Yadav. 2025. Mem0: Building production-ready AI agents with scalable long-term memory. CoRR , abs/2504.19413. Yun-Shiuan Chuang, Agam Goyal, Nikunj Harlalka, Siddharth Suresh, Robert Hawkins, Sijia Yang, Dha-van Shah, Junjie Hu, and Timothy T. Rogers. 2024. Simulating opinion dynamics with networks of llm-based agents. In Findings of the Association for Computational Linguistics , pages 3326–3346. Guillaume Deffuant, Frédéric Amblard, Gérard Weis-buch, and Thierry Faure. 2002. How can extremism prevail? a study based on the relative agreement in-teraction model. Journal of Artificial Societies and Social Simulation , 5(04).
+
+Matthijs Douze, Alexandr Guzhva, Chengqi Deng, Jeff Johnson, Gergely Szilvasy, Pierre-Emmanuel Mazaré, Maria Lomeli, Lucas Hosseini, and Hervé Jégou. 2024. The faiss library. CoRR , abs/2401.08281. Andrew B. Goldberg, Xiaojin Zhu, and Stephen Wright. 2007. Dissimilarity in graph-based semi-supervised classification. In Proceedings of the Eleventh Inter-national Conference on Artificial Intelligence and Statistics , pages 155–162. Rainer Hegselmann and Ulrich Krause. 2002. Opinion dynamics and bounded confidence models, analysis and simulation. Journal of Artificial Societies and Social Simulation , 5(03). Zhiwei Jin, Juan Cao, Yongdong Zhang, and Jiebo Luo. 2016. News verification by exploiting conflicting so-cial viewpoints in microblogs. In Proceedings of the Thirtieth AAAI Conference on Artificial Intelligence ,page 2972–2978. Bai Jinbo and Li Hongbo. 2019. Study on a pareto principle case of social network. In Proceedings of the 2019 4th International Conference on Social Sciences and Economic Development , pages 113– 117. Paul F. Lazarsfeld, Bernard Berelson, and Hazel Gaudet. 2021. The People’s Choice: How the Voter Makes Up His Mind in a Presidential Campaign . Columbia University Press. Kun Liu, Qi Liu, Xinchen Liu, Jie Li, Yongdong Zhang, Jiebo Luo, Xiaodong He, and Wu Liu. 2025a. Hoigen-1m: A large-scale dataset for human-object interaction video generation. In IEEE/CVF Confer-ence on Computer Vision and Pattern Recognition ,pages 24001–24010. Kun Liu, Mengxue Qu, Yang Liu, Yunchao Wei, Wen-ming Zhe, Yao Zhao, and Wu Liu. 2025b. Single-frame supervision for spatio-temporal video ground-ing. IEEE Transactions on Pattern Analysis and Machine Intelligence , 47(7):5177–5191. Yijun Liu, Wu Liu, Xiaoyan Gu, Yong Rui, Xiaodong He, and Yongdong Zhang. 2026. LMAgent: A large-scale multimodal agents society for multi-user sim-ulation. IEEE Transactions on Multimedia , pages 1–12. Jan Lorenz, Martin Neumann, and Tobias Schröder. 2021. Individual attitude change and societal dynam-ics: Computational experiments with psychological theories. Psychological Review , 128(04):623–642. Adyasha Maharana, Dong-Ho Lee, Sergey Tulyakov, Mohit Bansal, Francesco Barbieri, and Yuwei Fang. 2024. Evaluating very long-term conversational memory of LLM agents. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics , pages 13851–13870. Huiyu Min, Jiuxin Cao, Jiawei Ge, and Bo Liu. 2024. A multi-agent system for fine-grained opinion dynam-ics analysis in online social networks. IEEE Trans. Comput. Soc. Syst. , 11(1):815–828. Xinyi Mou, Zhongyu Wei, and Xuanjing Huang. 2024. Unveiling the truth and facilitating change: Towards agent-based large-scale social movement simulation. In Findings of the Association for Computational Linguistics , pages 4789–4809. Joon Sung Park, Joseph O’Brien, Carrie Jun Cai, Mered-ith Ringel Morris, Percy Liang, and Michael S. Bern-stein. 2023. Generative Agents: Interactive simulacra of human behavior. In Proceedings of the 36th An-nual ACM Symposium on User Interface Software and Technology , page 1–22. Preston Rasmussen, Pavlo Paliychuk, Travis Beauvais, Jack Ryan, and Daniel Chalef. 2025. Zep: A tempo-ral knowledge graph architecture for agent memory. 
+
+CoRR , abs/2501.13956. Yanhui Sun, Wu Liu, Wentao Wang, Hantao Yao, Jiebo Luo, and Yong-Dong Zhang. 2025. DynamiX: Large-scale dynamic social network simulator. CoRR ,abs/2507.19929. Víctor Vargas-Pérez, Jesús Giráldez-Cru, Pablo Mesejo, and Oscar Cordón. 2025. Unveiling agents’ confi-dence in opinion dynamics models via graph neu-ral networks. IEEE Trans. Comput. Soc. Syst. ,12(2):725–737. Kun Xiang, Zhili Liu, Terry Jingchen Zhang, Yinya Huang, Yunshuang Nie, Kaixin Cai, Yiyang Yin, Runhui Huang, Hanhui Li, Yihan Zeng, Yu-Jie Yuan, Jianhua Han, Lanqing Hong, Hang Xu, and Xiao-dan Liang. 2026. AtomThink: Multimodal slow thinking with atomic step reasoning. IEEE Transac-tions on Pattern Analysis and Machine Intelligence ,48(5):5725–5741. Wujiang Xu, Zujie Liang, Kai Mei, Hang Gao, Juntao Tan, and Yongfeng Zhang. 2025. A-Mem: Agentic memory for LLM agents. In The Thirty-ninth An-nual Conference on Neural Information Processing Systems , pages 1–28. Ziyi Yang, Zaibin Zhang, Zirui Zheng, Yuxian Jiang, Ziyue Gan, Zhiyu Wang, Zijian Ling, Jinsong Chen, Martz Ma, Bowen Dong, Prateek Gupta, Shuyue Hu, Zhenfei Yin, Guohao Li, Xu Jia, Lijun Wang, Bernard Ghanem, Huchuan Lu, Chaochao Lu, and 4 others. 2024. OASIS: open agent social interac-tion simulations with one million agents. CoRR ,abs/2411.11581. Jun Zhang, Yuwei Yan, Junbo Yan, Zhiheng Zheng, Jinghua Piao, Depeng Jin, and Yong Li. 2025. A par-allelized framework for simulating large-scale LLM agents with realistic environments and interactions. In Proceedings of the 63rd Annual Meeting of the As-sociation for Computational Linguistics , pages 1339– 1349. A Appendix 
+
+A.1 Theoretical Analysis of GOM A.1.1 Convexity Discussion 
+
+In this section, we discuss the convexity of the original objective in formula (4) and justify the need for the modification in formula (5) to achieve a more tractable optimization. According to formula (4) , it is straightforward to verify that the first and the third term are both convex function, since their Hessian matrices are equal to λi · 2I ≻ 0 ( i = 1 , 3) . Yet the second term of equation (4) is not intuitive to judge its convexity. Motivated by (Jin et al., 2016), we can rewrite the second term by defining f = D− 12 f as follows, 
+
+f TLf = f T 
+
+I − D− 12 WD − 12
+
+
+
+f
+
+= 12
+
+
+
+2f TDf − 2f TWf T
+
+= 12
+
+
+
+> n
+
+X
+
+> i=1
+
+dii fi 
+
+> 2
+
++
+
+> n
+
+X
+
+> j=1
+
+djj fj 
+
+> 2
+
+− 2
+
+> n
+
+X
+
+> i,j =1
+
+fiwij fj
+
+
+
+= 12
+
+> n
+
+X
+
+> i,j =1
+
+wij 
+
+fi
+
+√dii 
+
+− fj
+
+pdjj 
+
+!2
+
+.
+
+When we review the formula derivation in (10) , we can analyze that f TLf is convex when each of the edge weight wij ≥ 0. In this case, f TLf ≥ 0, L is positive semidefinite, and the whole term is convex with the minimal value being 0 when f ∝ √d =
+
+ √d11 , √d22 , . . . , √dnn 
+
+T.However, based on the sparse memory graph defined in section 3.2.1 , the memory edge weight 
+
+wij can be negative (since agents may have oppo-site opinion values), and the convexity of f TLf is no longer certain. Common approximations in ex-isting research (Jin et al., 2016)(Goldberg et al., 2007), which model the processed data on a graph that contains negative edge weight, often forces 
+
+wij ≥ 0 by taking the absolute value |wij |. Yet these methods totally discard the opposite features in the data, which causes a large change in the normalized Laplacian matrix L.Therefore, to ensure the objective convexity for a more tractable optimization (the convexity of 
+
+eQ(f )), we need to approximate L by an appropriate modification. Based on the formula (5) , we intro-duce a correction term ∆, whose diagonal elements are defined as ∆ii = ν( P 
+
+> j
+
+|wij | − dii ), ν ≥ 1.By adding D− 12 ∆D − 12 to the normalized Lapla-cian matrix L, we obtain a convex L′, as shown in the proof below. 
+
+Proof . Based on the Gershgorin’s circle theorem, there exists an upper and lower bound for each eigenvalue λi(L) of unnormalized L = D − W,
+
+Lii − X
+
+> j
+
+|Lij | ≤ λi(L) ≤ Lii + X
+
+> j
+
+|Lij |
+
+dii − X
+
+> j
+
+|wij | ≤ λi(L) ≤ dii + X
+
+> j
+
+|wij |
+
+X
+
+> j
+
+(wij − | wij |) ≤ λi(L) ≤ X
+
+> j
+
+(wij + |wij |).
+
+(10) Based on formula (10) , if the memory graph con-tains negative edge weights wij < 0, then the lower bound of the i-th eigenvalue of L falls below zero and L may not be positive semidefinite . How-ever, with the diagonal matrix ∆ added on L, the inequality becomes equation (11) 
+
+(ν − 1) 
+
+X
+
+> j
+
+|wij | − X
+
+> j
+
+wij 
+
+ ≤ λi(L + ∆)
+
+≤ X
+
+> j
+
+wij + X
+
+> j
+
+|wij | + ν
+
+X
+
+> j
+
+|wij | − wij 
+
+ .
+
+(11) Since ν ≥ 1, the lower bounds for all eigenval-ues are greater than 0, which is {λi(L)}ni=1 ∈ R+.In this way, the matrix L + ∆ must be positive semidefinite. By normalization, we can obtain the convex L′ = L + D− 12 ∆D − 12 . With this approxi-mation, only the diagonal elements of L are mod-ified, ensuring the convexity of eQ(f ). This com-pletes the proof. □
+
+A.1.2 Closed-Form Solution 
+
+The closed-form optimal solution of formula (5) can be derived directly based on the formulation, which characterizes the retrieval probabilities of the memory nodes during the agent’s memory retrieval task. Since we have proven the convexity of equa-tion (5) , the optimal f ∗ can be obtained by solv-ing the first-order condition ∇ eQ(f ) = 0 . Specifi-cally, we can expand eQ as λ1 (f − f0)T (f − f0) + 
+
+λ2f TL′f + λ3f Tf . Then we can calculate the gra-dient of eQ(f )
+
+∇ eQ(f ) = λ12 ( f − f0) + λ2
+
+
+
+L′ + L′T
+
+f + 2 λ3f
+
+= ( λ1 + λ3) · 2f + λ2 · 2L′f − λ1 · 2f0
+
+=  (λ1 + λ2) · I + λ2L′ · 2f − λ1 · 2f0.
+
+(12) Let ∇ eQ(f ) = 0 , and we can obtain the optimal memory selection vector f ∗ as follows 
+
+f ∗ = λ1
+
+ (λ1 + λ3)I + λ2L′ −1 f0. (13) This completes the proof. □
+
+A.1.3 Proof of Graph Propagation Retrieval 
+
+To reduce the computational complexity of calcu-lating the closed-form of the retrieval vector f , we design a fast graph propagation retrieval that avoids calculating the inverse of the large-scale matrix. For convenience, we assume the two hyperpa-rameters λ1 and λ2 are set to satisfy λ1 + λ2 = 1 ,then formula (13) can be rewritten as formula (14) 
+
+f ∗ = (1 − λ2)  (1 − λ2 + λ3)I + λ2L′ −1 f0
+
+= 1 − λ2
+
+1 − λ2 + λ3
+
+
+
+I + λ2
+
+1 − λ2 + λ3
+
+L′
+
+−1
+
+f0
+
+= λ1
+
+2λ1 + λ3 − 1 · (1 − μ) I + μL′−1 f0,
+
+= (1 − μ) I + μL′−1 f ′
+
+> 0
+
+,
+
+(14) where μ = λ2 
+
+> 1−λ2+λ3
+
+, f ′ 
+
+> 0
+
+= λ1 
+
+> 2λ1+λ3−1
+
+f0. Based on this simplification, we can efficiently calculate the optimal memory selection vector f ∗ in formula (14) by the designed graph propagation retrieval 
+
+fk+1 = μ(−L′) · fk + (1 − μ) · f ′
+
+> 0
+
+, with the proof detailed as follows. 
+
+Proof . Based on the initial value f ′
+
+> 0
+
+, we can make the following deduction in the iteration, 
+
+f1 = μ(−L′ ) · f ′ 
+
+> 0
+
++ (1 − μ) · f ′
+
+> 0
+
+,
+
+f2 =
+
+h
+
+μ(−L′ )
+
+i2
+
+· f ′ 
+
+> 0
+
++ (1 − μ)
+
+h
+
+μ(−L′ ) + I
+
+i
+
+· f ′
+
+> 0
+
+,
+
+...
+
+fk =
+
+h
+
+μ(−L′ )
+
+ik
+
+· f ′ 
+
+> 0
+
++ (1 − μ)
+
+> k−1
+
+X
+
+> i=0
+
+h
+
+μ(−L′ )
+
+ii
+
+· f ′
+
+> 0
+
+,
+
+> k−1
+
+X
+
+> i=0
+
+h
+
+μ(−L′ )
+
+ii
+
+=
+
+
+
+I −
+
+h
+
+μ(−L′ )
+
+ik 
+
+I + μ(L′ )
+
+−1
+
+.
+
+(15) Since our constructed memory graph Gmem is sparse, the modified Laplacian matrix L′ can be ap-proximated to a sparse random matrix. Therefore, we can make the following derivation 
+
+lim 
+
+> k→∞
+
+h
+
+μ(−L′ )
+
+ik
+
+= 0 ,
+
+lim  
+
+> k→∞
+
+fk = (1 − μ)
+
+
+
+I + μL′
+
+−1
+
+f ′
+
+> 0
+
+,
+
+(16) which is exactly the same as the equation form in (14) . Therefore, the optimal memory selection vector f ∗ can be efficiently approximated using the proposed graph propagation retrieval algorithm, which avoids computing the inverse of the large-scale matrix. This completes the proof. □
+
+A.2 Detailed Design of GMP 
+
+In this section, we provide the specific architectural details of the Graph Message Passing (GMP) mod-ule. GMP takes the historical opinion values of all agents as input, and updates agents’ opinions simultaneously in a single forward pass. Based on the method, the following sections detail the dy-namic feature extraction, the feature projection, the graph attention layers, and the training design. 
+
+A.2.1 Dynamic Feature Extraction 
+
+To efficiently process the population of N agents over accumulating time steps, we vectorize GMP feature extraction process. By organizing histori-cal data into global tensors, we compute the raw dynamic features, including the individual stance features φI and neighbor stance features φC , using matrix operations. 
+
+Initialization and Global Tensors Let t0 be the current time step and M be the maximum neighbor degree in agents’ topology. We define three primary tensors to facilitate parallel computation: • Global opinion tensor St0 ∈ RN ×t0 : Each row i contains historical opinion values of agent i.• Global neighbor opinion tensor Nt0 ∈
+
+RN ×M ×t0 : A 3D tensor where Ni,j, : repre-sents the opinion history of the j-th neighbor of agent i, padded with zeros for nodes with degree < M .• Neighbor Mask M ∈ { 0, 1}N ×M : A binary matrix where Mi,j = 1 indicates a valid neighbor and 0 indicates padding. 
+
+Vectorized Operations The feature extraction logic is summarized in Table 6. Operations are per-formed along specific tensor dimensions to exploit GPU parallelism. These operations yield the final dynamic feature tensor φt0 
+
+> d
+
+= [ φt0 
+
+> I
+
+∥ φt0 
+
+> C
+
+] ∈ RN ×9, where ∥ de-notes the concatenation operator. Feature Group Feature Description Vectorized Mathematical Operation Individual Stance                                              
+
+> φI∈RN×5
+> Mean & Variance μ= mean t(St0),σ2= var t(St0)
+> Boundary Values omax = max t(St0),omin = min t(St0)
+> Current State olast =St0
+> :,t 0
+> Neighbor Stance
+> φC∈RN×4
+> Neighbor Mean ˆμ= mean m,t (Nt0⊙M)
+> Neighbor Std. ˆσ=
+> qP
+> m,t (( Nt0−ˆμ)2⊙M)⊘P
+> mM
+> Pearson Alignment sim i=1P
+> jMi,j
+> PMj=1 Pearson( St0
+> i, :,Nt0
+> i,j, :)·Mi,j
+> Echo Chamber ech = sim ⊘(1 + ˆ σ)
+
+Table 6: Parallel operations for dynamic feature extraction, broadcasted over the agent dimension N .
+
+A.2.2 Feature Projection 
+
+Before entering the graph network, the raw features are projected into a shared latent space to facilitate fusion. As described in formula 9, we employ two separate Multi-Layer Perceptrons (MLPs) for this purpose: • Dynamic MLP: Projects the dynamic opinion statistics φt0 
+
+> d
+
+∈ R9 to a latent vector of size 
+
+64 .• Static MLP: Projects the BERT-encoded pro-file embeddings φs ∈ R768 to a latent vector of size 64 .These projected vectors are concatenated to form the input node features Xt0 ∈ R128 for the GAT. 
+
+A.2.3 Graph Attention Layers 
+
+The main reasoning module consists of a two-layer GAT configuration. We utilize edge weights within the attention mechanism to allow structural interac-tion strengths to modulate message passing. 
+
+Layer 1 (Multi-Head Attention): The first layer takes the 128-dimensional node features and ap-plies multi-head attention to capture diverse inter-action patterns. • Input Channels: 128 
+
+• Heads: 4
+
+• Hidden Channels per Head: 8
+
+• Output Dimension: The outputs of the K heads are concatenated, resulting in a feature vector of size 4 × 8 = 32 .• Activation: ReLU (·).
+
+Layer 2 (Opinion Regression): The second layer aggregates the hidden representations to regress the final opinion value. • Input Channels: 32 
+
+• Heads: 1
+
+• Output Channels: 1 (Scalar opinion value) • Activation: Tanh (·), to constrain the predicted opinion ot+1 within the valid opinion range of 
+
+[−1, 1] .Table 7 summarizes the above shapes and parame-ters of the network modules.                  
+
+> Module Parameter Value/Shape
+> Dynamic MLP Input Dim 9Output Dim 64 Static MLP Input Dim 768 Output Dim 64 GAT Layer 1 Input Channels 128 Attention Heads 4Hidden Units 8Edge Dim 1GAT Layer 2 Input Channels 32 Attention Heads 1Output Dim 1Output Activation Function Tanh
+
+Table 7: Hyperparameter settings and shapes for the GMP neural architecture. 
+
+A.2.4 Training Design 
+
+The GMP model is designed to recursively update the opinions of ordinary agents in parallel. By leveraging the forward pass of a Graph Attention Network (GAT), it captures fine-grained interaction dynamics. Specifically, the model requires only the initial opinion values of agents; the module then re-cursively constructs dynamic feature inputs based on historical states, along with the static agent pro-file features, to regress the future opinion values. However, training this supervised model on real-world data presents significant challenges, primar-ily due to the irregularity of social media datasets. The three main obstacles are: • Inconsistent Observation Space: The num-ber of participating users varies significantly across different event datasets, preventing a fixed-size input structure. • Discontinuous Opinion Trajectories: Users typically post sporadically. Consequently, quantifiable opinion scores are often sparse and discontinuous over time, complicating the training of a recursive time-series model. • Multi-scale Alignment: The objective func-tion must balance the need to fit micro-level individual stances while simultaneously cap-turing the macro global opinion trend. To address these challenges, we propose a com-prehensive training scheme comprising three key components: 
+
+a) User Embedding and Clustering To resolve the issue of inconsistent observation spaces, we normalize the variable number of real users into a fixed set of "virtual agents." We crawl user pro-file descriptions across events, generate semantic embeddings via text encoding, and cluster these vectors into 1000 distinct classes. Each class rep-resents a virtual agent. This approach ensures a consistent input dimension across diverse events and preserves privacy by preventing overfitting to specific real-world individuals. 
+
+b) Trajectory Interpolation To handle tempo-ral discontinuity, we employ a hybrid interpola-tion strategy to construct continuous opinion tra-jectories from sparse data. For time steps lacking explicit stance labels, opinion values are imputed using a weighted combination: 50% derived from linear interpolation of the specific agent’s history, and 50% sampled from a normal distribution based on the global opinion variance at that time step. This ensures the training data maintains temporal continuity and statistical consistency. 
+
+c) Optimization Objective To ensure the model captures both macro-level trends and micro-level di-versity, the loss function is designed as a weighted sum of individual and global errors. On one hand, the individual error (Llocal ) mini-mizes the Mean Squared Error (MSE) between the predicted stance ˆot and the ground truth ot for all virtual agents, 
+
+Llocal = 1
+
+tmax 
+
+X
+
+> t
+
+1
+
+n ˆot − ot 22 , (17) where tmax represents the training window, n is the number of virtual agents, and ∥·∥ 2 denotes the 
+
+L2 norm. On the other hand, the global error (Lglobal ) en-sures the predicted average opinion aligns with the macro ground truth, 
+
+Lglobal = 1
+
+tmax 
+
+X
+
+> t
+
+1
+
+n
+
+> n
+
+X
+
+> i=1
+
+ˆoti − 1
+
+n
+
+> n
+
+X
+
+> i=1
+
+oti
+
+!2
+
+.
+
+(18) Based on the above design, the total loss function is formulated as 
+
+L = α · Llocal + β · Lglobal . (19) To encourage the learning of distinct local features and prevent the model from collapsing individual predictions into the global mean, we assign weights 
+
+α = 0 .9 and β = 0 .1.It is important to note that, the objective of GMP is to learn relational influence weights among user nodes with heterogeneous dynamic features (opinion statistics) and static features (profiles) un-der varying network topologies, rather than to fit ground-truth individual opinion values. Specifi-cally, GMP is trained on real user data from the first ten steps (1,000 user nodes) of the datasets, including user profiles and opinion states. It is sub-sequently evaluated in a simulation across the en-tire 30-step duration with 10,000 generated agents different from training data. These agents feature newly generated profiles, network structures, and opinion spaces where ordinary agents are influ-enced by dynamically generated opinions from core agents. This setup is analogous to training on a training set and performing inference on a sep-arate test set, which inherently avoids data leakage. 
+
+A.3 Empirical Assessment of EDG 
+
+To provide direct structural evidence, we analyze the centrality of EDG-selected core agents within a 10,000-agent simulated network exhibiting a long-tailed degree distribution, where in-degree repre-sents the number of followers (global statistics: min = 10, max = 244, mean = 19.43, p80 = 22.0). As shown in Table 8, an average of 94.1% of the core agents selected per round fall within the top 20% in-degree tier ( ≥ p80). This aligns with the Pareto Principle (often referred to as the 80/20 rule), where a small fraction of agents exert the majority of influence. These results demonstrate that EDG preferentially selects influential nodes across all simulation rounds, which provides strong evidence supporting our claim that EDG identifies emergent opinion leaders.                                               
+
+> Round ≥p80 p60-80 p40-60 <p40 in Top 20% 1100 000100% 597 30097% 10 88 11 1088% 15 98 20098% 20 83 15 2083% 25 99 10099% 30 96 40096% Mean ----94.1%
+
+Table 8: Centrality of EDG-selected agents. 
+
+A.4 Heterogeneity Design 
+
+The heterogeneity in GASim is modeled at both the generative (LLM-driven reasoning of core agents) and parametric (GMP-based opinion updating of ordinary agents) levels, rather than assuming agent homogeneity. Each agent is initialized with a dis-tinct persona profile sampled from real-world distri-butions (e.g., name, gender, nationality, personality, interests), which shapes susceptibility, stubborn-ness, and activity patterns. When agents are dynamically selected as core agents by EDG, they generate responses via persona-conditioned LLM reasoning. The prompt explicitly enforces bias-consistent and personality-grounded behavior which requires agents to: • base decisions solely on provided context, in-cluding persona, trigger news, personal mem-ory, and twitter page • focus selectively on potential contradic-tions aligned with their concerns (see Ap-pendix A.9.2) • maintain personal biases unless sufficiently convinced When acting as ordinary agents, heterogeneity is explicitly modeled by GMP. Beyond dynamic opinion states, GMP incorporates static persona embeddings encoded by BERT, enabling differenti-ated opinion update dynamics across agents with diverse traits. 
+
+A.5 Statistical Report 
+
+We conducted sensitivity analyses on key hyper-parameters on the Politics dataset. Specifically, we evaluate the hyperparameter choices of Top-K core agents (Top-K), entropy windowing of EDG (Window), memory graph kNN (KNN), and GMP architecture depth (Depth). By default, Top-K is set to be 100; Window is set to be 1; KNN is set to be 10; Depth is set to be 2. As shown in Table 9, performance remains stable under moderate varia-tions, indicating that GASim is not overly sensitive to hyperparameter choices.                                              
+
+> Value ∆Bias ∆Div Corr. F.
+> Default –0.0700 0.0074 0.4261 0.1349 Top-K 50 0.0980 0.0096 0.3972 0.1485 150 0.0808 0.0072 0.5376 0.1112 Window 20.0828 0.0086 0.3119 0.1784 30.0797 0.0091 0.2430 0.2284 KNN 50.0746 0.0074 0.4011 0.1737 15 0.0848 0.0096 0.2238 0.2107 Depth 10.0826 0.0098 0.2768 0.2130 30.0775 0.0089 0.3122 0.1630
+
+Table 9: Results of sensitivity evaluation. 
+
+A.6 Data Collection and Preprocessing 
+
+We performed keyword-based retrieval to crawl event-related tweets from social media. For the opinion value annotation, we utilized the 
+
+gpt-4o-mini model to assign a stance score to each tweet within the interval of [−1, +1] . In this scoring system, a value of −1 represents an ex-tremely negative stance toward the event, while 
+
++1 represents an extremely positive stance. The LLM scorers used for the Politics 1, Business 2, and Education 3 simulation events in our dataset are as follows.                                                                                                                    
+
+> 1https://en.wikipedia.org/wiki/Russian_ interference_in_the_2016_United_States_elections
+> 2https://en.wikipedia.org/wiki/Xinjiang_ cotton_industry
+> 3https://finance.yahoo.com/news/ student-wowed-china-alibaba-math-070107525.html Based on the comment, output the attitude score in the discussions of whether Russia intervenes in the 2016 US election. -1 indicates completely disbelief in the target, thinking the whole thing as a political conspiracy from the other party and fully defending for Donald Trump. 1 indicates completely belief in the target and strongly condemning Trump and his teams. Only output ascore (float number) in the range of [-1, 1].
+> Based on the comment, output the attitude score in the discussions of whether China Xinjiang cotton is produced through forced labor. -1 indicates complete disbelief in the target, strongly defending for China, and thinking the whole thing as a political conspiracy from western countries. 1 indicates complete belief in the target and strongly condemning the human rights violation in Xinjiang. Only output ascore (float number) in the range of [-1, 1].
+> Based on the comment, output the attitude score in the discussions of whether "Jiang Ping", agirl who is the first technical secondary school student from China that won the 12th place in the Alibaba Global Math Competition, had potentials cheating and the whole thing was aover-hyped publicity by made by the girl, her teacher and Alibaba. -1 indicates completely disbelieving Jiang Ping, thinking the whole thing as amedia hype, or expressing extreme negative emotions (such as strong dissatisfaction, criticism, attacks, or sarcasm). 1indicates expressing strong defend, protection and support for Jiang Ping in terms of her gender and potential hard work. Only output a score (float number) in the range of [-1, 1].
+
+Following the crawling and scoring phases, the tweet data underwent comprehensive cleaning and organization. Each processed data record contains the following attributes, • User ID : The unique identifier of the user account. • User Description : The profile biography or description provided by the user. • Follower Count : The total number of follow-ers the user has. • Following Count : The number of accounts the user is following. • Tweet Content : The original text published by the user. • Posting Time : The specific timestamp when the tweet was published. • Opinion Value : The polarity value in 
+
+[−1, +1] derived from the LLM-based anno-tation. 
+
+A.7 Metrics for Trend Alignment 
+
+To quantitatively evaluate the alignment between simulated and real-world public opinion, we de-fine the simulated trend curve S as the sequence of average agent stances at each time step t ∈{1, . . . , t max }. Let n be the number of agents and 
+
+oti be the stance of agent i at time t; the simu-lated average is otsim = 1
+
+n
+
+Pni=1 oti. We compare 
+
+S = {o1
+
+sim , . . . , o tmax 
+
+sim } against the ground-truth curve G = {o1
+
+global , . . . , o tmax 
+
+global } using the follow-ing four metrics. 
+
+∆Bias (Mean Absolute Bias). This metric as-sesses the macro-level magnitude of error by mea-suring the average deviation between the simulated stance and the ground-truth labels across the entire duration. A lower value indicates higher simulation accuracy. It is defined as 
+
+∆Bias = 1
+
+tmax 
+
+tmax X
+
+t=1 
+
+|otglobal − otsim |. (20) 
+
+∆Div (Variance of Absolute Bias). To capture the temporal stability of the simulation, we com-pute the variance of the absolute error. This metric reflects whether the simulation error remains con-sistent or fluctuates significantly over time. It is defined as 
+
+∆Div = 1
+
+tmax 
+
+tmax X
+
+t=1 
+
+(|otglobal − otsim | − ∆Bias )2.
+
+(21) 
+
+Corr. (Pearson Correlation Coefficient). The Corr. metric measures the linear alignment and trend consistency between the two sequences. It evaluates how well the simulated fluctuations track the real-world rises and falls in public opinion. It is defined as Corr. = Cov  oglobal , o sim 
+
+q
+
+Var  oglobal 
+
+ Var( osim )
+
+. (22) 
+
+F. (Fréchet Distance). As a geometric metric, the Fréchet distance F. measures the global simi-larity between curves S and G by considering the location and ordering of points. It calculates the minimized maximum distance required to traverse both curves simultaneously. It is defined as 
+
+F. = inf 
+
+α,β max 
+
+t∈[0 ,1] ∥G(α(t)) − S(β(t)) ∥. (23) where α(t) and β(t) are continuous, non-decreasing reparameterization functions that map the normalized time interval [0 , 1] onto the curves’ domains. Unlike simpler metrics, F. accounts for both temporal alignment and geometric shape, pro-viding a more stringent assessment of structural similarity than Dynamic Time Warping (DTW). 
+
+A.8 Baseline Methods A.8.1 Trend Alignment Evaluation 
+
+For the social simulation experiments, we consider two categories of baseline methods: traditional agent-based models (ABMs) and LLM-based so-cial simulation frameworks. 
+
+Agent-Based Models. HK (Hegselmann and Krause, 2002), RA (Deffuant et al., 2002), and Lorenz (Lorenz et al., 2021) are classic math-ematical ABMs that describe attitude evolution through local interactions among neighboring agents. These models share a common compu-tational paradigm consisting of neighbor selection, message exchange, and attitude update functions. Detailed formulations and comparative analyses are provided in (Mou et al., 2024). 
+
+LLM-Based Frameworks. SOD (Chuang et al., 2024) is an LLM-driven framework for modeling belief formation and confirmation bias. It shows that LLM agents naturally converge toward fac-tual consensus, while carefully designed prompts can induce opinion fragmentation, making it a strong baseline for opinion dynamics. HiSim (Mou et al., 2024) is the first hybrid simulation frame-work that integrates LLM-driven agents with tra-ditional ABMs to significantly scale social simula-tions, serving as another competitive baseline for trend alignment evaluation. 
+
+A.8.2 Memory Architecture Evaluation 
+
+To evaluate the effectiveness of our memory design on the LoCoMo retrieval benchmark, we compare against representative memory architectures that have previously been evaluated on this dataset. 
+
+A-Mem.(Xu et al., 2025) A-Mem introduces an agentic memory system for LLM agents that rep-resents experiences as interconnected notes. Each note captures interactions enriched with structured attributes such as keywords, contextual descrip-tions, and tags generated by the LLM. New memo-ries retrieve relevant notes using semantic embed-dings and establish links through LLM-based sim-ilarity reasoning. Existing notes are dynamically updated as new information is integrated, allow-ing the memory structure to evolve and support increasingly rich contextual associations. Mem-ory retrieval is performed via semantic similarity to provide relevant historical context during agent interactions. 
+
+Zep.(Rasmussen et al., 2025) Zep is an memory-layer service powered by Graphiti, a dynamic and temporally aware knowledge graph engine. It syn-thesizes unstructured conversational data and struc-tured business data into a non-lossy knowledge graph. Unlike static representations, Zep explicitly maintains the temporal validity of facts and rela-tionships, enabling robust modeling of evolving environments. 
+
+LangMem. LangMem 4 is a open-source mem-ory architectures for long-term agent memory and behavioral adaptation. It automates knowledge ex-traction and consolidation from conversations and employs a background manager to continuously up-date agent state. Integrated with LangGraph, Lang-Mem enables agents to maintain consistent and personalized behavior through functional memory primitives and iterative prompt refinement. 
+
+Mem0 and Mem0g.(Chhikara et al., 2025) 
+
+Mem0 manages agent memory by extracting salient information and using an LLM to perform A DD ,UPDATE , D ELETE , or N OOP operations based on semantic comparisons with existing vector-embedded records. Mem0g extends this design to a graph-based architecture with a two-stage pipeline that extracts entities and relational triplets. It pre-serves temporal context through semantic node merging and an LLM-based conflict resolution mechanism that marks outdated relationships as invalid rather than deleting them, supporting com-plex relational reasoning over time. 
+
+A.9 Supplementary Prompts A.9.1 News Event Injection 
+
+We perform different news event injections at pre-defined time steps to simulate external information shocks across topic-specific events in our dataset, as detailed below. The following prompt contains the news triggers for the Politics dataset. 
+
+> 4https://langchain-ai.github.io/langmem/
+
+tr_trigger_news1: &tr_trigger_news1 Former President’s National Security Advisor Flynn resigned three weeks into office for discussing Russia sanctions with the Russian ambassador and concealing it from the Vice President. FBI Director Comey was fired by President Trump, after sources revealed he had recently asked the Justice Department for more funds to investigate Russia’s involvement in the 2016 U.S. election. tr_trigger_news2: &tr_trigger_news2 In the context of a presidential election, the “Russiagate” controversy appears to have become highly politicized, which may gradually turn into a campaign issue repeatedly used by both parties to mobilize supporters and attack each other. tr_trigger_news3: &tr_trigger_news3 Jared Kushner, director of the White House Innovation Office, son-in-law and senior adviser to President Trump, issued a statement in Washington to explain his four meetings with Russian officials during Trump’s campaign and transition period before taking office. He said he had never had “inappropriate contacts” with foreign countries. tr_trigger_news4: &tr_trigger_news4 U.S. Special Prosecutor Mueller announced that Trump’s former campaign manager Manafort and three others were prosecuted for improper contacts with Russia and suspected crimes, including money laundering, conspiracy, perjury, false reporting, and concealing bank information. The accused are George Papadopoulos, Paul Manafort, and Rick Gates. tr_trigger_news5: &tr_trigger_news5 In Washington, U.S., Michael Flynn, former national security adviser to U.S. President Trump, appeared in court and pleaded guilty to perjury to the FBI in the Russia investigation. 
+
+Similarly, the following prompt contains the news triggers for the Business dataset. 
+
+xj_trigger_news1: &xj_trigger_news1 1 - Reports reveal that Xinjiang cotton is produced through forced labor. ABC’s Four Corners investigative program said Uighur Muslims were arrested and forced to work in textile factories in Xinjiang. #XinjiangCotton 2 - (Breaking News) The well-known clothing brand H&M announced that it has terminated its relationship with a yarn supplier in mainland China (Huafu Fashion) because the factory’s products were suspected of being produced using “forced labor” of ethnic minorities in Xinjiang. Soon after Chinese state media and mainland Chinese netizens jointly boycott H&M. xj_trigger_news2: &xj_trigger_news2 Hua Chunying, spokesperson for China’s Ministry of Foreign Affairs, responded at a press conference, stating that Xinjiang’s cotton is among the best in the world and that the “forced labor” accusation is amalicious lie fabricated by anti-China forces to damage China’s image and Xinjiang’s stability. She emphasized that China is open and transparent, but the will of the Chinese people cannot be deceived, noting that over 40% of Xinjiang’s cotton fields are mechanized, countering Western criticism. xj_trigger_news3: &xj_trigger_news3 H&M faced widespread backlash in China for its stance on Xinjiang cotton, leading to the termination of partnerships, store closures, and a significant decline in sales, with China dropping out of the brand’s top markets by mid-2021. xj_trigger_news4: &xj_trigger_news4 On March 31, H&M affirmed its long-term commitment to the Chinese mainland market and its goal to be aresponsible buyer globally, emphasizing collaboration 
+
+with stakeholders to develop the fashion industry. However, the response did not address Xinjiang and was not well received by Chinese netizens. xj_trigger_news5: &xj_trigger_news5 On April 15, 2021, CGTN reported that the BCI official website removed the statement that “human rights violations and forced labor exist in Xinjiang”. However, when The Economist’s China editor consulted BCI, BCI said its policy remained unchanged and that it would only reissue the notice in response to attacks on its website. 
+
+Moreover, the following prompt contains the news triggers for the Education dataset. 
+
+jp_trigger_news1: &jp_trigger_news1 1 - Don’t look down on the poor youngsters! A technical secondary school girl Jiang Ping unexpectedly won the 12th place in the world in the mathematics competition. 2 - There is an online rumor that Harvard University, the University of Hong Kong and many other well-known universities were going to admit the vocational school student Jiang Ping through an exceptional admission process, but the official has refuted the rumor. jp_trigger_news2: &jp_trigger_news2 1 - How disrespectful to Jiang Ping! The Ali finals just ended, 39 finalists issued a joint letter questioning Jiang Ping. 2 - Shocking Viral News - famous “Anti-counterfeiting fighter” Fang Zhouzi questioned Jiang Ping, as her math score in the high school entrance exam was only 83 points (full score is 150 points), which was out of place when compared to the rankings in global competitions. Besides, in the promotional video released by Alibaba Damo Academy, her blackboard writing seemed to have many low-level mistakes that should not be made by an excellent math learner. Moreover, the competition is an open book test, so cheating is not difficult. #Jiang Ping #Fang Zhouzi jp_trigger_news3: &jp_trigger_news3 1 - Jiang Ping dropped out of school? Lianshui Middle School internal news leaked -> Has the genius girl “fallen”? 2 - Official notice- the online rumor that Jiang Ping failed the monthly math test in school is true. jp_trigger_news4: &jp_trigger_news4 Official notice- According to the investigation, Jiang Ping was provided help by her teacher Mr. Wang during the preliminaries, which violated the preliminaries rule of “prohibiting discussion with others”. 
+
+A.9.2 Agent Cognitive Bias 
+
+In this appendix, we detail the configuration of cognitive biases for the LLM-driven core agents within our simulation framework. To mimic the polarized nature of real-world social media discus-sions, agents are not treated as neutral information processors. Instead, they are assigned specific cog-nitive frameworks—referred to here as Potential Contradictions—which dictate their initial stances and their resistance to opposing information. 
+
+Agent Behavioral Instruction: “You should speak like a real person with personal biases regarding the news. Only when the proof and news are convincing will you alter your opinion. When you hear opinions that are opposed to your own, you might tend to choose one of the ’potential contradictions’ that concerns you and formulate biased views.” 
+
+For the Politics dataset, the bias prompt models the partisan divide characteristic of U.S. political discourse. 
+
+(Democrats and Supporters): They believe that Trump’s interactions and subsequent cover-up regarding Russia are sufficient in themselves to pose serious political and legal problems, and they believe that Trump’s team may have improperly colluded with Russia during the election. (Trump and Supporters): They believe that the “Russiagate” is merely a political conspiracy aimed at undermining the legitimacy of the Trump administration and the presidency. They argue that there is insufficient evidence to prove any illegal collusion between Trump and Russia. 
+
+For the Education dataset, the bias prompt cap-tures the intersection of academic elitism, gender prejudice, and social class. 
+
+(Education Conflict): When Jiang Ping is being questioned by the authority, do you tend to defend Jiang Ping and express dissatisfaction with exam-oriented education, academic qualifications, and class stratification considering her status as a technical secondary school student, poor family background, and passion for learning? (Gender Conflict): Do you tend to defend Jiang Ping by believing that the suspicion toward her is rooted in prejudice against women, and that there would not be so many doubts if the contestant were a man? (Class Conflict): Do you tend to think it is impossible for Jiang Ping to achieve such accomplishment considering the possible evidence of cheating and her educational background? (Media Moral Conflict): Do you tend to think that the entire event is essentially a staged media hype designed for viral engagement? 
+
+For the Business dataset, the bias prompt repre-sents the clash between international human rights narratives and domestic nationalist sentiment. 
+
+(Western Media and Business Circles): They accuse Chinese authorities of imposing “forced labor” on the Uyghur people in Xinjiang and launch trade sanctions and boycotts against products sourced from the region. (Chinese Official Media and Public): They accuse the West of malicious smearing and disinformation, mobilizing widespread support for Xinjiang cotton while initiating boycotts against companies that abandoned the regional supply chain. 
+
+A.9.3 Memory Judge Prompt 
+
+For the memory architecture evaluation based on LoCoMo dataset, we adopt the memory judge prompt as follows, 
+
+Your task is to label an answer to a question as ’CORRECT’ or ’WRONG’. You will be given the following data: (1) a question (posed by one user to another user), (2) a ’gold’ (ground truth) answer, (3) a generated answer which you will score as CORRECT/WRONG. The point of the question is to ask about something one user should know about the other user based on their prior conversations. The gold answer will usually be a concise and short answer that includes the referenced topic, for example: Question: Do you remember what I got the last time Iwent to Hawaii? Gold answer: A shell necklace The generated answer might be much longer, but you should be generous with your grading - as long as it touches on the same topic as the gold answer, it should be counted as CORRECT. For time related questions, the gold answer will be a specific date, month, year, etc. The generated answer might be much longer or use relative time references (like "last Tuesday" or "next month"), but you should be generous with your grading - as long as it refers to the same date or time period as the gold answer, it should be counted as CORRECT. Even if the format differs (e.g., "May 7th" vs "7 May"), consider it CORRECT if it’s the same date. Now it’s time for the real question: Question: {question} Gold answer: {gold_answer} Generated answer: {generated_answer} First, provide a short (one sentence) explanation of your reasoning, then finish with CORRECT or WRONG. Do NOT include both CORRECT and WRONG in your response, or it will break the evaluation script. Just return the label CORRECT or WRONG in a json format with the key as "label".
