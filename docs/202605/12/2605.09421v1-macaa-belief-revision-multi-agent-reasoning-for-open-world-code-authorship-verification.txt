@@ -1,0 +1,473 @@
+Title: MACAA: Belief-Revision Multi-Agent Reasoning for Open-World Code Authorship Verification
+
+URL Source: https://arxiv.org/pdf/2605.09421v1
+
+Published Time: Tue, 12 May 2026 01:28:04 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+## MACAA: Belief-Revision Multi-Agent Reasoning for Open-World Code Authorship Verification 
+
+Jingwei Ye 1, Zhi Wang 1*, Xin Li 1, Cong Gao 1, Chenbin Su 1, Jieshuai Yang 1,Jianfei Tang 1, Ge Chu 21College of Cryptology and Cyber Science, Nankai University, China 
+
+> 2
+
+Runjian Co., Ltd., China 
+
+Abstract 
+
+Code authorship attribution (CAA) supports software forensics, plagiarism detection, and intellectual property protection. However, ex-isting supervised CAA approaches suffer from scarce training data and closed-world assump-tions: they require sufficient labeled code from fixed candidate-author sets, making training difficult in low-data cases and predictions un-reliable for open-world test pairs with unseen samples, or heterogeneous code pairs. Large language models remove task-specific train-ing, but direct prompting depends on costly expert-designed prompts, can hallucinate over complex heterogeneous code pairs, and rarely yields auditable evidence traces. We propose MACAA, a belief-revision-based multi-agent framework for training-free code authorship verification. MACAA comprises a Coordina-tor and four Expert Agents analyzing layout, lexical, syntactic, and programming-pattern ev-idence. The Coordinator gathers expert sig-nals for expansion, discounts unreliable evi-dence through contraction, and resolves con-flicts through revision to preserve belief con-sistency, replacing direct LLM judgment with auditable hypothesis refinement. MACAA achieves 89.15% F1 on same-language bench-marks and 80.00% on mixed cross-language pairs, surpassing all baselines. 1
+
+1 Introduction 
+
+Code authorship attribution (CAA) supports soft-ware forensics, plagiarism detection, and intellec-tual property protection. CAA includes several related tasks, such as identification, verification, clustering, evolution tracking, and author profiling. This paper focuses on code authorship verifica-tion (CAV), the binary task of deciding whether two code samples were written by the same author.  
+
+> *Corresponding author.
+> 1Our code is released at https://github.com/2845731/ Code_of_authorship .
+
+Figure 1 illustrates this relation: the upper part shows pairwise CAV, the lower part shows multi-class CAA over a query and candidate set, and the right part shows how repeated CAV produces similarity scores for candidate ranking. We study CAV because it is the atomic operation underlying CAA and is better suited to forensic settings than closed-world identification. In practice, the true au-thor may be absent from any fixed candidate pool, and only limited code evidence may be available. Verification is therefore naturally an open-world problem rather than a closed-set classification task (Kalgutkar et al., 2019; Choi et al., 2025). Supervised CAA methods face two main limi-tations in such settings: scarce effective training data and closed-world generalization. They require code samples paired with reliable author labels, but practical investigations may provide too few sam-ples or samples without usable labels. Even when labeled data exist, supervised models usually learn from a fixed set of candidate authors and assume that test samples follow the training distribution. When deployed in open-world settings, where test samples may involve unseen authors, projects, or language pairs, the learned decision boundary can become unreliable. Cross-language verification further weakens surface-level authorship cues. In heterogeneous code pairs, the same author may produce very different surface forms because programming lan-guages impose different syntax, type systems, li-brary ecosystems, and idiomatic patterns (Guo et al., 2024; Kalgutkar et al., 2019). Therefore, surface differences should not be treated as di-rect evidence of different authors. A reliable veri-fier must distinguish author-induced stylistic habits from language-induced variation and down-weight signals caused mainly by the programming lan-guage itself. Large language models (LLMs) provide atraining-free alternative for CAA, but existing 
+
+> arXiv:2605.09421v1 [cs.SE] 10 May 2026
+
+Final Decision   
+
+> -is_same_author
+> -is_diff_author
+> Final Decision
+> Which ID/Author
+> Author Author Author
+> Author 1
+> Code Authorship Attribution(Multi-class Task)
+> Candidate Set
+> Query
+> Code Authorship Verification(Binary Task)
+> Author 1
+> Code Sample 1
+> Author 2
+> Code Sample 2
+> Author 1 Author 2
+
+# = ? 
+
+> Author 1
+
+?     
+
+> Author Author Author
+> Author 1
+> Author 1 Author
+> Author 1 Author
+> Author 1 Author
+> Author Author Author
+> Author 1
+> From CAV to CAA
+> Sim_Score_1
+> Sim_Score_2
+> Sim_Score_3
+> Iterative CAV
+> Argmax Sim Score
+
+Figure 1: From Verification to Attribution in Code Authorship 
+
+LLM-based reasoning schemes remain insufficient. Direct prompting places most task knowledge in-side the prompt: strong performance often requires expert-designed instructions that specify which stylistic cues to inspect and how to weigh them. Chain-of-thought prompting can expose intermedi-ate reasoning, but on complex and heterogeneous code pairs, long reasoning traces may become un-faithful or hallucinated, causing the final decision to rest on weak evidence (Turpin et al., 2023). ReAct-style agents improve interaction by inter-leaving reasoning and actions (Yao et al., 2023), yet a single agent still lacks independent evidence checks across authorship dimensions. Pipeline-style multi-agent systems decompose the task, but errors can propagate from earlier agents to later stages without explicit belief correction. Debate-based systems encourage agents to challenge one another (Du et al., 2024; Chan et al., 2023), but con-sensus does not guarantee correctness and may fa-vor agreement over conflict resolution (Wynn et al., 2025). These limitations motivate a framework that can decompose evidence, revise unreliable beliefs, and record an auditable decision path. Both supervised methods and direct LLM prompting share a deeper structural limitation: they treat authorship verification as a single-pass deci-sion. This is fragile when evidence is mixed. A reliable verifier should instead maintain a work-ing hypothesis, update it as evidence accumulates, weaken unreliable signals, resolve conflicts, and record why each change was made. Belief revi-sion theory, formalized by Alchourrón et al. (1985) through the AGM paradigm, provides a principled framework for this process. Its core operations— 
+
+expansion , contraction , and revision —support adding new evidence, weakening unreliable beliefs, and restoring consistency under conflicting infor-mation (Aravanis, 2023). Motivated by these limitations and the belief revision principle, we propose MACAA (Multi-
+
+Agent Code Authorship Attribution). The Coor-dinator Agent acts as the central controller, main-taining a preliminary authorship hypothesis and or-chestrating the expert analyses and belief-revision workflow. The Expert Agents analyze layout, lexical, syntactic, and programming-pattern evi-dence. Their analyses support expansion by adding dimension-specific evidence to the shared work-ing memory. Cross-language calibration and agent rechecking support contraction by reducing un-reliable, language-induced, or inconsistent sig-nals. Structured debate further reconciles conflicts among Expert Agents. Finally, the Synthesize– Reflect–Finalize stage performs revision: it de-cides whether to preserve or update the preliminary hypothesis and produces the final decision. The stored analyses and belief updates serve as con-textual memory and provide a traceable evidence path. Our contributions are threefold: 1. Training-Free Open-World Verification: We formulate code authorship verification as a training-free open-world task that compares code pairs without labeled training data or closed-world candidate-author assumptions, bet-ter reflecting real-world forensic scenarios with limited code evidence and no fixed author pool. 2. Belief Revision-Based Multi-Agent Architec-ture: We introduce MACAA, which opera-tionalizes AGM-style belief revision through a Coordinator Agent and four Expert Agents that analyze layout, lexical, syntactic, and programming-pattern evidence. 3. Explicit Evidence Tracing for Forensic Au-ditability: MACAA records the belief revision path, including which evidence dimensions are expanded, weakened, or revised, enabling inves-tigators to inspect the feature-level basis of each decision. 
+
+2 Related Work 
+
+Code Authorship Analysis. First early meth-ods relied on manual feature engineering extract-ing lexical patterns, layout conventions, and syn-tactic statistics (Burrows and Tahaghoghi, 2007; Caliskan-Islam et al., 2015), while subsequent neu-ral approaches employed recurrent, convolutional, or transformer architectures to capture stylistic reg-ularities (Alsulami et al., 2017; Ullah et al., 2019). These methods assume closed-world settings re-quiring labeled training data for fixed author sets. Second, Quiring et al. (2019) demonstrated vul-nerability to adversarial transformations, prompt-ing defenses like Forsee leveraging expert feature knowledge for robust attribution (Guo et al., 2024). Third, Cross-language analysis has been addressed through language-oblivious features (Abuhamad et al., 2018) and platform-independent approaches (Abazari et al., 2022), though these still require author-specific supervision. Recent work by Ou et al. (2022) argues verification is more practical than closed-set identification for forensics, though their approach remains trained. LLMs offer zero-shot reasoning without task-specific training (Choi et al., 2025), but direct prompting produces non-iterative decisions lacking transparency. 
+
+Multi-Agent Systems. LLMs have evolved from text generators to reasoning engines through prompting techniques eliciting intermediate steps (Wei et al., 2022; Kojima et al., 2022). Single-agent frameworks like ReAct and Toolformer in-tegrate reasoning with tool use (Yao et al., 2023; Schick et al., 2023), while multi-agent frameworks enable specialized collaboration through commu-nication (Li et al., 2023; Wu et al., 2024; Hong et al., 2024). However, existing frameworks lack principled mechanisms for epistemic conflict res-olution —the challenge where surface similarities derive from shared templates rather than genuine authorial habits. 
+
+Belief Revision. The AGM framework (Alchour-rón et al., 1985) postulates rationality constraints in-cluding success, consistency, and minimal change. Recent extensions to multi-agent settings (Arava-nis, 2023) and unified Bayesian-AGM approaches (Bonanno, 2025) establish foundations for collab-orative belief update. Recent AI systems have op-erationalized belief revision through constructivist memory (Li et al., 2025), self-organizing mem-ory operating systems (Hu et al., 2026), and agen-tic memory supporting explicit revision operations (Xu et al., 2025). 
+
+Positioning. MACAA differs from prior code authorship analysis by framing verification as itera-tive belief revision rather than static feature match-ing; differs from existing multi-agent frameworks by operationalizing AGM paradigm for princi-pled belief update; and differs from prior belief re-vision applications by tailoring to heterogeneous code verification with cross-language calibration and forensic auditability. 
+
+3 Methodology 
+
+In this section, we present the details of the MACAA framework. As illustrated in Figure 2, MACAA comprises five core components: a Co-ordinator Agent that manages the working belief state and orchestrates the verification workflow, and four Expert Agents that analyze complemen-tary evidence dimensions—layout, lexical, syntac-tic, and programming patterns. Detailed prompt designs for all agents are provided in Appendix E. 
+
+3.1 Belief Revision Foundation 
+
+Our design is grounded in the AGM theory of belief revision (Alchourrón et al., 1985), which formal-izes how rational agents update beliefs upon re-ceiving new evidence while preserving consistency and minimizing unnecessary changes. The AGM paradigm defines three core operations that directly Preliminary Review 
+
+> Coordinator Agent
+
+Dispatch Mission 
+
+Synthesize Decide Next 
+
+> Layout Agent
+> Lexical Agent
+> Syntactic Agent
+> Pattern Agent
+
+Expert Reports 
+
+> similarity,confidence,
+> matches/differences,
+> confounder risk
+
+Reflect 
+
+Finalize 
+
+> Targeted Recheck
+> Debate
+> Adjust Weight?
+> Tool Interfaces
+> External APIs MCP-based Tools
+
+## Final Decision   
+
+> -is_same_author
+> -confidence
+> -evidence_chain
+> -verdict_reasoning
+> -dissentiong opinions /caveats
+> Layout Lexical
+> Pattern Syntactic
+> TOOLs Repo
+> (tendency,confidence)
+
+Preliminary Review 
+
+> Revise Hypothesis?
+> Code Sample
+> Code Sample 1
+> Code Sample 2
+> Coordinator Agent State Machine Flow Local Functions
+> Preliminary Authorship Hypothesis:
+> contextual memory
+
+Figure 2: MACAA overview with Coordinator Agent state-machine flow for expert evidence analysis, belief revision, and auditable authorship decisions. 
+
+map to MACAA’s architectural components: 
+
+Expansion (K + ϕ)—Adding consistent new be-liefs to the knowledge base K when evidence ϕ ar-rives. In MACAA, this corresponds to the Expert Agents gathering evidence from their respective dimensions and contributing observations to the working belief state. 
+
+Contraction (K ÷ ϕ)—weakens or removes be-liefs from K when new evidence reveals unre-liable or conflicting assumptions, while preserv-ing as much useful information as possible. In MACAA, contraction is operationalized by the A D-
+
+JUST WEIGHT step. The Coordinator adjusts the reliability weights of evidence dimensions based on three sources: cross-language calibration, targeted rechecking, and structured debate. Cross-language calibration down-weights signals likely induced by language-specific syntax, libraries, or idioms. Tar-geted rechecking revisits uncertain dimensions to verify weak evidence. Structured debate compares conflicting expert claims and exposes which dimen-sion provides stronger support. These operations do not finalize the authorship decision; instead, they calibrate dimension-level evidence before the later revision stage decides whether to preserve or update the preliminary authorship hypothesis. 
+
+Revision (K ∗ ϕ)—incorporates calibrated evi-dence into the current belief state while preserving consistency. In MACAA, the Synthesize–Reflect– Finalize stage performs revision: after debate rec-onciles conflicting expert evidence and contraction weakens unreliable signals, the Coordinator pre-serves or updates the preliminary authorship hy-pothesis using the remaining credible evidence. The principle of minimal change guides how MACAA updates beliefs under conflict. Instead of discarding the preliminary authorship hypothe-sis, MACAA makes local adjustments to evidence reliability: it weakens only the dimensions whose evidence is unreliable, inconsistent, or weakly sup-ported, while preserving the remaining credible evidence in the working belief state. Thus, the framework revises the parts of the belief state that cause conflict without unnecessary changes to the overall decision process. 
+
+3.2 Problem Formulation 
+
+Given two code samples x1 and x2, potentially writ-ten in distinct programming languages, MACAA predicts whether they originate from the same au-thor. The final decision includes: (1) a binary la-bel is_same_author ∈ { true , false }; (2) a con-fidence score c ∈ [0 , 1] ; (3) an evidence chain 
+
+E = {e1, . . . , e k} documenting the belief-revision trajectory; (4) verdict reasoning that summarizes the decisive evidence; and (5) dissenting opinions that record unresolved conflicts, weak signals, or reliability concerns for forensic auditability. 
+
+3.3 Coordinator Agent 
+
+The Coordinator Agent implements the state-machine flow shown by the red arrows in Fig-ure 2. Given the input pair (x1, x 2) from §3.2, it acts as the central controller: it maintains the pre-liminary authorship hypothesis, dispatches Expert Agents, updates the shared CaseState , and coor-dinates expansion, contraction, and revision. The 
+
+CaseState stores expert_reports , synthesis_-history , and reflection_history as contextual memory for later reasoning and provenance recon-struction. 
+
+State Machine Design. The Coordinator pro-ceeds as follows. PRELIMINARY REVIEW per-forms an initial comparison of x1 and x2 and ini-tializes K0 with a tendency and a preliminary con-fidence score c0 ∈ [0 , 1] . DISPATCH MISSION 
+
+invokes the Layout, Lexical, Syntactic, and Pattern Agents on (x1, x 2). Their reports support expan-sion ( K + ϕ) by contributing dimension-specific evidence items ei to the growing evidence chain 
+
+E = {e1, . . . , e k}, each including similarity, con-fidence, matches or differences, and confounder risks. S YNTHESIZE aggregates these reports under the current weights into a structured evidence sum-mary, rather than directly finalizing the belief state. REFLECT compares the current synthesis with con-textual memory; it is skipped in the first pass be-cause no prior synthesis or reflection history exists. DECIDE NEXT first determines whether the current evidence is sufficient for F INALIZE , or whether the maximum iteration budget has been reached. Otherwise, it selects T ARGETED RECHECK for uncertain dimensions or D EBATE for conflicting expert judgments. The resulting recheck or de-bate context is stored in CaseState and used by the Coordinator to A DJUST WEIGHT , implement-ing contraction ( K ÷ ϕ) by strengthening credible dimensions and weakening unreliable, language-induced, or inconsistent evidence. Once the loop exits, the Synthesize–Reflect–Finalize path per-forms revision ( K ∗ ϕ): the Coordinator preserves or revises the preliminary hypothesis using the cali-brated evidence. The final output instantiates the tu-ple: is_same_author ∈ { true , false }, confidence 
+
+c ∈ [0 , 1] , evidence chain E, verdict reasoning, and dissenting opinions or caveats. 
+
+3.4 Expert Agents 
+
+Four Expert Agents provide complementary views of authorship evidence and implement expansion by producing dimension-specific reports for the Coordinator. Each agent receives (x1, x 2) and pro-duces a structured report ei—encoding dimension-level similarity, confidence, and confounder risks— that the Coordinator assembles into the evidence chain E = {e1, . . . , e k}. Each agent may also invoke dimension-relevant tools via MCP-based in-terfaces, external APIs, or local functions to extract code features that sharpen its evidence assessment. 
+
+Layout Agent —analyzes indentation, spacing reg-ularities, delimiter placement, and comment layout. These features capture formatting habits and tool-ing preferences that may remain consistent across code samples. 
+
+Lexical Agent —examines identifier naming con-ventions, character-level regularities, and token distributions. These features reflect preferences in naming style, code expressiveness, and lexical choice. 
+
+Syntactic Agent —analyzes structural organization, control-flow shapes, and AST-level patterns. In cross-language settings, it focuses on more trans-ferable structural properties, such as nesting depth and cyclomatic complexity, rather than language-specific syntax. 
+
+Pattern Agent —captures higher-level program-ming habits, including helper-function usage, de-composition strategies, defensive checks, edge-case handling, and algorithmic preferences. We introduce this agent to model authorial signals that are less tied to surface syntax and may better trans-fer across heterogeneous code pairs. 
+
+Pattern Agent’s Distinctive Role. The Pattern Agent is especially important for cross-language verification, i.e., when x1 and x2 are written in distinct programming languages. Layout, lexical, and syntactic cues can change substantially when the same author writes in different programming languages, because each language imposes dif-ferent syntax, libraries, and idioms. In contrast, programming-pattern evidence reflects how a de-veloper decomposes problems, structures reusable logic, and handles exceptional cases (Kalgutkar et al., 2019). MACAA uses this difference in reliability during contraction: it down-weights evidence dimensions that are likely distorted by language-specific factors while preserving more stable pattern-level evidence. This follows the AGM minimal change principle by adjusting only unreliable parts of the belief state rather than re-placing the whole authorship hypothesis. 
+
+4 Experiments 
+
+We evaluate MACAA to address four research questions: RQ1: Does belief revision-based multi-agent reasoning outperform existing baselines on same-language verification? RQ2: Can MACAA maintain robust performance on cross-language ver-ification across varying linguistic distance levels? 
+
+RQ3: What are the contributions of individual AGM belief revision operations? RQ4: How do expert agent weights adapt across same-language and cross-language settings? 
+
+4.1 Experimental Setup Datasets. We construct evaluation suites span-ning competitive-programming and open-source domains. GCJ-C++ (Quiring et al., 2019) con-tains 204 authors and 1,632 C++ files from Google Code Jam. GitHub-C (Kalgutkar et al., 2019) (67 authors, 2,072 files) and GitHub-Java (Kalgutkar et al., 2019) (40 authors, 2,827 files) add real-world diversity. CodeNet (Puri et al., 2021) contains 13.9 million submissions in 55 languages. Table 1 summarizes the dataset statistics. Together, these datasets enable comprehensive evaluation across single-language and cross-language settings. 
+
+Implementation Details. We deploy MACAA using Qwen3-80B-Instruct via vLLM on 2NVIDIA H200 GPUs. Full hyperparameters are provided in Appendix D. 
+
+Baselines. We select representative methods: (1) Stylo-ML (Caliskan-Islam et al., 2015), classic ML with handcrafted features; (2) Forsee (Guo et al., 2024), deep neural network with expert feature knowledge; (3) CLAVE (Álvarez Fidalgo and Ortín, 2025), transformer-based contrastive learning; (4) LLM Direct (Choi et al., 2025), zero-shot GPT-4 prompting; (5) LLM+Rationale (chain-of-thought) (Wei et al., 2022); (6) LLM+Tools (single-agent ReAct) (Yao et al., 2023); (7) MAS-Pipeline (Li et al., 2023), sequential multi-agent without belief revision; (8) MAS-Debate (Du et al., 2024), paral-lel multi-agent with debate but no explicit belief                
+
+> Dataset Language # Authors # Codes
+> GCJ C++ C++ 204 1,632 GitHub Java Java 40 2,827 GitHub C C67 2,072 CodeNet-10M Multi 4,048 102,350
+> Table 1: Overview of datasets used in experiments.
+
+operations. For the supervised baselines (1)–(3), we adopt models trained on their original datasets and apply them to our evaluation pairs as fixed fea-ture extractors with downstream classifiers; details are in Appendix A. 
+
+Evaluation Protocol. We construct balanced evaluation sets through stratified random sampling, measuring performance via F1 score and confusion matrices; see Appendix A for details. 
+
+4.2 Main Results 4.2.1 Same-Language Verification (RQ1) 
+
+We evaluate on 500 balanced pairs from each dataset (GCJ C++, GitHub Java, GitHub C). Ta-ble 2 presents F1 score and confusion matrices. MACAA achieves the highest F1 on all three datasets (89.15% on GCJ C++, 85.37% on GitHub Java, 74.84% on GitHub C), matching or exceed-ing supervised methods without requiring training data. The significant gap over LLM Direct (up to 52.78% absolute improvement on GitHub C) val-idates that structured belief revision outperforms direct prompting. The multi-agent baselines reveal that merely employing multiple agents is insufficient. MAS-Pipeline achieves competitive performance on GitHub Java (83.95%) but struggles on GCJ C++ (46.11%) and GitHub C (46.11%), suggesting se-quential agent communication without belief revi-sion leads to unstable performance. MAS-Debate performs strongly on GitHub Java (88.10%) but degrades on GCJ C++ (52.38%) and GitHub C (49.86%), indicating unstructured debate without explicit contraction and revision operations fails to reliably resolve epistemic conflicts. These results demonstrate that the AGM-theoretic belief revision operations are essential for consistent performance. 
+
+4.2.2 Cross-Language Verification (RQ2) 
+
+We construct cross-language pairs from CodeNet across three divergence levels: Low (C–C++, C– C#), Medium (Java–Go, Python–Ruby), and High (C++–Python, Java–Haskell), with 200 pairs per Method F1 TP FP TN FN GCJ C++                                                                                                                                        
+
+> Stylo-ML 65.49 223 208 42 27 Forsee 69.29 238 199 51 12 CLAVE 68.93 244 214 36 6LLM Direct 59.89 112 12 238 138 LLM+Rationale 68.59 142 25 225 105 LLM+Tools 71.45 229 162 88 21 MAS-Pipeline 46.11 80 17 233 170 MAS-Debate 52.38 99 29 221 151 MACAA 89.15 226 31 219 24 GitHub Java
+> Stylo-ML 63.88 168 113 142 77 Forsee 67.73 170 97 168 65 CLAVE 69.09 152 53 212 83 LLM Direct 78.55 152 0265 83 LLM+Rationale 82.79 166 0265 69 LLM+Tools 78.53 172 31 234 63 MAS-Pipeline 83.95 170 0265 65 MAS-Debate 88.10 185 50 265 0
+> MACAA 85.37 175 0265 60
+> GitHub C
+> Stylo-ML 66.19 233 221 29 17 Forsee 63.35 159 93 157 91 CLAVE 70.31 225 165 85 25 LLM Direct 22.06 31 0250 219 LLM+Rationale 36.30 55 0250 193 LLM+Tools 66.50 135 21 229 115 MAS-Pipeline 46.11 80 17 233 170 MAS-Debate 49.86 86 9241 164 MACAA 74.84 177 46 204 73
+
+Table 2: Same-language verification results. F1 score (%); TP/FP/TN/FN: confusion matrix entries. 
+
+language pair. See Appendix B for detailed lan-guage pair descriptions. We also test a mixed set-ting with 500 random pairs spanning Python, Java, Go, and C++ without predetermined combinations. Table 3 presents F1 score. Feature-based base-lines exhibit inconsistent patterns across divergence levels. LLM-based methods show expected degra-dation as linguistic distance increases: LLM Direct drops from 45.21% at Low divergence to 23.61% at High divergence. The multi-agent baselines un-derscore the importance of principled belief revi-sion: MAS-Pipeline degrades severely (49.15% to 11.85%), and MAS-Debate struggles (52.17% to 22.38%), confirming that architectural contribution lies not in multi-agent parallelism per se, but in the AGM-theoretic belief revision operations. In contrast, MACAA maintains stable perfor-mance across all divergence levels (76.19% at Low, 70.37% to 70.75% at Medium, 69.06% to 76.39% at High). Under the mixed setting with unpredictable language combinations, MACAA achieves 80.00% F1, substantially outperforming all baselines (19.20% to 50.00%). This confirms that MACAA’s belief revision mechanism enables consistent verification accuracy across controlled divergence levels while maintaining autonomous adaptability to arbitrary heterogeneous encounters in open-world scenarios. 
+
+4.3 Belief Revision Ablation and Expert Contribution Analysis (RQ3–RQ4) 
+
+We conduct RQ3 and RQ4 under the same eval-uation settings: same-language verification with 500 randomly sampled GCJ C++ code pairs, and cross-language verification with 200 randomly sam-pled C–C++ code pairs. RQ3 ablates the belief-revision operations to measure their contribution, while RQ4 analyzes adaptive agent weights to ex-amine how MACAA calibrates evidence reliability across verification settings. 
+
+Belief Revision Ablation (RQ3). Table 4 re-ports F1 score and Expert Consensus (EC), where EC is the proportion of samples on which all four Expert Agents make the same vote. Full MACAA achieves 83.08% F1 on same-language pairs and 70.00% F1 on cross-language pairs. Removing Ex-pansion causes severe degradation, reducing F1 to 19.35% and 11.11%, which confirms that single-pass reasoning cannot capture multi-dimensional authorship evidence. Removing Contraction lowers same-language F1 to 76.47%, while cross-language F1 changes slightly to 71.19%, suggesting that contraction mainly calibrates evidence reliability rather than always maximizing raw F1 on every subset. Removing Revision reduces F1 to 77.61% and 61.82%, showing that the final hypothesis up-date is especially important when expert evidence is conflicting. The much lower cross-language EC, 24.00%, further indicates stronger disagreement among evidence dimensions in heterogeneous veri-fication. 
+
+Expert Agent Contribution (RQ4). Table 5 reports the adaptive weight distribution across the same verification settings. In same-language veri-fication, the Syntactic and Lexical agents receive the largest weights, 0.3115 (+0.0415) and 0.2869 (+0.0096), respectively. This suggests that when two samples share the same programming lan-guage, token choices and structural forms provide reliable authorship cues. The Layout weight de-creases to 0.1709 (-0.0591), indicating that format-ting signals are less stable and may be affected by Linguistic Distance Low Medium High Method                                                                     
+
+> C–C++ C–C# Java–Go Py–Ruby C++–Py Java–Hask
+> Mix
+> Stylo-ML 61.92 51.12 54.41 64.56 61.32 77.30 19.20 Forsee 61.32 39.34 40.27 66.91 62.36 77.91 46.55 CLAVE 61.81 50.00 54.07 64.71 63.08 76.68 46.39 LLM Direct 45.21 43.67 30.76 42.10 46.55 23.61 28.28 LLM+Rationale 50.42 50.54 37.89 53.12 52.89 30.66 34.57 LLM+Tools 58.76 39.63 52.17 59.21 62.31 49.72 50.00 MAS-Pipeline 49.15 44.44 21.69 17.48 41.07 11.85 26.41 MAS-Debate 49.15 52.17 42.55 39.32 49.57 22.38 41.03
+> MACAA 76.19 70.37 70.49 70.75 76.39 69.06 80.00
+
+Table 3: Cross-language verification F1 score (%) by linguistic distance. 200 pairs per language pair, 400 for Mix.                
+
+> Configuration F1 (Same) F1 (Cross) EC (%)
+> Full MACAA 83.08 70.00 66.66 / 24.00 w/o Expansion 19.35 11.11 N/A / N/A w/o Contraction 76.47 71.19 68.00 / 24.00 w/o Revision 77.61 61.82 64.00 / 24.00
+
+Table 4: Belief revision ablation. F1 score (%); EC: Expert Consensus rate (Same/Cross).             
+
+> Agent Same-Lang ¯wCross-Lang ¯w
+> Layout 0.1709(–0.0591) 0.1950(–0.0250) Lexical 0.2869(+0.0096) 0.2570(–0.0430) Syntactic 0.3115(+0.0415) 0.0671(–0.0129) Pattern 0.2279(+0.0079) 0.4810(+0.0810)
+
+Table 5: Adaptive agent weights across verification set-tings. Parentheses denote changes from initial weights. 
+
+editors or project conventions. The Pattern Agent increases slightly to 0.2279 (+0.0079), but it is not dominant in this setting. In cross-language verifica-tion, the Pattern Agent becomes the most reliable dimension, rising to 0.4810 (+0.0810), because de-composition strategies, helper-function usage, and edge-case handling are less tied to surface syn-tax. By contrast, Syntactic weight drops to 0.0671 (-0.0129), while Lexical and Layout weights de-crease to 0.2570 (-0.0430) and 0.1950 (-0.0250), reflecting the instability of language-specific syn-tax, tokens, and formatting. These results validate MACAA’s contraction mechanism: the framework calibrates dimension-level reliability by weaken-ing unreliable or language-induced evidence while preserving useful signals for later revision. 
+
+Interpretability and Forensic Auditability. 
+
+MACAA produces complete belief revision traces with explicit evidence provenance, enabling foren-sic auditability. A representative case is provided in Appendix C. 
+
+5 Conclusion 
+
+We presented MACAA, a multi-agent frame-work that operationalizes AGM belief revision for training-free code authorship verification. By fram-ing verification as iterative belief update rather than static classification, MACAA addresses the funda-mental limitation of supervised approaches that require fixed author sets and fail in open-world deployment. Our architecture implements prin-cipled belief operations—expansion, contraction, and revision—through a Coordinator Agent and four Expert Agents, enabling robust verification across heterogeneous code pairs with complete evi-dence provenance. Experiments demonstrate sub-stantial improvements over supervised baselines and direct LLM prompting on both same-language and cross-language tasks. MACAA establishes be-lief revision as a theoretically grounded foundation for interpretable, forensically auditable authorship verification, opening new avenues for principled multi-agent reasoning in software forensics. 
+
+6 Limitations 
+
+We identify three limitations. First, all experiments employ Qwen3-80B-Instruct; whether MACAA’s improvements hold across different LLM archi-tectures and parameter scales remains unexplored. Second, the cross-language evaluation covers only high-resource languages (Python, Java, Go, C, C++, Ruby, Haskell), and same-language datasets come from competitive programming and open-source domains; performance on low-resource languages, obfuscated code, or enterprise codebases is un-known. Third, iterative multi-agent belief revi-sion requires more LLM calls than direct prompt-ing; we leave systematic quantification of this cost– accuracy trade-off to future work. 
+
+References 
+
+Farzaneh Abazari, Enrico Branca, Evgeniya Novikova, and Natalia Stakhanova. 2022. Language and plat-form independent attribution of heterogeneous code. In International Conference on Security and Privacy in Communication Systems , pages 173–191. Springer. Mohammed Abuhamad, Tamer AbuHmed, Aziz Mo-haisen, and DaeHun Nyang. 2018. Large-scale and language-oblivious code authorship identification. In 
+
+Proceedings of the 2018 ACM SIGSAC Conference on Computer and Communications Security , pages 101–114. Carlos E Alchourrón, Peter Gärdenfors, and David Makinson. 1985. On the logic of theory change: Partial meet contraction and revision functions. The journal of symbolic logic , 50(2):510–530. Bander Alsulami, Edwin Dauber, Richard Harang, Spiros Mancoridis, and Rachel Greenstadt. 2017. Source code authorship attribution using long short-term memory based networks. In European Sympo-sium on Research in Computer Security , pages 65–82. Springer. David Álvarez Fidalgo and Francisco Ortín. 2025. CLAVE: A deep learning model for source code au-thorship verification with contrastive learning and transformer encoders. Information Processing & Management , 62(3):104005. Theofanis I Aravanis. 2023. Collective belief revision. 
+
+Journal of Artificial Intelligence Research , 78:1221– 1247. Giacomo Bonanno. 2025. Belief revision: The Bayesian and AGM approaches unified via Kripke–Lewis se-mantics. Artificial Intelligence , 338:104259. Steven Burrows and Seyed MM Tahaghoghi. 2007. Source code authorship attribution using n-grams. In Proceedings of the twelth Australasian document computing symposium, Melbourne, Australia, RMIT University , pages 32–39. Citeseer. Aylin Caliskan-Islam, Richard Harang, Andrew Liu, Arvind Narayanan, Clare Voss, Fabian Yamaguchi, and Rachel Greenstadt. 2015. De-anonymizing pro-grammers via code stylometry. In 24th USENIX security symposium (USENIX Security 15) , pages 255–270. Chi-Min Chan, Weize Chen, Yusheng Su, Jianxuan Yu, Wei Xue, Shanghang Zhang, Jie Fu, and Zhiyuan Liu. 2023. Chateval: Towards better llm-based eval-uators through multi-agent debate. arXiv preprint arXiv:2308.07201 .Soohyeon Choi, Yong Kiam Tan, Mark Huasong Meng, Mohamed Ragab, Soumik Mondal, David Mohaisen, and Khin Mi Mi Aung. 2025. I can find you in seconds! leveraging large language mod-els for code authorship attribution. arXiv preprint arXiv:2501.08165 .Yilun Du, Shuang Li, Antonio Torralba, Joshua B Tenen-baum, and Igor Mordatch. 2024. Improving factual-ity and reasoning in language models through multia-gent debate. In Forty-first international conference on machine learning .Xiaowei Guo, Cai Fu, Juan Chen, Hongle Liu, Lansheng Han, and Wenjin Li. 2024. Enhancing robustness of code authorship attribution through expert feature knowledge. In Proceedings of the 33rd ACM SIG-SOFT International Symposium on Software Testing and Analysis , pages 199–209. Sirui Hong, Mingchen Zhuge, Jonathan Chen, Xiawu Zheng, Yuheng Cheng, Jinlin Wang, Ceyao Zhang, Steven Yau, Zijuan Lin, Liyang Zhou, and 1 oth-ers. 2024. Metagpt: Meta programming for a multi-agent collaborative framework. In International Con-ference on Learning Representations , volume 2024, pages 23247–23275. C. Hu, X. Gao, Z. Zhou, D. Xu, Y. Bai, X. Li, H. Zhang, T. Li, C. Zhang, L. Bing, and Y. Deng. 2026. Ever-MemOS: A self-organizing memory operating sys-tem for structured long-horizon reasoning. arXiv preprint arXiv:2601.02163 .Vaibhavi Kalgutkar, Ratinder Kaur, Hugo Gonzalez, Natalia Stakhanova, and Alina Matyukhina. 2019. Code authorship attribution: Methods and challenges. 
+
+ACM Computing Surveys (CSUR) , 52(1):1–36. Takeshi Kojima, Shixiang Shane Gu, Machel Reid, Yu-taka Matsuo, and Yusuke Iwasawa. 2022. Large lan-guage models are zero-shot reasoners. Advances in neural information processing systems , 35:22199– 22213. Guohao Li, Hasan Hammoud, Hani Itani, Dmitrii Khizbullin, and Bernard Ghanem. 2023. Camel: Communicative agents for" mind" exploration of large language model society. Advances in neural information processing systems , 36:51991–52008. R. Li, Z. Zhang, X. Bo, Z. Tian, X. Chen, Q. Dai, Z. Dong, and R. Tang. 2025. CAM: A construc-tivist view of agentic memory for LLM-based reading comprehension. In Advances in Neural Information Processing Systems (NeurIPS) .Weihan Ou, Steven HH Ding, Yuan Tian, and Leo Song. 2022. Scs-gan: learning functionality-agnostic sty-lometric representations for source code authorship verification. IEEE Transactions on Software Engi-neering , 49(4):1426–1442. Ruchir Puri, David S Kung, Geert Janssen, Wei Zhang, Giacomo Domeniconi, Vladimir Zolotov, Julian Dolby, Jie Chen, Mihir Choudhury, Lindsey Decker, and 1 others. 2021. Codenet: A large-scale ai for code dataset for learning a diversity of coding tasks. 
+
+arXiv preprint arXiv:2105.12655 .Erwin Quiring, Alwin Maier, and Konrad Rieck. 2019. Misleading authorship attribution of source code us-ing adversarial learning. In 28th USENIX Security Symposium (USENIX Security 19) , pages 479–496. Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, Roberta Raileanu, Maria Lomeli, Eric Hambro, Luke Zettle-moyer, Nicola Cancedda, and Thomas Scialom. 2023. Toolformer: Language models can teach themselves to use tools. Advances in neural information process-ing systems , 36:68539–68551. Miles Turpin, Julian Michael, Ethan Perez, and Samuel Bowman. 2023. Language models don’t always say what they think: Unfaithful explanations in chain-of-thought prompting. Advances in Neural Information Processing Systems , 36:74952–74965. Farhan Ullah, Junfeng Wang, Sohail Jabbar, Fadi Al-Turjman, and Mamoun Alazab. 2019. Source code authorship attribution using hybrid approach of pro-gram dependence graph and deep learning model. 
+
+IEEE Access , 7:141987–141999. Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Fei Xia, Ed Chi, Quoc V Le, Denny Zhou, and 1 others. 2022. Chain-of-thought prompting elic-its reasoning in large language models. Advances in neural information processing systems , 35:24824– 24837. Qingyun Wu, Gagan Bansal, Jieyu Zhang, Yiran Wu, Beibin Li, Erkang Zhu, Li Jiang, Xiaoyun Zhang, Shaokun Zhang, Jiale Liu, and 1 others. 2024. Au-togen: Enabling next-gen llm applications via multi-agent conversations. In First conference on language modeling .Andrea Wynn, Harsh Satija, and Gillian Hadfield. 2025. Talk isn’t always cheap: Understanding fail-ure modes in multi-agent debate. arXiv preprint arXiv:2509.05396 .W. Xu, Z. Liang, K. Mei, H. Gao, J. Tan, and Y. Zhang. 2025. A-mem: Agentic memory for LLM agents. In 
+
+Advances in Neural Information Processing Systems (NeurIPS) .Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. 2023. React: Synergizing reasoning and acting in language models. In 11th International Conference on Learn-ing Representations, ICLR 2023 .
+
+A Evaluation Protocol and Metrics 
+
+Following standard practice (Kalgutkar et al., 2019), we construct balanced evaluation sets through stratified random sampling. For same-language evaluation, we sample 500 pairs per dataset with balanced same/different author ratios (250:250). For cross-language evaluation, we sam-ple 200 pairs per language pair in the stratified setting and 500 pairs in the mixed setting. All code samples are preprocessed to remove explicit author identifiers while preserving stylistic features. We adopt F1 score as the primary metric: F1 =2 × Precision ×Recall Precision +Recall . The confusion matrix defini-tions are: TP (True Positive): same-author pairs correctly predicted; TN (True Negative): different-author pairs correctly predicted; FP (False Posi-tive): different-author pairs incorrectly predicted as same-author; FN (False Negative): same-author pairs incorrectly predicted as different-author. Un-der strict 1:1 class balance, F1 provides unbiased assessment of discrimination capability. For the supervised baselines (Stylo-ML, Forsee, CLAVE), we use the models trained on the original datasets reported in each respective paper. Each trained model serves as a fixed feature extractor on our evaluation pairs, and the resulting representa-tions are then classified using standard clustering or basic machine learning classifiers with extensive parameter grid search. We report the best configu-ration for each baseline. 
+
+B Cross-Language Language Pair Descriptions 
+
+Low distance (C–C++, C–C#): The low-distance group includes C–C++ and C–C#. These pairs are close enough that many surface and structural cues remain comparable. C and C++ share a di-rect C-family lineage, similar expression syntax, brace-based block structure, and common impera-tive control-flow forms. C and C# are not identical in type system or runtime model, but they still share C-style lexical conventions, block delimiters, oper-ator syntax, and common loop and branching forms. These pairs therefore test whether verification can use residual structural similarity without confusing language-family similarity with authorship similar-ity. 
+
+Medium distance (Java–Go, Python–Ruby): The medium-distance group includes Java–Go and Python–Ruby. These pairs share some broad pro-gramming conventions but differ in the details that often shape code style. Java and Go are both stati-cally typed, brace-based, and commonly used for modular program organization, yet they differ in object orientation, interface use, error handling, and standard idioms. Python and Ruby are both dynamically typed scripting languages with com-pact syntax and high-level library use, but they differ in block notation, method-call style, iterator idioms, and object conventions. These pairs test verification under partial transfer: some abstract habits, such as decomposition and naming prefer-ences, may remain visible, while many syntactic and idiomatic cues no longer align directly. 
+
+High distance (C++–Python, Java–Haskell): The high-distance group includes C++–Python and Java–Haskell. These pairs place the verifier un-der stronger language-induced shift. C++ and Python differ in typing discipline, memory and resource management, syntax density, standard-library style, and typical abstraction mechanisms. Java and Haskell differ even more sharply in pro-gramming paradigm, with Java centered on impera-tive object-oriented structure and Haskell centered on functional composition, algebraic data types, and expression-oriented design. In these settings, surface markers such as keywords, delimiters, and local syntax provide weak cross-language evidence. The main question is whether MACAA can down-weight such unstable cues and rely more on trans-ferable author habits, including problem decompo-sition, helper-function design, edge-case handling, and recurring semantic preferences. 
+
+C Interpretability and Forensic Auditability 
+
+This appendix presents the complete reasoning trace of MACAA on a cross-language case (Python vs C ++ , ground truth: same author). Each box shows actual system output at that stage. 
+
+Configuration & Preliminary Review. Cross-language detected (Python vs C ++ ); dimension weights adjusted and incompatible tools disabled. The Coordinator then establishes a Bayesian prior— not a vote. 
+
+[INIT] cross-language: CODE1=Python, CODE2=C++ weights: Layout=0.22, Lexical=0.30, Syntactic=0.08, Pattern=0.40 disabled: token_freq/ngram/abstract, ast_node/path/construct/dolos, api_idiom [PRELIMINARY] tendency: same_author confidence: 0.62 reasoning: 1. naming: both codes use short, lowercase-dominant identifiers (avg_len<3), suggesting consistent personal naming compression habit. 2. structure: both adopt flat, single-block scripts without helper functions or abstractions. 3. comment: both are comment-free, aligning with rapid-competition authoring style. 4. confounders: competitive template, language_syntax may mimic author-level consistency. 
+
+Listing 1: Coordinator: configuration and preliminary review. 
+
+Expert Evidence. Four Expert Agents analyze complementary dimensions in parallel via ReAct tool loops. 
+
+[LAYOUT] s=0.32, conf=0.58 -> different Python: space (37/37), avg_indent=7.28, indent_std=3.37, comma_tight=45, comma_space=27, no comments. indent_switch=0.59 (moderate), line_len_std=15.55, K&R absent. C++: tab (85/85), avg_indent=1.37, indent_std=0.76, K&R braces (same_line_opener=11), no comments. indent_switch=0.24 (consistent), line_len_std=7.97, comma_space=3. Verdict: Tab vs Space 100% opposite; avg_indent 5.3x divergence; C++ format 2x more stable. [LEXICAL] s=0.52, conf=0.67 -> uncertain Python: lower=96.7%, snake=3.3%, avg_len=2.82, unique_ratio=31%. Top: flag(7), s(5), key(5), h(4), g(4), p(4), data(4). 84% identifiers <= 4 chars. kw: if(7), break(4), while(1). C++: lower=93.9%, snake=6.1%, avg_len=2.08, unique_ratio=17%. Top: c(25), d(24), i(9), j(9). No custom funcs/classes. Naming style consistent (lower>93%, avg_len<3); specific names language-driven (high confounder). 
+
+Listing 2: Layout and Lexical Agent evidence. 
+
+[SYNTACTIC] s=0.45, conf=0.49 -> uncertain Python: depth=16, branching_std=2.34, 656 nodes, avg_branching=1.02. C++: depth=12, branching_std=2.07, 1130 nodes, avg_branching=1.01. Flat trees structurally similar; AST not cross-language alignable. Confounder: competition template forces flat structure in both. [PATTERN] s=0.42, conf=0.48 -> uncertain Python: 0 funcs, 7 if/2 for loops, ccn=7, short_temp=0.00. Zero assertions, zero constants, zero helpers, zero classes. C++: 1 main (ccn=14), 5 if/5 loops, short_temp=0.19, zero helpers. Zero assertions, zero constants. Both: no assert/const/helper pattern; func count language-driven (0 vs 1). 
+
+Listing 3: Syntactic and Pattern Agent evidence. 
+
+Synthesis. The Coordinator synthesizes all ex-pert reports and detects a high-severity conflict. 
+
+tendency: different_author (conf=0.55) layout: different (0.58) Tab/Space 100% opposite. avg_indent 7.28 vs 1.37 (5.3x). K&R vs non-K&R conflict. C++ format 2x more stable. lexical: uncertain (0.67) naming style consistent (lower>93%, avg_len<3). Specific names language-driven. High confounder risk. syntactic: uncertain (0.65) avg_branching=1.02 vs 1.01. Flat trees similar but AST not cross-language alignable. Confounder: competition template. pattern: uncertain (0.61) zero helpers/assert/const both. Func count (0 vs 1) driven by language ecosystem. critical_conflict: layout vs lexical (Tab/Space opposition vs naming consistency) action: START_DEBATE lexical (proponent) vs layout Listing 4: Synthesis Round 1 output. 
+
+Structured Debate. The Layout–Lexical con-flict triggers a 3-turn debate. Lexical argues the 
+
+flag →is_half semantic chain is author-stable; Layout counters that Tab/Space is a low-level fin-gerprint with >85% persistence. 
+
+> TURN 1 [Pro-Lexical]: flag->is_half/is_half2 semantic chain maps identical boolean-levelization logic. Confirmed in source; not template-replaceable. Naming style consistent: lower>93%, avg_len<3 across both languages. Low unique ratio (31% vs 17%) reflects same compression habit. TURN 2 [Con-Layout]: Tab/Space 100% opposite is an author-stable fingerprint. Literature: >85% persistence rate. avg_indent 5.3x divergence is not explainable by language alone. K&R vs non-K&R also conflicts. TURN 3 [Rebuttal]: indent adapts to language ecosystem. Python forces space; C++ CP defaults to Tab. No evidence of systematic author-level switching. flag->is_half source-code verified: flag at time-judge entry, is_half at same logic position, is_half2 is flag 's override logic. Result: Lexical promoted to same_author (conf=0.68). Syntactic conf lowered: 0.65->0.49.
+
+Listing 5: Debate: Lexical vs Layout (3 turns). 
+
+Recheck and Final Decision. Layout rechecked twice; s=0 .32 confirmed both times with no counter-evidence. The Coordinator finalizes. 
+
+> [RECHECK 1] layout: s=0.32 (same) Tab/Space gap confirmed. indent_switch=0.59 vs 0.24. C++ format 2x more stable. No new counter-evidence found. [RECHECK 2] layout: s=0.32 (same) Gap persists; no counter-evidence. Confounder strengthened: language ecosystem fully accounts for Tab/Space opposition. Python forces space; C++ CP defaults to Tab. [FINALIZE] same_author (conf=0.79) weights: Lex=0.35, Lay=0.25, Syn=0.20, Pat=0.20 rationale: 1. Lexical (s=0.52, conf=0.68): flag->is_half chain is stable, ecosystem-independent. Source-code verified: flag at time-judge entry, is_half at same logic position. 2. Layout (s=0.32) downweighted: Tab/Space attributed to language ecosystem (Py=space, C++=Tab). Rechecked 2x, no counter found. 3. Syntactic/Pattern uncertain but do not contradict. opponent notes: Tab/Space persistence >85% in literature; but no evidence author systematically switched. process: 4 rounds, 1 debate, 2 rechecks, 35/40 LLM calls. anchored: PRELIMINARY same@0.62.
+
+Listing 6: Layout recheck and final decision. 
+
+The final decision ( same_author , 0.79) agrees with the ground truth. The trace above demon-strates how MACAA resolves cross-dimensional conflicts through transparent belief revision: Lay-out’s Tab/Space opposition, the strongest counter-signal, is ultimately attributed to language ecosys-tem conventions, while Lexical’s naming patterns (notably the flag →is_half mapping confirmed in source code) persist through debate and recheck as author-stable evidence. Each intermediate de-cision, including confidence adjustments and tool outputs, is logged and auditable. 
+
+D Implementation Details 
+
+We deploy MACAA using Qwen3-80B-Instruct via vLLM (v0.6.6) with tensor parallelism across 2 NVIDIA H200 GPUs, at temperature 0.1 and max_tokens 4096. The Coordinator runs up to 4 rounds with at most 2 debate sessions (3 turns each), capped at 40 LLM calls per sample. Ini-tial dimension weights differ by setting: for same-language verification, Layout, Lexical, Syntactic, and Pattern receive 0.23, 0.28, 0.27, and 0.22; for cross-language, they receive 0.22, 0.30, 0.08, and 0.40. Pairs with score ≥ 0.62 are classified as same-author, those ≤ 0.38 as different-author, and scores in (0 .38 , 0.62) as uncertain. Scores > 0.70 
+
+allow early termination; scores ≤ 0.50 trigger a targeted recheck. 
+
+E Agent Prompts 
+
+This appendix presents all prompt specifications for MACAA’s multi-agent system. We organize prompts by agent type: §E.1–E.4 cover the four Expert Agents (layout, lexical, syntactic, pattern), each with a ReAct phase for feature extraction and a Comparison phase for pairwise evidence assess-ment; §E.5 presents the Coordinator Agent across its key operational stages (preliminary review, syn-thesis, strategic decision, reflection, truth-seeking debate, and final decision). All prompts require JSON-only output for programmatic integration; 
+
+confidence and similarity_score are normal-ized to [0 , 1] .
+
+E.1 Layout Agent 
+
+Targets whitespace, delimiter placement, comment positioning, and formatting stability. ReAct loop with 4 tools, max_steps ≥4. 
+
+E.1.1 ReAct Phase 
+
+> You are a "Layout Expert Agent." Your task: perform interpretable, reproducible, comparable layout-style analysis on a code sample.
+
+Obtain observations via callable tools, organize into evidence for the Coordinator 's authorship attribution. Goal: - Autonomously decide next tool (or stop) with causal rationale. - Each step maximizes information gain, reduces uncertainty. - Output is structured, interpretable, traceable to observations. Tools (provided by program): - extract_whitespace_profile - extract_delimiter_layout_profile - extract_comment_layout_profile - extract_format_stability_profile One tool per step, or stop (stop=true). Coverage Constraint: - max_steps >= 4: all 4 tools must be invoked at least once. - No repeated calls to the same tool. - max_steps < 4: prioritize most informative/complementary tools. ReAct Methodology: Hypothesis-Verify-Update Each tool selection must answer: 1) Current uncertainty? (which layout dims lack/conflict evidence) 2) Candidate tool 's new info? (expected distinguishing signals) 3) Why now? (max info gain, complementary, avoid repetition) ReAct Structure per step: 1) Thought: current uncertainty dimension, expected signals, causal link from previous observation. 2) Action: select tool. Priority: uncovered > complementary > conflict resolution. 3) Observation: convert output to 1-3 signals. Assess template/task influence; downweight if affected. 4) Stop: when coverage met or budget exhausted. Output evidence: summary (one-line style portrait), signals (per dimension), confidence (0-1, stability confidence, not same-author). Output (strict JSON only, no text/markdown/fences): Continue: {"thought":"...", "action":{"type":"tool", "name":"tool_name"}, "stop":false} Stop: {"thought":"...","action": {"type":"stop"}, "stop":true, "evidence":{ "summary":"...", "signals":["..."], "confidence":0.0}} 
+
+Listing 7: Layout Agent ReAct system prompt. 
+
+E.1.2 Comparison Phase 
+
+You are a LayoutComparator in a code authorship attribution system. Your task: judge whether two layout profiles come from the same author. Features to compare: 1. whitespace_profile: avg_indent, tab/space lines, avg_line_length, empty_line_ratio, trailing_space_lines, indent_std 2. delimiter_layout_profile: control_space_before_paren, control_tight_before_paren, comma_space/tight, same_line_block_opener, next_line_block_opener 3. comment_layout_profile: comment_line_ratio, inline_comments, standalone_comments, doc_comments 4. format_stability_profile: indent_switch_rate, line_length_std Key judgment principles: - Indentation and spacing preferences are strong author signals. - Delimiter formatting habits (if(x) vs if (x)) are stable. - Comment style aids judgment but content is task-influenced. - Large code-size differences distort absolute metrics; focus on ratios. - Layout is HIGH-confounder in competitive programming: High-risk: 2/4-space indent, K&R braces, compact formatting, sparse comments, standard comma spacing, common CP patterns. Low-risk: uncommon internal formatting combos, rare indentation combos, unique empty-line rhythm, stable trailing spaces. Output: {similarity_score, confidence, matches[], differences[], author_stable_matches[], template_or_task_matches[], high_risk_confounders[], signal_quality, confounder_risk, reasoning} 
+
+Listing 8: Layout Comparator system prompt. 
+
+E.2 Lexical Agent 
+
+Examines token distributions, naming conventions, identifier morphology, and abstract lexical tem-plates. ReAct loop with 5 core tools, max_-steps ≥5. 
+
+E.2.1 ReAct Phase 
+
+You are a "Lexical Expert Agent." Perform interpretable, reproducible, comparable lexical-style analysis. Tools: - extract_token_frequency_profile - extract_token_ngram_profile - extract_char_ngram_profile - extract_identifier_style_profile - extract_abstract_lexical_profile Coverage: max_steps >= 5, all 5 tools invoked at least once. ReAct methodology, step structure, output format: identical to Layout Agent ReAct phase (Section E.1). 
+
+Listing 9: Lexical Agent ReAct system prompt. 
+
+E.2.2 Comparison Phase 
+
+You are a LexicalComparator. Judge whether two lexical profiles come from the same author. Features to compare: 1. token_frequency_profile: keyword_ratio, identifier_ratio, operator_ratio, punctuation_ratio, token_top 2. token_ngram_profile: token_bigrams, abstract_token_trigrams, longest_repeated_sequence 3. char_ngram_profile: char_4gram, char_5gram 4. identifier_style_profile: identifier_cases, avg_length, unique_ratio, digit_ratio, underscore_ratio 5. abstract_lexical_profile: abstract distributions + bigrams Key principles: - Naming style = strong author signal (snake_case vs camelCase, identifier length, abbreviation habits). Stable across projects. - Abstract templates > concrete tokens. "if(ID)" vs "if(ID==NUM)". - Same-author/different-problem: trust identifier_style, abstract_lexical, char_ngram over raw token_top. - Competitive homogenization: keyword ratios converge in CP code; without naming-level overlap, similarity <= ~0.62. High-risk: raw char-ngrams from boilerplate, top tokens (include/ int/for/cin/cout/return), contest templates, short-loop i/j/k. Low-risk: identifier morphology + casing, abstract lexical templates, recurring naming discipline, underscore_ratio + avg_length. 
+
+Listing 10: Lexical Comparator system prompt. 
+
+E.3 Syntactic Agent 
+
+Examines AST structure, tree shape, and construct usage. ReAct loop with 4 tools; Coordinator addi-tionally invokes Dolos (Tree-sitter + k-gram finger-printing) outside the loop. 
+
+E.3.1 ReAct Phase 
+
+You are a "Syntactic Expert Agent." Perform interpretable, reproducible, comparable syntactic/structural style analysis. Tools: - extract_ast_node_profile (degraded mode: keyword pseudo-nodes) - extract_ast_path_profile (degraded mode: abstract token bigrams) - extract_tree_shape_profile (degraded mode: bracket-based depth) - extract_construct_usage_profile (if/for/while/switch/return/...) Coverage: max_steps >= 4, all 4 tools invoked at least once. External tool (NOT in ReAct loop): - analyze_with_dolos: Tree-sitter + k-gram fingerprinting with variable masking. Returns dolos_similarity, total_overlap, longest_fragment. Treat as supplementary reference. ReAct methodology, step structure, output format: identical to Layout Agent ReAct phase (Section E.1). 
+
+Listing 11: Syntactic Agent ReAct system prompt. 
+
+E.3.2 Comparison Phase 
+
+You are a SyntacticComparator. Judge whether two syntactic profiles come from the same author. Features to compare: 1. ast_node_profile: node type ratios (degraded mode possible) 2. ast_path_profile: parent_child_pairs, sibling_pairs 3. tree_shape_profile: max_depth, avg_branching, branching_std, node_count 4. construct_usage_profile: if/for/while/switch/return ratios 5. [Optional] Dolos: dolos_similarity, total_overlap, longest_fragment (reference only) Key principles: - AST paths + context = core author signals. - Tree shape = structural thinking (nested vs flat). - Control-structure prefs (for vs while, early return) = stable. - Size differences: compare RATIOS, not absolutes. - Degraded mode: reduce confidence. - Similarity should not drop below ~0.42 for size mismatches alone. High-risk: standard DFS/BFS/Dijkstra/DP boilerplate, problem-driven control-flow shifts, for-loop dominance, node_count. Low-risk: recurring AST organization beyond templates, stable parent_child/sibling pair prefs, branching_std (normalized). 
+
+Listing 12: Syntactic Comparator system prompt. 
+
+E.4 Pattern Agent 
+
+Captures function decomposition, control strategy, API/idiom usage, and semantic naming patterns. ReAct loop with 4 tools, max_steps ≥4. 
+
+E.4.1 ReAct Phase 
+
+You are a Pattern Expert Agent. Extract "programming pattern" evidence from a single code sample. Tools: - extract_lizard_function_profile: function_count, avg/max NLOC, avg/max cyclomatic complexity, avg parameter count, complexity_concentration_ratio, main_like_ccn_ratio - extract_control_strategy_profile: guard_clause_count, guard_if_ratio, recursive_function_hints, loop_count, if_count - extract_api_idiom_profile: api_families (collections/sorting/ io/assertions/exceptions), plugin_flags (competitive_header, fast_io_optimization) - extract_semantic_habit_profile: short_temp_ratio, helper_name_ratio, uppercase_constant_ratio, assert_like_count Coverage: max_steps >= 4, all 4 tools invoked at least once. Recommended order: lizard -> control -> api -> semantic. lizard_function_profile is the primary anchor for Pattern dimension. If different tools give conflicting signals, state the conflict explicitly rather than forcing consistency. ReAct methodology, step structure, output format: identical to Layout Agent ReAct phase (Section E.1). 
+
+Listing 13: Pattern Agent ReAct system prompt. 
+
+E.4.2 Comparison Phase 
+
+You are a PatternComparator. Judge whether two programming-pattern profiles come from the same author. Features to compare: 1. function_metric_profile: function_count, avg_lines_per_function, return_per_function, avg_line_length 2. control_strategy_profile: guard_if_ratio, recursive_function_hints, loop_count, if_count 3. api_idiom_profile: api_families; plugin_flags 4. semantic_habit_profile: short_temp_ratio, helper_name_ratio, uppercase_constant_ratio, assert_like_count Key principles: - Function size + organization = stable. - Control strategy = core author signal (guard clause, recursion). - Semantic habits = strong signals: temp variable naming (i/j/k vs x/y/z), helper naming, constant style. - Code-size differences: compare RATIOS not absolutes. - Same-author/different-problem: similarity stays 0.45-0.68 when only scale differs; never <0.35 for "one simple, one complex." High-risk: contest headers, fastio, container combos, common temp vars (i/j/k/tmp/ans), function_count/loop_count (problem-driven). Low-risk: function decomposition habits, complexity distribution, helper_name_ratio, uppercase_constant_ratio. 
+
+Listing 14: Pattern Comparator system prompt. 
+
+E.5 Coordinator Agent 
+
+Orchestrates a 10-state machine. Six states are LLM-driven. 
+
+E.5.1 Preliminary Review 
+
+You are the coordinator. Holistic first-pass review; NOT the final verdict. Contest Code Context: GCJ/KickStart/ACM-ICPC/AtCoder. IGNORE contest artifacts: C/C++: bits/stdc++.h, using namespace std, ios::sync, long long, STL containers, macros. Python: import sys/math, sys.setrecursionlimit, input=sys.stdin.readline, list comps. Java: import java.util.*, public class Main, FastScanner. Go: package main, fmt.Println, bufio.NewReader. Agnostic: short loop vars (i/j/k), main()/solve() scaffolding. Signal Families (author-stable first): 1. Coding Style 2. Naming 3. Code Structure 4. Control-Flow 5. Comments 6. Language Features 7. Error-Handling 8. Lexical Fingerprints 9. Statistical Cues 10. Idiosyncratic. Hard Rules: no default to different_author from artifacts; mark confounders; balanced same/different. Output: {overall_first_impression, candidate_style_axes[], suspected_confounders[], dimension_routing{layout/lexical/ syntactic/pattern{priority,why,focus_question}}, global_questions[], do_not_overtrust[]} 
+
+Listing 15: Preliminary Review prompt (same-language). 
+
+CRITICAL: CROSS-LANGUAGE mode. IGNORE: language-specific syntax (keywords, control structures, types, stdlib) -- NOT author evidence. FOCUS: naming conventions, indentation style, spacing habits, comment style, code organization. DO NOT COMPARE: syntax structures, keyword frequencies, AST. Signal Reliability: Indentation=HIGH, Naming=HIGH, Spacing=HIGH, Comment=MED-HI, Organization=MEDIUM, Control-flow=MEDIUM, Syntax=LOW, Library=LOW. Dimension Routing: Layout=MEDIUM, Lexical=HIGH, Syntactic=LOW, Pattern=HIGH. Confidence range: 0.35-0.70. Output adds: cross_language_mode, detected_languages, cross_language_stable_signals. 
+
+Listing 16: Preliminary Review prompt (cross-language additions). 
+
+E.5.2 Synthesis 
+
+Coordinator as "Research Manager." Synthesize ExpertReports. Must answer: (1) Per-dimension tendency + confidence? (2) Cross-dimension conflicts? (3) Insufficient/degraded dims? (4) Overall tendency + confidence? (5) What changed? (6) What remains unanswered? Core: preliminary_review is PRIOR not VOTE (confirm/weaken/overturn). "uncertain" preserved, never compressed. Size differences => prefer "same author, different problem" unless strong abstract-layer counter-evidence. Evidence Chain: high-confounder dims not "strong"; template_or_task-dominated = weak/moderate; only low-confounder author-stable = strong support. Output: { per_dimension_summary[4]{ dimension, tendency, confidence, key_signal, is_degraded, signal_quality, confounder_risk}, cross_dimension_analysis{ consensus, conflicts, uncertain, max_severity}, preliminary_update{ status, why}, evidence_balance{ same_author_support, different_author_support, main_drivers, high_risk_confounders}, overall_assessment{ tendency, confidence, reasoning}, what_changed, remaining_questions} 
+
+Listing 17: Synthesis prompt. 
+
+E.5.3 Strategic Decision 
+
+Strategy Planner selects exactly one action: 1. FINALIZE: evidence sufficient or budget exhausted. 2. RECHECK_DIMENSION: low-confidence/high-impact dimension. 3. START_DEBATE: two dimensions in conflict. 4. ADJUST_WEIGHTS: post-debate/recheck credibility shift. Priority: no conflict+full evidence > FINALIZE; preliminary conflict > RECHECK; two expert dims conflict > DEBATE. Mandatory: dim-divergence check (dim<0.40 + dim>=0.60 => DEBATE/ RECHECK). LLM comparison failure => must RECHECK. Debate participants = real dimensions only (layout|lexical|syntactic|pattern). Output: {action_type, reasoning, params{...}} 
+
+Listing 18: Decision prompt. 
+
+E.5.4 Reflection 
+
+Meta-cognitive reviewer. NOT judging authorship --assessing whether current evidence is sufficient for a reliable judgment. Three mandatory questions: 1. Evidence Sufficiency: all dimensions covered? concrete signals? 2. Conflict Resolution: cross-dimension conflicts explained? 3. Marginal Gain: how much new info could further investigation yield? Low-Similarity Veto Rule: - A dimension with similarity_score < 0.40 is "suspect." - Suspect dims prevent evidence_sufficient unless: (a) after debate/recheck, similarity rises to >= 0.45, OR (b) the gap is confirmed as task/algorithm-driven, not style. - With 2+ suspect dims, prefer CONTINUE unless conflicts resolved. Preliminary Review usage: compare current evidence to preliminary hypotheses. Mark concerns as confirmed/weakened/contradicted. Unresolved preliminary hints are NOT evidence. Output: {round, evidence_sufficient, assessment{ total_dimensions_analyzed, high_confidence_dimensions[], resolved_conflicts[], unresolved_conflicts[], overall_evidence_strength}, recommendation(FINALIZE|CONTINUE), reasoning} 
+
+Listing 19: Reflection prompt. 
+
+E.5.5 Truth-Seeking Debate 
+
+You are the {dimension} expert. Goal: FIND TRUTH, not win. Privilege: direct CODE1/CODE2 access. Step 1: Examine source code. Find dimension-relevant patterns, overlooked/overestimated evidence. Step 2: Debate with required fields: claim, evidence (numbers+facts), concession, what_would_change_my_mind, verdict_request, new_code_grounded_observations, which_existing_evidence_is _overstated, which_existing_evidence_is_confirmed, updated_dimension_tendency, updated_confidence. Principles: honest about weaknesses; proactively request deeper analysis when insufficient. 
+
+Listing 20: Debate Participant prompt. 
+
+Debate Judge. Responsibilities: 1. Ruling: conflict resolved? 2. Tracing: dimension credibility update? 3. New Evidence: source-level insights from debate. 4. Corrections: which dimension reports need revision? Evaluation: source consistency, preliminary review alignment, external consistency (one dim contradicts others?), argument strength (who provided more verifiable observations?). Required tasks: determine conflict resolution, assess which side is more persuasive, update dimension credibility, extract new evidence, list remaining issues, weight adjustment recommendation, final judgment (same_author|different_author|uncertain), report patch suggestions (if a dimension 's conclusion was overturned by new evidence, provide corrected tendency+confidence). Output: {debate_topic, proponent, opponent, total_turns, resolution{conflict_resolved, explanation, dimension_credibility_update, weight_recommendation, new_evidence_from_debate, remaining_issues, report_patch_suggestions[]}, final_judgment, confidence_after_debate, recommended_next_action} 
+
+Listing 21: Debate Judge prompt. E.5.6 Final Decision 
+
+Final Decision Judge. Directly examine CODE1/CODE2 source code, combine all upstream evidence. NOT voting or counting anchors. Must read: (1) CODE1+CODE2 source, (2) preliminary_review, (3) four dimension latest_reports, (4) latest_synthesis, (5) latest_debate_result, (6) latest_reflection. Mandatory questions: 1. After re-reading code, overall gut tendency? 2. Which dims support same_author? different_author? uncertain? 3. Is preliminary confirmed/weakened/overturned? 4. Did debate bring genuinely new evidence? 5. Was reflection 's advice adopted? Hard Rules: - No numeric anchors; uncertain != different_author. - Overturning preliminary requires explanation. - different_author requires >=2 moderate different dims OR 1 strong structural counter-evidence (confounder_risk=low) + debate. - Mixed evidence (2 same + 2 different) => uncertain. - Cross-lang: syntactic = weak auxiliary; same_author from preliminary uncertain/different requires credible non-syntactic primary driver (prefer lexical naming quirks). Output: {verdict: same_author|different_author|uncertain, confidence, evidence_chain[4]{dimension,supports,strength,weight, similarity_score,confounder_risk,key_evidence}, process_alignment{preliminary_review_status, dimension_alignment, debate_contribution, reflection_adoption}, reasoning} 
+
+Listing 22: Final Decision prompt. 
+
+E.6 Pairwise Direct Comparison 
+
+Each dimension supports a direct pairwise com-parison mode on raw code. The system prompt is constructed per dimension from Table 6. 
+
+You are a specialized {display_name} pairwise comparator for source-code authorship attribution. You are NOT extracting features from a single file. You are directly comparing CODE_A and CODE_B within one stylistic dimension. {context_line: Both snippets are in `lang `. | CODE_A in 
+
+`lang_A `,CODE_B in `lang_B ` (DIFFERENT LANGUAGES).} Your report must separate three kinds of evidence: 1. author_stable_signals: similarities persisting across problems. 2. different_author_signals: contrasts supporting different authors. 3. neutral_or_confounding_signals: overlaps better explained by templates, tasks, ecosystems, or language defaults. Prioritize: {per-dimension stable_focus items} Different-author cues: {per-dimension different_focus items} Actively discount: {per-dimension confounders} Return exactly one JSON object: {tendency, similarity_score, confidence, summary, author_stable_signals[], different_author_signals[], neutral_or_confounding_signals[], high_risk_confounders[], reasoning} 
+
+Listing 23: Pairwise direct comparison system prompt template. Dim Author-Stable Different-Author Confounders 
+
+Layout Indentation habits; brace/delimiter combos; micro-spacing; blank-line rhythm; comment placement Conflicting indent units; systematic brace disagreement; different density; spacing micro-habits Auto-formatters; code-size wrapping; shared boilerplate Lexical Identifier morphology/casing; temp-variable habits; abstract templates; operator-keyword phraseology Conflicting naming discipline; different identifier lengths; different keyword phraseology Problem vocabulary; language keywords; char-ngram/token overlap from templates Syntactic Decomposition habits; control-structure composition; structural sequencing; cross-lang prefs Different decomposition; different guard/nesting style; different recursion/iteration Algorithm templates (DFS/BFS/DP); parser degradation; problem complexity Pattern Problem-solving decomposition; complexity concentration; API/idiom selection; semantic habits Different decomposition depth; different data-structure choices; different defensive habits Problem requirements; ecosystem idioms; small programs with sparse evidence 
+
+Table 6: Per-dimension focus signals for pairwise direct comparison.
