@@ -6,103 +6,97 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-13
-- 运行时间：2026-05-13 21:04:35 UTC
+- 最新运行日期：2026-05-14
+- 运行时间：2026-05-14 21:26:57 UTC
 - 运行状态：成功
-- 本次总论文数：27
-- 精读区：15
+- 本次总论文数：25
+- 精读区：13
 - 速读区：12
 
 ### 今日简报（AI）
-今日精选 27 篇前沿论文，深度解析多智能体推理拓扑与跨框架技能编译等核心突破。
-重点关注利用继任表示优化 LLM 通信拓扑的预测图模型，以及提升 Agent 技能跨框架移植性与安全性的 SkCC 编译技术。
-建议关注 Agent 在视频生成、工具生态进化及零信任安全架构中的落地应用，把握智能体协同的工程化趋势。
-- 详情：[/202605/13/README](/202605/13/README)
+今日精选 25 篇前沿论文，深度聚焦多智能体协作优化与大模型 Agent 的全方位安全防御体系。
+重点关注多智能体流网络中的强化协作机制，以及通过统一图表示和影子内存技术构建可审计、防注入的 Agent 安全底座。
+建议优先研读 Agent 安全审计与隐私计算综述，为构建工业级可靠智能体应用筑牢安全防线。
+- 详情：[/202605/14/README](/202605/14/README)
 
 ### 精读区论文标签
-1. [Predictive Maps of Multi-Agent Reasoning: A Successor-Representation Spectrum for LLM Communication Topologies](/202605/13/2605.11453v1-predictive-maps-of-multi-agent-reasoning-a-successor-representation-spectrum-for-llm-communication-topologies)  
+1. [Reinforced Collaboration in Multi-Agent Flow Networks](/202605/14/2605.12943v1-reinforced-collaboration-in-multi-agent-flow-networks)  
    标签：评分：10.0/10、query:malm
-   evidence：多智能体大语言模型通信图谱诊断
-2. [SkCC: Portable and Secure Skill Compilation for Cross-Framework LLM Agents](/202605/13/2605.03353v1-skcc-portable-and-secure-skill-compilation-for-cross-framework-llm-agents)  
+   evidence：多智能体协作与工作流优化的框架
+2. [Towards Security-Auditable LLM Agents: A Unified Graph Representation](/202605/14/2605.06812v1-towards-security-auditable-llm-agents-a-unified-graph-representation)  
    标签：评分：9.0/10、query:malm
-   evidence：跨框架大语言模型智能体的编译框架
-3. [Insider Attacks in Multi-Agent LLM Consensus Systems](/202605/13/2605.08268v1-insider-attacks-in-multi-agent-llm-consensus-systems)  
+   evidence：多智能体协作审计的统一图表示
+3. [CoCoDA: Co-evolving Compositional DAG for Tool-Augmented Agents](/202605/14/2605.08399v1-cocoda-co-evolving-compositional-dag-for-tool-augmented-agents)  
    标签：评分：9.0/10、query:malm
-   evidence：多智能体大模型共识系统中的内部攻击
-4. [When Child Inherits: Modeling and Exploiting Subagent Spawn in Multi-Agent Networks](/202605/13/2605.08460v1-when-child-inherits-modeling-and-exploiting-subagent-spawn-in-multi-agent-networks)  
+   evidence：基于组合 DAG 的工具增强型智能体框架
+4. [GAMBIT: A Three-Mode Benchmark for Adversarial Robustness in Multi-Agent LLM Collectives](/202605/14/2605.09027v2-gambit-a-three-mode-benchmark-for-adversarial-robustness-in-multi-agent-llm-collectives)  
    标签：评分：9.0/10、query:malm
-   evidence：多智能体网络中子智能体生成与记忆继承建模
-5. [Large Language Models over Networks: Collaborative Intelligence under Resource Constraints](/202605/13/2605.08626v1-large-language-models-over-networks-collaborative-intelligence-under-resource-constraints)  
+   evidence：多智能体大语言模型集体的对抗鲁棒性基准
+5. [FlowSteer: Prompt-Only Workflow Steering Exposes Planning-Time Vulnerabilities in Multi-Agent LLM Systems](/202605/14/2605.11514v1-flowsteer-prompt-only-workflow-steering-exposes-planning-time-vulnerabilities-in-multi-agent-llm-systems)  
    标签：评分：9.0/10、query:malm
-   evidence：多个独立大语言模型的协作智能
-6. [SkillMaster: Toward Autonomous Skill Mastery in LLM Agents](/202605/13/2605.08693v1-skillmaster-toward-autonomous-skill-mastery-in-llm-agents)  
+   evidence：多智能体大语言模型系统中的规划-执行架构
+6. [AgentDisCo: Towards Disentanglement and Collaboration in Open-ended Deep Research Agents](/202605/14/2605.11732v1-agentdisco-towards-disentanglement-and-collaboration-in-open-ended-deep-research-agents)  
    标签：评分：9.0/10、query:malm
-   evidence：大语言模型智能体的自主技能掌握
-7. [MCP-Cosmos: World Model-Augmented Agents for Complex Task Execution in MCP Environments](/202605/13/2605.09131v1-mcp-cosmos-world-model-augmented-agents-for-complex-task-execution-in-mcp-environments)  
+   evidence：用于研究的协作式智能体架构
+7. [CHAL: Council of Hierarchical Agentic Language](/202605/14/2605.12718v1-chal-council-of-hierarchical-agentic-language)  
    标签：评分：9.0/10、query:malm
-   evidence：世界模型增强的复杂任务智能体
-8. [MACAA: Belief-Revision Multi-Agent Reasoning for Open-World Code Authorship Verification](/202605/13/2605.09421v2-macaa-belief-revision-multi-agent-reasoning-for-open-world-code-authorship-verification)  
+   evidence：用于信念优化的多智能体辩证框架
+8. [Embodied Multi-Agent Coordination by Aligning World Models Through Dialogue](/202605/14/2605.12920v1-embodied-multi-agent-coordination-by-aligning-world-models-through-dialogue)  
    标签：评分：9.0/10、query:malm
-   evidence：基于信念修正的多智能体推理框架
-9. [STAR: Failure-Aware Markovian Routing for Multi-Agent Spatiotemporal Reasoning](/202605/13/2605.10057v2-star-failure-aware-markovian-routing-for-multi-agent-spatiotemporal-reasoning)  
+   evidence：基于大语言模型的具身智能体通过对话协作
+9. [CANTANTE: Optimizing Agentic Systems via Contrastive Credit Attribution](/202605/14/2605.13295v1-cantante-optimizing-agentic-systems-via-contrastive-credit-attribution)  
    标签：评分：9.0/10、query:malm
-   evidence：多智能体系统的故障感知路由
-10. [AgentGR: Semantic-aware Agentic Group Decision-Making Simulator for Group Recommendation](/202605/13/2605.10367v1-agentgr-semantic-aware-agentic-group-decision-making-simulator-for-group-recommendation)  
+   evidence：优化基于大语言模型的多智能体系统的框架
+10. [IdeaForge: A Knowledge Graph-Grounded Multi-Agent Framework for Cross-Methodology Innovation Analysis and Patent Claim Generation](/202605/14/2605.13311v1-ideaforge-a-knowledge-graph-grounded-multi-agent-framework-for-cross-methodology-innovation-analysis-and-patent-claim-generation)  
    标签：评分：9.0/10、query:malm
-   evidence：智能体群体决策模拟器
-11. [SkillGen: Verified Inference-Time Agent Skill Synthesis](/202605/13/2605.10999v1-skillgen-verified-inference-time-agent-skill-synthesis)  
-   标签：评分：9.0/10、query:malm
-   evidence：合成智能体技能的多智能体框架
-12. [LLM-X: A Scalable Negotiation-Oriented Exchange for Communication Among Personal LLM Agents](/202605/13/2605.11376v1-llm-x-a-scalable-negotiation-oriented-exchange-for-communication-among-personal-llm-agents)  
-   标签：评分：9.0/10、query:malm
-   evidence：大模型间协作的通信协议
-13. [LegalCheck: Retrieval- and Context-Augmented Generation for Drafting Municipal Legal Advice Letters](/202605/13/2605.12012v1-legalcheck-retrieval--and-context-augmented-generation-for-drafting-municipal-legal-advice-letters)  
+   evidence：基于知识图谱的多智能体专利权利要求生成框架
+11. [LLMs as annotators of credibility assessment in Danish asylum decisions: evaluating classification performance and errors beyond aggregated metrics](/202605/14/2605.13412v1-llms-as-annotators-of-credibility-assessment-in-danish-asylum-decisions-evaluating-classification-performance-and-errors-beyond-aggregated-metrics)  
    标签：评分：9.0/10、query:profile-1
-   evidence：利用检索增强生成和大模型起草法律建议书并检索先例
-14. [No Action Without a NOD: A Heterogeneous Multi-Agent Architecture for Reliable Service Agents](/202605/13/2605.12240v1-no-action-without-a-nod-a-heterogeneous-multi-agent-architecture-for-reliable-service-agents)  
+   evidence：基于大语言模型的避难判决文本法律 NLP 标注任务
+12. [SkillOps: Managing LLM Agent Skill Libraries as Self-Maintaining Software Ecosystems](/202605/14/2605.13716v1-skillops-managing-llm-agent-skill-libraries-as-self-maintaining-software-ecosystems)  
    标签：评分：9.0/10、query:malm
-   evidence：服务智能体的异构多智能体架构
-15. [ProfiliTable: Profiling-Driven Tabular Data Processing via Agentic Workflows](/202605/13/2605.12376v1-profilitable-profiling-driven-tabular-data-processing-via-agentic-workflows)  
+   evidence：管理大语言模型智能体技能库与架构
+13. [Good Agentic Friends Do Not Just Give Verbal Advice: They Can Update Your Weights](/202605/14/2605.13839v1-good-agentic-friends-do-not-just-give-verbal-advice-they-can-update-your-weights)  
    标签：评分：9.0/10、query:malm
-   evidence：用于表格数据处理的自主多智能体框架
+   evidence：多智能体大语言模型系统的权重空间通信框架
 
 ### 速读区论文标签
-1. [Action Agent: Agentic Video Generation Meets Flow-Constrained Diffusion](/202605/13/2605.01477v1-action-agent-agentic-video-generation-meets-flow-constrained-diffusion)  
+1. [When Agents Handle Secrets: A Survey of Confidential Computing for Agentic AI](/202605/14/2605.03213v2-when-agents-handle-secrets-a-survey-of-confidential-computing-for-agentic-ai)  
    标签：评分：8.0/10、query:malm
-   evidence：大语言模型在两阶段智能体框架中担任编排模块
-2. [FitText: Evolving Agent Tool Ecologies via Memetic Retrieval](/202605/13/2605.02411v1-fittext-evolving-agent-tool-ecologies-via-memetic-retrieval)  
+   evidence：智能体间消息协议与安全
+2. [MAGE: Safeguarding LLM Agents against Long-Horizon Threats via Shadow Memory](/202605/14/2605.03228v1-mage-safeguarding-llm-agents-against-long-horizon-threats-via-shadow-memory)  
    标签：评分：8.0/10、query:malm
-   evidence：智能体推理循环中的动态工具检索
-3. [Hybrid Inspection and Task-Based Access Control in Zero-Trust Agentic AI](/202605/13/2605.02682v1-hybrid-inspection-and-task-based-access-control-in-zero-trust-agentic-ai)  
+   evidence：使用影子内存架构的大模型智能体防御框架
+3. [ARGUS: Defending LLM Agents Against Context-Aware Prompt Injection](/202605/14/2605.03378v1-argus-defending-llm-agents-against-context-aware-prompt-injection)  
    标签：评分：8.0/10、query:malm
-   evidence：分布式智能体协作中的安全和访问控制
-4. [Mitigating Misalignment Contagion by Steering with Implicit Traits](/202605/13/2605.02751v1-mitigating-misalignment-contagion-by-steering-with-implicit-traits)  
+   evidence：防御大语言模型智能体的提示注入攻击
+4. [Workspace-Bench 1.0: Benchmarking AI Agents on Workspace Tasks with Large-Scale File Dependencies](/202605/14/2605.03596v1-workspace-bench-10-benchmarking-ai-agents-on-workspace-tasks-with-large-scale-file-dependencies)  
    标签：评分：8.0/10、query:malm
-   evidence：多智能体设置以及多个大语言模型之间的交互
-5. [SkCC: Portable and Secure Skill Compilation for Cross-Framework LLM Agents](/202605/13/2605.03353v2-skcc-portable-and-secure-skill-compilation-for-cross-framework-llm-agents)  
+   evidence：在工作空间任务上评估AI智能体
+5. [Dynamic Authorization for Knowledge-Base Agents in 6G](/202605/14/2605.05269v1-dynamic-authorization-for-knowledge-base-agents-in-6g)  
    标签：评分：7.0/10、query:malm
-   evidence：跨框架大模型智能体的便携且安全技能编译
-6. [SURE-RAG: Sufficiency and Uncertainty-Aware Evidence Verification for Selective Retrieval-Augmented Generation](/202605/13/2605.03534v1-sure-rag-sufficiency-and-uncertainty-aware-evidence-verification-for-selective-retrieval-augmented-generation)  
+   evidence：6G中的去中心化多智能体系统
+6. [Securing the Agent: Vendor-Neutral, Multitenant Enterprise Retrieval and Tool Use](/202605/14/2605.05287v1-securing-the-agent-vendor-neutral-multitenant-enterprise-retrieval-and-tool-use)  
    标签：评分：7.0/10、query:malm
-   evidence：选择性检索增强生成的证据验证
-7. [ANDRE: An Attention-based Neuro-symbolic Differentiable Rule Extractor](/202605/13/2605.04193v1-andre-an-attention-based-neuro-symbolic-differentiable-rule-extractor)  
-   标签：评分：7.0/10、query:q6
-   evidence：用于推理的神经符号微分规则提取器
-8. [GEM: Graph-Enhanced Mixture-of-Experts with ReAct Agents for Dialogue State Tracking](/202605/13/2605.04449v1-gem-graph-enhanced-mixture-of-experts-with-react-agents-for-dialogue-state-tracking)  
+   evidence：保障智能体AI系统中的检索和工具使用安全
+7. [PRISM: Perception Reasoning Interleaved for Sequential Decision Making](/202605/14/2605.05407v1-prism-perception-reasoning-interleaved-for-sequential-decision-making)  
    标签：评分：7.0/10、query:malm
-   evidence：结合语言模型与ReAct智能体推理的框架
-9. [Where Paths Split: Localized, Calibrated Control of Moral Reasoning in Large Language Models](/202605/13/2605.03609v1-where-paths-split-localized-calibrated-control-of-moral-reasoning-in-large-language-models)  
-   标签：评分：6.0/10、query:q4
-   evidence：大语言模型道德推理的控制
-10. [Rose-SQL: Role-State Evolution Guided Structured Reasoning for Multi-Turn Text-to-SQL](/202605/13/2605.03720v1-rose-sql-role-state-evolution-guided-structured-reasoning-for-multi-turn-text-to-sql)  
+   evidence：基于大语言模型的具身智能体感知-推理-决策框架
+8. [Knowledge-Graph Paths as Intermediate Supervision for Self-Evolving Search Agents](/202605/14/2605.05702v1-knowledge-graph-paths-as-intermediate-supervision-for-self-evolving-search-agents)  
+   标签：评分：7.0/10、query:malm
+   evidence：具有多步推理能力的自进化搜索智能体
+9. [SCOUT: Active Information Foraging for Long-Text Understanding with Decoupled Epistemic States](/202605/14/2605.04496v1-scout-active-information-foraging-for-long-text-understanding-with-decoupled-epistemic-states)  
    标签：评分：6.0/10、query:malm
-   evidence：智能体结构化推理的角色状态演化
-11. [Efficiently Aligning Language Models with Online Natural Language Feedback](/202605/13/2605.04356v1-efficiently-aligning-language-models-with-online-natural-language-feedback)  
+   evidence：用于长文本理解和信息搜寻的专业智能体
+10. [Heterogeneous Judge-Aware Ranking with Sensitivity, Disagreement, and Confidence](/202605/14/2605.05073v1-heterogeneous-judge-aware-ranking-with-sensitivity-disagreement-and-confidence)  
    标签：评分：6.0/10、query:malm
-   evidence：在模糊领域为智能体任务对齐语言模型
-12. [CAR: Query-Guided Confidence-Aware Reranking for Retrieval-Augmented Generation](/202605/13/2605.04495v1-car-query-guided-confidence-aware-reranking-for-retrieval-augmented-generation)  
+   evidence：用于大语言模型评估的多裁判排名框架
+11. [Heterogeneous Judge-Aware Ranking with Sensitivity, Disagreement, and Confidence](/202605/14/2605.05073v2-heterogeneous-judge-aware-ranking-with-sensitivity-disagreement-and-confidence)  
    标签：评分：6.0/10、query:malm
-   evidence：检索增强生成的置信度感知重排序
+   evidence：用于大语言模型评估的多裁判排名框架
+12. [Agentic Retrieval-Augmented Generation for Financial Document Question Answering](/202605/14/2605.05409v1-agentic-retrieval-augmented-generation-for-financial-document-question-answering)  
+   标签：评分：6.0/10、query:malm
+   evidence：用于复杂推理和检索的智能体RAG框架
 
 
 <div class="dpr-home-promo-card">

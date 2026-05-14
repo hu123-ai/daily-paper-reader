@@ -1,0 +1,3479 @@
+Title: Heterogeneous Judge-Aware Ranking with Sensitivity, Disagreement, and Confidence
+
+URL Source: https://arxiv.org/pdf/2605.05073v2
+
+Published Time: Fri, 08 May 2026 00:26:28 GMT
+
+Number of Pages: 42
+
+Markdown Content:
+# Heterogeneous Judge-Aware Ranking with Sensitivity, Disagreement, and Confidence 
+
+Shibo Yu 
+
+The University of Hong Kong 
+
+shibo-yu01@connect.hku.hk 
+
+Yingzhou Wang 
+
+The University of Hong Kong 
+
+wyingz@connect.hku.hk 
+
+Yan Chen 
+
+The University of Hong Kong 
+
+yanc25@hku.hk 
+
+Guodong Li 
+
+The University of Hong Kong 
+
+gdli@hku.hk 
+
+Jin-Hong Du 
+
+The University of Hong Kong 
+
+jinhongd@hku.hk 
+
+Abstract 
+
+Pairwise comparisons from multiple judges are central to large language model evaluation and preference modeling, yet standard ranking pipelines often pool judgments into a single score vector, treating systematic judge disagreement as noise. We propose Heterogeneous Judge-Aware (HJA) ranking , a structured multi-judge ranking framework that separates consensus ranking, judge-specific sen-sitivity to consensus, and residual preference disagreement. HJA thereby treats ranking, judge sensitivity, and structured disagreement as separate inferential tar-gets. We establish conditions under which this decomposition is identifiable and develop an anchored alternating algorithm that preserves the identifying geome-try. For confidence quantification, we study a fixed-panel repeated-comparison regime in which the judge panel may remain fixed or modest while information grows through repeated judgments. This yields uncertainty statements for consen-sus and judge-specific ranking contrasts, sensitivity parameters, pairwise probabil-ities, and summaries of residual disagreement. Experiments on synthetic and real multi-judge comparison data show that HJA improves recovery, robustness, uncer-tainty calibration, and near-tie performance relative to pooled and sensitivity-only baselines. The fitted model also provides diagnostics for judge disagreement and model-affinity patterns, giving a statistically grounded framework for ranking un-der heterogeneous comparative judgments. 
+
+1 Introduction 
+
+Comparative judgments have become a standard interface for evaluating and aligning modern lan-guage models. Pairwise preferences are used to build leaderboards, benchmark systems, and provide supervision for post-training and preference optimization [1–4]. Increasingly, however, these judg-ments are not produced by a single homogeneous evaluator, but by panels of human annotators, model-based judges, prompting protocols, or evaluation settings applied to the same collection of candidate outputs [5–8]. In such settings, disagreement among judges is not merely exchangeable noise around one latent ranking. Recent evidence shows substantial variation across judge models, languages, tasks, and evaluation protocols, with especially large consequences for subjective eval-uations and near-tie comparisons [9–12]. Thus, moving from one judge to many does not simply increase sample size for a classical ranking problem; it changes the object of inference from a single pooled ordering to a structured multi-judge ranking problem. To address this problem, we develop a heterogeneous judge-aware ranking framework that treats multi-judge comparisons as evidence for several distinct ranking targets rather than as noisy votes for one pooled ordering. As summarized in Figure 1, the framework separates a consensus ranking      
+
+> Preprint.
+> arXiv:2605.05073v2 [stat.ME] 7 May 2026 Traditional multiple-judge ranking Heterogeneous judge-aware ranking
+> Simple consensus /
+> average model
+> Judge-aware ranking Judge-specific
+> ranking
+> Consensus ranking
+> Ranking with
+> confidence
+> Heterogeneuous
+> preferences
+> Uncertainty
+> quantification
+> Reliabilities Homogeneous
+> reliabilities
+> Homogeneous
+> preferences
+> Single consensus
+> ranking
+> No confidence
+> measure
+> Multiple
+> judges
+> Multiple
+> judges
+> Joint
+> latent
+> model
+> Reliability estimation
+> Preference modeling
+> (a) (b) (c) Interpreting judges with HJA
+
+Figure 1: Overview of Heterogeneous Judge-Aware (HJA) ranking. Unlike pooled multi-judge ranking, which collapses heterogeneous judgments into a single consensus score, HJA models judge-specific latent scores through the structured decomposition. This yields consensus and judge-specific rankings, sensitivity assessment, structured disagreement analysis, and uncertainty quantification. shared across judges, judge-specific sensitivity to that consensus, and structured residual disagree-ment across judges and items. This distinction is important because two judges may differ not only in how reliably they track the common ranking signal, but also in which types of items or responses they systematically favor. The resulting model supports uncertainty quantification for consensus scores, judge-specific comparisons, consensus sensitivity, and latent disagreement patterns. A key technical distinction is that the low-rank structure is not used as an arbitrary latent preference space. As formalized in Section 4, HJA decomposes the judge-specific Bradley–Terry–Luce (BTL) score matrix as S = γμ ⊤ + U V ⊤, where μ is the row-average consensus direction, γk is judge k’s loading on that direction, and U V ⊤ is constrained to represent residual disagreement orthogonal to consensus. Thus γk measures sensitivity to the shared ranking signal, rather than global judge qual-ity, while the low-rank component captures structured deviations after consensus has been removed. The resulting targets are therefore not merely an improved predictor of pairwise preferences, but the identifiable components of this canonical decomposition. The main technical challenge is to make this separation statistically well-defined, estimable, and inferentially useful. We first show that the consensus component, judge-specific consensus sensi-tivities, and structured disagreement subspace are identifiable under explicit normalization and rank conditions (Proposition 1). We then estimate the model by constrained maximum likelihood and develop an anchored proximal alternating algorithm that preserves the identifying geometry of the decomposition while enjoying a local linear convergence guarantee (Algorithm 1 and Theorem 2). For inference, we study a repeated-comparison asymptotic regime in which the number of judges may remain fixed or modest while information grows through repeated comparisons, and establish asymptotic normality for the constrained estimator (Theorem 3). This yields confidence intervals for smooth ranking targets, including consensus score contrasts, judge-specific score contrasts, con-sensus sensitivity, pairwise preference probabilities, and summaries of latent disagreement. Empirically, we evaluate HJA through synthetic recovery studies and real-data benchmarks (Sec-tion 6.1). Synthetic experiments show that HJA recovers consensus rankings, judge-specific be-havior, structured heterogeneity, and uncertainty calibration as comparison information increases, while misspecified baselines degrade under stronger heterogeneity. Across four real LLM-evaluation datasets, HJA improves robustness to noisy judges, held-out pairwise prediction, and near-tie per-formance, especially when judge disagreement is consequential. Beyond predictive benchmarking, we use HJA as a diagnostic tool to report judge-specific rankings with confidence intervals, identify high-leverage judges, and localize structured judge-model affinity patterns, including possible self-or family-affinity effects without treating them as universal findings (Section 6.2). 
+
+2 Related Work 
+
+Pairwise ranking, annotator heterogeneity, and judge-aware aggregation. Our starting point is the BTL model for ranking from pairwise comparisons [13, 14]. Beyond the homogeneous BTL setting, prior work in crowdsourcing and machine translation evaluation shows that aggregation should account for annotator-specific sensitivity, calibration, or sharpness when comparisons are collected from multiple annotators [5, 6]. Motivated by modern multi-judge evaluation settings, we build on this perspective by allowing disagreement to involve structured preference heterogeneity beyond scalar sensitivity. 2LLM-as-a-judge and evaluator disagreement. Pairwise LLM judging became a practical standard through benchmarks and platforms such as MT-Bench and Chatbot Arena [1, 15], and early evidence suggested that strong LLM judges could sometimes serve as useful proxies for human evaluation [16]. More recent work has weakened that optimistic view. Large-scale empirical studies report substantial variation across tasks and benchmarks [9]; multilingual evaluations show poor cross-language stability [10]; and rating-indeterminacy analyses argue that collapsing multiple defensible judgments into a single forced label can itself introduce evaluation bias [11]. Near-tie settings are especially fragile, since small prompt or decoding changes can induce large changes in pairwise outcomes and hence in final leaderboards [12]. These observations suggest that disagreement among judges should be explicitly modeled, rather than averaged away as if all judges were interchangeable. 
+
+Judge-aware ranking and uncertainty quantification. JA-Ranking [17] introduces judge-specific discrimination parameters for ranking LLM outputs without ground truth, capturing scalar sensi-tivity variation across judges. In our notation, this is the sensitivity-only structure S = γμ ⊤, the 
+
+r = 0 special case of HJA. Collaborative ranking and preference-completion methods instead learn structured heterogeneous preferences from pairwise data [18, 19], with related work imposing low-rank structure on pairwise preference probabilities or heterogeneous preference populations [20–22]. These approaches show that preference heterogeneity can be low-dimensional, but typically treat the individualized or low-rank preference object as the primary target. HJA uses low-rank structure for a different inferential purpose: it canonically decomposes the judge-specific BTL score matrix into a row-average consensus direction, judge-specific sensitivity to that direction, and an orthogonal residual disagreement component. This yields separate targets for consensus ranking, judge-specific ranking, and latent disagreement, with fixed-panel uncertainty quantification for identifiable compo-nents rather than only pairwise prediction. Complementary work on comparative uncertainty argues that evaluation pipelines should retain confidence information rather than reduce judgments to de-terministic verdicts [23, 24]; HJA connects this perspective to structured multi-judge ranking with fixed or modest judge panels. See Section A for a detailed comparison. 
+
+3 Problem Setup 
+
+Pairwise judgments from multiple judges. We consider repeated pairwise comparison settings with multiple judges. Let [N ] = {1, . . . , N } and [K] = {1, . . . , K } index the items and the judges. For each judge k ∈ [K] and unordered item pair (i, j ) with 1 ≤ i < j ≤ N , nkij denotes the number of repeated comparisons between items i and j, and Ykij ∈ { 0, . . . , n kij } denotes the number of times judge k prefers item i to item j. In LLM evaluation and preference modeling, pairwise comparisons are routinely used to benchmark systems, rank models without reference answers, and train preference-aligned models [1–4, 8]. Write 
+
+Ω := {(k, i, j ) : 1 ≤ k ≤ K, 1 ≤ i < j ≤ N, n kij > 0} (1) for the set of observed judge-item-pair triples. Throughout, statistical information grows through repeated judgments on observed triples, while the number of judges K may remain fixed or modest. A pooled ranking model treats all judges as interchangeable and collapses their responses into a single latent score vector. In multi-judge evaluation, however, this is often too restrictive. This concern is already visible in crowdsourced pairwise ranking and MT evaluation, where annotator-specific sensitivity or calibration affects aggregation [5, 6], and is amplified in LLM-as-a-judge settings with judge, language, and protocol sensitivity [9, 10, 12]. Judges may differ not only in how strongly they align with an overall ranking signal, but also in systematic ways that cannot be explained by a common score plus independent noise. These considerations suggest that the target of inference should not be a single pooled ranking alone, but a decomposition that preserves a consensus ranking while allowing structured judge-specific departures from it. 
+
+Consensus ranking with sensitivity, preference heterogeneity, and confidence. A judge-aware ranking model should do more than output a single pooled ordering of the items. In many evaluation settings, the substantive questions are not only which items rank highest on average, but also which judges track the shared ranking signal most strongly, where systematic preference disagreement remains, and how confident we should be in the ranking conclusions. Accordingly, we seek a representation that separates three statistical targets: (i) consensus rank-ing , which summarizes the ordering most strongly supported across judges; (ii) consensus sensi-tivity , which is judge-specific sensitivity to the shared consensus ranking direction and measures 3how strongly a judge tracks the common ranking signal, rather than the judge’s overall quality or calibration across all possible preference dimensions; and (iii) structured preference heterogeneity ,which allows judges to differ not only in sharpness or noise level, but also in systematic preferences that cannot be explained by a scalar rescaling alone. This perspective is aligned with collabora-tive ranking and preference-completion models, which treat individualized preferences as structured low-dimensional signals rather than independent noise [18, 19, 25]. In addition to recovering these latent components, the model should support confidence statements for the inferential outputs they induce. In particular, we would like to quantify uncertainty in the consensus ranking, in judge-specific comparisons, and in the estimated sensitivity and disagreement structure. This is especially important in near-tie regimes, where small perturbations in judgments can produce large changes in the final ordering [11, 12]. These considerations motivate a structured latent-score model that separates shared ranking signal from judge-specific alignment and residual disagreement. The next section introduces such a decomposition. 
+
+4 Heterogeneous Judge-Aware Ranking Model 
+
+4.1 Judge-specific latent variable model 
+
+We model each judge as having a latent score vector over the N items, with pairwise judgments determined by differences in those scores. Let S ∈ RK×N denote the score matrix where the kth row Sk, : represents the score vector for judge k. Conditional on S, the counts {Ykij : ( k, i, j ) ∈ Ω}
+
+are assumed to be independent and follow Bradley–Terry–Luce (BTL) model [13, 26]: 
+
+Ykij ∼ Binomial( nkij , p kij ), logit( pkij ) = Ski − Skj , (k, i, j ) ∈ Ω. (2) Equivalently, pkij = exp( Ski )/{exp( Ski )+exp( Skj )}. For each judge k, let Gk = ([ N ], Ek) denote the comparison graph with edge set Ek = {{ i, j } : ( k, i, j ) ∈ Ω}. For the main development, we assume that Gk is connected for every k, as is standard in BTL estimation [14]. This condition implies that each judge-specific score vector is identifiable up to an additive constant from that judge’s observed comparisons. Together with the row-centering constraint 
+
+S1N = 0 K , (3) this removes the usual additive invariance of the BTL model, so the collection {pkij : ( k, i, j ) ∈
+
+Ω} uniquely identifies S. We allow for disconnected individual comparison graphs in the partial sampling regime of Section D.4, provided that the pooled comparison structure together with the structural constraints of our model still identifies the latent score matrix. To separate shared ranking information from structured disagreement across judges, we model the latent score matrix through a consensus-plus-heterogeneity decomposition: 
+
+S = γμ ⊤ + U V ⊤, (4) where μ ∈ RN is the consensus item score vector, γ ∈ RK collects judge-specific consensus-sensitivity parameters, U ∈ RK×r contains judge loadings on latent disagreement directions, and 
+
+V ∈ RN ×r contains the corresponding item coordinates. Equivalently, one has 
+
+logit( pkij ) = γk(μi − μj ) + Uk, :(Vi, : − Vj, :)⊤, (k, i, j ) ∈ Ω. (5) This decomposition separates two distinct sources of variation across judges. The term γk(μi − μj )
+
+captures how strongly judge k responds to the common consensus signal, and therefore determines how sharply judge k discriminates along the shared ranking direction μ. In the unlikely case where 
+
+γk < 0, the judge k is anti-aligned with the consensus direction or may be malicious [5, 27]. The residual term Uk, :(Vi, : − Vj, :)⊤ captures systematic departures from that consensus that cannot be explained by a scalar rescaling alone. As a result, the model distinguishes judges who differ mainly in sharpness from judges who exhibit structured preference heterogeneity across items. This distinction is particularly useful in LLM-as-a-judge settings. Some judges may be weakly aligned with the common ordering and therefore behave as comparatively noisy evaluators, while others may display systematic deviations tied to answer style, language, task domain, or other latent attributes. Under (4), the consensus vector μ represents the population-level ranking target, whereas 
+
+U V ⊤ encodes interpretable disagreement structure around that target. 44.2 Identification of latent components 
+
+The decomposition in (4) introduces interpretable latent components for consensus, consensus sen-sitivity, and structured heterogeneity, but the factorization is not identified by the likelihood alone: many parameter tuples can generate the same row-centered score matrix S. The role of the following constraints is therefore not merely to choose a convenient scale, rotation, or centering convention. They define the canonical representative in which μ is the cross-judge consensus direction, γ mea-sures judge-specific sensitivity to that direction, and U V ⊤ represents residual disagreement. 
+
+Condition 1 (Normalization) . The parameters (γ, μ, U, V ) satisfy: (i) Centering: 1⊤ 
+
+> N
+
+μ = 0 and V ⊤1N = 0 r .(ii) Scaling: 1⊤ 
+
+> K
+
+U = 0 ⊤ 
+
+> r
+
+and 1⊤ 
+
+> K
+
+γ = K.(iii) Orthogonality: μ⊤V = 0 ⊤ 
+
+> r
+
+.(iv) Subspace anchoring: N −1V ⊤V = Ir and K−1U ⊤U = D for some diagonal matrix D with strictly decreasing positive diagonal entries. 
+
+Condition 1(i)-(ii) fix a canonical representative of the decomposition in (4). The centering con-straints remove the additive indeterminacy inherited from the BTL model and align the decom-position with the row-centering normalization S1N = 0 K . The scaling constraints then calibrate the consensus component so that μ represents the cross-judge consensus direction and γ measures judge-specific alignment with that direction. Indeed, under Condition 1(ii), if S⊤1K̸ = 0 N , then 
+
+1
+
+K 1⊤ 
+
+> K
+
+S = 1
+
+K 1⊤ 
+
+> K
+
+γμ ⊤ + 1
+
+K 1⊤ 
+
+> K
+
+U V ⊤ = μ⊤, γ = Sμ 
+
+∥μ∥22
+
+= K
+
+∥1⊤ 
+
+> K
+
+S∥22
+
+SS ⊤1K .
+
+Thus μ is the row-average BTL score direction induced by the judge-specific score matrix. Corre-spondingly, γk is the consensus sensitivity of judge k’s loading on this consensus direction. Condition 1(iii)-(iv) separate consensus from heterogeneity and anchor the residual factorization. The constraint μ⊤V = 0 ⊤ 
+
+> r
+
+requires the heterogeneous item directions to be orthogonal to the consensus direction, while the subspace-anchoring condition removes rotational ambiguity up to column-wise sign changes. Define the heterogeneous component of the latent score matrix: 
+
+eS := SP ⊥ 
+
+> S⊤1K
+
+, (6) where P ⊥ 
+
+> A
+
+denotes the projection matrix onto the orthogonal complement of A’s column space. In the degenerate case S⊤1K = 0 N , the induced model reduces to pure heterogeneity. Accordingly, for a fixed rank r ≤ Rmax := min {K − 1, N − 2}, we define 
+
+Θr = (γ, μ, U, V ) : μ ∈ RN , γ ∈ RK , U ∈ RK×r , V ∈ RN ×r , Condition 1 holds .
+
+While Condition 1 specifies a normalized parameterization, it does not guarantee that an arbitrary centered score matrix S admits such a decomposition. To recover (γ, μ, U, V ) uniquely from S, we therefore impose regularity conditions on S and its heterogeneous component eS.
+
+Condition 2. The cross-judge aggregate score vector of S is nonzero, i.e., S⊤1K̸ = 0 N , and the heterogeneous score matrix eS has r distinct positive singular values. 
+
+The next proposition formalizes the identifiability of the model. First, the BTL comparison law iden-tifies the row-centered judge-specific score matrix S. Second, Conditions 1 and 2 recover from S the canonical consensus-plus-heterogeneity decomposition, uniquely up to column-wise sign changes in (U, V ). Compared to generic low-rank preference modeling [20–22], the latent factors in HJA are therefore not introduced merely as a flexible approximation: they are identifiable components with distinct meanings as consensus, consensus sensitivity, and residual disagreement. 
+
+Proposition 1 (Identification) . Consider the probabilistic preference model (2) subject to (3) . Then, (i) (BTL identification) The latent score matrix S can be identified from the generative probability distribution of pairwise comparisons in (2) .(ii) (Parameter identification) If Condition 2 holds for S, then there exists (γ, μ, U, V ) ∈ Θr such that (4) holds. Such existence is unique up to some sign changes in the columns of U and V .
+
+Proposition 1 shows that the model parameters correspond to uniquely defined features of the data-generating mechanism, rather than to an arbitrary factorization of S. The only residual ambiguity can be eliminated via some sign conventions. This identification result provides the foundation for the constrained estimation and uncertainty quantification procedures developed in the next section. 5Algorithm 1 Heterogeneous judge-aware (HJA) ranking by proximal anchored alternating MLE 
+
+Require: Data {(nkij , Y kij )}(k,i,j )∈Ω, rank r, tolerance ε, iterations T , and parameters {τ (t)}t≥0.
+
+Ensure: Estimated parameter bθ, Fisher information matrix In(bθ), and a smooth target estimand q. 
+
+> 1:
+
+θ(0) ← INITIALIZE ({(nkij , Y kij )}(k,i,j )∈Ω, r ) based on Algorithm C.1.  
+
+> 2:
+
+for t = 0 , 1, . . . , T − 1 do  
+
+> 3:
+
+Set τ ← τ (t). 
+
+> 4:
+
+Compute (eγ, eU ) as the unique minimizer of Ln(γ, μ (t), U, V (t)) + τ 
+
+> 2
+
+∥γ − γ(t)∥22 + τ 
+
+> 2
+
+∥U − U (t)∥2
+
+> F
+
+subject to 1⊤ 
+
+> K
+
+γ = K and 1⊤ 
+
+> K
+
+U = 0 ⊤ 
+
+> r
+
+. 
+
+> 5:
+
+Compute (eμ, eV ) as the unique minimizer of Ln(eγ, μ, eU , V ) + τ 
+
+> 2
+
+∥μ − μ(t)∥22 + τ 
+
+> 2
+
+∥V − V (t)∥2 
+
+> F
+
+subject to 1⊤ 
+
+> N
+
+μ = 0 and 1⊤ 
+
+> N
+
+V = 0 ⊤ 
+
+> r
+
+. 
+
+> 6:
+
+θ(t+1) ← REANCHOR (eγ, eμ, eU , eV ) based on Algorithm C.2.  
+
+> 7:
+
+if |L n(θ(t+1) ) − L n(θ(t))|/[1 + |L n(θ(t))|] < ε then  
+
+> 8:
+
+break  
+
+> 9:
+
+end if  
+
+> 10:
+
+end for  
+
+> 11:
+
+bθ ← θ(t+1) and In(bθ) ← ESTIMATE FISHER INFO (bθ) based on Algorithm C.3.  
+
+> 12:
+
+Compute bq = q(bθ), bse( bq), and the Wald interval bq ± z1−α/ 2 bse( bq) using Algorithm C.4. 
+
+5 Estimation and Uncertainty Quantification 
+
+5.1 Constrained maximum likelihood estimation 
+
+We first consider estimation for a fixed heterogeneity rank r ≤ Rmax := min {K − 1, N − 2};practical rank-selection criteria are discussed in Section C.1. Let θ = ( γ, μ, U, V ) ∈ Θr . For each observed triple (k, i, j ) ∈ Ω, define ηkij (θ) = γk(μi − μj ) + Uk, :(Vi, : − Vj, :)⊤. Dropping constants independent of θ, the negative log-likelihood is 
+
+Ln(θ) := X
+
+> (k,i,j )∈Ω
+
+nkij 
+
+h
+
+− ¯Ykij ηkij (θ) + log 1 + exp( ηkij (θ)) 
+
+i
+
+, (7) where ¯Ykij = Ykij /n kij . We estimate the identifiable components of the HJA model by the con-strained maximum-likelihood estimator (MLE) 
+
+bθ = ( bγ, bμ, bU , bV ) ∈ arg min 
+
+> θ∈Θr
+
+Ln(θ). (8) The constraint set Θr encodes the normalizations used in Section 4.2 to make the consensus di-rection, judge-specific consensus sensitivities, and low-rank disagreement component statistically identifiable, so that bθ estimates the canonical representative of the decomposition (4). The resulting optimization problem is nonconvex because of the bilinear factorization in (U, V ) and the nonlinear anchoring constraints in Θr . In addition, direct alternating updates over the judge and item blocks do not preserve the nonlinear identification constraints, including μ⊤V = 0 , N −1V ⊤V = Ir , and 
+
+K−1U ⊤U . To address this, we develop a proximal alternating algorithm for constrained maximum likelihood estimation that maintains the identifying structure of the decomposition while exploiting the blockwise smoothness of the loss function, shown in Algorithm 1. We combine proximal block updates with a re-anchoring step to obtain the canonical representative in Θr . Further implementa-tion details, including initialization and the re-anchoring routine, are given in Section C.2. To analyze Algorithm 1 in the local nonconvex regime, we work in an identified chart around the target constrained MLE. Assumption A1 ensures that the re-anchoring map is locally well defined and nondegenerate; Assumption A2 imposes an isolated constrained local minimizer with positive curvature in this chart; and Assumption A3 places the initialization in its basin of attraction. Let 
+
+bθ be defined by (8), and let {θ(t)}t≥0 denote the anchored sequence generated by Algorithm 1. Throughout the remainder of Section 5, we fix the local column signs of (U, V ) by the anchoring convention (e.g., by Remark 1) and work in the corresponding local identified parameterization. 
+
+Theorem 2 (Locally linear convergence of Algorithm 1) . Under Assumptions A1–A3, the iterates remain in the identified local chart, the likelihood values {L n(θ(t))}t≥0 are nonincreasing, and 
+
+θ(t) → bθ. Moreover, there exist constants C < ∞, ρ ∈ (0 , 1) , and t0 ≥ 0 such that, for all t ≥ t0,
+
+∥θ(t) − bθ∥2 + Ln(θ(t)) − L n(bθ) ≤ Cρ t−t0 .
+
+6Theorem 2 suggests that the re-anchored alternating updates of Algorithm 1 are stable within the identified local chart, i.e., the objective decreases monotonically, the iterates converge to the intended constrained MLE, and the final local convergence is geometric. See Section C.3 for its proof. 
+
+5.2 Uncertainty quantification 
+
+Point estimates alone are insufficient for judge-aware ranking: in near-tie regimes, small pertur-bations in the observed comparisons can change the consensus ordering, judge-specific rankings, or estimated disagreement structure. We therefore quantify uncertainty for the score contrasts that determine ranking conclusions, rather than only for the latent components themselves. We study this problem in a fixed-rank repeated-comparison regime, where K and N may remain fixed while information accumulates through repeated comparisons on observed triples. This regime matches LLM evaluation settings in which the same judge panel can be queried repeatedly across prompts, random seeds, or judging instances, even when adding trusted judges is costly. We impose the following regularity conditions for statistical inference in this setting. Assump-tion A4 assumes stable asymptotic sampling fractions nkij /n → wkij ; Assumption A5 requires the active comparison graph for each judge to be connected; Assumption A6 places the true parameter in the local identifiable geometry; and Assumption A7 ensures that the structured parameterization is locally regular after fixing the column signs of (U, V ). Together, graph connectivity identifies the row-centered score matrix from active pairwise differences, while local regularity ensures that this information passes to the consensus, sensitivity, and heterogeneity parameters. With the local sign convention fixed as in Section 5.1 and Ωw defined in (D.1), we define the Fisher information for the anchored true parameter θ∗ ∈ Θr by 
+
+I(θ∗) = X
+
+> (k,i,j )∈Ωw
+
+wkij p∗ 
+
+> kij
+
+(1 − p∗ 
+
+> kij
+
+)∇θ ηkij (θ∗)∇θ ηkij (θ∗)⊤. (9) The next theorem shows the inferential properties of the constrained MLE and the delta-method limit of the smooth target functionals. 
+
+Theorem 3 (Fixed-rank asymptotics) . Under Assumptions A4–A6, the constrained MLE satisfies 
+
+bθ p
+
+−→ θ∗. Additionally under Assumption A7, I(θ∗) is positive definite in the identified local param-eterization, and √n bθ − θ∗ d
+
+−→ N  0, I(θ∗)−1 .
+
+Consequently, for any smooth scalar target q : Θ r → R,
+
+√n{q(bθ) − q(θ∗)} d
+
+−→ N  0, ∇θ q(θ∗)⊤I(θ∗)−1∇θ q(θ∗) .
+
+Theorem 3 shows that repeated judgments can support inference on the structured components of the HJA model even when the judge panel itself does not grow. The Fisher information in (9) can be consistently estimated by the plug-in observed design estimator 
+
+In(bθ) = P
+
+> (k,i,j )∈Ω
+
+nkij 
+
+n bpkij (1 − bpkij ∇θ ηkij (bθ)∇θ ηkij (bθ)⊤, (10) where bpkij = {1 + exp[ −ηkij (bθ)] }−1. Under the assumptions of Theorem 3, In(bθ) p
+
+−→ I (θ∗). Thus Wald standard errors for smooth targets q(θ) are given by bse {q(bθ)} = [ 1 
+
+> n
+
+∇q(bθ)⊤In(bθ)−1∇q(bθ)] 1/2.
+
+Typical choices of q include consensus contrasts μi − μj , judge-specific contrasts Ski − Skj ,consensus-sensitivity parameters γk, pairwise probabilities pkij , and smooth summaries of U V ⊤.These are the natural inferential objects for ranking: full rankings are discontinuous at ties, whereas pairwise score differences remain smooth and directly quantify ranking uncertainty. 
+
+6 Empirical Evaluation 
+
+6.1 Benchmarking across synthetic and real data Synthetic simulations. We first use synthetic data to isolate the effect of structured judge hetero-geneity under a known latent score matrix and known consensus-plus-heterogeneity decomposition. Data are generated from (2) and (4) with N = 8 items, K = 4 judges, rank r = 1 , and 50 random 71000 2000 3000                                           
+
+> Number of comparisons ncmp
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> MSE
+> Score recovery
+> 1000 2000 3000
+> Number of comparisons ncmp
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> Spearman
+> Consensus ranking
+> 1000 2000 3000
+> Number of comparisons ncmp
+> 0.80
+> 0.85
+> 0.90
+> 0.95
+> 1.00
+> NDCG@N
+> Consensus ranking
+> 1000 2000 3000
+> Number of comparisons ncmp
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Coverage
+> Uncertainty calibration
+> 1000 2000 3000
+> Number of comparisons ncmp
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Accuracy
+> Judge-specific behavior
+> 0.0 0.5 1.0 1.5 2.0
+> Heterogeneity scale h
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> MSE
+> 0.0 0.5 1.0 1.5 2.0
+> Heterogeneity scale h
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> Spearman
+> 0.0 0.5 1.0 1.5 2.0
+> Heterogeneity scale h
+> 0.80
+> 0.85
+> 0.90
+> 0.95
+> 1.00
+> NDCG@N
+> 0.0 0.5 1.0 1.5 2.0
+> Heterogeneity scale h
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Coverage
+> 0.0 0.5 1.0 1.5 2.0
+> Heterogeneity scale h
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Accuracy
+> Methods HJA Unstructured BTL + SVD JA-Ranking Standard BTL
+
+Figure 2: Benchmarking on synthetic simulations, with (a) varying numbers of pairwise compar-isons T ∈ { 400 , 800 , 1200 , 1600 , 2000 , 2500 , 3000 } at heterogeneity scale 1.0, and (b) varying het-erogeneity scales over {0, 0.5, 1, 2} and fixed T = 800 comparisons. Each panel reports the mean over 50 independent repetitions with 95% normal-approximation error bars. Columns show perfor-mance on score recovery (MSE), consensus rank quality (Spearman and NDCG@N), uncertainty calibration (nominal 95% score-entry coverage), and judge-specific behavior (sign accuracy). seeds. We compare 4 methods: HJA, JA-Ranking [17], pooled BTL (γ = 1 K , r = 0) , and an unstructured judge-wise BTL estimator followed by a rank-(r + 1) truncated SVD of the estimated score matrix; and consider 2 regimes: a sample-size experiment varying the total number of com-parisons ncmp at fixed heterogeneity scale h = 1 , and a heterogeneity experiment varying h at fixed 
+
+ncmp = 800 , where h scales the residual component U V ⊤. Full data-generating details, metric definitions, convergence diagnostics, and sensitivity-only simulations are deferred to Section E. Figure 2 shows that HJA improves score recovery, consensus ranking, uncertainty calibration, and judge-specific sign prediction as comparison information increases. The advantage is most pro-nounced as heterogeneity grows: pooled BTL and JA-Ranking are structurally misspecified because they cannot represent residual judge-item preference structure, and hence concentrate around bi-ased score matrices in larger samples. The unstructured BTL+SVD baseline is less accurate and has higher score-level variance because it estimates the full score matrix before imposing low-rank structure. The ablation in Section E.5 further shows that the structured optimization and reanchor step are necessary to stabilize the identified decomposition and improve score-level recovery. 
+
+Real-data robustness evaluation. We next use four representative real-world evaluation datasets to test whether modeling structured judge heterogeneity improves ranking under noisy, uneven, and near-tie judgments: Chatbot Arena [15], MT-Bench [1], UltraFeedback [28], and an in-house judg-ment dataset [17]. We compare the induced consensus rankings by HJA, JA-Ranking, and BTL along three axes: robustness to injected noisy judges, held-out pairwise prediction, and accuracy on em-pirically ambiguous near-tie pairs, where automatic rankings are especially fragile [11, 12]. Noisy-judge robustness measures how stable the estimated ranking remains as additional noisy judges are injected; held-out prediction evaluates record-level generalization; and near-tie accuracy focuses on Table 1: Real-data comparison. Robustness is evaluated under increasing noisy-judge perturbation; near-tie accuracy is evaluated across increasingly less ambiguous near-tie groups. Entries are mean 
+
+± standard deviation in 20 random seeds; bold marks the best mean per dataset-metric group. 
+
+Dataset Method Noisy-judge robustness Hold-out accuracy Near-tie accuracy 
+
+Low Mid High Closest Mid Farthest Chatbot Arena HJA 0.95 ±0.07 0.85 ±0.09 0.82 ±0.07 0.65 ±0.01 0.68 ±0.05 0.69 ±0.04 0.67 ±0.06 
+
+JA-Ranking 0.77 ±0.09 0.51 ±0.12 0.46 ±0.11 0.58 ±0.01 0.58 ±0.03 0.54 ±0.05 0.50 ±0.06 
+
+BTL 0.47 ±0.16 0.33 ±0.13 0.21 ±0.11 0.58 ±0.01 0.57 ±0.04 0.54 ±0.05 0.51 ±0.06 
+
+MT-Bench HJA 1.00 ±0.00 1.00 ±0.00 1.00 ±0.00 0.76 ±0.01 0.74 ±0.02 0.84 ±0.01 0.89 ±0.01 
+
+JA-Ranking 0.67 ±0.00 0.67 ±0.00 0.67 ±0.00 0.70 ±0.01 0.62 ±0.02 0.78 ±0.01 0.86 ±0.01 
+
+BTL 0.92 ±0.15 0.87 ±0.17 0.85 ±0.20 0.70 ±0.01 0.62 ±0.02 0.78 ±0.01 0.86 ±0.01 
+
+UltraFeedback HJA 0.81 ±0.06 0.65 ±0.11 0.67 ±0.13 0.70 ±0.01 0.69 ±0.05 0.68 ±0.04 0.71 ±0.06 
+
+JA-Ranking 0.83 ±0.11 0.63 ±0.11 0.62 ±0.16 0.62 ±0.01 0.55 ±0.06 0.58 ±0.06 0.60 ±0.04 
+
+BTL 0.57 ±0.09 0.32 ±0.12 0.30 ±0.10 0.61 ±0.01 0.55 ±0.06 0.58 ±0.06 0.60 ±0.04 
+
+In-house HJA 0.94 ±0.05 0.83 ±0.05 0.33 ±0.05 0.62 ±0.01 0.60 ±0.07 0.56 ±0.10 0.58 ±0.10 
+
+JA-Ranking 0.65 ±0.06 0.43 ±0.09 0.36 ±0.08 0.61 ±0.01 0.58 ±0.07 0.56 ±0.08 0.59 ±0.09 
+
+BTL 0.35 ±0.08 0.18 ±0.06 0.12 ±0.04 0.61 ±0.01 0.57 ±0.07 0.56 ±0.08 0.59 ±0.09 
+
+8Model family               
+
+> Community
+> Other
+> OpenAI
+> Google
+> Meta
+> Anthropic −1
+> 0
+> 1̂
+> μi ± 95% CI
+> Consensus score
+> 0123̂
+> γk± 95% CI
+> zai-org/GLM-4.5-Air-FP8
+> google/gemma-3n-E4B-it
+> marin-8b-instruct
+> Mistral-7B-Instruct-v0.1
+> deepseek-chat
+> arcee_ai/arcee-spotlight
+> kimi-k2-0905-preview
+> Qwen3-235B-A22B-Instruct
+> Llama-4-Maverick-17B-128
+> openai/gpt-oss-20b
+> Judges
+> *
+> *
+> *
+> *
+> *
+> *
+> *
+> *
+> *
+> Judge sensitivity
+> dolly-v2-12b
+> fastchat-t5-3b
+> RWKV-4-Raven-14B
+> alpaca-13b
+> chatglm-6b
+> gpt-4
+> palm-2
+> wizardlm-13b
+> vicuna-13b
+> vicuna-7b
+> gpt4all-13b-snoozy
+> llama-13b
+> claude-v1
+> gpt-3.5-turbo
+> koala-13b
+> stablelm-tuned-alph…
+> claude-instant-v1
+> mpt-7b-chat
+> guanaco-33b
+> oasst-pythia-12b
+> Models
+> −1.0
+> −0.5
+> 0.0
+> 0.5
+> 1.0
+> UV  ⊤ (clipped at 90th pct)
+> (a)
+> Judges (γ = sensitivity)
+> Consensus ̂ μi
+> Qwen3-235B-A22B-Instruct-2 (γ=+1.11)
+> arcee_ai/arcee-spotlight (γ=+0.98)
+> deepseek-chat (γ=+0.10)
+> google/gemma-3n-E4B-it (γ=+0.98)
+> kimi-k2-0905-preview (γ=+0.97)
+> marin-8b-instruct (γ=+0.12)
+> Llama-4-Maverick-17B-128E-(γ=+0.85)
+> Mistral-7B-Instruct-v0.1 (γ=+0.19)
+> openai/gpt-oss-20b (γ=+1.22)
+> claude-instant-v1
+> claude-v1
+> gpt-4
+> gpt-3.5-turbo
+> RWKV-4-Raven-14B
+> guanaco-33b
+> alpaca-13b
+> chatglm-6b
+> gpt4all-13b-snoozy
+> koala-13b
+> palm-2
+> vicuna-13b
+> mpt-7b-chat
+> fastchat-t5-3b
+> wizardlm-13b
+> dolly-v2-12b
+> vicuna-7b
+> oasst-pythia-12b
+> llama-13b
+> stablelm-tuned-al…
+> Models (sorted by consensus rank)
+> −2
+> −1
+> 0
+> 1
+> 2
+> (b)
+
+Figure 3: HJA diagnostic analysis on Chatbot Arena. (a) Heatmap shows the heterogeneous prefer-ence matrix bU bV ⊤; barplots show judge sensitivity bγ and consensus score bμ, with 95% confidence intervals. The models are colored by LLM model families. (b) Judge-specific score profiles bSk, :,ordered by consensus score bμ with the high-leverage outlier excluded. item pairs with empirical win rates close to 0.5, where small modeling biases can flip the induced ordering. see Section F.1 for dataset and experimental details. Table 1 shows that HJA performs strongly on the three public benchmarks, Chatbot Arena, MT-Bench, and UltraFeedback, with clear gains in held-out prediction and consistent improvements in robustness and near-tie accuracy. On the in-house dataset [17], though HJA does not dominate JA-Ranking under the strongest perturbations or all near-tie slices, it remains competitive. Overall, these results support the benefit of modeling structural judge heterogeneity beyond scalar sensitivity. 
+
+6.2 Consensus, sensitivity, and disagreement in real data 
+
+Beyond benchmark comparison, we use HJA as a full-data diagnostic tool for real multi-judge eval-uation. We focus on Chatbot Arena, a large crowdsourced LLM comparison dataset, and report analogous analyses for the other real datasets in Section F.2. The fitted decomposition separates three quantities: the consensus ranking, judge sensitivity, and residual judge-model interactions. As shown in Figure 3(a), this separation is useful for judge assessment: a large bγk indicates a strong response to the consensus direction, but reliability also requires small residual leverage. The judge 
+
+zai-org/GLM-4.5-Air-FP8 has both unusually large consensus sensitivity and unusually large residual disagreement, making it a high-leverage judge rather than simply a strong judge; this agrees with the broader diagnostic in Figure F6. HJA also provides judge-specific rankings through the fitted score profiles bSk, : = bγk bμ⊤ + bUk, : bV ⊤. Figure 3(b) shows these profiles ordered by the consen-sus ranking. Unlike fitting each judge independently, HJA estimates these rankings jointly through a shared consensus direction and a low-rank disagreement structure. This pooling is important in sparse or noisy pairwise data: judge-specific deviations are allowed, but they are regularized through common latent disagreement directions rather than estimated as unrelated score vectors. Finally, the residual component bU bV ⊤ localizes structured judge-model affinities. After identifying high-leverage outliers, we can refit or visualize the model with those judges filtered to obtain a more stable consensus and a less saturated interaction heatmap; see Figure F8. The same residual structure can be inspected by clustering judges and models, as in Figures F9 and F10, to reveal groups with similar evaluation behavior. These analyses suggest that HJA can flag unreliable or high-leverage judges, recover judge-specific ranking preferences, and expose systematic affinity patterns, while treating self- or family-preference effects as diagnostic hypotheses rather than universal conclusions. 
+
+7 Conclusion and discussion 
+
+We introduced HJA ranking, an identifiable multi-judge BTL framework that separates consensus ranking, judge sensitivity, and structured residual disagreement. With constrained estimation and fixed-panel uncertainty quantification, HJA yields rankings that are more robust, interpretable, and diagnostic under heterogeneous judgments. The framework is not intended to certify rankings under adversarial judge panels: severe coordinated bias may affect the consensus estimate, and the non-convex optimization remains locally initialized. Hence, deliberate manipulations may cause HJA to output biased rankings, which poses a potential negative impact. Thus, HJA should be viewed as a statistically grounded diagnostic layer for heterogeneous evaluation before benchmark design. 9References 
+
+[1] Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao Zhuang, Zi Lin, Zhuohan Li, Dacheng Li, Eric Xing, et al. Judging llm-as-a-judge with mt-bench and chatbot arena. Advances in neural information processing systems , 36:46595– 46623, 2023. [2] Paul F Christiano, Jan Leike, Tom Brown, Miljan Martic, Shane Legg, and Dario Amodei. Deep reinforcement learning from human preferences. Advances in neural information pro-cessing systems , 30, 2017. [3] Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, et al. Training language models to follow instructions with human feedback. Advances in neural information processing systems ,35:27730–27744, 2022. [4] Rafael Rafailov, Archit Sharma, Eric Mitchell, Christopher D Manning, Stefano Ermon, and Chelsea Finn. Direct preference optimization: Your language model is secretly a reward model. 
+
+Advances in neural information processing systems , 36:53728–53741, 2023. [5] Xi Chen, Paul N Bennett, Kevyn Collins-Thompson, and Eric Horvitz. Pairwise ranking ag-gregation in a crowdsourced setting. In Proceedings of the sixth ACM international conference on Web search and data mining , pages 193–202, 2013. [6] Naoki Otani, Toshiaki Nakazawa, Daisuke Kawahara, and Sadao Kurohashi. Irt-based aggre-gation model of crowdsourced pairwise comparison for evaluating machine translations. In 
+
+Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing ,pages 511–520, 2016. [7] Justin Zhao, Flor Miriam Plaza-del Arco, and Amanda Cercas Curry. Language model coun-cil: Democratically benchmarking foundation models on highly subjective tasks. In Proceed-ings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers) , pages 12395–12450, 2025. [8] Amit Dhurandhar, Rahul Nair, Moninder Singh, Elizabeth Daly, and Karthikeyan Natesan Ra-mamurthy. Ranking large language models without ground truth. In Findings of the Association for Computational Linguistics: ACL 2024 , pages 2431–2452, 2024. [9] Anna Bavaresco, Raffaella Bernardi, Leonardo Bertolazzi, Desmond Elliott, Raquel Fernán-dez, Albert Gatt, Esam Ghaleb, Mario Giulianelli, Michael Hanna, Alexander Koller, et al. Llms instead of human judges? a large scale empirical study across 20 nlp evaluation tasks. In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 2: Short Papers) , pages 238–255, 2025. [10] Xiyan Fu and Wei Liu. How reliable is multilingual llm-as-a-judge? In Findings of the Associa-tion for Computational Linguistics: EMNLP 2025 . Association for Computational Linguistics, 2025. [11] Luke Guerdan, Solon Barocas, Ken Holstein, Hanna Wallach, Steven Wu, and Alexandra Chouldechova. Validating llm-as-a-judge systems under rating indeterminacy. In The Thirty-ninth Annual Conference on Neural Information Processing Systems , 2025. [12] Mingqi Gao, Yixin Liu, Xinyu Hu, Xiaojun Wan, Jonathan Bragg, and Arman Cohan. Re-evaluating automatic llm system ranking for alignment with human preference. In Findings of the Association for Computational Linguistics: NAACL 2025 , pages 4605–4629, 2025. [13] Ralph Allan Bradley and Milton E Terry. Rank analysis of incomplete block designs: I. the method of paired comparisons. Biometrika , 39(3/4):324–345, 1952. [14] David R Hunter. Mm algorithms for generalized bradley-terry models. The annals of statistics ,32(1):384–406, 2004. 10 [15] Wei-Lin Chiang, Lianmin Zheng, Ying Sheng, Anastasios Nikolas Angelopoulos, Tianle Li, Dacheng Li, Banghua Zhu, Hao Zhang, Michael Jordan, Joseph E Gonzalez, et al. Chatbot arena: An open platform for evaluating llms by human preference. In International Conference on Machine Learning , pages 8359–8388. PMLR, 2024. [16] Cheng-Han Chiang and Hung-yi Lee. Can large language models be an alternative to human evaluations? In Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 15607–15631, 2023. [17] Mingyuan Xu, Xinzi Tan, Jiawei Wu, and Doudou Zhou. A judge-aware ranking framework for evaluating large language models without ground truth. arXiv preprint arXiv:2601.21817 ,2026. [18] Yu Lu and Sahand N Negahban. Individualized rank aggregation using nuclear norm regular-ization. In 2015 53rd Annual Allerton Conference on Communication, Control, and Computing (Allerton) , pages 1473–1479. IEEE, 2015. [19] Dohyung Park, Joe Neeman, Jin Zhang, Sujay Sanghavi, and Inderjit Dhillon. Preference completion: Large-scale collaborative ranking from pairwise comparisons. In International Conference on Machine Learning , pages 1907–1916. PMLR, 2015. [20] Arun Rajkumar and Shivani Agarwal. When can we rank well from comparisons of o (n \log (n)) non-actively chosen pairs? In Conference on Learning Theory , pages 1376–1401. PMLR, 2016. [21] Tao Jin, Pan Xu, Quanquan Gu, and Farzad Farnoud. Rank aggregation via heterogeneous thurstone preference models. In Proceedings of the AAAI Conference on Artificial Intelligence ,volume 34 (04), pages 4353–4360, 2020. [22] Rui Wu, Jiaming Xu, Rayadurgam Srikant, Laurent Massoulié, Marc Lelarge, and Bruce Ha-jek. Clustering and inference from pairwise comparisons. In Proceedings of the 2015 ACM SIGMETRICS International Conference on Measurement and Modeling of Computer Systems ,pages 449–450, 2015. [23] Yassir Fathullah and Mark Gales. Generalised probabilistic modelling and improved uncer-tainty estimation in comparative llm-as-a-judge. In Conference on Uncertainty in Artificial Intelligence , pages 1266–1288. PMLR, 2025. [24] Victor Wang, Michael JQ Zhang, and Eunsol Choi. Improving LLM-as-a-judge inference with the judgment distribution. In Findings of the Association for Computational Linguistics: EMNLP 2025 , Suzhou, China, November 2025. Association for Computational Linguistics. [25] Jianqing Fan, Hyukjun Kwon, and Xiaonan Zhu. Uncertainty quantification for ranking with heterogeneous preferences. arXiv preprint arXiv:2509.01847 , 2025. [26] R Duncan Luce et al. Individual choice behavior , volume 4. Wiley New York, 1959. [27] Jing Li, Rafal Mantiuk, Junle Wang, Suiyi Ling, and Patrick Le Callet. Hybrid-mst: A hybrid active sampling strategy for pairwise preference aggregation. Advances in neural information processing systems , 31, 2018. [28] Ganqu Cui, Lifan Yuan, Ning Ding, Guanming Yao, Bingxiang He, Wei Zhu, Yuan Ni, Guo-tong Xie, Ruobing Xie, Yankai Lin, Zhiyuan Liu, and Maosong Sun. ULTRAFEEDBACK: Boosting language models with scaled AI feedback. In Proceedings of the 41st International Conference on Machine Learning , volume 235 of Proceedings of Machine Learning Research ,pages 9722–9744. PMLR, 21–27 Jul 2024. [29] Fan RK Chung. Spectral graph theory , volume 92. American Mathematical Soc., 1997. [30] Paul Erdös. Graph theory and probability. Canadian Journal of Mathematics , 11:34–38, 1959. [31] Steven G. Self and Kung-Yee Liang. Asymptotic properties of maximum likelihood estimators and likelihood ratio tests under nonstandard conditions. Journal of the American Statistical Association , 82(398):605–610, 1987. 11 [32] Jean-Marc Robin and Richard J. Smith. Tests of rank. Econometric Theory , 16(2):151–175, 2000. [33] Hamed Karimi, Julie Nutini, and Mark Schmidt. Linear convergence of gradient and proximal-gradient methods under the polyak-łojasiewicz condition. In Joint European conference on machine learning and knowledge discovery in databases , pages 795–811. Springer, 2016. [34] Boris Teodorovich Polyak. Gradient methods for minimizing functionals. Zhurnal vychisli-tel’noi matematiki i matematicheskoi fiziki , 3(4):643–653, 1963. [35] Hédy Attouch, Jérôme Bolte, Patrick Redont, and Antoine Soubeyran. Proximal alternating minimization and projection methods for nonconvex problems: An approach based on the kurdyka-łojasiewicz inequality. Mathematics of operations research , 35(2):438–457, 2010. [36] Ruijian Han, Wenlu Tang, and Yiming Xu. Statistical inference for pairwise comparison mod-els. arXiv preprint arXiv:2401.08463v3 , 2025. [37] Richard H Byrd, Peihuang Lu, Jorge Nocedal, and Ciyou Zhu. A limited memory algorithm for bound constrained optimization. SIAM Journal on scientific computing , 16(5):1190–1208, 1995. [38] John A Hartigan. Direct clustering of a data matrix. Journal of the american statistical asso-ciation , 67(337):123–129, 1972. 12 Appendix 
+
+This serves as an appendix to the main paper. Below, we provide an outline for the appendix along with a summary of the notation used in the main paper and the appendix. 
+
+Organization. The content of the appendix is organized as follows. 
+
+Appendix Content 
+
+Section A Relation to alternative formulations. Section B B.1 Proof of Proposition 1 on model identification. Section C C.1 Rank selection criteria. C.2 Algorithms and implementation details. C.3 Proof of Theorem 2 on convergence analysis. Section D D.1 Proof of consistency part of Theorem 3. D.2 Proof of asymptotic normality part in Theorem 3 via graph theory. D.3 Auxiliary lemmas used for the proofs. D.4 Partial-sampling (pooled-graph treatment) regime. Section E E.1 Main heterogeneous DGP specification. E.2 Comparison design, fitting protocol, and metrics. E.3 Convergence diagnostics. E.4 JA-Ranking DGP specification and results. E.5 Ablation study. Section F F.1 Real-data evaluation details. F.2 Interpretation on real data analyses. 
+
+Notation. An overview of some general notations used in the main paper and the appendix is as follows. In Rd, the j-th standard basis vector is denoted by ej and the zero (or all-one) vector is denoted by 
+
+0d (or 1d) or simply 0 (or 1) if the dimension is clear from the context. The cardinality of a set S is denoted by |S| . The indicator function is denoted by 1{·} .We use “ o” and “ O” to denote the little-o and big-O notations; “ oP” and “ OP” are their probabilistic counterparts. For sequences {an} and {bn}, we write an ≲ bn if an = O(bn); and an ≍ bn if 
+
+an = O(bn) and bn = O(an). Convergence almost surely, in probability, and in distribution is denoted by “ a.s.
+
+−−→”, “ p
+
+−→”, and “ d
+
+−→”, respectively. When “positivity” property is imposed or stated on a matrix, it means positive definiteness. We use KL( p ∥ q) to denote the Kullback–Leibler (KL) divergence between two distributions p and q.
+
+Reproducibility. All experiment results in this paper can be reproduced with datasets openly ac-cessible. The code files can be downloaded from https://anonymous.4open.science/r/HJ A-Ranking-37BF/ .13 A Relation to Alternative Formulations 
+
+Relation to JA-Ranking. JA-Ranking [17] and related judge-aware BTL models represent judge heterogeneity primarily through a judge-specific discrimination or sensitivity parameter, leading to a sensitivity-only score matrix of the form S = γμ ⊤. HJA contains this model as the special case 
+
+r = 0 , up to the normalization 1⊤ 
+
+> K
+
+γ = K. The main distinction is that, for r > 0, HJA allows judges to deviate from the consensus direction through the residual component U V ⊤. Thus γk
+
+should be interpreted as judge k’s sensitivity to the consensus ranking direction, rather than as a global sensitivity parameter scaling all aspects of the judge-specific score vector. A judge can be weakly aligned with the consensus while still having strong, structured preferences in the residual disagreement subspace. This differs from formulations in which a single positive discrimination parameter scales the entire latent score vector. If one instead wishes γ to scale the full judge-specific score, one may set U = diag( γ) eU and write 
+
+S = γμ ⊤ + diag( γ) eU V ⊤ = diag( γ) 1K μ⊤ + eU V ⊤.
+
+Under this alternative parameterization, γ plays the role of a global sensitivity parameter, since it scales both the consensus and heterogeneous components simultaneously. Additionally, our formulation does not impose strict positivity on the coefficients γk. This is useful in settings with noisy or partially adversarial judges: γk = 0 means that judge k does not respond to the consensus direction and contributes only through structured disagreement around consensus, whereas γk < 0 indicates systematic opposition to the consensus signal. By contrast, JA-ranking imposes a strict positivity restriction on the corresponding discrimination parameters. Thirdly, JA-Ranking assumes a balanced comparison design in which each unordered model pair is sampled uniformly for each judge. HJA instead works directly with the observed triple set Ω in (1), allowing arbitrary and unbalanced cell counts nkij , including designs in which some judge–pair cells are observed much more often than others or are missing entirely. This flexibility is important in realistic LLM evaluation pipelines, where certain comparisons may be difficult to obtain because of API rate limits, model availability, annotation cost, safety filters, or adaptive sampling policies that focus effort on near-tie or high-disagreement pairs. In the main theory, identification and inference are guaranteed when each judge-specific active comparison graph is connected. Beyond this regime, Section D.4 gives a pooled-graph treatment: disconnected judge-specific graphs can still be handled when the pooled comparison graph is connected and the structural low-rank constraints rule out unidentified local perturbations. 
+
+Relation to low-rank BTL and collaborative ranking models. Low-rank preference and collabo-rative ranking models [20–22] also exploit low-dimensional structure in heterogeneous preferences. However, HJA uses low rank for a different inferential purpose. Rather than treating the factoriza-tion of the full score matrix as the primary object, HJA first defines the consensus direction as the row-average score vector and then constrains the residual factor U V ⊤ to be orthogonal to that con-sensus direction. Consequently, the low-rank component represents structured disagreement around consensus, not an arbitrary rotated latent preference space. The normalization and rank conditions in Proposition 1 make this separation identifiable from the BTL comparison law, up to the usual column-wise sign ambiguity of the factors. 
+
+Relation to two-step BTL plus spectral decomposition. A natural alternative is to first estimate an unrestricted judge-specific BTL score matrix bS, and then recover (bγ, bμ, bU , bV ) by applying the decomposition in Proposition 1 followed by a truncated singular value decomposition (SVD). This two-step procedure is useful as a diagnostic and as a computational baseline, especially when each judge has many repeated comparisons over a dense comparison graph. However, it separates score estimation from the structural constraints and therefore does not exploit the low-rank consensus-plus-heterogeneity model during likelihood fitting. In finite samples, this can lead to high variance in the estimated score matrix before the spectral step is applied, as shown in Figure 2, when the het-erogeneity level increases. By contrast, the constrained MLE estimates the identifiable components jointly, borrows strength across judges and items through the structural model, and directly supports the Fisher-information-based uncertainty quantification. 
+
+Relation to random graph theory. The inference properties of HJA rely on the connectivity struc-ture of the active comparison graphs Gwk (where edge (i, j ) exists if (k, i, j ) ∈ Ω) for each judge 
+
+k. The weighted graph-Laplacian framework in Proposition D.1 shows that Fisher information non-14 degeneracy is controlled by properties of the graph, similar to spectral properties in random graph theory [29]. With these techniques, we can establish the properties of MLE without requiring a fully connected comparison graph, which is important for real-world evaluation settings, as judges may only compare subsets of items. In the asymptotic regime where the comparison graph G (where edge (i, j ) exists if (k, i, j ) ∈ Ω for some k) is fixed, connectivity is imposed as a deterministic structural assumption (Assumption A5). However, when comparisons are allocated randomly, or the graph grows dynamically (e.g., active learning over time), one could appeal to results from random graph theory, such as properties of Erd˝ os-Rényi [30], to establish that connectivity holds with high probability. Such connections sug-gest that HJA’s asymptotic theory could be extended to settings with random or growing comparison graphs, though the current paper focuses on fixed-panel designs common in LLM evaluation. 15 B Identification 
+
+B.1 Proof of Proposition 1 
+
+Proof of Proposition 1. The proof consists of three parts. First for (i), given any set of pairwise probabilities, S is uniquely identified if each of its row is restricted to have zero sum (i.e., Eq. (3)). The second part proves that the mapping induced by (4) from Θr to the space of S is injective. Finally, Part (iii) imposes (3) on the space of S, which makes such mapping bijective (one-to-one). Part (iii), combined with Part (ii), establishes the unique existence, which is identification. 
+
+Part (i): Identification of BTL score matrix. For each fixed judge k, the pairwise probabilities determine all score differences Ski − Skj through the inverse logit (2). Hence, if eS is another matrix generating the same pairwise probabilities, then 
+
+eSki − eSkj = Ski − Skj for all i, j. 
+
+Therefore, for each k, the vector eSk, : − Sk, : is constant across items, i.e., there exists ck ∈ R such that eSk, : = Sk, : + ck1⊤ 
+
+> N
+
+.
+
+Right-multiplying both sides by 1N yields 
+
+eSk, :1N = Sk, :1N + ck1⊤ 
+
+> N
+
+1N = Sk, :1N + N c k.
+
+But it is required that S1N = 0 , with the same applying to eS, and therefore ck = 0 for all k ∈{1, . . . , K }, i.e., S = eS.
+
+Part (ii): Identification of latent components. Below, we prove that if S = γμ ⊤ + U V ⊤ with 
+
+(γ, μ, U, V ) ∈ Θr , the parameters are uniquely identified subject to some sign changes to be speci-fied later. Multiplying both sides of (4) with 1 
+
+> K
+
+1⊤ 
+
+> K
+
+yields 
+
+1
+
+K 1⊤ 
+
+> K
+
+S = 1
+
+K 1⊤ 
+
+> K
+
+γμ ⊤ + 1
+
+K 1⊤ 
+
+> K
+
+U V ⊤ = μ⊤, (B.1) so μ is immediately identified by the row average of S.To further separate the consensus item direction from the heterogeneity item subspace, by Condi-tion 1(iii), 
+
+Sμ = γ∥μ∥2 + U (V ⊤μ) = γ∥μ∥2 =⇒ γ = Sμ 
+
+∥μ∥2 , (B.2) and thus γ is identified. We proceed to identify U and V from eS := S − γμ ⊤ = U V ⊤. Write U = [ u1, . . . , u r ] and 
+
+V = [ v1, . . . , v r ]. By Condition 1(iv), the vectors v1, . . . , v r are orthonormal after normalization by √N , and the columns of U are mutually orthogonal with ∥uj ∥22 = Kd j . Together with the orthogonality condition (Condition 1(iii)), this yields the orthogonal decomposition 
+
+eS =
+
+> r
+
+X
+
+> j=1
+
+uj v⊤ 
+
+> j
+
+,
+
+where the left vectors γ, u 1, . . . , u r are mutually orthogonal and the right vectors μ, v 1, . . . , v r are mutually orthogonal. Therefore, after normalization, this is a SVD of eS. Its nonzero singular values are 
+
+σj = ∥uj ∥2∥vj ∥2 = pKN d j , j = 1 , . . . , r. 
+
+The strict inequalities d1 > · · · > d r > 0 imply that σ1, . . . , σ r are pairwise distinct and therefore simple. Now let eS = eU eV ⊤ be another representation satisfying the same conditions. The same argument shows that this representation also produces an SVD of eS with the same simple nonzero singular 16 values. By the uniqueness of singular vectors associated with simple singular values, there exist signs ε1, . . . , ε r ∈ {± 1} such that 
+
+euj = εj uj , evj = εj vj , j = 1 , . . . , r. 
+
+For each j, the pair (euj , evj ) may be replaced by (−euj , −evj ) without changing the product euj ev⊤ 
+
+> j
+
+.And therefore U and V are identified up to the sign changes in their corresponding columns. 
+
+Remark 1 (Sign of factors and loadings) . In subsequent analysis where such sign ambiguities also need ruling out, we may require the first non-zero elements of each column of U to be positive, so that the signs of U and V are anchored and fixed. 
+
+Part (iii): Existence of parameters recovered from S. We are left to show that given any matrix 
+
+S ∈ RK×N satisfying S1N = 0 and Condition 2, these parameters can indeed be constructed. Let 
+
+μ = 1 
+
+> K
+
+S⊤1K , and we have 1⊤ 
+
+> N
+
+μ = 0 . Then, 
+
+γ := 1
+
+∥μ∥2 Sμ = K
+
+∥1⊤ 
+
+> K
+
+S∥2 SS ⊤1K
+
+satisfies 1⊤ 
+
+> K
+
+γ = K, which is the second part of Condition 1(ii). After recovering the consensus part, the remaining eS = S − αSS ⊤1K 1⊤ 
+
+> K
+
+S, where α = 1 /∥1TK S∥2.Hence, eS = SP ⊥ 
+
+> S⊤1K
+
+where P ⊥ 
+
+> A
+
+is the projection matrix onto the orthogonal complement of col (A).Therefore, 1⊤ 
+
+> K
+
+eS = 1 ⊤ 
+
+> K
+
+SP ⊥ 
+
+> S⊤1K
+
+= 0 ⊤ automatically holds. Take the SVD of eS to get eS = P ΣR⊤.Let V = √N R and U = 1√N P Σ, and Condition 1(iv) is satisfied. The rank r is also determined to be rank( eS).To verify the first part of Condition 1(ii), we left-multiply 1⊤ 
+
+> K
+
+to the equation eS = U V ⊤ and get 
+
+(1 ⊤ 
+
+> K
+
+U )V ⊤ = 1 ⊤ 
+
+> K
+
+eS = 0 ⊤, i.e., V (1 ⊤ 
+
+> K
+
+U )⊤ = 0 . But V ∈ RN ×r is constructed to have full column rank, and consequently Condition 1(ii) must hold. Finally, we study V ⊤μ. Note that by (6), eSμ = 1 
+
+> K
+
+SP ⊥ 
+
+> S⊤1K
+
+1⊤ 
+
+> K
+
+S = 0 , and hence U V ⊤μ = 0 . But 
+
+U is also constructed to have full column rank, and V ⊤μ must be zero. Taking the transpose yields Condition 1(iii). A similar argument verifies V ⊤1N = 0 .Parts (ii) and (iii) jointly corroborate Proposition 1(ii). 17 C Estimation 
+
+C.1 Rank selection 
+
+The rank r of the factorization U V ⊤ serves as a structural hyperparameter that controls the model’s capacity to capture structured disagreement around consensus, thereby affecting model complexity. We offer three ways to select the rank r of HJA. 
+
+Cross Validation. In experiments with dense comparison graphs, we can mask a validation subset of the pairwise comparisons Ωval ⊂ Ω. For each candidate rank r, we estimate the parameters bθr
+
+on the training set and select the r that minimizes the negative log-likelihood on Ωval . This guards against overfitting by measuring generalizability and is hence suitable for empirical practices with real-world datasets. We adopt this method when dealing with real-world datasets in this paper; see Section F.1. 
+
+Spectral Residual Analysis. According to (6), estimation of the preference residuals U V ⊤ as a whole does not depend on r. Therefore, as a straightforward diagnostic, r can be selected by analyzing the spectral decay of U V ⊤, which can be estimated by fitting the consensus-only model (S0 = γμ ⊤) and computing S − S0. A scree plot of the SVD of this residual matrix can help locate the optimal r, which typically corresponds to the elbow of the plot, reflecting the dominant aspects of disagreement. However, since the optimization is structural, this method may serve as a heuristic for future work. Another potential problem with this approach lies in the instability of bS directly estimated from the data, which is shown in Figure 2. 
+
+Information-theoretic approach: BIC. We also propose the BIC method for hyperparameter selection, which is statistically guaranteed to consistently estimate the true rank r∗ of the underlying judge preference matrix (U V ⊤)∗. Note that the BIC for a candidate rank r is defined as BIC (r) = 2 Ln(bθr ) + dr log n, (C.1) where Ln(bθr ) is the minimized negative log-likelihood under rank r, and dr := r(K + N − r − 3) is the effective degrees of freedom (having accounted for the identifiability constraints). The following theorem shows the consistency of BIC under the setting of Theorem 3. 
+
+Theorem C.1 (Consistency of rank selection) . Under Assumptions A4–A7 with fixed comparison graph, the rank selected by minimizing BIC defined in (C.1) is statistically consistent, i.e., 
+
+lim  
+
+> n→∞
+
+P
+
+
+
+arg min  
+
+> r∈{ 0,...,R max }
+
+BIC( r) = r∗
+
+
+
+= 1 .
+
+We now provide the formal proof for Theorem C.1. The goal is to show that minimizing the Bayesian Information Criterion (BIC) consistently selects the true heterogeneity rank r∗ as the total number of comparisons n → ∞ while the comparison graph Ω remains fixed. Note that the sample log-likelihood is −L n(θ) throughout the paper. 
+
+Proof of Theorem C.1. Let P∗ denote the true data-generating distribution parameterized by θ∗ ∈
+
+Θr∗ , where Θr is the constrained parameter space corresponding to rank r (adhering to the identi-fiability constraints in Proposition 1). To prove lim n→∞ P (r∗ = arg min r BIC (r)) = 1 , we must show that for any r̸ = r∗, P (BIC (r) − BIC (r∗) > 0) → 1. We partition the analysis into two cases: the under-parameterized regime ( r < r ∗) and the over-parameterized regime ( r > r ∗). 
+
+Case 1: Under-parameterized regime ( r < r ∗). When r < r ∗, the candidate model space Θr
+
+does not contain the true parameter θ∗. Because the BTL model is a strictly concave Generalized Linear Model (GLM) mapping bounded logits to probabilities, and our identifiability constraints make the parameterization injective, θ∗ cannot be perfectly approximated by any θ ∈ Θr .Following the argument of Section D.1 (especially (D.4)), by the properties of the KL divergence, the maximum expected log-likelihood under the restricted space Θr is strictly less than under the true parameter: 
+
+δr := M (θ∗) − sup 
+
+> θ∈Θr
+
+M (θ) > 0
+
+18 100 200 300 400 500 600 
+
+> Sample Size
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Selection Probability
+> BIC Rank Recovery
+> P(BIC selects true rank)
+
+Figure C1: BIC rank selection consistency. The selection probability (y-axis) is estimated by the frequency of correct rank estimation over 50 repetitions. Error bars denote ± twice the standard error. By the Uniform Law of Large Numbers (since Θ is compact and the BTL log-likelihood is con-tinuous and bounded), we have 1 
+
+> n
+
+Ln(bθr ) p
+
+−→ sup θ∈Θr M (θ) and 1 
+
+> n
+
+Ln(bθr∗ ) p
+
+−→ M (θ∗). Hence 
+
+Ln(bθr ) − L n(bθr∗ ) = nδ r + oP(n).The difference in BIC is BIC (r) − BIC (r∗) = −2
+
+
+
+Ln(bθr∗ ) − L n(bθr )
+
+
+
++ ( dr − dr∗ ) log( n) (C.2) 
+
+= −2n
+
+ 1
+
+n Ln(bθr∗ ) − 1
+
+n Ln(bθr )
+
+
+
++ ( dr − dr∗ ) log( n).
+
+Since the term inside the first parenthesis converges in probability to δr > 0, the likelihood differ-ence scales as Op(n). But the penalty difference (dr − dr∗ ) log( n) only scales as O(log n), making the linear growth of the likelihood deficit dominate. Thus, for any r < r ∗,
+
+lim  
+
+> n→∞
+
+P (BIC (r) − BIC (r∗) > 0) = 1 .
+
+Case 2: Over-parameterized regime ( r > r ∗) When r > r ∗, the candidate model space Θr
+
+strictly nests the true model space Θr∗ in terms of closure (i.e., Θr∗ ⊂ Θr ). Therefore, θ∗ ∈ Θr ,and the model can be viewed as correctly specified but over-parameterized. Because the true model is nested within the larger model, we invoke theory on the Likelihood Ratio (LR) test. Under the identifiability constraints (Section 4.2) and assumptions required by asymp-totic normality, the Fisher Information Matrix evaluated at θ∗ is non-singular. Note that under the null hypothesis that the true parameter lies in the restricted space Θr∗ , the log-likelihood ratio statistic may not converge in law to a chi-squared distribution, as the true parameter θ∗ essentially lies on the boundary of Θr . However, −2
+
+
+
+Ln(bθr ) − L n(bθr∗ )
+
+
+
+is still Op(1) by theory on the boundary behaviour of LR [31, Theorem 3] and tests on reduced-rank regression [32, Theorem 3.2]. Therefore, the maximum improvement in log-likelihood gained by fitting r − r∗ spurious compo-nents is bounded in probability. But r > r ∗ leads to dr > d r∗ and consequently the penalty term 
+
+(dr − dr∗ ) log( n) → ∞ as n → ∞ . Thus, for any r > r ∗:
+
+lim  
+
+> n→∞
+
+P (BIC (r) − BIC (r∗) > 0) = 1 .
+
+Combining Case 1 and Case 2, the true rank r∗ strictly minimizes the BIC with probability tending to 1 as the sample size n → ∞ , i.e., lim n→∞ P (arg min r BIC (r) = r∗) = 1 .We also add a proof-of-concept simulation on the rank selection consistency of BIC under the oracle model; see Figure C1. Based on the theory and simulations, we prefer BIC when the true data fit our method well or when computational resources are too limited to run cross-validation. 19 C.2 Algorithm C.2.1 Initialization 
+
+We initialize our parameters by fitting a pooled BTL model for μ, all ones for γ, and a judgewise BTL model for each row of S. See Algorithm C.1. 
+
+Algorithm C.1 INITIALIZE : construct (γ(0) , μ (0) , U (0) , V (0) )
+
+Require: Aggregated counts {(nkij , Y kij )}(k,i,j )∈Ω, target rank r
+
+Ensure: Initial value θ(0) = ( γ(0) , μ (0) , U (0) , V (0) ) ∈ Θr 
+
+> 1:
+
+Fit a pooled centered BTL model to obtain μ(0) . 
+
+> 2:
+
+Re-center μ(0) ← μ(0) − 1 
+
+> N
+
+(1 ⊤ 
+
+> N
+
+μ(0) )1 N . 
+
+> 3:
+
+Set γ(0) ← 1K . 
+
+> 4:
+
+for k = 1 , . . . , K do  
+
+> 5:
+
+Fit a centered judgewise BTL model using judge k’s comparisons to obtain eS(0)  
+
+> k, :
+
+. 
+
+> 6:
+
+end for  
+
+> 7:
+
+Form the initial residual matrix R(0) ← eS(0) − γ(0) (μ(0) )⊤. 
+
+> 8:
+
+Judge-center the residual: R(0)  
+
+> c
+
+← R(0) − 1 
+
+> K
+
+1K 1⊤ 
+
+> K
+
+R(0) . 
+
+> 9:
+
+Compute the rank-r truncated SVD R(0)  
+
+> c
+
+≈ Pr Σr Q⊤ 
+
+> r
+
+. 
+
+> 10:
+
+Set U (0) ← Pr Σ1/2 
+
+> r
+
+and V (0) ← Qr Σ1/2 
+
+> r
+
+. 
+
+> 11:
+
+Compute (γ(0) , μ (0) , U (0) , V (0) ) ← REANCHOR (γ(0) , μ (0) , U (0) , V (0) ) based on Algo-rithm C.2.  
+
+> 12:
+
+return θ(0) = ( γ(0) , μ (0) , U (0) , V (0) ).
+
+C.2.2 Re-anchor and enforce identifiability Algorithm C.2 REANCHOR : canonical re-anchoring with feasibility check 
+
+Require: Tentative (eγ, eμ, eU , eV ) from the two block updates, tolerance δμ > 0, spectral tolerance 
+
+δσ > 0.
+
+Ensure: Either a feasible anchored point (γ+, μ +, U +, V +) ∈ Θr or F AIL . 
+
+> 1:
+
+Set μ+ ← eμ. 
+
+> 2:
+
+if ∥μ+∥2 < δ μ then  
+
+> 3:
+
+return FAIL ▷ Avoid instability incurred on updating V 
+
+> 4:
+
+end if  
+
+> 5:
+
+Compute a ← eV ⊤μ+/∥μ+∥22. 
+
+> 6:
+
+Set ¯V ← eV − μ+a⊤ and γ+ ← eγ + eU a . 
+
+> 7:
+
+Form ¯H ← eU ¯V ⊤. 
+
+> 8:
+
+Compute the thin SVD ¯H = P ΣQ⊤, with diagonal entries of Σ arranged in decreasing order.  
+
+> 9:
+
+if σr (Σ) < δ σ then  
+
+> 10:
+
+return FAIL ▷ Avoid ill-conditioned matrices caused by a large leap  
+
+> 11:
+
+end if  
+
+> 12:
+
+Set U + ← P Σ/√N , and V + ← √N Q . Flip the corresponding columns of (U +, V +) so that the first nonzero entry of each column of U + is positive.  
+
+> 13:
+
+return (γ+, μ +, U +, V +)
+
+The re-anchoring step restores the nonlinear identification constraints without changing the implied score matrix eS = eγ eμ⊤ + eU eV ⊤. Concretely, R EANCHOR removes the component of eV along eμ,compensates for this change through the update γ+ = eγ + eU a , and then refactorizes the heterogene-ity term by a normalized SVD. If the candidate loading violates the local nondegeneracy conditions, the routine returns F AIL , and the main algorithm increases the proximal parameter before recomput-ing the block updates. Unlike JA-Ranking [17], we do not log-reparameterize the judge-specific coefficient γ. In our model, 
+
+γ is an affine-anchored consensus-sensitivity vector recovered from the structured score matrix, not a strictly positive global discrimination parameter. A log transform would impose unnecessary 20 positivity and would not be compatible with the S-preserving re-anchoring map. The proximal terms make the block updates well posed and provide descent, while re-anchoring restores the canonical representative without changing the likelihood. In exact arithmetic, the post-anchor candidate automatically satisfies 1⊤ 
+
+> K
+
+γ+ = K because the judge block enforces 1⊤ 
+
+> K
+
+eγ = K and 1⊤ 
+
+> K
+
+eU = 0 ⊤ 
+
+> r
+
+.
+
+C.2.3 Confidence intervals for target functionals Algorithm C.3 ESTIMATE FISHER INFO : plug-in Fisher information 
+
+Require: Final estimator bθ = ( bγ, bμ, bU , bV ), data {(nkij , Y kij )}(k,i,j )∈Ω.
+
+Ensure: Plug-in Fisher information matrix In(bθ). 
+
+> 1:
+
+Use the local identified parameterization fixed in Section 5.1; all gradients below are taken in this parameterization.  
+
+> 2:
+
+for each (k, i, j ) ∈ Ω do  
+
+> 3:
+
+Compute bηkij = bγk(bμi − bμj ) + bUk, :( bVi, : − bVj, :)⊤. 
+
+> 4:
+
+Set bpkij = {1 + exp( −bηkij )}−1. 
+
+> 5:
+
+Compute the local gradient bgkij = ∇θ ηkij (bθ). 
+
+> 6:
+
+end for  
+
+> 7:
+
+Set In(bθ) ← P 
+
+> (k,i,j )∈Ω
+> nkij
+> n
+
+bpkij (1 − bpkij )bgkij bg⊤ 
+
+> kij
+
+. 
+
+> 8:
+
+return In(bθ).
+
+Algorithm C.4 UNCERTAINTY QUANTIFICATION : delta-method confidence intervals 
+
+Require: Final estimator bθ, plug-in information matrix In(bθ), target functionals Q, confidence level 1 − α.
+
+Ensure: Wald confidence intervals for {q(θ) : q ∈ Q} . 
+
+> 1:
+
+Use the local identified parameterization fixed in Section 5.1.  
+
+> 2:
+
+Set bΣθ ← 1 
+
+> n
+
+In(bθ)−1. 
+
+> 3:
+
+for each smooth scalar target q ∈ Q do  
+
+> 4:
+
+Compute bq = q(bθ). 
+
+> 5:
+
+Compute the local gradient baq = ∇θ q(bθ). 
+
+> 6:
+
+Compute bse( bq) = 
+
+ba⊤ 
+
+> q
+
+bΣθbaq
+
+1/2
+
+. 
+
+> 7:
+
+Report bq ± z1−α/ 2 bse( bq). 
+
+> 8:
+
+end for C.3 Convergence analysis Assumption A1 (Local algorithmic chart) . There exists a compact set Θr, 0 ⊂ Θr such that: (i) θ∗
+
+lies in the relative interior of Θr, 0 after fixing the local anchor signs of the columns of U and V ; (ii) for every θ = ( γ, μ, U, V ) ∈ Θr, 0, one has ∥μ∥2 ≥ δμ, and the nonzero singular values of U V ⊤ are separated from each other and from zero by at least δσ ; (iii) the re-anchoring map is well-defined and maps Θr, 0 into itself. 
+
+Assumption A2 (Local isolated minimizer) . For the empirical criterion Ln, there exists a unique local minimizer bθn ∈ Θr, 0, after fixing the anchor signs, and ∇2 
+
+> ξ
+
+Ln(bθn) is positive definite in the local free-coordinate chart ξ.
+
+Assumption A3 (Initialization in basin) . The initialized iterate θ(0) lies in the basin of attraction of 
+
+bθn within Θr, 0.
+
+Proof of Theorem 2. The proof of Theorem 2 follows from Proposition C.2. 
+
+Proposition C.2 (Convergence of the proximal anchored alternating algorithm) . Consider the se-quence {θ(t)}t≥0 generated by Algorithm 1, where each block subproblem includes the proximal 
+
+21 terms τt
+
+2 ∥γ − γ(t)∥22 + τt
+
+2 ∥U − U (t)∥2 
+
+> F
+
+and τt
+
+2 ∥μ − μ(t)∥22 + τt
+
+2 ∥V − V (t)∥2 
+
+> F
+
+,
+
+with proximal parameters uniformly bounded away from zero ( τt ≥ τ > 0) if τ is allowed to change during different iterations. 
+
+Part I: Global descent properties. Suppose the structural assumptions (Assumptions A1 and A6) hold. Then: 1. the sequence {L n(θ(t))}t≥0 is nonincreasing and convergent; 2. the iterates satisfy P∞ 
+
+> t=0
+
+∥θ(t+1) − θ(t)∥2 < ∞.
+
+Part II: Local sequence convergence. Suppose further that Assumptions A2 and A3 concerning the basin hold. Then: 3. the iterates remain in Θr, 0 and the full anchored sequence θ(t) converges to bθn;4. equivalently, before anchoring, the factor pair (U (t), V (t)) converges to the equivalence class of ( bUn, bVn) up to the column-sign convention, and after re-anchoring the convergence is ordi-nary parameter convergence. 
+
+Part III: Local linear rate. Following Part II, the convergence is locally linear: there exist constants 
+
+C > 0 and ρ ∈ (0 , 1) such that 
+
+∥θ(t) − bθn∥ ≤ Cρ t and Ln(θ(t)) − L n(bθn) ≤ Cρ t
+
+for all sufficiently large t.
+
+In particular, whenever the sample criterion admits a unique local minimizer bθn in the identified chart Θr, 0, the output of Algorithm 1 coincides with that local constrained MLE for all sufficiently accurate runs. 
+
+Proof of Proposition C.2. Let the parameter space be partitioned into two blocks: the judge block 
+
+ϕ1 = ( γ, U ) and the item block ϕ2 = ( μ, V ), such that the full parameter vector is θ = ( ϕ1, ϕ 2).
+
+Part I: Global Descent Properties. This part relies only on the structural conditions in Assump-tions A1 and A6 as the properties of proximal alternating minimization. 
+
+Claim 1 (Nonincreasing and convergent objective): For the judge block ϕ(t+1) 1 , the update satisfies: 
+
+ϕ(t+1) 1 = argmin 
+
+> ϕ1
+
+n
+
+Ln(ϕ1, ϕ (t)2 ) + τt
+
+2 ∥ϕ1 − ϕ(t)1 ∥2o
+
+.
+
+Comparing the value at the minimum ϕ(t+1) 1 against the previous iterate ϕ(t)1 yields the sufficient decrease inequality for the first block: 
+
+Ln(ϕ(t+1) 1 , ϕ (t)2 ) ≤ L n(ϕ(t)1 , ϕ (t)2 ) − τt
+
+2 ∥ϕ(t+1) 1 − ϕ(t)1 ∥2.
+
+Applying identical logic to the item block update ϕ(t+1) 2 yields 
+
+Ln(ϕ(t+1) 1 , ϕ (t+1) 2 ) ≤ L n(ϕ(t+1) 1 , ϕ (t)2 ) − τt
+
+2 ∥ϕ(t+1) 2 − ϕ(t)2 ∥2.
+
+Adding these two inequalities provides the global sufficient decrease condition for a full iteration: 
+
+Ln(θ(t+1) ) ≤ L n(θ(t)) − τt
+
+2 ∥θ(t+1) − θ(t)∥2 ≤ L n(θ(t)). (C.3) The re-anchoring step (Algorithm C.2 and by Assumption A1) acts purely on the rotational and scal-ing equivalence classes of the bilinear factorization. Because it is an invariant transformation with respect to S, the objective value Ln remains unchanged before and after re-anchoring. Therefore, the sequence of objective values {L n(θ(t))} is monotonically nonincreasing. Since the negative log-likelihood is bounded from below (by zero), the sequence converges to some limit L∗ ≥ 0.
+
+Claim 2 (Square-summability): Summing the sufficient decrease inequality (C.3) from iteration 
+
+t = 0 to T yields a telescoping sum: 
+
+> T
+
+X
+
+> t=0
+
+τt
+
+2 ∥θ(t+1) − θ(t)∥2 ≤ L n(θ(0) ) − L n(θ(T +1) ) ≤ L n(θ(0) ).
+
+22 Using the strict lower bound τt ≥ τ > 0 and taking the limit as T → ∞ , we obtain: 
+
+> ∞
+
+X
+
+> t=0
+
+∥θ(t+1) − θ(t)∥2 ≤ 2
+
+τ Ln(θ(0) ) < ∞.
+
+This finite sum guarantees square-summability of the iterate differences, which also trivially implies that the step sizes converge to zero: ∥θ(t+1) − θ(t)∥ → 0 as t → ∞ .
+
+Part II: Local Sequence Convergence. This part invokes the statistical and initialization condi-tions in Assumptions A2 and A3. 
+
+Claim 3 (Convergence to the local minimizer bθn): By Assumption A2, bθn is an isolated local min-imizer. Therefore, there exists a compact neighborhood B ⊂ Θr, 0 around bθn such that bθn is the strictly unique stationary point within B, and Ln(θ) > Ln(bθn) for all θ ∈ B \ { bθn}.By Assumption A3, the initialization θ(0) lies close enough to bθn such that the connected component of the sublevel set S := {θ ∈ B | L n(θ) ≤ L n(θ(0) )} is strictly contained in the interior of B, given the positive definiteness of the Hessian matrix. Because B is compact and Ln is continuous, the sublevel set S is also compact. By the global descent property established in Part I, Ln(θ(t+1) ) ≤ L n(θ(t)) for all t. Thus, the sequence cannot enter the region where Ln(θ) > Ln(θ(0) ), meaning the entire sequence {θ(t)}∞
+
+> t=0
+
+is strictly confined within the compact set S. The re-anchoring step under Assumption A1 preserves this containment. Because S is compact, the sequence {θ(t)} must possess at least one limit point θ∗ ∈ S by the Bolzano-Weierstrass theorem. To characterize any such limit point, we invoke the first-order opti-mality conditions of the exact proximal block updates. For the judge block, 
+
+∇ϕ1 Ln(ϕ(t+1) 1 , ϕ (t)2 ) + τt(ϕ(t+1) 1 − ϕ(t)1 ) = 0 .
+
+Taking the norm yields ∥∇ ϕ1 Ln(ϕ(t+1) 1 , ϕ (t)2 )∥ = τt∥ϕ(t+1) 1 − ϕ(t)1 ∥. By Part I and the boundedness of τt, the right-hand side converges to zero, and thus the gradient mapping uniformly converges to zero. Because Ln is continuously differentiable, any subsequence converging to θ∗ satisfies 
+
+∇L n(θ∗) = 0 .Therefore, every limit point of the sequence is a stationary point. But S ⊂ B , and by construction, 
+
+bθn is the strictly unique stationary point within B. Therefore, θ∗ = bθn is the unique limit point of the sequence. Since {θ(t)} is a sequence in a compact set with exactly one limit point, the entire sequence globally converges to bθn.
+
+Claim 4 (Pre- and post-anchoring equivalence): Because the joint parameters converge, the se-quence of latent evaluation scores S(t) = γ(t)(μ(t))⊤ + U (t)(V (t))⊤ converges to the optimal em-pirical score matrix bSn. Before the re-anchoring step is applied, the unanchored factor matrices 
+
+(U (t), V (t)) converge to the equivalence class [ bUn, bVn] defined by orthogonal rotations and scale-sign permutations. The re-anchoring map is a continuous function acting on Θr, 0 that uniquely identifies a representative from this equivalence class by fixing local anchor signs, and hence guar-antees the ordinary parameter-wise convergence in Euclidean space. 
+
+Part III: Local linear rate. This part draws the final conclusion on local convergence rate from the assumed and established properties of the objective function, the algorithm, and the topological structures of the global optimum. We restrict the domain of the objective function in S, where L demonstrates strong convexity. By [33, Theorem 2], L satisfies the Polyak-Łojasiewicz (PL) inequality [34], and by Appendix F of [33], satisfies the proximal-PL property, and by Appendix G of [33], has a local Kurdyka-Łojasiewicz (KL) exponent θ = 1 /2. The local linear convergence rate hence directly follows from [35, Theorem 3.4]. 23 D Statistical Inference 
+
+D.1 Consistency of constrained MLE 
+
+Recall that the structural parameter is estimated by the constrained maximum likelihood estimator 
+
+bθ := ( bγ, bμ, bU , bV ) ∈ arg min 
+
+> θ∈Θr
+
+L(S(θ)) , S(θ) := γμ ⊤ + U V ⊤.
+
+Since the likelihood depends on θ only through the induced score matrix S(θ), the proof is most naturally carried out on the centered score space 
+
+S := {S ∈ RK×N : S1N = 0 , and Condition 2 holds }.
+
+The signs of the columns of (U, V ) can be anchored and fixed via, say, Remark 1, and then Propo-sition 1 ensures S = {S(θ) : θ ∈ Θr }.We formalize the regularity conditions mentioned in Section 5.2 as the assumptions below. 
+
+Assumption A4 (Asymptotic sampling fractions) . There exist fixed constants wkij ≥ 0 such that 
+
+nkij /n p
+
+−→ wkij for all (k, i, j ) ∈ Ω as n → ∞ .If nkij is non-random, i.e., the design of the experiment is deterministic, the convergence in proba-bility is reduced to convergence in the ordinary sense. Note that a triple can be observed ( nkij > 0)but still have asymptotic fraction wkij = 0 . To account for this in subsequent analysis, we define: 
+
+Ωw := {(k, i, j ) ∈ Ω : wkij > 0} (D.1) as the set of asymptotically active triples. 
+
+Assumption A5 (Graph connectivity) . For each judge k ∈ [K], the comparison graph Gwk =([ N ], Ewk ) with edge set Ewk = {{ i, j } : ( k, i, j ) ∈ Ωw} is connected, and 0 < p ∗ 
+
+> kij
+
+< 1 for each active triple (k, i, j ) ∈ Ωw.By connectedness, we mean an undirected graph where a path (a sequence of connecting edges) exists between every pair of nodes (items). Therefore, under Assumption A5, all the items assessed by a judge should be linked via one or more comparisons. However, it is not required that all possible pairs be directly compared, and this scenario is accounted for via Ωw.
+
+Assumption A6 (Structured parameter identifiability) . The true model (4) holds with the true pa-rameter θ∗ ∈ Θr , and the true consensus direction μ∗̸ = 0 .These assumptions can guarantee the consistency of bθ, which is shown below. 
+
+Proof of Theorem 3: consistency part. For S ∈ S , write 
+
+ηkij (S) := Ski − Skj , pkij (S) := 11 + exp {− ηkij (S)} .
+
+Also write ¯Ykij := Ykij /n kij . Then the normalized negative log-likelihood, viewed as a function of 
+
+S, is 
+
+Mn(S) := 1
+
+n L(S) = X
+
+> (k,i,j )∈Ω
+
+nkij 
+
+n
+
+h
+
+− ¯Ykij ηkij (S) + log  1 + exp {ηkij (S)}i
+
+. (D.2) By the strong law, for each fixed (k, i, j ) ∈ Ω,
+
+¯Ykij 
+
+> a.s.
+
+−−→ p∗ 
+
+> kij
+
+,
+
+and by Assumption A4, nkij 
+
+n → wkij .
+
+Since Ω is fixed and each summand in (D.2) is continuous in S, it follows that Mn(S) converges uniformly on every compact subset of S to 
+
+M (S) := X
+
+> (k,i,j )∈Ω
+
+wkij 
+
+h
+
+− p∗ 
+
+> kij
+
+ηkij (S) + log  1 + exp {ηkij (S)}i
+
+. (D.3) 24 Let S∗ = S(θ∗) ∈ S . Then, by the usual Bernoulli Kullback–Leibler identity, 
+
+M (S) − M (S∗) = X
+
+> (k,i,j )∈Ω
+
+wkij KL  Bern( p∗ 
+
+> kij
+
+) ∥ Bern( pkij (S))  ≥ 0. (D.4) Equality holds if and only if pkij (S) = p∗ 
+
+> kij
+
+for all (k, i, j ) ∈ Ωw, equivalently, 
+
+Ski − Skj = S∗ 
+
+> ki
+
+− S∗ 
+
+> kj
+
+for all (k, i, j ) ∈ Ωw.
+
+By Lemma D.2, equality in (D.4) implies S = S∗. Hence S∗ is the unique minimizer of M on S.We first prove the consistency of the score-space MLE bS ∈ arg min S∈S L(S).Fix any open neighborhood O of S∗ in S. Since M is continuous and uniquely minimized at S∗,there exists δ > 0 such that 
+
+inf  
+
+> S∈S\O
+
+M (S) ≥ M (S∗) + 3 δ. (D.5) By Lemma D.3, there exists R < ∞ such that 
+
+inf    
+
+> S∈S :∥S∥F>R
+
+M (S) ≥ M (S∗) + 4 δ. (D.6) Define the truncated score set 
+
+KR := {S ∈ S : ∥S∥F ≤ R}.
+
+Since KR is closed and bounded in the finite-dimensional Euclidean space RK×N , it is compact. By uniform convergence on compact subsets, 
+
+sup 
+
+> S∈KR
+
+|Mn(S) − M (S)| p
+
+−→ 0.
+
+Hence, with probability tending to one, 
+
+sup 
+
+> S∈KR
+
+|Mn(S) − M (S)| < δ. 
+
+On this event, for every S ∈ KR,
+
+Mn(S∗) ≤ M (S∗) + δ, 
+
+whereas for every S ∈ KR \ O , by (D.5), 
+
+Mn(S) ≥ M (S) − δ ≥ M (S∗) + 2 δ. 
+
+Thus no minimizer of Mn over KR can lie in KR \ O .Further, by the sample coercivity part of Lemma D.3, with probability tending to one, 
+
+inf    
+
+> S∈S :∥S∥F>R
+
+Mn(S) > M (S∗) + 2 δ. 
+
+Hence no global minimizer of Mn over S can lie outside KR. Combining the two conclusions, any global minimizer bS of Mn over S must belong to O with probability tending to one, i.e., 
+
+P( bS ∈ O ) → 1.
+
+Since O was arbitrary, we obtain 
+
+bS p
+
+−→ S∗.
+
+We now pass the consistency in the score space into the parameter space after fixing the sign con-vention of Remark 1. By Lemma D.3, the criterion Mn remains coercive on S with high probability, ensuring that any global minimizer of Mn belongs to the identified score space S.Define the structured score map 
+
+Φ : Θ r → S , Φ( θ) = γμ ⊤ + U V ⊤.
+
+By Proposition 1, after fixing column signs, Φ is invertible with smooth inverse Φ−1 : S → Θr .Since both Φ and its inverse are continuous, the continuous mapping theorem yields 
+
+bθ = Φ −1( bS) p
+
+−→ Φ−1(S∗) = θ∗.
+
+25 D.2 Asymptotic normality and nondegeneracy of the Fisher information 
+
+The asymptotic normality of the constrained maximum likelihood estimator requires the nonsingu-larity of the Fisher information matrix 
+
+IΘ(θ∗) = X
+
+> (k,i,j )∈Ωw
+
+wkij p∗ 
+
+> kij
+
+(1 − p∗ 
+
+> kij
+
+)∇θ ηkij (θ∗)∇θ ηkij (θ∗)⊤.
+
+In this section, we first argue that such nondegeneracy can be derived from the active comparison graph structure together with a local regularity condition on the structured score map, and then we establish the aysmptotic normality. The argument is inspired by the graph-Laplacian viewpoint for pairwise-comparison Fisher information developed in [36], where positivity of the Fisher informa-tion is obtained from graph connectivity (after quotienting out the additive invariance of pairwise-comparison models). In our setting, the argument proceeds in two layers: 1. establish positive definiteness of the Fisher information in the ambient row-centered score space 
+
+S via judge-wise connected active graphs; and 2. pull this positivity back to the structured parameter space Θr through the differential of the map Φ( θ) = S(θ) = γμ ⊤ + U V ⊤.The second step is needed because our inferential target is not the unrestricted score matrix S, but the constrained latent parameter θ = ( γ, μ, U, V ).We first isolate the local regularity condition needed to pass from score-space nondegeneracy to parameter-space nondegeneracy. 
+
+Assumption A7 (Local chart regularity of the structured score map) . Let θ∗ = ( γ∗, μ ∗, U ∗, V ∗) ∈
+
+Θr denote the true parameter. After fixing the column signs of (U, V ) according to a local sign convention, there exists a neighborhood of θ∗ in Θr that is parameterized by a smooth local chart on the manifold. Moreover, the differential of the structured score map 
+
+Φ : Θ r → S , Φ( θ) = S(θ) = γμ ⊤ + U V ⊤,
+
+is injective at θ∗ on the tangent space Tθ∗ Θr . That is, 
+
+DΦ( θ∗)[ δθ ] = 0 , δθ ∈ Tθ∗ Θr =⇒ δθ = 0 .
+
+Assumption A7 is the infinitesimal analog of parameter identifiability at the local chart of θ∗. Now we can state the proposition that is crucial to the proof of asymptotic normality. 
+
+Proposition D.1 (Graph-induced nondegeneracy of the Fisher information) . Suppose Assump-tions A4–A6 hold, and assume in addition Assumption A7. Let 
+
+S∗ := S(θ∗) = γ∗μ∗⊤ + U ∗V ∗⊤ .
+
+Then the Fisher information matrix 
+
+IΘ(θ∗) = X
+
+> (k,i,j )∈Ωw
+
+ωkij ∇θ ηkij (θ∗)∇θ ηkij (θ∗)⊤
+
+is positive definite on the identified tangent space Tθ∗ Θr ; that is, 
+
+δθ ⊤IΘ(θ∗)δθ > 0 for every 0̸ = δθ ∈ Tθ∗ Θr .
+
+Consequently, IΘ(θ∗) is nonsingular in the local identified coordinates. 
+
+We begin to prove the second part of Theorem 3. Proof of Proposition D.1 follows afterwards. 
+
+Proof of Theorem 3: asymptotic normality. In Section D.1, we have established bS p
+
+−→ S∗. Asymp-totic normality of bS can follow this consistency. Since S is a finite-dimensional Euclidean space and Mn is a smooth criterion (the binomial log-likelihood is twice continuously differentiable in S), standard asymptotic MLE theory applies, i.e., consistency combined with the local posi-tive definiteness of the Hessian (equivalently, the Fisher information in the S-parameterization) implies asymptotic normality. But Proposition D.1 guarantees the nonsingularity of the Fisher 26 information in the S-space, so the local positive definiteness condition is satisfied. This yields 
+
+√n( bS − S∗) d
+
+−→ N (0 , IS (S∗)−1).We now pass this normality from the S-space to the parameter space Θr . By the delta method applied to Φ−1,
+
+√n(bθ − θ∗) = √nD Φ−1(S∗)( bS − S∗) + op(1) d
+
+−→ N (0 , D Φ−1(S∗)Σ S [DΦ−1(S∗)] ⊤),
+
+The limiting covariance in the S-space is ΣS = IS (S∗)−1, where 
+
+IS (S∗) = X
+
+> (k,i,j )∈Ωw
+
+wkij p∗ 
+
+> kij
+
+(1 − p∗ 
+
+> kij
+
+)∇S ηkij (S∗)∇S ηkij (S∗)⊤
+
+is positive definite by Proposition D.1 (Step 1–2 of its Proof). The likelihood depends on θ only through the linear predictor ηkij (θ). By the chain rule, for each active triple (k, i, j ) ∈ Ωw,
+
+∂η kij 
+
+∂θ = ∂η kij 
+
+∂S · ∂S ∂θ = ∇S ηkij (S∗) · DΦ( θ∗), (D.7) where DΦ( θ∗) is the Jacobian matrix of the score map Φ( θ) = γμ ⊤ + U V ⊤ evaluated at θ∗.The Fisher information in the structured parameter space is therefore 
+
+IΘ(θ∗) = X
+
+> (k,i,j )∈Ωw
+
+wkij p∗ 
+
+> kij
+
+(1 − p∗ 
+
+> kij
+
+)
+
+ ∂η kij 
+
+∂θ 
+
+  ∂η kij 
+
+∂θ 
+
+⊤
+
+= X
+
+> (k,i,j )∈Ωw
+
+wkij p∗ 
+
+> kij
+
+(1 − p∗ 
+
+> kij
+
+)DΦ( θ∗)⊤∇S ηkij (S∗)∇S ηkij (S∗)⊤DΦ( θ∗)= DΦ( θ∗)⊤
+
+ X
+
+> (k,i,j )∈Ωw
+
+wkij p∗ 
+
+> kij
+
+(1 − p∗ 
+
+> kij
+
+)∇S ηkij (S∗)∇S ηkij (S∗)⊤
+
+ DΦ( θ∗)= DΦ( θ∗)⊤ IS (S∗) DΦ( θ∗). (D.8) Assumption A7 ensures that DΦ( θ∗) is injective. Combined with the positive definiteness of 
+
+IS (S∗), the conjugation by DΦ( θ∗) preserves positive definiteness. Therefore, √n(bθ − θ∗) d
+
+−→ N (0 , IΘ(θ∗)−1),
+
+and for any smooth scalar target functional q(θ), the delta method yields 
+
+√n{q(bθ) − q(θ∗)} d
+
+−→ N  0, ∇θ q(θ∗)⊤I(θ∗)−1∇θ q(θ∗) ,
+
+completing the proof. 
+
+Proof of Proposition D.1. The proof is divided into three steps. 
+
+Step 1: Score-space Fisher information as a weighted Laplacian form. Temporarily parame-terize the model by the row-centered score matrix 
+
+S := {S ∈ RK×N : S1N = 0 }.
+
+For a fixed active triple (k, i, j ) ∈ Ωw, recall that 
+
+ηkij (S) := Ski − Skj .
+
+Under the binomial Bradley–Terry–Luce model, the population Fisher information in the ambient score parameterization is 
+
+IS (S∗) = X
+
+> (k,i,j )∈Ωw
+
+ωkij ∇S ηkij (S∗)∇S ηkij (S∗)⊤,
+
+27 where ωkij = wkij p∗ 
+
+> kij
+
+(1 − p∗ 
+
+> kij
+
+) > 0.Let H = ( Hkn ) ∈ S be an arbitrary score perturbation. Then the corresponding quadratic form is 
+
+⟨H, I S (S∗)H⟩ = X
+
+> (k,i,j )∈Ωw
+
+ωkij (Hki − Hkj )2. (D.9) Indeed, for each triple (k, i, j ), the directional derivative of ηkij (S) along H is 
+
+Dη kij (S∗)[ H] = Hki − Hkj ,
+
+which gives (D.9). Now fix a judge k ∈ [K], and write hk = ( Hk1, . . . , H kN )⊤ ∈ RN . Then the k-th summand in (D.9) becomes X
+
+> {i,j }∈ Ewk
+
+ωkij (hk,i − hk,j )2 = h⊤ 
+
+> k
+
+Lkhk,
+
+where Lk is the weighted graph Laplacian of the active graph Gwk = ([ N ], E wk ) with edge weights 
+
+ωkij . Therefore 
+
+⟨H, I S (S∗)H⟩ =
+
+> K
+
+X
+
+> k=1
+
+h⊤ 
+
+> k
+
+Lkhk. (D.10) 
+
+Step 2: Judge-wise graph connectivity implies positivity on S. By Assumption A5, each active graph Gwk is connected. Because Lk is the weighted Laplacian of the connected graph Gwk with strictly positive edge weights, for every x ∈ RN ,
+
+x⊤Lkx = X
+
+> {i,j }∈ Ewk
+
+ωkij (xi − xj )2 ≥ 0.
+
+Hence x ∈ ker( Lk) implies x⊤Lkx = 0 , so xi = xj for every edge {i, j } ∈ Ewk . Since Gwk is connected, x must be constant on all vertices, that is, x = c1N . Conversely, Lk1N = 0 . Therefore, 
+
+ker( Lk) = span {1N }.
+
+Hence, for each k,
+
+h⊤ 
+
+> k
+
+Lkhk = 0 ⇐⇒ hk = ck1N for some ck ∈ R.
+
+But H ∈ S means every row of H is centered, i.e. 
+
+H1N = 0 .
+
+Equivalently, 
+
+1⊤ 
+
+> N
+
+hk = 0 for all k ∈ [K].
+
+If hk = ck1N , then 0 = 1 ⊤ 
+
+> N
+
+hk = N c k, so ck = 0 , and therefore hk = 0 . Since this holds for every 
+
+k, we conclude that 
+
+⟨H, I S (S∗)H⟩ = 0 =⇒ H = 0 .
+
+Thus IS (S∗) is positive definite on S:
+
+⟨H, I S (S∗)H⟩ > 0 ∀ 0̸ = H ∈ S . (D.11) 
+
+Step 3: Pulling back positivity to the structured parameter space Θr . Let δθ ∈ Tθ∗ Θr be an arbitrary tangent perturbation, and define the induced score perturbation 
+
+H := DΦ( θ∗)[ δθ ] ∈ S .
+
+Since 
+
+Φ( θ) = γμ ⊤ + U V ⊤,
+
+the first-order variation of S(θ) at θ∗ is 
+
+H = δγ μ ∗⊤ + γ∗ δμ ⊤ + δU V ∗⊤ + U ∗ δV ⊤. (D.12) 28 For each active triple (k, i, j ) ∈ Ωw, the directional derivative of the structured logit difference satisfies 
+
+Dη kij (θ∗)[ δθ ] = Hki − Hkj .
+
+Equivalently, 
+
+∇θ ηkij (θ∗)⊤δθ = Hki − Hkj .
+
+Therefore, 
+
+δθ ⊤IΘ(θ∗)δθ = X
+
+> (k,i,j )∈Ωw
+
+ωkij 
+
+ ∇θ ηkij (θ∗)⊤δθ 2
+
+= X
+
+> (k,i,j )∈Ωw
+
+ωkij (Hki − Hkj )2
+
+= ⟨H, I S (S∗)H⟩. (D.13) Now suppose 
+
+δθ ⊤IΘ(θ∗)δθ = 0 .
+
+Then (D.13) and (D.11) imply that H = 0 . That is, 
+
+DΦ( θ∗)[ δθ ] = 0 .
+
+By Assumption A7, the differential DΦ( θ∗) is injective on Tθ∗ Θr , hence δθ = 0 .We have thus shown that 
+
+δθ ⊤IΘ(θ∗)δθ > 0 ∀ 0̸ = δθ ∈ Tθ∗ Θr ,
+
+which proves positive definiteness of IΘ(θ∗) on the identified tangent space. Therefore IΘ(θ∗) is nonsingular in any local identified coordinate system. 
+
+Remark 2 (Interpretation of the two-layer argument) . The proposition separates the source of non-degeneracy into two logically distinct parts. Unlike in ordinary BTL models, graph connectivity alone is not sufficient for Fisher nondegeneracy in the structured latent-factor parameterization, due to parameter-level identifiability from local reg-ularity of the structured map. It must be combined with local injectivity of the decomposition map reflected in Assumption A7. 
+
+Remark 3 (Relation to the pairwise-comparison literature) . The proof above is inspired by re-cent asymptotic-inference theory for pairwise-comparison models, where the Fisher information is represented as a graph-Laplacian quadratic form and its nondegeneracy is deduced from graph con-nectivity after quotienting out the additive invariance of pairwise scores [36]. The present argument extends that idea to the heterogeneous judge-aware model by treating the structured parameter space 
+
+Θr as a smooth submanifold of the row-centered score space S, and then pulling back the ambient Fisher information through the differential of the map Φ( θ) = γμ ⊤ + U V ⊤.In other words, the graph structure controls nondegeneracy in the ambient score geometry, whereas the constraint geometry of Θr controls whether such nondegeneracy is retained after passing to the latent parameters. 
+
+D.3 Auxiliary lemmas 
+
+Two lemmas used in the proof of Theorem 3 are established below. 
+
+Lemma D.2 (Injectivity of active score differences) . Under Assumption A5, if S, S ′ ∈ S satisfy 
+
+Ski − Skj = S′ 
+
+> ki
+
+− S′ 
+
+> kj
+
+for all (k, i, j ) ∈ Ωw,
+
+then S = S′.Proof of Lemma D.2. Fix a judge k and let hk := Sk, : − S′ 
+
+> k, :
+
+∈ RN . The assumption implies 
+
+hki − hkj = 0 for every {i, j } ∈ E wk .
+
+29 Because the graph Gwk is connected, hk must be constant across items, say 
+
+hk = ck1N .
+
+Since both S and S′ lie in the centered space S, we also have 
+
+h⊤ 
+
+> k
+
+1N = 0 .
+
+Therefore N c k = 0 , so ck = 0 and hence hk = 0 . This holds for every judge k, and thus S =
+
+S′.
+
+Lemma D.3 (Coercivity) . Under Assumption A5, the population criterion M in (D.3) is coercive on S, i.e. 
+
+∥S∥F → ∞ , S ∈ S =⇒ M (S) → ∞ .
+
+Moreover, with probability tending to one, the sample criterion Mn in (D.2) is also coercive on S.Proof of Lemma D.3. We first prove the coercivity of the population criterion. For each fixed active triple (k, i, j ) ∈ Ωw, define 
+
+ϕkij (x) := −p∗ 
+
+> kij
+
+x + log(1 + ex).
+
+Because p∗ 
+
+> kij
+
+∈ (0 , 1) , the function ϕkij is continuous, nonnegative, and satisfies 
+
+ϕkij (x) → ∞ as |x| → ∞ .
+
+Indeed, as x → +∞,
+
+ϕkij (x) = (1 − p∗ 
+
+> kij
+
+)x + o(x) → ∞ ,
+
+while as x → −∞ ,
+
+ϕkij (x) = −p∗ 
+
+> kij
+
+x + o(1) → ∞ .
+
+Now fix a judge k and write the kth row of S as 
+
+sk := ( Sk1, . . . , S kN )⊤ ∈ RN .
+
+Since S ∈ S , we have s⊤ 
+
+> k
+
+1N = 0 . Because Gwk is connected and N is fixed, we have 
+
+∥sk∥2 ≤ √N ∥sk∥1 ≤ 2√N X
+
+> {i,j }∈E wk
+
+|sk,i − sk,j |. (D.14) To see this, fix a reference node in Gwk and telescope along paths from the reference node to each other node; since the graph is finite and connected, all resulting path lengths are uniformly bounded. Suppose now that ∥S∥F → ∞ with S ∈ S . Then for some judge k we must have ∥sk∥2 → ∞ . By (D.14), this implies that for at least one active edge {i, j } ∈ E wk ,
+
+|Ski − Skj | = |sk,i − sk,j | → ∞ .
+
+Since the corresponding summand in M (S) is 
+
+wkij ϕkij (Ski − Skj ),
+
+with wkij > 0, it follows that this term diverges to +∞. All other summands are nonnegative, and therefore 
+
+M (S) → ∞ .
+
+This proves population coercivity. We next prove sample coercivity. On the event 
+
+An := {0 < Y kij < n kij for all (k, i, j ) ∈ Ωw},
+
+define 
+
+ϕkij,n (x) := − ¯Ykij x + log(1 + ex).
+
+Whenever 0 < ¯Ykij < 1, the same argument as above shows that 
+
+ϕkij,n (x) → ∞ as |x| → ∞ .
+
+Since p∗ 
+
+> kij
+
+∈ (0 , 1) and nkij → ∞ for each active triple, we have 
+
+P Ykij = 0 or Ykij = nkij 
+
+ → 0,
+
+and therefore, by a union bound over the finite set Ωw,
+
+P(An) → 1.
+
+On An, the same graph argument used for the population criterion shows that 
+
+∥S∥F → ∞ , S ∈ S =⇒ Mn(S) → ∞ .
+
+Thus Mn is coercive on S with probability tending to one. 30 D.4 Partial sampling scheme 
+
+Let G := ([ N ], E) denote the pooled graph where E := {{ i, j } : ( k, i, j ) ∈ Ωw for some k} denotes the edge set. If the graph belonging to a judge, say, Gk is not connected, then the sampling is considered partial. For example, a judge may compare Item 1, 2, 3 and 4, 5, 6, but the graphs of 1–2–3 and 4–5–6 are separated. Under such a scenario, identification becomes the major obstacle to statistical analysis. The judge may assign higher scores to all 1, 2, and 3, and lower scores to all 4, 5, and 6 without breaking Equation (3) or altering the likelihood. Therefore, assumptions should be made to rule out such ambiguity: the true parameter shall lie in a region where such perturbations must make it impossible for S to still admit the structured representation (4) with unchanged r.We define the structured score manifold 
+
+Mr := {S = γμ ⊤ + U V ⊤ : ( γ, μ, U, V ) ∈ Θr } ∩ S ,
+
+and let T ∗ := TS∗ Mr be its tangent space at S∗ to characterize the potential local perturbations on 
+
+S∗.
+
+Assumption A8 (Identification under partial overlap) . Every nonzero local perturbation of the struc-tured score matrix changes at least one observed pairwise log-odds difference. Equivalently, if 
+
+H ∈ T ∗ satisfies 
+
+Hki − Hkj = 0 for all (k, i, j ) ∈ Ωw,
+
+then we must have H = 0 .On the other hand, we assume connectivity on the pooled graph to ensure that there are shared nodes (items) that connect the disconnected parts of each judge, so information is expected to be aligned with the help of these connecting nodes. 
+
+Assumption A9 (Connectivity of the pooled graph) . The pooled graph G = ([ N ], E) with edge set 
+
+E := {{ i, j } : ( k, i, j ) ∈ Ωw for some k} is connected. 
+
+Remark 4 (How overlap helps) . The point of Assumptions A8 and A9 is that overlap lets different judges’ local comparisons be aligned through the shared low-rank structure. For example, suppose judge 1 compares items (1 , 2) and judge 2 compares items (2 , 3) , but neither judge compares all three pairs. Item 2 then serves as an overlap point linking the two local pieces of information. Assumption A8 dictates that, after imposing the structured model, such overlaps are rich enough that one cannot change the latent score matrix in a nontrivial way without altering at least one observed comparison. 
+
+Assumption A10 (Local compact parameter chart) . There exists a compact set Θr, 0 ⊂ Θr such that 
+
+θ∗ lies in its relative interior after fixing the local anchor signs of the columns of U and V . And the population structured criterion 
+
+m(θ) := X
+
+> (k,i,j )∈Ωw
+
+wkij 
+
+h
+
+− p∗ 
+
+> kij
+
+ηkij (θ) + log  1 + exp {ηkij (θ)}i
+
+,
+
+has θ∗ as its unique minimizer over Θr, 0.This assumption replaces the coercivity established in Lemma D.3 under Assumption A5 (full sam-pling setting). As the identification constraint becomes obscured for the entire space S, this as-sumption, together with Assumption A10, dictates that even though the likelihood may be flat along component-wise shifts of an unrestricted row, those shifts should either be infeasible within the fixed-rank structured model or break the Θr, 0 boundary that we set. By the standard asymptotic theory of MLE, the asymptotic properties of bθ of Theorem 3 still hold under Assumptions A4, A6 and A8–A10. In practice, however, we need to avoid this setting due to the difficulty in verifying Assumptions A8 and A10, unless the sample size is really limited. 31 E Simulation Studies 
+
+This section details Section 6.1 on the specifications and settings. 
+
+E.1 Main heterogeneous DGP 
+
+The main synthetic simulations use N = 8 items, K = 4 judges, true heterogeneity rank r = 1 , and 50 independent repetitions for each condition. The sample-size experiment varies 
+
+ncmp ∈ { 400 , 800 , 1200 , 1600 , 2000 , 2500 , 3000 }
+
+at heterogeneity scale h = 1 . The heterogeneity experiment fixes ncmp = 800 and varies h ∈{0, 0.5, 1, 2}. Error bars in Figure 2 report mean ±1.96 standard errors across repetitions. For each repetition, the true parameters are generated as follows. We draw eμi
+
+> i.i.d.
+
+∼ N (0 , 1) and center it as 
+
+μ = eμ − ¯eμ1N ,
+
+so that 1⊤ 
+
+> N
+
+μ = 0 . We draw judge consensus sensitivities as γ = Kp , where p ∼ Dirichlet(1 K ), so that 1⊤ 
+
+> K
+
+γ = K. For r > 0, raw item and judge factor matrices are drawn with iid standard-normal entries. The item factor is column-centered and projected off the consensus direction, 
+
+eV ← eV − 1N ¯v⊤, eV ← eV − μ μ⊤ eV
+
+max( μ⊤μ, ε ) .
+
+A QR decomposition is then applied in this constrained column space, yielding an item factor satis-fying V ⊤1N = 0 and μ⊤V = 0 . The judge factor is similarly column-centered, 
+
+eU ← eU − 1K ¯u⊤,
+
+and orthogonalized in the zero-sum judge space, so that 1⊤ 
+
+> K
+
+U = 0 .The code assigns decreasing factor strengths r, r − 1, . . . , 1 and sets 
+
+V = QV diag {√N strengths }, U = QU diag {√K strengths }.
+
+The item factor is then re-centered, re-projected off μ, and the columns of (U, V ) are sign-canonicalized. Finally, both U and V are multiplied by √h, so the heterogeneous score component 
+
+U V ⊤ is scaled by h. These operations preserve the zero-sum and orthogonality constraints. By construction, the generated parameters satisfy 
+
+1⊤ 
+
+> N
+
+μ = 0 , 1⊤ 
+
+> K
+
+γ = K, 1⊤ 
+
+> K
+
+U = 0 , V ⊤1N = 0 , μ⊤V = 0 .
+
+After QR normalization and canonical sign anchoring, the factors also satisfy the anchoring require-ments in Condition 1. The true score matrix is then 
+
+S = γμ ⊤ + U V ⊤,
+
+and pairwise outcomes are generated according to the BTL model in (2). We also use an auxiliary DGP from JA-Ranking, which uses the same μ, γ draw but sets U = V = 0 , so Ski = γkμi. The experiment specifications and results are shown in Section E.4. 
+
+E.2 Comparison design, fitting protocol, and metrics 
+
+For the design of experiment, comparisons are allocated using a near-balanced design over all judge-item-pair cells (k, i, j ) with i < j . Let C = KN (N − 1) /2. Each cell receives either ⌊ncmp /C ⌋ or 
+
+⌈ncmp /C ⌉ comparisons, with the remaining cells selected uniformly without replacement. For each comparison in cell (k, i, j ), we draw 
+
+Y (ℓ) 
+
+> kij
+
+∼ Bernoulli {σ(Ski − Skj )},
+
+where Y (ℓ) 
+
+> kij
+
+= 1 means that judge k prefers item i to item j. The generated records are aggregated into upper-triangular comparison counts nkij and win counts Ykij .32 All methods are fit to the same aggregated counts. For pooled BTL, we aggregate comparisons over judges and fit a single centered score vector bμBTL , then form 
+
+bSBTL = 1 K bμ⊤
+
+> BTL
+
+.
+
+For JA-Ranking, we fit the sensitivity-only model 
+
+bSJA = bγ bμ⊤,
+
+using the same centering and normalization convention as in the main text. For HJA, we fit the rank-r constrained model bSHJA = bγ bμ⊤ + bU bV ⊤.
+
+All score-level metrics below are computed from these fitted score matrices. For each method, score-entry intervals are obtained by applying the corresponding asymptotic co-variance estimate to the fitted score-entry functional q(θ) = Ski . For HJA, this uses the plug-in Fisher-information estimator from Theorem 3; for JA-Ranking and pooled BTL, we use the corre-sponding model-specific delta-method covariance estimates under their restricted parameterizations. For misspecified baselines, coverage is evaluated against the true heterogeneous score matrix S, so undercoverage reflects both statistical uncertainty and structural bias. We report four groups of metrics: (1) Score-matrix error. Score recovery is measured by the mean squared error 
+
+MSE = 1
+
+KN 
+
+> K
+
+X
+
+> k=1
+> N
+
+X
+
+> i=1
+
+( bSki − Ski )2.
+
+(2) Consensus ranking recovery. Let r⋆i and bri denote the ranks of item i induced by the true consensus score μ and the estimated consensus score bμ, respectively, with rank 1 assigned to the largest score. We report the Spearman rank correlation 
+
+ρsp (μ, bμ) = corr  (r⋆ 
+
+> 1
+
+, . . . , r ⋆N ), (br1, . . . , brN ).
+
+When there are no ties, this is equivalently 
+
+ρsp (μ, bμ) = 1 − 6 PNi=1 (r⋆i − bri)2
+
+N (N 2 − 1) .
+
+We also report NDCG@ N . Let bπ be the ordering of items sorted by decreasing bμi, and define the true relevance score 
+
+rel i = 2 N −r⋆i − 1.
+
+The discounted cumulative gain of the estimated ranking is 
+
+DCG @ N =
+
+> N
+
+X
+
+> ℓ=1
+
+rel bπ(ℓ)
+
+log 2(ℓ + 1) .
+
+Let π⋆ be the ordering of items sorted by decreasing μi. The ideal discounted cumulative gain is 
+
+IDCG @ N =
+
+> N
+
+X
+
+> ℓ=1
+
+rel π⋆(ℓ)
+
+log 2(ℓ + 1) .
+
+We define 
+
+NDCG @ N = DCG @ N
+
+IDCG @ N .
+
+(3) Uncertainty calibration. Let C0.95  
+
+> ki
+
+denote the nominal 95% confidence interval for the score entry Ski . Coverage is measured by 
+
+Coverage = 1
+
+KN 
+
+> K
+
+X
+
+> k=1
+> N
+
+X
+
+> i=1
+
+1{Ski ∈ C0.95  
+
+> ki
+
+}.
+
+Note that “Unstructured BTL + SVD” is excluded from this metric as truncated SVD is a non-smooth mapping prohibiting ordinary uncertainty quantification. (4) Judge-specific sign accuracy. Judge-specific pairwise behavior is measured by the fraction of item-pair signs correctly recovered: 
+
+SignAcc = 1
+
+K N
+
+> 2
+
+
+
+> K
+
+X
+
+> k=1
+
+X
+
+> 1≤i<j ≤N
+
+1
+
+n
+
+sign( Ski − Skj ) = sign( bSki − bSkj )
+
+o
+
+.
+
+33 E.3 Convergence analysis 
+
+A run is declared converged when the relative likelihood decrease falls below the tolerance used in Algorithm 1. Figure E2 offers a typical example of the convergence of Algorithm 1. Since each iteration step calculates a minimum, its convergence rate is fast. 2 4 6 8 10 12        
+
+> Iteration
+> 342
+> 343
+> 344
+> 345
+> 346
+> Negative log-likelihood
+> (a) Single run
+> 10 20 30 40
+> Iteration
+> 10 −6
+> 10 −5
+> 10 −4
+> 10 −3
+> 10 −2
+> 10 −1
+> 10 0
+> Normalized excess NLL
+> (b) All repetitions
+> All repetitions (n=50)
+> Rep 0
+> 816 24 32 40
+> Iterations to convergence
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> Count
+> (c) Convergence speed
+> Median = 10
+
+Figure E2: Convergence behavior of our proposed model. (a) Negative log-likelihood (NLL) de-creases monotonically over iterations for a representative run. (b) Normalized excess NLL (log-scale) across n = 50 repetitions shows consistent geometric convergence regardless of random seed. (c) Histogram of convergence iterations demonstrates that the algorithm consistently converges in a small, predictable number of steps. 
+
+E.4 Auxiliary sensitivity-only DGP 
+
+We also run an auxiliary simulation under a sensitivity-only data-generating process matching the structure of JA-Ranking. The true score matrix is 
+
+Ski = γkμi,
+
+with no low-rank heterogeneous component. We vary 
+
+ncmp ∈ { 400 , 800 , 1200 , 1600 , 2000 , 2500 , 3000 },
+
+and otherwise use the same comparison allocation, aggregation, and evaluation metrics as in Sec-tion E.2. HJA is still fit with rank r = 1 , so this experiment evaluates robustness to mild over-parameterization when the true heterogeneity rank is zero. Figure E3 reports the results. The proposed method remains stable despite fitting one redundant heterogeneous direction. In some finite-sample settings, HJA can match or slightly improve on the sensitivity-only fit. We interpret this as a numerical finite-sample effect rather than a structural advantage: when some generated γk values are close to zero, the log-parameterization used by the sensitivity-only baseline can become unstable, whereas the affine parameterization used by HJA does not require strict positivity of γk.1000 2000 3000                  
+
+> Number of comparisons ncmp
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> MSE
+> Score recovery
+> 1000 2000 3000
+> Number of comparisons ncmp
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> Spearman
+> Consensus ranking
+> 1000 2000 3000
+> Number of comparisons ncmp
+> 0.80
+> 0.85
+> 0.90
+> 0.95
+> 1.00
+> NDCG@N
+> Consensus ranking
+> 1000 2000 3000
+> Number of comparisons ncmp
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Coverage
+> Uncertainty calibration
+> 1000 2000 3000
+> Number of comparisons ncmp
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Accuracy
+> Judge-specific behavior
+> Methods HJA Unstructured BTL + SVD JA-Ranking Standard BTL
+
+Figure E3: Synthetic performance under JA-Ranking data-generating process [17], where the true score matrix has Ski = γkμi and no low-rank interaction term. 
+
+E.5 Ablation Study 
+
+We introduce a variant that performs the same alternating likelihood updates but omits ReAnchor as the ablated model. We also add an unstructured estimation scheme where ¯S (subject to (3)) is first estimated from the data and bS and bθ are recovered via Proposition 1 and truncated SVD on eS
+
+defined by (6). We compare the score recovery, consensus ranking, and sign prediction accuracy of 34 our full model, the direct-S truncated-SVD model, and the ablated model where the ReAnchor Step (Algorithm C.2) is removed from Algorithm 1. The settings are the same as in the main simulation experiment, although the plot of confidence interval coverage accuracy is removed due to the non-identifiability of the ablated model. 1000 2000 3000                                  
+
+> Number of comparisons ncmp
+> 0
+> 10
+> 20
+> MSE
+> Score recovery
+> 1000 2000 3000
+> Number of comparisons ncmp
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> Spearman
+> Consensus ranking
+> 1000 2000 3000
+> Number of comparisons ncmp
+> 0.90
+> 0.92
+> 0.94
+> 0.96
+> 0.98
+> 1.00
+> NDCG@N
+> Consensus ranking
+> 1000 2000 3000
+> Number of comparisons ncmp
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Accuracy
+> Judge-specific behavior
+> 0.0 0.5 1.0 1.5 2.0
+> Heterogeneity scale h
+> 0
+> 10
+> 20
+> 30
+> MSE
+> 0.0 0.5 1.0 1.5 2.0
+> Heterogeneity scale h
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> Spearman
+> 0.0 0.5 1.0 1.5 2.0
+> Heterogeneity scale h
+> 0.90
+> 0.92
+> 0.94
+> 0.96
+> 0.98
+> 1.00
+> NDCG@N
+> 0.0 0.5 1.0 1.5 2.0
+> Heterogeneity scale h
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Accuracy
+> Methods HJA HJA w/ unstructured optimization HJA w/o ReAnchor
+
+Figure E4: ReAnchor ablation under the synthetic DGP. We compare the proposed HJA estimator, the direct-S truncated-SVD estimator, and an ablated HJA variant that omits the ReAnchor step after each alternating update. Columns report score MSE, Spearman correlation, NDCG@N, and judge-specific sign accuracy; rows vary sample size and heterogeneity strength. Figure E4 shows that the performance of the ablated models are worse than that of the full model. This shows that ReAnchor and structure are important for stabilizing the identified low-rank pa-rameterization and improving score recovery, while the non-reanchored variant can still preserve much of the ordinal information needed for ranking and judge-specific sign prediction. In sum-mary, the design of Algorithm 1 stabilizes score recovery while preserving the strong ranking and judge-behavior performance of the proposed estimator. 35 F Real Data 
+
+This section provides three layers of real-data analysis: (i) experimental specifications and robust-ness benchmarks comparing HJA to baselines (Section F.1); (ii) proper interpretations of patterns of model outputs (Section F.2). 
+
+F.1 Experiment specifications for Real-data robustness evaluation of Section 6.1 
+
+The overall aim of real data comparison is to evaluate whether the proposed heterogeneous judge-aware model improves both prediction and ranking sensitivity relative to JA-Ranking and Standard BTL. The experiments are organized around held-out prediction, robustness to injected noisy judges, and accuracy on near-tie item pairs. 
+
+Dataset description. We evaluate on four pairwise LLM-comparison datasets downloaded from 
+
+https://github.com/TanXZfra/A-Judge-Aware-Ranking-Framework-for-Evaluat ing-Large-Language-Models-without-Ground-Truth/tree/main/data . Recall that 
+
+N denotes the number of candidate models, K the number of judge models, and ncmp the number of usable pairwise comparisons after preprocessing. Each comparison is represented as (k, i, j, y ),where k indexes the judge, i, j index the compared candidate models, and y ∈ { 0, 0.5, 1} records the judge preference, with ties mapped to 0.5. We drop only records with unknown labels. For each judge-item-pair cell, nkij denotes the number of observed comparisons for judge k on candidate pair 
+
+(i, j ); the summaries below report the average, minimum, and maximum over nonzero nkij cells. The Chatbot Arena dataset is derived from the LMSYS Chatbot Arena pairwise evaluation setting under the Apache 2.0 license, a crowdsourced battle platform for comparing chat assistants [1, 15]. The original file contains 10,000 pairwise records. After removing 63 unknown-label records, we use ncmp = 9 ,937 comparisons, including 1,224 ties; the tie-excluded count is 8,713. The dataset has N = 20 candidate models and K = 10 judge models. Among the possible judge-item-pair cells, 1,737 of 1,900 are observed, and nonzero nkij has average/minimum/maximum 5.72 /1/29 .The MT-Bench dataset follows the LMSYS MT-Bench setting (Apache 2.0 license), a controlled multi-turn benchmark with 80 questions. The original file contains 10,000 pairwise records compar-ing N = 6 candidate models, evaluated by K = 20 judge models [1]. After removing 294 unknown-label records, we use ncmp = 9 ,706 comparisons, including 756 ties; the tie-excluded count is 8,950. All 300 possible judge-item-pair cells are observed, with nonzero nkij average/minimum/maximum 
+
+32 .35 /10 /48 .The UltraFeedback dataset is derived from UltraFeedback-style instruction-response comparisons (under MIT license), based on a large-scale AI-feedback resource built from diverse prompts and model responses [28]. The original file contains 10,000 pairwise records. After remov-ing 274 unknown-label records, we use ncmp = 9 ,726 comparisons, including 761 ties; the tie-excluded count is 8,965. The dataset contains N = 17 candidate models and K = 20 judge models. We observe 2,379 of 2,720 possible judge-item-pair cells, and nonzero nkij has aver-age/minimum/maximum 4.09 /1/15 .The in-house dataset is a private pairwise comparison set over recent LLMs collected by [17]. The original file contains 36,000 pairwise records. After removing 161 unknown-label records, we use ncmp = 35 ,839 comparisons, including 1,782 ties; the tie-excluded count is 34,057. This is the largest dataset in our experiments, with N = 45 candidate models and K = 18 judge models. We observe 15,374 of 17,820 possible judge-item-pair cells, with nonzero nkij aver-age/minimum/maximum 2.33 /1/9.
+
+Experiment details. Stability and near-tie experiments use a record-level 80/20 train/test split. Our proposed model selects rank by 5-fold validation on negative log likelihood on the training split or full sample, depending on the workflow. Candidate ranks are 0, . . . , min( K − 1, N − 2) . For the stability experiment, we fit each method on the training records and report held-out pairwise accuracy on the test records. For the robustness experiment, we fit base rankings on the original data, then add noisy judges sequentially. The saved default noisy-judge grid is 1 through 10 added noisy judges; the main table reports steps 1, 5, and 10 as low, mid, and high perturbation levels, with the numbers indicating exact-ranking accuracy versus the base ranking after noisy judges. For the near-tie slice, we select up to 20 item pairs from the training split with at least 20 training records per pair, sorted by empirical win-rate distance to 0.5 and ordered into low/mid/high tertiles, and evaluate 36 the selected near-tie test records separately from all other test records after skipping tie-labeled test records. All experiments were run on a CPU server with 12 cores, the type being Intel(R) Xeon(R) Gold 6126 CPU. One repetition of a whole Robustness experiment takes 45 minutes, while other experiments take minutes for one repetition. The optimization parameter τ = 30 is used by default, while it is finetuned to be 5 and 300 for the Robustness experiment on UltraFeedback (excluding low noisy injection) and the Near-tie experiment in in-house data. For each convex optimization task, i.e., Line 4–5 in Algorithm 1, we use L-BFGS-B method [37] after reparameterization based on Condition 1 (i)-(ii). 
+
+F.2 Interpretation Outlier judge identification. We first show the composite analysis for MT-Bench and Ultra-Feedback in Figure F5. In both experiments, Llama-4-Scout-17B-16E-In appears noisy and not sensitive to the consensus of other judges. However, in order to interpret fitted judge behavior, we need to distinguish consensus sensitivity from residual disagreement. A large value of bγk indicates that judge k responds strongly to the consensus ranking direction bμ, but it does not by itself imply that the judge is globally reliable. We therefore also examine the residual leverage 
+
+bhk = ∥( bU bV ⊤)k, :∥2,
+
+or its relative version 
+
+bρk = ∥( bU bV ⊤)k, :∥2
+
+|bγk|∥ bμ∥2 + ε .
+
+Judges with large bγk and small bhk are strongly aligned with the consensus signal, whereas judges with both large bγk and large bhk are high-leverage judges whose evaluations combine sharp consensus discrimination with substantial off-consensus structure. In the rank-one fits used here, the sign of 
+
+bUk1 further indicates whether this residual disagreement is aligned with or opposed to the dominant judge-side pattern. Figure F6 plots bhk against bγk. Because only the outliers matter under this metric, we only mark the outlier judge. Under this diagnostic, zai-org/GLM-4.5-Air-FP8 is not best interpreted as simply a highly reli-able judge. Although it has the largest estimated consensus sensitivity, it also has unusually large residual leverage, with a residual direction opposed to the main judge cluster. Thus, GLM-4.5 be-haves as a high-sensitivity but high-bias judge: it sharply separates models along the consensus direction while simultaneously imposing a strong idiosyncratic preference component. In light of this, we rerun our model on MT-Bench and UltraFeedback without GLM 4.5 and visualize the results in Figure F7. From these results, we find that Llama-4-Scout-17B-16E-In is no longer a pure noise, but rather a judge with moderate sensitivity. This shows that the extreme leverage of GLM 4.5 distorts the fitted judge behavior of other judges, and its removal allows a more nuanced interpretation of the remaining judges. 
+
+Self-evaluation bias. A well-documented phenomenon in automated evaluation is self-evaluation bias (or self-preference), where an LLM judge systematically assigns higher scores to responses generated by itself or models from the same provider family. While this bias poses a significant threat to naive aggregation methods when a judging panel is monopolized by a single model family, its impact is fundamentally mitigated in a diverse, multi-judge setting. However, apart from select-ing a dataset containing diversified judges and models, our formulation can also absorb a judge’s systematic self-preference into the orthogonal residual disagreement term U V ⊤. The heatmap of 
+
+U V ⊤ should show bright “hotspots” exactly where a judge prefers the output of its own or its fam-ily members. This mechanism ensures that μ retains a high-fidelity representation of consensus quality without the need to completely discard a biased judge. As an example, we plot the heatmap of U V ⊤ to show the heterogeneous interaction between judges and the items on ChatBot Arena after the removal; see Figure F8, which illustrates the interaction between the judges and the models. 37 Model family 
+
+Community 
+
+OpenAI 
+
+Anthropic 
+
+Meta 
+
+−1.5 
+
+−1.0 
+
+−0.5 
+
+0.0 
+
+0.5 
+
+1.0 ̂
+
+> μi ± 95% CI
+
+Consensus score 
+
+0.0 0.5 1.0 1.5 2.0 ̂
+
+γk ± 95% CI 
+
+zai-org/GLM-4.5-Air-FP8 
+
+Mixtral-8x7B-Instruct-v0 
+
+qwen-2-1.5b-instruct 
+
+google/gemma-3n-E4B-it 
+
+Llama-4-Scout-17B-16E-In 
+
+Qwen2.5-7B-Instruct-Turb 
+
+arcee_ai/arcee-spotlight 
+
+marin-8b-instruct 
+
+cogito-v2-preview-llama-
+
+Qwen3-235B-A22B-Instruct 
+
+Qwen3-Next-80B-A3B-Instr 
+
+deepseek-chat 
+
+moonshot-v1-128k 
+
+Llama-3.3-70B-Instruct-T 
+
+Llama-4-Maverick-17B-128 
+
+kimi-k2-thinking-turbo 
+
+openai/gpt-oss-120b 
+
+openai/gpt-oss-20b 
+
+kimi-k2-0905-preview 
+
+moonshot-v1-32k 
+
+> Judges
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+Judge sensitivity 
+
+> alpaca-13b
+> gpt-4
+> vicuna-13b-v1.2
+> claude-v1
+> gpt-3.5-turbo
+> llama-13b
+
+Models ̂
+
+> ÛV ⊤
+
+−1.00 
+
+−0.75 
+
+−0.50 
+
+−0.25 
+
+0.00 
+
+0.25 
+
+0.50 
+
+0.75 
+
+1.00 
+
+> UV  ⊤ (clipped at 90th pct)
+
+(a) MT-Bench Model family 
+
+Google 
+
+Community 
+
+Other 
+
+OpenAI 
+
+Meta 
+
+−1.5 
+
+−1.0 
+
+−0.5 
+
+0.0 
+
+0.5 
+
+1.0 
+
+1.5 ̂
+
+> μi ± 95% CI
+
+Consensus score 
+
+−1 0123̂
+
+γk ± 95% CI 
+
+zai-org/GLM-4.5-Air-FP8 
+
+Llama-4-Scout-17B-16E-In 
+
+qwen-2-1.5b-instruct 
+
+Mixtral-8x7B-Instruct-v0 
+
+cogito-v2-preview-llama-
+
+deepseek-chat 
+
+Llama-4-Maverick-17B-128 
+
+kimi-k2-0905-preview 
+
+moonshot-v1-128k 
+
+Qwen3-235B-A22B-Instruct 
+
+openai/gpt-oss-120b 
+
+moonshot-v1-32k 
+
+Qwen3-Next-80B-A3B-Instr 
+
+kimi-k2-thinking-turbo 
+
+Llama-3.3-70B-Instruct-T 
+
+google/gemma-3n-E4B-it 
+
+openai/gpt-oss-20b 
+
+marin-8b-instruct 
+
+Qwen2.5-7B-Instruct-Turb 
+
+arcee_ai/arcee-spotlight 
+
+> Judges
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+Judge sensitivity 
+
+> bard
+> alpaca-7b
+> falcon-40b-instruct
+> wizardlm-70b
+> vicuna-33b
+> wizardlm-13b
+> wizardlm-7b
+> ultralm-65b
+> pythia-12b
+> ultralm-13b
+> gpt-4
+> mpt-30b-chat
+> starchat
+> llama-2-13b-chat
+> llama-2-70b-chat
+> gpt-3.5-turbo
+> llama-2-7b-chat
+
+Models ̂
+
+> ÛV ⊤
+
+−1.5 
+
+−1.0 
+
+−0.5 
+
+0.0 
+
+0.5 
+
+1.0 
+
+1.5 
+
+> UV  ⊤ (clipped at 90th pct)
+
+(b) UltraFeedback 
+
+Figure F5: The composite figures showing the judge sensitivity, model rankings, and judge-model interaction by our proposed model. Error bars are given with near-normality assumption. 38 −1 0 1 2 3 
+
+> Judge scale ̂ γk
+> 0
+> 5
+> 10
+> 15
+> 20
+> Residual leverage ̂  hk = ‖(̂ ÛV ⊤ )k, :  ‖2
+> ChatBot Arena
+> MT-Bench
+> UltraFeedback
+> In-House
+> Judge residual leverage vs. scale
+> Dataset
+> ChatBot Arena
+> MT-Bench
+> UltraFeedback
+> In-House
+> GLM-4.5-Air-FP8
+
+Figure F6: The scatter plot of leverages, where the outlier model is explicitly annotated. Figure F8 shows that although different judges indeed prefer the styles from different models, there is no observed self-preferencing bias, possibly due to the double-blindness in the design and collec-tion of these data. We also try a biclustering analysis [38] on the estimated bS of in-house data (with GLM 4.5) removed to mine some patterns; see Figure F9. We analyze in-house data because it contains the most diversi-fied models and judges and is hence the most suitable for biclustering analysis. We also include the biclustering results for the other three datasets in Figure F10. The block structures validates HJA’s decomposition: judges from the same family converge on similar preference profiles, suggesting that systematic disagreement is not random noise but reflects coherent, interpretable differences in evaluation philosophy. This makes the residual component U V ⊤ a meaningful diagnostic tool rather than an unexplained variance sink. 39 Model family 
+
+Community 
+
+OpenAI 
+
+Meta 
+
+Anthropic 
+
+−1.5 
+
+−1.0 
+
+−0.5 
+
+0.0 
+
+0.5 
+
+1.0 ̂
+
+> μi ± 95% CI
+
+Consensus score 
+
+0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 ̂
+
+γk ± 95% CI 
+
+Mixtral-8x7B-Instruct-v0 
+
+qwen-2-1.5b-instruct 
+
+google/gemma-3n-E4B-it 
+
+Llama-4-Scout-17B-16E-In 
+
+cogito-v2-preview-llama-
+
+deepseek-chat 
+
+arcee_ai/arcee-spotlight 
+
+Qwen2.5-7B-Instruct-Turb 
+
+kimi-k2-thinking-turbo 
+
+marin-8b-instruct 
+
+Qwen3-Next-80B-A3B-Instr 
+
+Qwen3-235B-A22B-Instruct 
+
+Llama-4-Maverick-17B-128 
+
+kimi-k2-0905-preview 
+
+moonshot-v1-32k 
+
+Llama-3.3-70B-Instruct-T 
+
+moonshot-v1-128k 
+
+openai/gpt-oss-120b 
+
+openai/gpt-oss-20b 
+
+> Judges
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+Judge sensitivity 
+
+> vicuna-13b-v1.2
+> gpt-4
+> llama-13b
+> alpaca-13b
+> claude-v1
+> gpt-3.5-turbo
+
+Models 
+
+−1.5 
+
+−1.0 
+
+−0.5 
+
+0.0 
+
+0.5 
+
+1.0 
+
+1.5 
+
+> UV  ⊤
+
+(a) MT-Bench Model family 
+
+Open-Source 
+
+Community 
+
+Meta 
+
+OpenAI 
+
+Google 
+
+−1.5 
+
+−1.0 
+
+−0.5 
+
+0.0 
+
+0.5 
+
+1.0 ̂
+
+> μi ± 95% CI
+
+Consensus score 
+
+0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 ̂
+
+γk ± 95% CI 
+
+Llama-4-Scout-17B-16E-In 
+
+qwen-2-1.5b-instruct 
+
+Mixtral-8x7B-Instruct-v0 
+
+google/gemma-3n-E4B-it 
+
+Qwen3-Next-80B-A3B-Instr 
+
+marin-8b-instruct 
+
+kimi-k2-thinking-turbo 
+
+Llama-3.3-70B-Instruct-T 
+
+Qwen3-235B-A22B-Instruct 
+
+openai/gpt-oss-120b 
+
+arcee_ai/arcee-spotlight 
+
+Qwen2.5-7B-Instruct-Turb 
+
+moonshot-v1-32k 
+
+openai/gpt-oss-20b 
+
+kimi-k2-0905-preview 
+
+moonshot-v1-128k 
+
+cogito-v2-preview-llama-
+
+deepseek-chat 
+
+Llama-4-Maverick-17B-128 
+
+> Judges
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+Judge sensitivity 
+
+> pythia-12b
+> wizardlm-70b
+> wizardlm-7b
+> wizardlm-13b
+> ultralm-65b
+> vicuna-33b
+> starchat
+> ultralm-13b
+> llama-2-7b-chat
+> mpt-30b-chat
+> llama-2-70b-chat
+> gpt-4
+> llama-2-13b-chat
+> falcon-40b-instruct
+> gpt-3.5-turbo
+> alpaca-7b
+> bard
+
+Models 
+
+−2 
+
+−1 
+
+0
+
+1
+
+2
+
+> UV  ⊤
+
+(b) UltraFeedback 
+
+Figure F7: The composite figures showing the judge sensitivity, model rankings, and judge-model interaction by our proposed model with GLM 4.5 removed. Error bars are given with near-normality assumption. 40 dolly-v2-12b 
+
+> fastchat-t5-3b
+> RWKV-4-Raven-14B
+> alpaca-13b
+> chatglm-6b
+> gpt-4
+> palm-2
+> wizardlm-13b
+> vicuna-13b
+> vicuna-7b
+> gpt4all-13b-snoozy
+> llama-13b
+> claude-v1
+> gpt-3.5-turbo
+> koala-13b
+> stablelm-tuned-alpha-7b
+> claude-instant-v1
+> mpt-7b-chat
+> guanaco-33b
+> oasst-pythia-12b
+
+Models (ordered by cluster) 
+
+google/gemma-3n-E4B-it 
+
+marin-community/marin-8b-instruct 
+
+mistralai/Mistral-7B-Instruct-v0.1 
+
+deepseek-chat 
+
+arcee_ai/arcee-spotlight 
+
+kimi-k2-0905-preview 
+
+Qwen/Qwen3-235B-A22B-Instruct-2507-tput 
+
+meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8 
+
+openai/gpt-oss-20b 
+
+> Judges (ordered by cluster)
+
+1.5 
+
+1.0 
+
+0.5 
+
+0.0 
+
+0.5 
+
+1.0 
+
+1.5 
+
+> UV T value
+
+Figure F8: Judge-model heterogeneous interaction terms U V ⊤ for ChatBot Arena clustered by judge-model affinity (extreme judge removed). The first three judges on the y-axis (gemma-3n-E4B-it , marin-8b-instruct , and Mistral-7B-Instruct-v0.1 ) show compara-tively weak heterogeneous preferences, indicating closer alignment with the consensus ranking. Most disagreement happens mainly on the first ten models shown on the x-axis, with the majority of judges preferring model 6–10 than 1–5 on the x-axis. Qwen/Qwen2.5-VL-72B-Instruct 
+
+> arize-ai/qwen-2-1.5b-instruct
+> meta-llama/Llama-3.2-3B-Instruct-Turbo
+> meta-llama/Meta-Llama-3-8B-Instruct-Lite
+> meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo
+> mistralai/Mistral-7B-Instruct-v0.2
+> mistralai/Mistral-7B-Instruct-v0.3
+> mistralai/Mixtral-8x7B-Instruct-v0.1
+> togethercomputer/Refuel-Llm-V2-Small
+> Qwen/Qwen2.5-72B-Instruct-Turbo
+> Qwen/Qwen2.5-7B-Instruct-Turbo
+> ServiceNow-AI/Apriel-1.5-15b-Thinker
+> arcee-ai/trinity-mini
+> deepcogito/cogito-v2-1-671b
+> deepcogito/cogito-v2-preview-llama-109B-MoE
+> deepcogito/cogito-v2-preview-llama-405B
+> deepcogito/cogito-v2-preview-llama-70B
+> deepseek-ai/DeepSeek-R1-Distill-Llama-70B
+> google/gemma-3n-E4B-it
+> meta-llama/Llama-3-70b-chat-hf
+> meta-llama/Llama-3.3-70B-Instruct-Turbo
+> meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8
+> meta-llama/Llama-4-Scout-17B-16E-Instruct
+> meta-llama/Meta-Llama-3-70B-Instruct-Turbo
+> meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo
+> meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo
+> mistralai/Mistral-Small-24B-Instruct-2501
+> nvidia/NVIDIA-Nemotron-Nano-9B-v2
+> scb10x/scb10x-typhoon-2-1-gemma3-12b
+> Qwen/Qwen3-235B-A22B-Instruct-2507-tput
+> Qwen/Qwen3-235B-A22B-Thinking-2507
+> Qwen/Qwen3-235B-A22B-fp8-tput
+> Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8
+> Qwen/Qwen3-Next-80B-A3B-Instruct
+> Qwen/Qwen3-Next-80B-A3B-Thinking
+> deepseek-ai/DeepSeek-R1
+> deepseek-ai/DeepSeek-R1-0528-tput
+> deepseek-ai/DeepSeek-V3
+> deepseek-ai/DeepSeek-V3.1
+> moonshotai/Kimi-K2-Instruct-0905
+> moonshotai/Kimi-K2-Thinking
+> openai/gpt-oss-120b
+> openai/gpt-oss-20b
+> zai-org/GLM-4.6
+
+Items 
+
+Qwen/Qwen2.5-7B-Instruct-Turbo 
+
+Qwen/Qwen3-Next-80B-A3B-Instruct 
+
+deepcogito/cogito-v2-preview-llama-109B-MoE 
+
+deepseek-ai/DeepSeek-R1-Distill-Llama-70B 
+
+deepseek-chat 
+
+google/gemma-3n-E4B-it 
+
+meta-llama/Llama-3.3-70B-Instruct-Turbo 
+
+meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8 
+
+meta-llama/Llama-4-Scout-17B-16E-Instruct 
+
+mistralai/Mixtral-8x7B-Instruct-v0.1 
+
+openai/gpt-oss-120b 
+
+openai/gpt-oss-20b 
+
+Qwen/Qwen3-235B-A22B-Instruct-2507-tput 
+
+kimi-k2-0905-preview 
+
+kimi-k2-thinking-turbo 
+
+moonshot-v1-128k 
+
+moonshot-v1-32k 
+
+> Judges
+
+−2 
+
+−1 
+
+0
+
+1
+
+2
+
+> Estimated S
+
+Figure F9: Biclustering of the estimated judge-specific score matrix bS on the in-house dataset af-ter removing the high-leverage GLM-4.5 judge. Rows and columns are reordered by biclustering, so contiguous blocks indicate judges and models with similar fitted preference profiles. On the item side, the clustering separates earlier/smaller Qwen–Llama–Mistral-style models from a middle group of DeepCogito, DeepSeek-distilled, Gemma, Llama, and Mistral/Nemotron models, and a rightmost block dominated by recent Qwen3, DeepSeek, Kimi/Moonshot, OpenAI gpt-oss , and GLM models. On the judge side, Qwen-family judges show similar scoring behavior, Kimi and Moonshot judges form a closely related cluster, and DeepSeek, Gemma, Llama, Mistral, and Ope-nAI judges occupy a more moderate shared cluster. The block structure indicates that HJA recovers family-level affinity patterns in judge-specific rankings, rather than only isolated judge or model effects. 41 vicuna-13b-v1.2 
+
+> claude-v1
+> gpt-3.5-turbo
+> gpt-4
+> alpaca-13b
+> llama-13b
+
+Items 
+
+Qwen/Qwen2.5-7B-Instruct-Turbo 
+
+Qwen/Qwen3-235B-A22B-Instruct-2507-tput 
+
+Qwen/Qwen3-Next-80B-A3B-Instruct 
+
+google/gemma-3n-E4B-it 
+
+kimi-k2-0905-preview 
+
+kimi-k2-thinking-turbo 
+
+meta-llama/Llama-3.3-70B-Instruct-Turbo 
+
+mistralai/Mixtral-8x7B-Instruct-v0.1 
+
+moonshot-v1-128k 
+
+moonshot-v1-32k 
+
+openai/gpt-oss-120b 
+
+openai/gpt-oss-20b 
+
+deepcogito/cogito-v2-preview-llama-109B-MoE 
+
+marin-community/marin-8b-instruct 
+
+meta-llama/Llama-4-Scout-17B-16E-Instruct 
+
+arcee_ai/arcee-spotlight 
+
+arize-ai/qwen-2-1.5b-instruct 
+
+deepseek-chat 
+
+meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8 
+
+> Judges
+
+−3 
+
+−2 
+
+−1 
+
+0
+
+1
+
+2
+
+3
+
+> Estimated S
+
+(a) MT-Bench alpaca-7b 
+
+> falcon-40b-instruct
+> llama-2-7b-chat
+> mpt-30b-chat
+> starchat
+> ultralm-13b
+> ultralm-65b
+> vicuna-33b
+> wizardlm-13b
+> wizardlm-70b
+> wizardlm-7b
+> bard
+> gpt-3.5-turbo
+> gpt-4
+> llama-2-13b-chat
+> llama-2-70b-chat
+> pythia-12b
+
+Items 
+
+arize-ai/qwen-2-1.5b-instruct 
+
+mistralai/Mixtral-8x7B-Instruct-v0.1 
+
+meta-llama/Llama-4-Scout-17B-16E-Instruct 
+
+Qwen/Qwen2.5-7B-Instruct-Turbo 
+
+Qwen/Qwen3-235B-A22B-Instruct-2507-tput 
+
+Qwen/Qwen3-Next-80B-A3B-Instruct 
+
+arcee_ai/arcee-spotlight 
+
+deepcogito/cogito-v2-preview-llama-109B-MoE 
+
+deepseek-chat 
+
+google/gemma-3n-E4B-it 
+
+kimi-k2-0905-preview 
+
+kimi-k2-thinking-turbo 
+
+marin-community/marin-8b-instruct 
+
+meta-llama/Llama-3.3-70B-Instruct-Turbo 
+
+meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8 
+
+moonshot-v1-128k 
+
+moonshot-v1-32k 
+
+openai/gpt-oss-120b 
+
+openai/gpt-oss-20b 
+
+> Judges
+
+−10.0 
+
+−7.5 
+
+−5.0 
+
+−2.5 
+
+0.0 
+
+2.5 
+
+5.0 
+
+7.5 
+
+10.0 
+
+> Estimated S
+
+(b) UltraFeedback gpt4all-13b-snoozy 
+
+> koala-13b
+> llama-13b
+> mpt-7b-chat
+> oasst-pythia-12b
+> palm-2
+> stablelm-tuned-alpha-7b
+> vicuna-13b
+> vicuna-7b
+> wizardlm-13b
+> RWKV-4-Raven-14B
+> alpaca-13b
+> chatglm-6b
+> dolly-v2-12b
+> fastchat-t5-3b
+> claude-instant-v1
+> claude-v1
+> gpt-3.5-turbo
+> gpt-4
+> guanaco-33b
+
+Items 
+
+deepseek-chat 
+
+mistralai/Mistral-7B-Instruct-v0.1 
+
+Qwen/Qwen3-235B-A22B-Instruct-2507-tput 
+
+arcee_ai/arcee-spotlight 
+
+google/gemma-3n-E4B-it 
+
+kimi-k2-0905-preview 
+
+meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8 
+
+openai/gpt-oss-20b 
+
+marin-community/marin-8b-instruct 
+
+> Judges
+
+−1 
+
+0
+
+1
+
+> Estimated S
+
+(c) Chatbot Arena 
+
+Figure F10: Biclustering of estimated bS across (a) MT-Bench, (b) UltraFeedback, and (c) Chatbot Arena, all with GLM-4.5 removed. From (c), we find that Claude and GPT are preferred by most judges, and indeed, they have a high consensus score. Such a concordance pattern also appears in (a). 42
