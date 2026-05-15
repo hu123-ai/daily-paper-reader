@@ -6,97 +6,106 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-14
-- 运行时间：2026-05-14 21:26:57 UTC
+- 最新运行日期：2026-05-15
+- 运行时间：2026-05-15 20:51:20 UTC
 - 运行状态：成功
-- 本次总论文数：25
-- 精读区：13
+- 本次总论文数：28
+- 精读区：16
 - 速读区：12
 
 ### 今日简报（AI）
-今日精选 25 篇前沿论文，深度聚焦多智能体协作优化与大模型 Agent 的全方位安全防御体系。
-重点关注多智能体流网络中的强化协作机制，以及通过统一图表示和影子内存技术构建可审计、防注入的 Agent 安全底座。
-建议优先研读 Agent 安全审计与隐私计算综述，为构建工业级可靠智能体应用筑牢安全防线。
-- 详情：[/202605/14/README](/202605/14/README)
+今日深度解析 28 篇 AI 论文，重点攻克法律逻辑推理的忠实度与多智能体协同调度难题。
+满分佳作揭示了反事实强化学习在多智能体执行中的潜力，并探讨了形式逻辑桥接法律解释的新路径。
+建议关注 AI 法律实务与智能体搜索系统的演进，把握复杂推理任务下的最新技术范式。
+- 详情：[/202605/15/README](/202605/15/README)
 
 ### 精读区论文标签
-1. [Reinforced Collaboration in Multi-Agent Flow Networks](/202605/14/2605.12943v1-reinforced-collaboration-in-multi-agent-flow-networks)  
+1. [Bridging Legal Interpretation and Formal Logic: Faithfulness, Assumption, and the Future of AI Legal Reasoning](/202605/15/2605.14049v1-bridging-legal-interpretation-and-formal-logic-faithfulness-assumption-and-the-future-of-ai-legal-reasoning)  
+   标签：评分：10.0/10、query:profile-1
+   evidence：法律人工智能与推理的神经符号方法
+2. [LEMON: Learning Executable Multi-Agent Orchestration via Counterfactual Reinforcement Learning](/202605/15/2605.14483v1-lemon-learning-executable-multi-agent-orchestration-via-counterfactual-reinforcement-learning)  
    标签：评分：10.0/10、query:malm
-   evidence：多智能体协作与工作流优化的框架
-2. [Towards Security-Auditable LLM Agents: A Unified Graph Representation](/202605/14/2605.06812v1-towards-security-auditable-llm-agents-a-unified-graph-representation)  
+   evidence：通过强化学习学习可执行的多智能体编排
+3. [Falkor-IRAC: Graph-Constrained Generation for Verified Legal Reasoning in Indian Judicial AI](/202605/15/2605.14665v1-falkor-irac-graph-constrained-generation-for-verified-legal-reasoning-in-indian-judicial-ai)  
+   标签：评分：10.0/10、query:profile-1
+   evidence：司法人工智能中用于验证法律推理的图约束生成
+4. [Beyond Individual Intelligence: Surveying Collaboration, Failure Attribution, and Self-Evolution in LLM-based Multi-Agent Systems](/202605/15/2605.14892v1-beyond-individual-intelligence-surveying-collaboration-failure-attribution-and-self-evolution-in-llm-based-multi-agent-systems)  
+   标签：评分：10.0/10、query:malm
+   evidence：调研基于大语言模型的多智能体系统协作与架构
+5. [Social Theory Should Be a Structural Prior for Agentic AI: A Formal Framework for Multi-Agent Social Systems](/202605/15/2605.07069v3-social-theory-should-be-a-structural-prior-for-agentic-ai-a-formal-framework-for-multi-agent-social-systems)  
    标签：评分：9.0/10、query:malm
-   evidence：多智能体协作审计的统一图表示
-3. [CoCoDA: Co-evolving Compositional DAG for Tool-Augmented Agents](/202605/14/2605.08399v1-cocoda-co-evolving-compositional-dag-for-tool-augmented-agents)  
+   evidence：多智能体社会系统的正式框架
+6. [AgentForesight: Online Auditing for Early Failure Prediction in Multi-Agent Systems](/202605/15/2605.08715v2-agentforesight-online-auditing-for-early-failure-prediction-in-multi-agent-systems)  
    标签：评分：9.0/10、query:malm
-   evidence：基于组合 DAG 的工具增强型智能体框架
-4. [GAMBIT: A Three-Mode Benchmark for Adversarial Robustness in Multi-Agent LLM Collectives](/202605/14/2605.09027v2-gambit-a-three-mode-benchmark-for-adversarial-robustness-in-multi-agent-llm-collectives)  
+   evidence：多智能体系统故障预测的在线审计框架
+7. [Safe Multi-Agent Behavior Must Be Maintained, Not Merely Asserted: Constraint Drift in LLM-Based Multi-Agent Systems](/202605/15/2605.10481v1-safe-multi-agent-behavior-must-be-maintained-not-merely-asserted-constraint-drift-in-llm-based-multi-agent-systems)  
    标签：评分：9.0/10、query:malm
-   evidence：多智能体大语言模型集体的对抗鲁棒性基准
-5. [FlowSteer: Prompt-Only Workflow Steering Exposes Planning-Time Vulnerabilities in Multi-Agent LLM Systems](/202605/14/2605.11514v1-flowsteer-prompt-only-workflow-steering-exposes-planning-time-vulnerabilities-in-multi-agent-llm-systems)  
+   evidence：基于大语言模型的多智能体系统中的安全与约束漂移
+8. [Predictive Maps of Multi-Agent Reasoning: A Successor-Representation Spectrum for LLM Communication Topologies](/202605/15/2605.11453v2-predictive-maps-of-multi-agent-reasoning-a-successor-representation-spectrum-for-llm-communication-topologies)  
    标签：评分：9.0/10、query:malm
-   evidence：多智能体大语言模型系统中的规划-执行架构
-6. [AgentDisCo: Towards Disentanglement and Collaboration in Open-ended Deep Research Agents](/202605/14/2605.11732v1-agentdisco-towards-disentanglement-and-collaboration-in-open-ended-deep-research-agents)  
+   evidence：多智能体LLM通信拓扑的结构化诊断
+9. [Position: Agentic AI System Is a Foreseeable Pathway to AGI](/202605/15/2605.12966v1-position-agentic-ai-system-is-a-foreseeable-pathway-to-agi)  
    标签：评分：9.0/10、query:malm
-   evidence：用于研究的协作式智能体架构
-7. [CHAL: Council of Hierarchical Agentic Language](/202605/14/2605.12718v1-chal-council-of-hierarchical-agentic-language)  
-   标签：评分：9.0/10、query:malm
-   evidence：用于信念优化的多智能体辩证框架
-8. [Embodied Multi-Agent Coordination by Aligning World Models Through Dialogue](/202605/14/2605.12920v1-embodied-multi-agent-coordination-by-aligning-world-models-through-dialogue)  
-   标签：评分：9.0/10、query:malm
-   evidence：基于大语言模型的具身智能体通过对话协作
-9. [CANTANTE: Optimizing Agentic Systems via Contrastive Credit Attribution](/202605/14/2605.13295v1-cantante-optimizing-agentic-systems-via-contrastive-credit-attribution)  
-   标签：评分：9.0/10、query:malm
-   evidence：优化基于大语言模型的多智能体系统的框架
-10. [IdeaForge: A Knowledge Graph-Grounded Multi-Agent Framework for Cross-Methodology Innovation Analysis and Patent Claim Generation](/202605/14/2605.13311v1-ideaforge-a-knowledge-graph-grounded-multi-agent-framework-for-cross-methodology-innovation-analysis-and-patent-claim-generation)  
-   标签：评分：9.0/10、query:malm
-   evidence：基于知识图谱的多智能体专利权利要求生成框架
-11. [LLMs as annotators of credibility assessment in Danish asylum decisions: evaluating classification performance and errors beyond aggregated metrics](/202605/14/2605.13412v1-llms-as-annotators-of-credibility-assessment-in-danish-asylum-decisions-evaluating-classification-performance-and-errors-beyond-aggregated-metrics)  
+   evidence：智能体系统与单体学习器的理论对比
+10. [Dual Hierarchical Dialogue Policy Learning for Legal Inquisitive Conversational Agents](/202605/15/2605.14057v1-dual-hierarchical-dialogue-policy-learning-for-legal-inquisitive-conversational-agents)  
    标签：评分：9.0/10、query:profile-1
-   evidence：基于大语言模型的避难判决文本法律 NLP 标注任务
-12. [SkillOps: Managing LLM Agent Skill Libraries as Self-Maintaining Software Ecosystems](/202605/14/2605.13716v1-skillops-managing-llm-agent-skill-libraries-as-self-maintaining-software-ecosystems)  
+   evidence：针对美国最高法院口头辩论的对话智能体
+11. [SkillFlow: Flow-Driven Recursive Skill Evolution for Agentic Orchestration](/202605/15/2605.14089v1-skillflow-flow-driven-recursive-skill-evolution-for-agentic-orchestration)  
    标签：评分：9.0/10、query:malm
-   evidence：管理大语言模型智能体技能库与架构
-13. [Good Agentic Friends Do Not Just Give Verbal Advice: They Can Update Your Weights](/202605/14/2605.13839v1-good-agentic-friends-do-not-just-give-verbal-advice-they-can-update-your-weights)  
+   evidence：基于大语言模型的智能体任务编排系统
+12. [Agentic Systems as Boosting Weak Reasoning Models](/202605/15/2605.14163v1-agentic-systems-as-boosting-weak-reasoning-models)  
    标签：评分：9.0/10、query:malm
-   evidence：多智能体大语言模型系统的权重空间通信框架
+   evidence：验证器支持的委员会搜索作为推理模型推理时的性能提升手段
+13. [MetaAgent-X : Breaking the Ceiling of Automatic Multi-Agent Systems via End-to-End Reinforcement Learning](/202605/15/2605.14212v1-metaagent-x--breaking-the-ceiling-of-automatic-multi-agent-systems-via-end-to-end-reinforcement-learning)  
+   标签：评分：9.0/10、query:malm
+   evidence：自动多智能体系统的端到端强化学习
+14. [Making OpenAPI Documentation Agent-Ready: Detecting Documentation and REST Smells with a Multi-Agent LLM System](/202605/15/2605.14312v1-making-openapi-documentation-agent-ready-detecting-documentation-and-rest-smells-with-a-multi-agent-llm-system)  
+   标签：评分：9.0/10、query:malm
+   evidence：用于 API 文档评估的多智能体大语言模型系统
+15. [Orchard: An Open-Source Agentic Modeling Framework](/202605/15/2605.15040v1-orchard-an-open-source-agentic-modeling-framework)  
+   标签：评分：9.0/10、query:malm
+   evidence：用于可扩展智能体训练的开源智能体建模框架
+16. [APWA: A Distributed Architecture for Parallelizable Agentic Workflows](/202605/15/2605.15132v1-apwa-a-distributed-architecture-for-parallelizable-agentic-workflows)  
+   标签：评分：9.0/10、query:malm
+   evidence：可并行化多智能体工作流的分布式架构
 
 ### 速读区论文标签
-1. [When Agents Handle Secrets: A Survey of Confidential Computing for Agentic AI](/202605/14/2605.03213v2-when-agents-handle-secrets-a-survey-of-confidential-computing-for-agentic-ai)  
+1. [Evaluating Generative Models as Interactive Emergent Representations of Human-Like Collaborative Behavior](/202605/15/2605.03855v2-evaluating-generative-models-as-interactive-emergent-representations-of-human-like-collaborative-behavior)  
    标签：评分：8.0/10、query:malm
-   evidence：智能体间消息协议与安全
-2. [MAGE: Safeguarding LLM Agents against Long-Horizon Threats via Shadow Memory](/202605/14/2605.03228v1-mage-safeguarding-llm-agents-against-long-horizon-threats-via-shadow-memory)  
+   evidence：大语言模型智能体与人类完成需要协作的任务
+2. [Domain-Adaptive Dense Retrieval for Brazilian Legal Search](/202605/15/2605.04005v1-domain-adaptive-dense-retrieval-for-brazilian-legal-search)  
+   标签：评分：8.0/10、query:profile-1
+   evidence：法律检索的领域自适应稠密检索
+3. [Rethinking Reasoning-Intensive Retrieval: Evaluating and Advancing Retrievers in Agentic Search Systems](/202605/15/2605.04018v1-rethinking-reasoning-intensive-retrieval-evaluating-and-advancing-retrievers-in-agentic-search-systems)  
    标签：评分：8.0/10、query:malm
-   evidence：使用影子内存架构的大模型智能体防御框架
-3. [ARGUS: Defending LLM Agents Against Context-Aware Prompt Injection](/202605/14/2605.03378v1-argus-defending-llm-agents-against-context-aware-prompt-injection)  
+   evidence：智能体搜索系统中的检索器
+4. [Redefining AI Red Teaming in the Agentic Era: From Weeks to Hours](/202605/15/2605.04019v1-redefining-ai-red-teaming-in-the-agentic-era-from-weeks-to-hours)  
    标签：评分：8.0/10、query:malm
-   evidence：防御大语言模型智能体的提示注入攻击
-4. [Workspace-Bench 1.0: Benchmarking AI Agents on Workspace Tasks with Large-Scale File Dependencies](/202605/14/2605.03596v1-workspace-bench-10-benchmarking-ai-agents-on-workspace-tasks-with-large-scale-file-dependencies)  
-   标签：评分：8.0/10、query:malm
-   evidence：在工作空间任务上评估AI智能体
-5. [Dynamic Authorization for Knowledge-Base Agents in 6G](/202605/14/2605.05269v1-dynamic-authorization-for-knowledge-base-agents-in-6g)  
+   evidence：探测多智能体系统的安全性
+5. [LoopTrap: Termination Poisoning Attacks on LLM Agents](/202605/15/2605.05846v1-looptrap-termination-poisoning-attacks-on-llm-agents)  
    标签：评分：7.0/10、query:malm
-   evidence：6G中的去中心化多智能体系统
-6. [Securing the Agent: Vendor-Neutral, Multitenant Enterprise Retrieval and Tool Use](/202605/14/2605.05287v1-securing-the-agent-vendor-neutral-multitenant-enterprise-retrieval-and-tool-use)  
+   evidence：大语言模型智能体迭代循环中的安全风险
+6. [MemReranker: Reasoning-Aware Reranking for Agent Memory Retrieval](/202605/15/2605.06132v1-memreranker-reasoning-aware-reranking-for-agent-memory-retrieval)  
    标签：评分：7.0/10、query:malm
-   evidence：保障智能体AI系统中的检索和工具使用安全
-7. [PRISM: Perception Reasoning Interleaved for Sequential Decision Making](/202605/14/2605.05407v1-prism-perception-reasoning-interleaved-for-sequential-decision-making)  
+   evidence：智能体记忆检索的推理感知重排序
+7. [MANTRA: Synthesizing SMT-Validated Compliance Benchmarks for Tool-Using LLM Agents](/202605/15/2605.06334v1-mantra-synthesizing-smt-validated-compliance-benchmarks-for-tool-using-llm-agents)  
    标签：评分：7.0/10、query:malm
-   evidence：基于大语言模型的具身智能体感知-推理-决策框架
-8. [Knowledge-Graph Paths as Intermediate Supervision for Self-Evolving Search Agents](/202605/14/2605.05702v1-knowledge-graph-paths-as-intermediate-supervision-for-self-evolving-search-agents)  
+   evidence：工具使用型大语言模型智能体的合规性基准
+8. [Constraint Decay: The Fragility of LLM Agents in Backend Code Generation](/202605/15/2605.06445v1-constraint-decay-the-fragility-of-llm-agents-in-backend-code-generation)  
    标签：评分：7.0/10、query:malm
-   evidence：具有多步推理能力的自进化搜索智能体
-9. [SCOUT: Active Information Foraging for Long-Text Understanding with Decoupled Epistemic States](/202605/14/2605.04496v1-scout-active-information-foraging-for-long-text-understanding-with-decoupled-epistemic-states)  
+   evidence：自主代码生成中的LLM智能体
+9. [Text-Graph Synergy: A Bidirectional Verification and Completion Framework for RAG](/202605/15/2605.05643v1-text-graph-synergy-a-bidirectional-verification-and-completion-framework-for-rag)  
+   标签：评分：6.0/10、query:q8
+   evidence：用于多跳推理的检索增强生成框架
+10. [Retrieval from Within: An Intrinsic Capability of Attention-Based Models](/202605/15/2605.05806v1-retrieval-from-within-an-intrinsic-capability-of-attention-based-models)  
+   标签：评分：6.0/10、query:q8
+   evidence：在基于注意力的模型中统一检索和生成
+11. [Retrieval from Within: An Intrinsic Capability of Attention-Based Models](/202605/15/2605.05806v2-retrieval-from-within-an-intrinsic-capability-of-attention-based-models)  
    标签：评分：6.0/10、query:malm
-   evidence：用于长文本理解和信息搜寻的专业智能体
-10. [Heterogeneous Judge-Aware Ranking with Sensitivity, Disagreement, and Confidence](/202605/14/2605.05073v1-heterogeneous-judge-aware-ranking-with-sensitivity-disagreement-and-confidence)  
+   evidence：注意力模型内部的检索增强生成
+12. [Self-Consolidating Language Models: Continual Knowledge Incorporation from Context](/202605/15/2605.07076v1-self-consolidating-language-models-continual-knowledge-incorporation-from-context)  
    标签：评分：6.0/10、query:malm
-   evidence：用于大语言模型评估的多裁判排名框架
-11. [Heterogeneous Judge-Aware Ranking with Sensitivity, Disagreement, and Confidence](/202605/14/2605.05073v2-heterogeneous-judge-aware-ranking-with-sensitivity-disagreement-and-confidence)  
-   标签：评分：6.0/10、query:malm
-   evidence：用于大语言模型评估的多裁判排名框架
-12. [Agentic Retrieval-Augmented Generation for Financial Document Question Answering](/202605/14/2605.05409v1-agentic-retrieval-augmented-generation-for-financial-document-question-answering)  
-   标签：评分：6.0/10、query:malm
-   evidence：用于复杂推理和检索的智能体RAG框架
+   evidence：从长上下文工作流中持续整合知识
 
 
 <div class="dpr-home-promo-card">
