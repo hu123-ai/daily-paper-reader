@@ -1,0 +1,803 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-23T21:05:12.304935+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 2,
+    "deep_divecandidates": 30,
+    "deep_cap": 7,
+    "deep_selected": 7,
+    "quick_candidates": 23,
+    "quick_skim_target": 12,
+    "quick_selected": 12
+  },
+  "deep_dive": [
+    {
+      "id": "2605.09879v1",
+      "title": "M2A: Synergizing Mathematical and Agentic Reasoning in Large Language Models",
+      "abstract": "While reasoning has become a central capability of large language models (LLMs), the reasoning patterns required for different scenarios are often misaligned. Mathematical reasoning typically relies on intrinsic logic to solve closed-world problems in a single response, whereas agentic reasoning requires not only internal reasoning but also multi-turn interaction with external environments, interleaving thought and action. This misalignment prevents mathematical and agentic reasoning from effectively benefiting from each other, often yielding unstable reasoning behavior and only limited performance gains under multi-task learning. In this paper, we propose M2A, a novel paradigm that synergizes mathematical and agentic reasoning via model merging. To avoid overfitting to superficial reasoning patterns under joint training, M2A operates directly in parameter space: it identifies the feature subspace critical for agent behavior, and merges the mathematical reasoning task vector only along its null space, thereby injecting reasoning capability along directions that do not perturb agent behavior. Unlike SFT or RL, M2A requires no additional gradient-update and exposes the merging coefficient as a simple knob for controlling reasoning length. Experiments in a challenging real-world coding agent setting show that our method effectively extends agentic reasoning depth and delivers substantial performance improvements. Applied to a fine-tuned Qwen3-8B, M2A improves its SWE-Bench Verified resolved rate from 44.0% to 51.2% without retraining the model. Code is available at https://github.com/laplucky/M2A.git.",
+      "authors": [
+        "Junjian Wang",
+        "Xin Zhou",
+        "Qiran Xu",
+        "Kun Zhan"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-11T02:05:30+00:00",
+      "link": "https://arxiv.org/pdf/2605.09879v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "synergizing mathematical and agentic reasoning in LLMs",
+      "llm_evidence_cn": "协同大语言模型中的数学与智能体推理",
+      "llm_evidence": "协同大语言模型中的数学与智能体推理",
+      "canonical_evidence": "协同大语言模型中的数学与智能体推理",
+      "llm_tldr_en": "Proposes a model merging paradigm to combine internal logic and external interaction in LLM reasoning.",
+      "llm_tldr_cn": "提出了一种模型合并范式，将大语言模型推理中的内部逻辑与外部交互相结合。",
+      "llm_tldr": "提出了一种模型合并范式，将大语言模型推理中的内部逻辑与外部交互相结合。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "multi agent LLM frameworks for complex reasoning and decision making",
+      "matched_requirement_id": "req-19",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.09879v1"
+    },
+    {
+      "id": "2605.10286v1",
+      "title": "AgentRx: A Benchmark Study of LLM Agents for Multimodal Clinical Prediction Tasks",
+      "abstract": "Building effective clinical decision support systems requires the synthesis of complex heterogeneous multimodal data. Such modalities include temporal electronic health records data, medical images, radiology reports, and clinical notes. Large language model (LLM)-based agents have shown impressive performance in various healthcare tasks, especially those involving textual modalities. Considering the fragmentation of healthcare data across hospital systems, collaborative agent frameworks present a promising direction to mitigate data sharing challenges. However, the effectiveness of LLM agents for multimodal clinical risk prediction remains largely unexamined. In this work, we conduct a systematic evaluation of LLM-based agents for clinical prediction tasks using large-scale real-world data. We assess performance in unimodal and multimodal settings and quantify performance gaps between single agent and multi-agent systems. Our findings highlight that single agent frameworks outperform naive multi-agent systems, are better at handling multimodal data, and are better calibrated. This underscores a critical need for improving multi-agent collaboration to better handle heterogeneous inputs. By open-sourcing our code and evaluation framework, this work offers a new benchmark to support future developments relating to agentic systems in healthcare.",
+      "authors": [
+        "Baraa Al Jorf",
+        "Farah E. Shamout"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-11T09:46:41+00:00",
+      "link": "https://arxiv.org/pdf/2605.10286v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "collaborative agent frameworks for clinical prediction",
+      "llm_evidence_cn": "用于临床预测的协作智能体框架",
+      "llm_evidence": "用于临床预测的协作智能体框架",
+      "canonical_evidence": "用于临床预测的协作智能体框架",
+      "llm_tldr_en": "Evaluates collaborative LLM agent frameworks for multimodal clinical risk prediction tasks.",
+      "llm_tldr_cn": "评估了用于多模态临床风险预测任务的协作式大语言模型智能体框架。",
+      "llm_tldr": "评估了用于多模态临床风险预测任务的协作式大语言模型智能体框架。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.10286v1"
+    },
+    {
+      "id": "2605.09934v1",
+      "title": "TRACER: Verifiable Generative Provenance for Multimodal Tool-Using Agents",
+      "abstract": "Multimodal large language models increasingly solve vision-centric tasks by calling external tools for visual inspection, OCR, retrieval, calculation, and multi-step reasoning. Current tool-using agents usually expose the executed tool trajectory and the final answer, but they rarely specify which tool observation supports each generated claim. We call this missing claim-level dependency structure the provenance gap. The gap makes tool use hard to verify and hard to optimize, because useful evidence, redundant exploration, and unsupported reasoning are mixed in the same trajectory. We introduce TRACER, a framework for verifiable generative provenance in multimodal tool-using agents. Instead of adding citations after generation, TRACER generates each answer sentence together with a structured provenance record that identifies the supporting tool turn, evidence unit, and semantic support relation. Its relation space contains Quotation, Compression, and Inference, covering direct reuse, faithful condensation, and grounded derivation. TRACER verifies each record through schema checking, tool-turn alignment, source authenticity, and relation rationality, and then converts verified provenance into traceability constraints and provenance-derived local credit for reinforcement learning. We further construct TRACE-Bench, a benchmark for sentence-level provenance reconstruction from coarse multimodal tool trajectories. On TRACE-Bench, simply adding tools often introduces noise. With Qwen3-VL-8B, TRACER reaches 78.23% answer accuracy and 95.72% summary accuracy, outperforming the strongest closed-source tool-augmented baseline by 23.80 percentage points. Compared with tool-only supervised fine-tuning, it also reduces total test-set tool calls from 4949 to 3486. These results show that reliable multimodal tool reasoning depends on provenance-aware use of observations, not on more tool calls alone.",
+      "authors": [
+        "Bihui Yu",
+        "Caijun Jia",
+        "Jing Chi",
+        "Xiaohan Liu",
+        "Yining Wang",
+        "He Bai",
+        "Yuchen Liu",
+        "Jingxuan Wei",
+        "Junnan Zhu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-05-11T03:32:55+00:00",
+      "link": "https://arxiv.org/pdf/2605.09934v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Verifiable generative provenance for tool-using agents",
+      "llm_evidence_cn": "工具使用型智能体的可验证生成溯源",
+      "llm_evidence": "工具使用型智能体的可验证生成溯源",
+      "canonical_evidence": "工具使用型智能体的可验证生成溯源",
+      "llm_tldr_en": "TRACER provides a framework for claim-level provenance in multimodal tool-using agents to improve verifiability.",
+      "llm_tldr_cn": "TRACER为多模态工具智能体提供声明级溯源，解决了工具使用过程难以验证的问题。",
+      "llm_tldr": "TRACER为多模态工具智能体提供声明级溯源，解决了工具使用过程难以验证的问题。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "tool augmented and retrieval augmented multi agent LLM systems",
+      "matched_requirement_id": "req-20",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.09934v1"
+    },
+    {
+      "id": "2605.10480v1",
+      "title": "ASIA: an Autonomous System Identification Agent",
+      "abstract": "Over the years, research in system identification has provided a rich set of methods for learning dynamical models, together with well-established theoretical guarantees. In practice, however, the choice of model class, training algorithm, and hyperparameter tuning is still largely left to empirical trial-and-error, requiring substantial expert time and domain experience. Motivated by recent advances in agentic artificial intelligence, we present ASIA, a framework that delegates this iterative search to a large language model acting as an autonomous coding agent. Building on existing agentic platforms, ASIA closes the loop between hypothesis, implementation, and evaluation without human intervention, requiring only a plain-English description of the identification problem. We conduct an empirical study of ASIA on two system identification benchmarks and analyse the agent's search behaviour, the architectures and training strategies it discovers, and the quality of the resulting models. We also discuss the potential of the approach and its current limitations, including implicit test leakage, reduced methodological transparency, and reproducibility concerns.",
+      "authors": [
+        "Dario Piga",
+        "Marco Forgione"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-11T12:41:21+00:00",
+      "link": "https://arxiv.org/pdf/2605.10480v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Autonomous system identification agent framework using LLMs",
+      "llm_evidence_cn": "使用LLM的自主系统识别智能体框架",
+      "llm_evidence": "使用LLM的自主系统识别智能体框架",
+      "canonical_evidence": "使用LLM的自主系统识别智能体框架",
+      "llm_tldr_en": "ASIA is an agentic framework that uses LLMs to autonomously identify dynamical models from descriptions.",
+      "llm_tldr_cn": "ASIA是一个智能体框架，利用LLM根据描述自主识别动力学模型。",
+      "llm_tldr": "ASIA是一个智能体框架，利用LLM根据描述自主识别动力学模型。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.10480v1"
+    },
+    {
+      "id": "2605.09942v1",
+      "title": "HAGE: Harnessing Agentic Memory via RL-Driven Weighted Graph Evolution",
+      "abstract": "Memory retrieval in agentic large language model (LLM) systems is often treated as a static lookup problem, relying on flat vector search or fixed binary relational graphs. However, fixed graph structures cannot capture the varying strength, confidence, and query-dependent relevance of relationships between events. In this paper, we propose HAGE, a weighted multi-relational memory framework that reconceptualizes retrieval as sequential, query-conditioned traversal over a unified relational memory graph. Memory is organized as relation-specific graph views over shared memory nodes, where each edge is associated with a trainable relation feature vector encoding multiple relational signals. Given a query, an LLM-based classifier identifies the relational intent, and a routing network dynamically modulates the corresponding dimensions of the edge embedding. Traversal scores are computed via a learned combination of semantic similarity and these query-conditioned edge representations. This allows memory traversal to prioritize high-utility relational paths while softly suppressing noisy or weakly relevant connections. Beyond adaptive traversal, HAGE further introduces a reinforcement learning-based training framework that jointly optimizes routing behavior and edge representations using downstream tasks. Finally, empirical results demonstrate improved long-horizon reasoning accuracy and a favorable accuracy-efficiency trade-off compared to state-of-the-art agentic memory systems. Our code is available at https://github.com/FredJiang0324/HAGE_MVPReview.",
+      "authors": [
+        "Dongming Jiang",
+        "Yi Li",
+        "Guanpeng Li",
+        "Qiannan Li",
+        "Bingzhe Li"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-11T03:41:18+00:00",
+      "link": "https://arxiv.org/pdf/2605.09942v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "weighted multi-relational memory framework for agentic LLM systems",
+      "llm_evidence_cn": "智能体LLM系统的加权多关系记忆框架",
+      "llm_evidence": "智能体LLM系统的加权多关系记忆框架",
+      "canonical_evidence": "智能体LLM系统的加权多关系记忆框架",
+      "llm_tldr_en": "Proposes HAGE, a framework using RL-driven graph evolution to improve memory retrieval for AI agents.",
+      "llm_tldr_cn": "提出HAGE框架，利用强化学习驱动的图演化来改进AI智能体的记忆检索。",
+      "llm_tldr": "提出HAGE框架，利用强化学习驱动的图演化来改进AI智能体的记忆检索。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.09942v1"
+    },
+    {
+      "id": "2605.10787v1",
+      "title": "ComplexMCP: Evaluation of LLM Agents in Dynamic, Interdependent, and Large-Scale Tool Sandbox",
+      "abstract": "Current LLM agents are proficient at calling isolated APIs but struggle with the \"last mile\" of commercial software automation. In real-world scenarios, tools are not independent; they are atomic, interdependent, and prone to environmental noise. We introduce $\\textbf{ComplexMCP}$, a benchmark designed to evaluate agents in these rigorous conditions. Built on the Model Context Protocol (MCP), $\\textbf{ComplexMCP}$ provides over 300 meticulously tested tools derived from 7 stateful sandboxes, ranging from office suites to financial systems. Unlike existing datasets, our benchmark utilizes a seed-driven architecture to simulate dynamic environment states and unpredictable API failures, ensuring a deterministic yet diverse evaluation.   We evaluate various LLMs across full-context and RAG paradigms, revealing a stark performance gap: even top-tier models fail to exceed a 60% success rate, far trailing human performance 90%. Granular trajectory analysis identifies three fundamental bottlenecks: (1) $\\textbf{tool retrieval saturation}$ as action spaces scale; (2) $\\textbf{over-confidence}$, where agents skip essential environment verifications; and (3) $\\textbf{strategic defeatism}$, a tendency to rationalize failure rather than pursuing recovery. These findings underscore the insufficiency of current agents for interdependent workflows, positioning $\\textbf{ComplexMCP}$ as a critical testbed for the next generation of resilient autonomous systems.",
+      "authors": [
+        "Yuanyang Li",
+        "Xue Yang",
+        "Longyue Wang",
+        "Weihua Luo",
+        "Hongyang Chen"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.SE"
+      ],
+      "published": "2026-05-11T16:20:51+00:00",
+      "link": "https://arxiv.org/pdf/2605.10787v1",
+      "tags": [
+        "keyword:MALM",
+        "query:MALM"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "benchmark for LLM agents in large-scale tool sandboxes",
+      "llm_evidence_cn": "大规模工具沙箱中的LLM智能体基准测试",
+      "llm_evidence": "大规模工具沙箱中的LLM智能体基准测试",
+      "canonical_evidence": "大规模工具沙箱中的LLM智能体基准测试",
+      "llm_tldr_en": "Introduces ComplexMCP to evaluate LLM agents in dynamic, interdependent, and large-scale tool environments.",
+      "llm_tldr_cn": "引入ComplexMCP，用于在动态、相互依赖的大规模工具环境中评估LLM智能体。",
+      "llm_tldr": "引入ComplexMCP，用于在动态、相互依赖的大规模工具环境中评估LLM智能体。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.10787v1"
+    },
+    {
+      "id": "2605.10268v1",
+      "title": "MemReread: Enhancing Agentic Long-Context Reasoning via Memory-Guided Rereading",
+      "abstract": "To tackle long-context reasoning tasks without the quadratic complexity of standard attention mechanisms, approaches based on agent memory have emerged, which typically maintain a dynamically updated memory when linearly processing document chunks. To mitigate the potential loss of latent evidence in this memorize-while-reading paradigm, recent works have integrated retrieval modules that allow agents to recall information previously discarded during memory overwriting. However, retrieval-based recall suffers from both evidence loss during memory formation and interference induced by invalid queries. To overcome these limitations, we propose MemReread. Built upon streaming reading, MemReread circumvents intermediate retrieval. It triggers question decomposition and rereading when the final memory is insufficient, enabling the recovery of indirect facts that were prematurely discarded. This design supports non-linear reasoning while preserving the inherent logical flow of document comprehension. To further enhance practicality, we introduce a reinforcement learning framework that enhances length extrapolation capability while dynamically determining the number of rereading passes based on task complexity, thereby flexibly controlling computational overhead. Extensive experiments demonstrate that MemReread consistently outperforms baseline frameworks on long-context reasoning tasks, while maintaining linear time complexity with respect to context length.",
+      "authors": [
+        "Baibei Ji",
+        "Xiaoyang Weng",
+        "Juntao Li",
+        "Zecheng Tang",
+        "Yihang Lou",
+        "Min Zhang"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-05-11T09:30:59+00:00",
+      "link": "https://arxiv.org/pdf/2605.10268v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "agentic long-context reasoning",
+      "llm_evidence_cn": "代理式长文本推理",
+      "llm_evidence": "代理式长文本推理",
+      "canonical_evidence": "代理式长文本推理",
+      "llm_tldr_en": "MemReread enhances agentic long-context reasoning via memory-guided rereading without retrieval modules.",
+      "llm_tldr_cn": "MemReread 通过记忆引导的重读机制增强智能体的长文本推理能力，无需检索模块。",
+      "llm_tldr": "MemReread 通过记忆引导的重读机制增强智能体的长文本推理能力，无需检索模块。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.10268v1"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.10380v1",
+      "title": "Agent-X: Full Pipeline Acceleration of On-device AI Agents",
+      "abstract": "LLM-based agents deliver state-of-the-art performance across tasks but incur high end-to-end latency on edge devices. We introduce Agent-X, a software-only, accuracy-preserving framework that accelerates both the prefill and decode stages of on-device agent workloads. Agent-X's two key components rewrite prompts to leverage prefix caching tailored to agent-specific input-token patterns and enable LLM-free speculative decoding for fast token generation with minimal overhead. On representative agentic workloads, Agent-X achieves a 1.61x end-to-end speedup in real systems with no accuracy loss and can be seamlessly integrated into existing on-device AI agents. To the best of our knowledge, ours is the first to systematically characterize and eliminate latency bottlenecks in on-device agents.",
+      "authors": [
+        "Jinha Chung",
+        "Byeongjun Shin",
+        "Jiin Kim",
+        "Minsoo Rhu"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-11T11:23:38+00:00",
+      "link": "https://arxiv.org/pdf/2605.10380v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "acceleration framework for on-device LLM-based agents",
+      "llm_evidence_cn": "端侧大语言模型智能体的加速框架",
+      "llm_evidence": "端侧大语言模型智能体的加速框架",
+      "canonical_evidence": "端侧大语言模型智能体的加速框架",
+      "llm_tldr_en": "Presents Agent-X, a framework to reduce latency for LLM agents on edge devices without losing accuracy.",
+      "llm_tldr_cn": "提出了 Agent-X 框架，旨在不损失准确性的情况下降低边缘设备上 LLM 智能体的延迟。",
+      "llm_tldr": "提出了 Agent-X 框架，旨在不损失准确性的情况下降低边缘设备上 LLM 智能体的延迟。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.10380v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.10870v1",
+      "title": "Remember the Decision, Not the Description: A Rate-Distortion Framework for Agent Memory",
+      "abstract": "Long-horizon language agents must operate under limited runtime memory, yet existing memory mechanisms often organize experience around descriptive criteria such as relevance, salience, or summary quality. For an agent, however, memory is valuable not because it faithfully describes the past, but because it preserves the distinctions between histories that must remain separated under a fixed budget to support good decisions. We cast this as a decision-centric rate-distortion problem, measuring memory quality by the loss in achievable decision quality induced by compression. This yields an exact forgetting boundary for what can be safely forgotten, and a memory-distortion frontier characterizing the optimal tradeoff between memory budget and decision quality. Motivated by this decision-centric view of memory, we propose DeMem, an online memory learner that refines its partition only when data certify that a shared state would induce decision conflict, and prove near-minimax regret guarantees. On both controlled synthetic diagnostics and long-horizon conversational benchmarks, DeMem yields consistent gains under the same runtime budget, supporting the principle that memory should preserve the distinctions that matter for decisions, not descriptions.",
+      "authors": [
+        "Mingxi Zou",
+        "Zhihan Guo",
+        "Langzhang Liang",
+        "Zhuo Wang",
+        "Qifan Wang",
+        "Qingsong Wen",
+        "Irwin King",
+        "Lizhen Qu",
+        "Zenglin Xu"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-11T17:20:58+00:00",
+      "link": "https://arxiv.org/pdf/2605.10870v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "decision-centric rate-distortion framework for agent memory",
+      "llm_evidence_cn": "以决策为中心的智能体记忆率失真框架",
+      "llm_evidence": "以决策为中心的智能体记忆率失真框架",
+      "canonical_evidence": "以决策为中心的智能体记忆率失真框架",
+      "llm_tldr_en": "Proposes a decision-centric memory framework for long-horizon language agents to optimize memory usage.",
+      "llm_tldr_cn": "为长程语言智能体提出了一种以决策为中心的记忆框架，以优化内存使用。",
+      "llm_tldr": "为长程语言智能体提出了一种以决策为中心的记忆框架，以优化内存使用。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.10870v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.11135v1",
+      "title": "Control Charts for Multi-agent Systems",
+      "abstract": "Generative agents have proven to be powerful assistants in a wide variety of contexts. Given this success, users are now deploying agents with minimal restrictions in open ended, multi-agent environments. Current methods for monitoring the dynamics of open-ended multi-agent systems are limited to qualitative inspection. In this paper, we extend the process-theoretic notion of adaptive control charts to multi-agent systems to enable automated monitoring. Using simulation, we demonstrate that adaptive control charts are necessary for monitoring multi-agent systems that can learn from their environment. We further demonstrate, both empirically and theoretically, that adaptive control charts are susceptible to adversarial agents that defect sufficiently slowly. These results illustrate a fundamental tradeoff in multi-agent system control: either agents in a system cannot learn or the system is susceptible to adversaries.",
+      "authors": [
+        "Hayden Helm",
+        "Carey Priebe",
+        "Brandon Duderstadt"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-05-11T18:42:12+00:00",
+      "link": "https://arxiv.org/pdf/2605.11135v1",
+      "tags": [
+        "keyword:MALM",
+        "query:MALM"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "monitoring dynamics of multi-agent systems",
+      "llm_evidence_cn": "多智能体系统动态监控",
+      "llm_evidence": "多智能体系统动态监控",
+      "canonical_evidence": "多智能体系统动态监控",
+      "llm_tldr_en": "Adapts control charts to monitor and detect adversarial behavior in open-ended multi-agent LLM environments.",
+      "llm_tldr_cn": "将控制图应用于多智能体系统，以监控和检测开放式大模型环境中的对抗行为。",
+      "llm_tldr": "将控制图应用于多智能体系统，以监控和检测开放式大模型环境中的对抗行为。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "multi-agent large language model frameworks and systems",
+      "matched_requirement_id": "req-11",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.11135v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.11169v1",
+      "title": "OLIVIA: Online Learning via Inference-time Action Adaptation for Decision Making in LLM ReAct Agents",
+      "abstract": "Large language model agents interleave reasoning, action selection, and observation to solve sequential decision-making tasks. In deployed settings where agents repeatedly handle related multi-step tasks, small action-selection errors can accumulate into wasted tool calls, latency, and reduced reliability. Despite this need for deployment-time improvement, existing inference-time adaptation methods for LLM agents mainly rely on prompting or retrieval, which influence behavior indirectly through context manipulation. For ReAct-style agents, such approaches do not expose an explicit decision layer that can score candidate actions, represent uncertainty, or be updated online from action-level feedback. As a result, they provide limited support for trackable, fine-grained, and uncertainty-aware adaptation during deployment. We propose OLIVIA, an inference-time action adaptation framework for ReAct-style agents. OLIVIA models the LLM's final action-selection layer as a contextual linear bandit over candidate actions, with frozen hidden states as decision contexts. This choice is particularly suitable for deployment because it adapts behavior directly at the action-selection interface, preserves the underlying reasoning process, and provides explicit uncertainty estimates and lightweight online updates from action-level feedback. With upper-confidence-bound exploration, OLIVIA improves the policy sample-efficiently with minimal computational overhead. We instantiate OLIVIA on four benchmarks and show that it consistently improves task performance over static ReAct and prompt-based inference-time baselines. Our results suggest that explicit online decision layers provide an effective alternative to purely prompt- or retrieval-based adaptation for LLM agents during deployment.",
+      "authors": [
+        "Sheldon Yu",
+        "Junda Wu",
+        "Xintong Li",
+        "Nikki Lijing Kuang",
+        "Sizhe Zhou",
+        "Tong Yu",
+        "Jiawei Han",
+        "Jingbo Shang",
+        "Julian McAuley"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-11T19:28:20+00:00",
+      "link": "https://arxiv.org/pdf/2605.11169v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "decision making in LLM ReAct agents",
+      "llm_evidence_cn": "LLM ReAct 智能体中的决策制定",
+      "llm_evidence": "LLM ReAct 智能体中的决策制定",
+      "canonical_evidence": "LLM ReAct 智能体中的决策制定",
+      "llm_tldr_en": "Proposes OLIVIA for online action adaptation in LLM agents to improve sequential decision-making reliability.",
+      "llm_tldr_cn": "提出 OLIVIA 框架，通过推理时动作自适应提升 LLM 智能体在连续决策任务中的可靠性。",
+      "llm_tldr": "提出 OLIVIA 框架，通过推理时动作自适应提升 LLM 智能体在连续决策任务中的可靠性。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.11169v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.11388v1",
+      "title": "Deep Reasoning in General Purpose Agents via Structured Meta-Cognition",
+      "abstract": "Humans intuitively solve complex problems by flexibly shifting among reasoning modes: they plan, execute, revise intermediate goals, resolve ambiguity through associative judgment, and apply formal procedures to well-specified subproblems. Current LLM agents lack this flexibility, as their scaffolds hard-code such reasoning decisions in advance. These scaffolds are effective when their prescribed structure matches the task, but brittle when solving the task requires adapting the structure of reasoning itself. We introduce Deep Reasoning -- an inference-time approach for constructing task-specific scaffolds through structured meta-reasoning. Deep Reasoning uses a formal language that represents meta-reasoning as executable decompositions over associative inference, formal computation, and recursive subproblem solving, enabling decomposition principles to be encoded as in-context examples that guide test-time scaffold construction. We instantiate this approach in a general-purpose agent (DOLORES) that distributes complex tasks across more controlled reasoning threads. We evaluate it against state-of-the-art scaffolding methods across four hard benchmarks: multi-hop reasoning, long-chain question answering, long-context aggregation, and deep research-style information seeking. DOLORES outperforms all evaluated scaffolds across three model sizes and two model families, improving over the strongest evaluated scaffold baseline by 24.8% on average. DOLORES distributes cognition across structured, lower-load reasoning threads, thereby reducing premature termination and hallucinations. This advantage can even bridge the scaling gap, with an 8B version surpassing all evaluated 32B baselines from the same family in more than half the settings. These results point toward future agentic systems that treat scaffolding as adaptive reasoning, constructing the structure each task requires just-in-time.",
+      "authors": [
+        "Dean Light",
+        "Michael Theologitis",
+        "Kshitish Ghate",
+        "Shuyue Stella Li",
+        "Benjamin Newman",
+        "Chirag Shah",
+        "Aylin Caliskan",
+        "Pang Wei Koh",
+        "Dan Suciu",
+        "Yulia Tsvetkov"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-05-12T01:21:37+00:00",
+      "link": "https://arxiv.org/pdf/2605.11388v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "inference-time approach for task-specific scaffolds in LLM agents",
+      "llm_evidence_cn": "大语言模型智能体任务特定支架的推理时方法",
+      "llm_evidence": "大语言模型智能体任务特定支架的推理时方法",
+      "canonical_evidence": "大语言模型智能体任务特定支架的推理时方法",
+      "llm_tldr_en": "Introduces Deep Reasoning to allow LLM agents to adaptively structure their reasoning processes.",
+      "llm_tldr_cn": "引入深度推理，使大语言模型智能体能够自适应地构建其推理过程结构。",
+      "llm_tldr": "引入深度推理，使大语言模型智能体能够自适应地构建其推理过程结构。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.11388v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.12061v1",
+      "title": "SAGE: A Self-Evolving Agentic Graph-Memory Engine for Structure-Aware Associative Memory",
+      "abstract": "Long-term memory is becoming a central bottleneck for language agents. Exsting RAG and GraphRAG systems largely treat memory graphs as static retrieval middleware, which limits their ability to recover complete evidence chains from partial cues, exploit reusable graph-structrual roles, and improve the memory itself through downstream feedback. We introduce SAGE, a Self-evolving Agentic Graph-memory Engine that models graph memory as a dynamic long-term memory substrate. SAGE couples two roles: a memory writer that incrementally constucts structured graph memory from interaction histories, and a Graph Foundation Model-based memory reader to perform retrieval and provide feedback to the memory writer. We provide rigorooous theoretical annalyses supporting the framework. Across multi-hop QA, open-domain retireval, domain-specific review QA, and long-term agent-memory benchmarks, SAGE improves evidence recovery, answer grounding, and retrieval efficiency: after two self-evolution rounds, it achieves the best average rank on multi-hop QA; in zero-shot open-domain transfer, it reaches 82.5/91.6 Recall@2/5 on NQ. Further results on LongMemEval and HaluMem show that traning and reader-writer feedback improve multiple long-term memory and hallucination-diagnostic metrics, suggesting that self-evolving, structure-aware graph memory is a promising foundation for robust long-horizon language agents.",
+      "authors": [
+        "Juntong Wang",
+        "Haoyue Zhao",
+        "guanghui Pan",
+        "Xiyuan Wang",
+        "Yanbo Wang",
+        "Qiyan Deng",
+        "Muhan Zhang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-12T12:47:43+00:00",
+      "link": "https://arxiv.org/pdf/2605.12061v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "agentic graph-memory engine for language agents",
+      "llm_evidence_cn": "语言智能体的智能图记忆引擎",
+      "llm_evidence": "语言智能体的智能图记忆引擎",
+      "canonical_evidence": "语言智能体的智能图记忆引擎",
+      "llm_tldr_en": "Introduces a self-evolving graph-memory engine to improve long-term memory for LLM agents.",
+      "llm_tldr_cn": "引入了一种自进化图记忆引擎，以增强大语言模型智能体的长期记忆能力。",
+      "llm_tldr": "引入了一种自进化图记忆引擎，以增强大语言模型智能体的长期记忆能力。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.12061v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.12460v1",
+      "title": "Multi-Stream LLMs: Unblocking Language Models with Parallel Streams of Thoughts, Inputs and Outputs",
+      "abstract": "The continued improvements in language model capability have unlocked their widespread use as drivers of autonomous agents, for example in coding or computer use applications. However, the core of these systems has not changed much since early instruction-tuned models like ChatGPT. Even advanced AI agents function on message exchange formats, successively exchanging messages with users, systems, with itself (i.e. chain-of-thought) and tools in a single stream of computation. This bottleneck to a single stream in chat models leads to a number of limitations: the agent cannot act (generate output) while reading, and in reverse, cannot react to new information while writing. Similarly, the agent cannot act while thinking and cannot think while reading or acting on information.   In this work, we show that models can be unblocked by switching from instruction-tuning for sequential message formats to instruction-tuning for multiple, parallel streams of computation, splitting each role into a separate stream. Every forward pass of the language model then simultaneously reads from multiple input streams and generates tokens in multiple output streams, all of which causally depend on earlier timesteps. We argue that this data-driven change remedies a number of usability limitations as outlined above, improves model efficiency through parallelization, improves model security through better separation of concerns and can further improve model monitorability.",
+      "authors": [
+        "Guinan Su",
+        "Yanwu Yang",
+        "Xueyan Li",
+        "Jonas Geiping"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CL"
+      ],
+      "published": "2026-05-12T17:47:41+00:00",
+      "link": "https://arxiv.org/pdf/2605.12460v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "parallel streams of thoughts for autonomous agents",
+      "llm_evidence_cn": "自主智能体的并行思维流",
+      "llm_evidence": "自主智能体的并行思维流",
+      "canonical_evidence": "自主智能体的并行思维流",
+      "llm_tldr_en": "Enables LLM agents to process multiple streams of thought and action simultaneously to remove bottlenecks.",
+      "llm_tldr_cn": "使大语言模型智能体能够同时处理多个思维和行动流，以消除性能瓶颈。",
+      "llm_tldr": "使大语言模型智能体能够同时处理多个思维和行动流，以消除性能瓶颈。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.12460v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.12784v1",
+      "title": "ToolMol: Evolutionary Agentic Framework for Multi-objective Drug Discovery",
+      "abstract": "Advances in large language models (LLMs) have recently opened new and promising avenues for small-molecule drug discovery. Yet existing LLM-based approaches for molecular generation often suffer from high rates of invalid and low-quality ligand candidates, a result of the syntactic limitations of current models with regard to molecular strings. In this paper, we introduce $\\texttt{ToolMol}$, an evolutionary agentic framework for de novo drug design. $\\texttt{ToolMol}$ combines a multi-objective genetic algorithm with an agentic LLM operator that iteratively updates the ligand population. We build a comprehensive toolbox of RDKit-backed functions that allows our agentic operator to consisently make precise ligand modifications. $\\texttt{ToolMol}$ achieves state-of-the-art performance on multi-objective property optimization tasks, discovering drug-like and synthesizable ligands that have $>10\\%$ stronger predicted binding affinity compared to existing methods, evaluated on three protein targets. $\\texttt{ToolMol}$ ligands additionally achieve state-of-the-art results in gold-standard Absolute Binding Free Energy scores, gaining over existing methods by over $35\\%$. By studying chain-of-thought reasoning traces, we observe that tool-calling enables the model to more faithfully execute its planned modifications, efficiently exploiting the strong chemical prior knowledge in LLMs.",
+      "authors": [
+        "Andrew Y. Zhou",
+        "Sharvaree Vadgama",
+        "Sumanth Varambally",
+        "Peter Eckmann",
+        "Michael K. Gilson",
+        "Rose Yu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.NE",
+        "q-bio.QM"
+      ],
+      "published": "2026-05-12T21:58:14+00:00",
+      "link": "https://arxiv.org/pdf/2605.12784v1",
+      "tags": [
+        "keyword:MALM"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Evolutionary agentic framework for multi-objective drug discovery",
+      "llm_evidence_cn": "用于多目标药物发现的进化智能体框架",
+      "llm_evidence": "用于多目标药物发现的进化智能体框架",
+      "canonical_evidence": "用于多目标药物发现的进化智能体框架",
+      "llm_tldr_en": "ToolMol is an agentic framework combining genetic algorithms with LLMs for molecular drug design.",
+      "llm_tldr_cn": "ToolMol是一个将遗传算法与LLM结合的智能体框架，用于分子药物设计。",
+      "llm_tldr": "ToolMol是一个将遗传算法与LLM结合的智能体框架，用于分子药物设计。",
+      "llm_tags": [
+        "query:malm:composite"
+      ],
+      "matched_query_tag": "query:malm:composite",
+      "matched_query_text": "Papers central to 请检索近五年关于多智能体大语言模型框架的高水平论文, especially work that connects or combines: multi-agent large language model frameworks and systems; agent-based frameworks for large language models; collaborative large language model agents working together; multi-agent systems with large language model components; large language model based agents and their architectures; communication protocols between LLM-based agents; frameworks for multi agent large language model systems; architectures enabling collaboration among LLM agents; multi agent LLM frameworks for complex reasoning and decision making; tool augmented and retrieval augmented multi agent LLM systems.",
+      "matched_requirement_id": "req-composite-malm",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.12784v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.12863v1",
+      "title": "Language-Based Agent Control",
+      "abstract": "This paper introduces language-based agent control (LBAC), a new programming model for agentic applications that brings techniques from programming languages and language-based security to the problem of agent control. In conventional programming, combinations of static typing and runtime enforcement have long been used to guarantee that well-typed programs satisfy user-specified policies, including policies for access control, information flow, data provenance, and more. The key idea behind LBAC is to extend these guarantees to agentic applications by requiring agents to generate programs that are themselves well typed in the context of the surrounding scaffolding code. Unsafe programs are rejected by the type-checker before execution, allowing policies to apply uniformly across the entire application, including both agent-generated behavior and developer-written scaffolding. At the same time, LBAC preserves substantial expressiveness: agents may perform arbitrary side-effect-free computation and recursively invoke subagents, which retain full tool access subject to the same -- or potentially more restrictive -- policies. We demonstrate LBAC with three case studies: I/O sandboxing via filesystem capabilities, data provenance, and information-flow control.",
+      "authors": [
+        "Timothy Zhou",
+        "Loris D'Antoni",
+        "Nadia Polikarpova"
+      ],
+      "primary_category": "cs.PL",
+      "categories": [
+        "cs.PL",
+        "cs.AI",
+        "cs.CR"
+      ],
+      "published": "2026-05-13T01:21:05+00:00",
+      "link": "https://arxiv.org/pdf/2605.12863v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "programming model for agentic applications",
+      "llm_evidence_cn": "代理应用程序的编程模型",
+      "llm_evidence": "代理应用程序的编程模型",
+      "canonical_evidence": "代理应用程序的编程模型",
+      "llm_tldr_en": "Introduces language-based agent control to guarantee policy satisfaction in agentic systems.",
+      "llm_tldr_cn": "引入了基于语言的代理控制，以确保代理系统满足预设策略。",
+      "llm_tldr": "引入了基于语言的代理控制，以确保代理系统满足预设策略。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.12863v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.12894v1",
+      "title": "Beyond Cooperative Simulators: Generating Realistic User Personas for Robust Evaluation of LLM Agents",
+      "abstract": "Large Language Model (LLM) agents are increasingly deployed in settings where they interact with a wide variety of people, including users who are unclear, impatient, or reluctant to share information. However, collecting real interaction data at scale remains expensive. The field has turned to LLM-based user simulators as stand-ins, but these simulators inherit the behavior of their underlying models: cooperative and homogeneous. As a result, agents that appear strong in simulation often fail under the unseen, diverse communication patterns of real users. To narrow this gap, we introduce Persona Policies (PPol), a plug-and-play control layer that induces realistic behavioral variation in user simulators while preserving the original task goals. Rather than hand-crafting personas, we cast persona generation as an LLM-driven evolutionary program search that optimizes a Python generator to discover behaviors and translate them into task-preserving roleplay policies. Candidate generators are guided by a multi-objective fitness score combining human-likeness with broad coverage of human behavioral patterns. Once optimized, the generator produces a diverse population of human-like personas for any task in the domain. Across tau^2-bench retail and airline domains, evolved PPol programs yield 33-62% absolute gains in fitness score over the baseline simulator. In a blinded evaluation, annotators rated PPol-conditioned users as human 80.4% of the time, close to real human traces and nearly twice as frequently as baseline simulators. Agents trained with PPol are more robust to challenging, out-of-distribution behaviors, improving task success by +17% relative to training only on existing simulated interactions. This offers a novel approach to strengthen simulator-based evaluation and training without changing tasks or rewards.",
+      "authors": [
+        "Harshita Chopra",
+        "Kshitish Ghate",
+        "Aylin Caliskan",
+        "Tadayoshi Kohno",
+        "Chirag Shah",
+        "Natasha Jaques"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-05-13T02:16:51+00:00",
+      "link": "https://arxiv.org/pdf/2605.12894v1",
+      "tags": [
+        "keyword:MALM",
+        "query:MALM"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "generating realistic user personas for LLM agents",
+      "llm_evidence_cn": "为大模型智能体生成真实的用户画像",
+      "llm_evidence": "为大模型智能体生成真实的用户画像",
+      "canonical_evidence": "为大模型智能体生成真实的用户画像",
+      "llm_tldr_en": "Introduces Persona Policies to create diverse user simulators for robust evaluation of LLM agents.",
+      "llm_tldr_cn": "引入Persona Policies来创建多样化的用户模拟器，用于大模型智能体的鲁棒性评估。",
+      "llm_tldr": "引入Persona Policies来创建多样化的用户模拟器，用于大模型智能体的鲁棒性评估。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.12894v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.13119v1",
+      "title": "Towards Long-horizon Embodied Agents with Tool-Aligned Vision-Language-Action Models",
+      "abstract": "Vision-language-action (VLA) models are effective robot action executors, but they remain limited on long-horizon tasks due to the dual burden of extended closed-loop planning and diverse physical operations. We therefore propose VLAs-as-Tools, a strategy that distributes this burden across a high-level vision language model (VLM) agent for temporal reasoning and a family of specialized VLA tools for diverse local physical operations. The VLM handles scene analysis, global planning, and recovery, while each VLA tool executes a bounded subtask. To tightly couple agent planning with VLA tool execution in long-horizon tasks, we introduce a VLA tool-family interface that exposes explicit tool selection and in-execution progress feedback, enabling efficient event-triggered agent replanning without continuous agent polling. To obtain diverse specialized VLA tools that faithfully follow agent invocations, we further propose Tool-Aligned Post-Training (TAPT), which constructs invocation-aligned training units for instruction following and adopts tool-family residual adapters for efficient tool specialization. Experiments show that VLAs-as-Tools improves the success rate of $π_{0.5}$ by 4.8 points on LIBERO-Long and 23.1 points on RoboTwin, and further enhances invocation fidelity by 15.0 points as measured by Non-biased Rate. Code will be released.",
+      "authors": [
+        "Zixing Lei",
+        "Changxing Liu",
+        "Yichen Xiong",
+        "Minhao Xiong",
+        "Yuanzhuo Ding",
+        "Zhipeng Zhang",
+        "Weixin Li",
+        "Siheng Chen"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI",
+        "cs.CV"
+      ],
+      "published": "2026-05-13T07:40:34+00:00",
+      "link": "https://arxiv.org/pdf/2605.13119v1",
+      "tags": [
+        "keyword:MALM",
+        "query:MALM"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "multi-agent strategy with VLM and VLA tools",
+      "llm_evidence_cn": "结合VLM和VLA工具的多智能体策略",
+      "llm_evidence": "结合VLM和VLA工具的多智能体策略",
+      "canonical_evidence": "结合VLM和VLA工具的多智能体策略",
+      "llm_tldr_en": "Proposes a multi-agent strategy distributing long-horizon tasks between a VLM agent and specialized VLA tools.",
+      "llm_tldr_cn": "提出一种多智能体策略，在VLM智能体和专用VLA工具之间分配长程任务。",
+      "llm_tldr": "提出一种多智能体策略，在VLM智能体和专用VLA工具之间分配长程任务。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "multi-agent systems with large language model components",
+      "matched_requirement_id": "req-14",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.13119v1",
+      "quick_tier": "8plus"
+    },
+    {
+      "id": "2605.13497v1",
+      "title": "Task-Aware Automated User Profile Generation for Recommendation Simulation Using Large Language Models",
+      "abstract": "Large Language Model (LLM)-based agent simulation has emerged as a promising approach to meet the increasing demand for real-time and rigorous evaluation in modern recommender systems. A typical LLM-driven simulation framework comprises three essential components: the profile module, memory module, and action module. However, existing studies have primarily concentrated on enhancing the memory and action modules, with limited attention to profile generation, which plays a pivotal role in ensuring realistic agent behaviours and aligning simulated interactions with real user dynamics. Moreover, the scarcity of datasets specifically designed for recommendation simulations has led to heavy reliance on manually crafted profiles, significantly limiting the scalability and generalisability of simulation frameworks across different datasets. To address these challenges, this work proposes an Automated Profile Generation Framework for Recommendation Simulation, APG4RecSim, that constructs realistic, coherent, and robust user profiles with minimal supervision. Extensive experiments on three benchmark datasets demonstrate that APG4RecSim achieves the best overall performance on discrimination, ranking, and rating tasks, improving ranking quality by up to 7% in nDCG@10 and reducing rating distribution divergence by 8% in JSD compared to existing profile-generation baselines. Beyond overall performance gains, our results show that profiles generated by APG4RecSim are resilient to popularity- and position-induced biases and maintain stable performance across datasets and different LLMs.",
+      "authors": [
+        "Xinye Wanyan",
+        "Chenglong Ma",
+        "Danula Hettiachchi",
+        "Ziqi Xu",
+        "Jeffrey Chan"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR"
+      ],
+      "published": "2026-05-13T13:20:39+00:00",
+      "link": "https://arxiv.org/pdf/2605.13497v1",
+      "tags": [
+        "keyword:MALM",
+        "keyword:法律预测",
+        "query:MALM",
+        "query:法律预测"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "LLM-based agent simulation framework",
+      "llm_evidence_cn": "基于 LLM 的智能体模拟框架",
+      "llm_evidence": "基于 LLM 的智能体模拟框架",
+      "canonical_evidence": "基于 LLM 的智能体模拟框架",
+      "llm_tldr_en": "Focuses on automated user profile generation to enhance the realism of LLM-based agent simulations.",
+      "llm_tldr_cn": "专注于自动化用户画像生成，以增强基于 LLM 的智能体模拟的真实性。",
+      "llm_tldr": "专注于自动化用户画像生成，以增强基于 LLM 的智能体模拟的真实性。",
+      "llm_tags": [
+        "query:malm"
+      ],
+      "matched_query_tag": "query:malm",
+      "matched_query_text": "large language model based agents and their architectures",
+      "matched_requirement_id": "req-15",
+      "selection_source": "carryover_cache",
+      "paper_id": "2605.13497v1",
+      "quick_tier": "8plus"
+    }
+  ]
+}

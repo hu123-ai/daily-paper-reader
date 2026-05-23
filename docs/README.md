@@ -6,8 +6,8 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-22
-- 运行时间：2026-05-22 21:29:58 UTC
+- 最新运行日期：2026-05-23
+- 运行时间：2026-05-23 21:07:26 UTC
 - 运行状态：成功
 - 本次总论文数：19
 - 精读区：7
@@ -15,71 +15,71 @@
 
 ### 今日简报（AI）
 - 今日共生成 19 篇推荐（精读 7 篇，速读 12 篇）
-- 精读：《SkillRet: A Large-Scale Benchmark for Skill Retrieval in LLM Agents》（8.0/10）, 《MemReranker: Reasoning-Aware Reranking for Agent Memory Retrieval》（8.0/10）
-- 速读：《From Agent Loops to Deterministic Graphs: Execution Lineage for Reproducible AI-Native Work》（8.0/10）, 《SkillOS: Learning Skill Curation for Self-Evolving Agents》（8.0/10）, 《Towards Autonomous Business Intelligence via Data-to-Insight Discovery Agent》（8.0/10）
+- 精读：《M2A: Synergizing Mathematical and Agentic Reasoning in Large Language Models》（8.0/10）, 《TRACER: Verifiable Generative Provenance for Multimodal Tool-Using Agents》（8.0/10）
+- 速读：《Agent-X: Full Pipeline Acceleration of On-device AI Agents》（8.0/10）, 《Remember the Decision, Not the Description: A Rate-Distortion Framework for Agent Memory》（8.0/10）, 《Control Charts for Multi-agent Systems》（8.0/10）
 - 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
-- 详情：[/202605/22/README](/202605/22/README)
+- 详情：[/202605/23/README](/202605/23/README)
 
 ### 精读区论文标签
-1. [SkillRet: A Large-Scale Benchmark for Skill Retrieval in LLM Agents](/202605/22/2605.05726v1-skillret-a-large-scale-benchmark-for-skill-retrieval-in-llm-agents)  
+1. [M2A: Synergizing Mathematical and Agentic Reasoning in Large Language Models](/202605/23/2605.09879v1-m2a-synergizing-mathematical-and-agentic-reasoning-in-large-language-models)  
    标签：评分：8.0/10、query:malm
-   evidence：大语言模型智能体的技能检索
-2. [MemReranker: Reasoning-Aware Reranking for Agent Memory Retrieval](/202605/22/2605.06132v2-memreranker-reasoning-aware-reranking-for-agent-memory-retrieval)  
+   evidence：协同大语言模型中的数学与智能体推理
+2. [TRACER: Verifiable Generative Provenance for Multimodal Tool-Using Agents](/202605/23/2605.09934v1-tracer-verifiable-generative-provenance-for-multimodal-tool-using-agents)  
    标签：评分：8.0/10、query:malm
-   evidence：智能体记忆检索的推理感知重排序
-3. [When Agents Overtrust Environmental Evidence: An Extensible Agentic Framework for Benchmarking Evidence-Grounding Defects in LLM Agents](/202605/22/2605.08828v1-when-agents-overtrust-environmental-evidence-an-extensible-agentic-framework-for-benchmarking-evidence-grounding-defects-in-llm-agents)  
+   evidence：工具使用型智能体的可验证生成溯源
+3. [HAGE: Harnessing Agentic Memory via RL-Driven Weighted Graph Evolution](/202605/23/2605.09942v1-hage-harnessing-agentic-memory-via-rl-driven-weighted-graph-evolution)  
    标签：评分：8.0/10、query:malm
-   evidence：用于基准测试大模型智能体证据落地能力的框架
-4. [OPT-BENCH: Evaluating the Iterative Self-Optimization of LLM Agents in Large-Scale Search Spaces](/202605/22/2605.08904v1-opt-bench-evaluating-the-iterative-self-optimization-of-llm-agents-in-large-scale-search-spaces)  
+   evidence：智能体LLM系统的加权多关系记忆框架
+4. [MemReread: Enhancing Agentic Long-Context Reasoning via Memory-Guided Rereading](/202605/23/2605.10268v1-memreread-enhancing-agentic-long-context-reasoning-via-memory-guided-rereading)  
    标签：评分：8.0/10、query:malm
-   evidence：评估大语言模型智能体的自我优化
-5. [PHAGE: Patent Heterogeneous Attention-Guided Graph Encoder for Representation Learning](/202605/22/2605.10073v1-phage-patent-heterogeneous-attention-guided-graph-encoder-for-representation-learning)  
-   标签：评分：8.0/10、query:q5
-   evidence：专利权利要求和法律引用的图编码器
-6. [CiteVQA: Benchmarking Evidence Attribution for Trustworthy Document Intelligence](/202605/22/2605.12882v1-citevqa-benchmarking-evidence-attribution-for-trustworthy-document-intelligence)  
-   标签：评分：8.0/10、query:profile-1
-   evidence：法律等高风险领域的证据归因
-7. [Automatic Construction of a Legal Citation Graph from 100 Million Ukrainian Court Decisions: Large-Scale Extraction, Topological Analysis, and Ontology-Driven Clustering](/202605/22/2605.15362v1-automatic-construction-of-a-legal-citation-graph-from-100-million-ukrainian-court-decisions-large-scale-extraction-topological-analysis-and-ontology-driven-clustering)  
-   标签：评分：8.0/10、query:profile-1
-   evidence：法院判决书法律引用图谱用于领域分析与预测
+   evidence：代理式长文本推理
+5. [AgentRx: A Benchmark Study of LLM Agents for Multimodal Clinical Prediction Tasks](/202605/23/2605.10286v1-agentrx-a-benchmark-study-of-llm-agents-for-multimodal-clinical-prediction-tasks)  
+   标签：评分：8.0/10、query:malm
+   evidence：用于临床预测的协作智能体框架
+6. [ASIA: an Autonomous System Identification Agent](/202605/23/2605.10480v1-asia-an-autonomous-system-identification-agent)  
+   标签：评分：8.0/10、query:malm
+   evidence：使用LLM的自主系统识别智能体框架
+7. [ComplexMCP: Evaluation of LLM Agents in Dynamic, Interdependent, and Large-Scale Tool Sandbox](/202605/23/2605.10787v1-complexmcp-evaluation-of-llm-agents-in-dynamic-interdependent-and-large-scale-tool-sandbox)  
+   标签：评分：8.0/10、query:malm
+   evidence：大规模工具沙箱中的LLM智能体基准测试
 
 ### 速读区论文标签
-1. [From Agent Loops to Deterministic Graphs: Execution Lineage for Reproducible AI-Native Work](/202605/22/2605.06365v1-from-agent-loops-to-deterministic-graphs-execution-lineage-for-reproducible-ai-native-work)  
+1. [Agent-X: Full Pipeline Acceleration of On-device AI Agents](/202605/23/2605.10380v1-agent-x-full-pipeline-acceleration-of-on-device-ai-agents)  
    标签：评分：8.0/10、query:malm
-   evidence：智能体工作流的执行模型
-2. [SkillOS: Learning Skill Curation for Self-Evolving Agents](/202605/22/2605.06614v1-skillos-learning-skill-curation-for-self-evolving-agents)  
+   evidence：端侧大语言模型智能体的加速框架
+2. [Remember the Decision, Not the Description: A Rate-Distortion Framework for Agent Memory](/202605/23/2605.10870v1-remember-the-decision-not-the-description-a-rate-distortion-framework-for-agent-memory)  
    标签：评分：8.0/10、query:malm
-   evidence：为自我进化智能体学习技能策划
-3. [Towards Autonomous Business Intelligence via Data-to-Insight Discovery Agent](/202605/22/2605.07202v1-towards-autonomous-business-intelligence-via-data-to-insight-discovery-agent)  
+   evidence：以决策为中心的智能体记忆率失真框架
+3. [Control Charts for Multi-agent Systems](/202605/23/2605.11135v1-control-charts-for-multi-agent-systems)  
    标签：评分：8.0/10、query:malm
-   evidence：复杂业务环境下的自主探索智能体
-4. [SARC: A Governance-by-Architecture Framework for Agentic AI Systems](/202605/22/2605.07728v1-sarc-a-governance-by-architecture-framework-for-agentic-ai-systems)  
+   evidence：多智能体系统动态监控
+4. [OLIVIA: Online Learning via Inference-time Action Adaptation for Decision Making in LLM ReAct Agents](/202605/23/2605.11169v1-olivia-online-learning-via-inference-time-action-adaptation-for-decision-making-in-llm-react-agents)  
    标签：评分：8.0/10、query:malm
-   evidence：工具使用型智能体的治理架构
-5. [SkillMaster: Toward Autonomous Skill Mastery in LLM Agents](/202605/22/2605.08693v2-skillmaster-toward-autonomous-skill-mastery-in-llm-agents)  
+   evidence：LLM ReAct 智能体中的决策制定
+5. [Deep Reasoning in General Purpose Agents via Structured Meta-Cognition](/202605/23/2605.11388v1-deep-reasoning-in-general-purpose-agents-via-structured-meta-cognition)  
    标签：评分：8.0/10、query:malm
-   evidence：大语言模型智能体框架中的自主技能掌握
-6. [AHD Agent: Agentic Reinforcement Learning for Automatic Heuristic Design](/202605/22/2605.08756v1-ahd-agent-agentic-reinforcement-learning-for-automatic-heuristic-design)  
+   evidence：大语言模型智能体任务特定支架的推理时方法
+6. [SAGE: A Self-Evolving Agentic Graph-Memory Engine for Structure-Aware Associative Memory](/202605/23/2605.12061v1-sage-a-self-evolving-agentic-graph-memory-engine-for-structure-aware-associative-memory)  
    标签：评分：8.0/10、query:malm
-   evidence：大模型智能体的工具集成多轮框架
-7. [Trustworthy AI: Ensuring Reliability and Accountability from Models to Agents](/202605/22/2605.08964v1-trustworthy-ai-ensuring-reliability-and-accountability-from-models-to-agents)  
+   evidence：语言智能体的智能图记忆引擎
+7. [Multi-Stream LLMs: Unblocking Language Models with Parallel Streams of Thoughts, Inputs and Outputs](/202605/23/2605.12460v1-multi-stream-llms-unblocking-language-models-with-parallel-streams-of-thoughts-inputs-and-outputs)  
    标签：评分：8.0/10、query:malm
-   evidence：在自主设置中评估大模型驱动的智能体
-8. [Containment Verification: AI Safety Guarantees Independent of Alignment](/202605/22/2605.09045v1-containment-verification-ai-safety-guarantees-independent-of-alignment)  
+   evidence：自主智能体的并行思维流
+8. [ToolMol: Evolutionary Agentic Framework for Multi-objective Drug Discovery](/202605/23/2605.12784v1-toolmol-evolutionary-agentic-framework-for-multi-objective-drug-discovery)  
    标签：评分：8.0/10、query:malm
-   evidence：在智能体框架本身中定位安全保证
-9. [FORTIS: Benchmarking Over-Privilege in Agent Skills](/202605/22/2605.09163v1-fortis-benchmarking-over-privilege-in-agent-skills)  
+   evidence：用于多目标药物发现的进化智能体框架
+9. [Language-Based Agent Control](/202605/23/2605.12863v1-language-based-agent-control)  
    标签：评分：8.0/10、query:malm
-   evidence：评估大语言模型智能体技能和架构中的过度权限问题
-10. [FORTIS: Benchmarking Over-Privilege in Agent Skills](/202605/22/2605.09163v2-fortis-benchmarking-over-privilege-in-agent-skills)  
+   evidence：代理应用程序的编程模型
+10. [Beyond Cooperative Simulators: Generating Realistic User Personas for Robust Evaluation of LLM Agents](/202605/23/2605.12894v1-beyond-cooperative-simulators-generating-realistic-user-personas-for-robust-evaluation-of-llm-agents)  
    标签：评分：8.0/10、query:malm
-   evidence：大模型智能体技能过度授权的基准测试
-11. [MACAA: Belief-Revision Multi-Agent Reasoning for Code Authorship Verification](/202605/22/2605.09421v3-macaa-belief-revision-multi-agent-reasoning-for-code-authorship-verification)  
+   evidence：为大模型智能体生成真实的用户画像
+11. [Towards Long-horizon Embodied Agents with Tool-Aligned Vision-Language-Action Models](/202605/23/2605.13119v1-towards-long-horizon-embodied-agents-with-tool-aligned-vision-language-action-models)  
    标签：评分：8.0/10、query:malm
-   evidence：基于信念修正的多智能体框架
-12. [Quantifying the Utility of User Simulators for Building Collaborative LLM Assistants](/202605/22/2605.09808v1-quantifying-the-utility-of-user-simulators-for-building-collaborative-llm-assistants)  
+   evidence：结合VLM和VLA工具的多智能体策略
+12. [Task-Aware Automated User Profile Generation for Recommendation Simulation Using Large Language Models](/202605/23/2605.13497v1-task-aware-automated-user-profile-generation-for-recommendation-simulation-using-large-language-models)  
    标签：评分：8.0/10、query:malm
-   evidence：用于交互训练的协作式大语言模型助手和用户模拟器
+   evidence：基于 LLM 的智能体模拟框架
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,677 @@
+Title: Deep Reasoning in General Purpose Agents via Structured Meta-Cognition
+
+URL Source: https://arxiv.org/pdf/2605.11388v1
+
+Published Time: Wed, 13 May 2026 00:27:44 GMT
+
+Number of Pages: 23
+
+Markdown Content:
+# Deep Reasoning in General Purpose Agents via Structured Meta-Cognition 
+
+Dean Light 1∗ Michael Theologitis 1∗ Kshitish Ghate 1∗
+
+Shuyue Stella Li 1 Benjamin Newman 1 Chirag Shah 1 Aylin Caliskan 1
+
+Pang Wei Koh 1 Dan Suciu 1 Yulia Tsvetkov 11University of Washington Seattle, WA, USA 
+
+{deanlcs, mthe, kghate}@cs.washington.edu 
+
+§ dolores 
+
+## Abstract 
+
+Humans solve complex problems by flexibly shifting among reasoning modes, often without explicit deliberation: they plan, execute, revise intermediate goals, resolve ambiguity through associative judgment, and apply formal procedures to well-specified subproblems. Current LLM agents lack this flexibility, as their scaffolds hard-code such reasoning decisions in advance through fixed inference patterns. These scaffolds are effective when their prescribed structure matches the task, but brittle when solving the task requires adapting the structure of rea-soning itself. We introduce Deep Reasoning – an inference-time approach for constructing task-specific scaffolds through structured meta-reasoning . Deep Reasoning uses a formal language that represents meta-reasoning as executable decompositions over associative inference, formal computation, and recursive sub-problem solving, enabling decomposition principles to be encoded as in-context examples that guide test-time scaffold construction. We instantiate this approach in a general-purpose agent (D OLORES ) that distributes complex tasks across smaller, more controlled reasoning threads while preserving dependencies among subprob-lems. We evaluate D OLORES against state-of-the-art scaffolding methods across four hard benchmarks: grounded multi-hop reasoning, synthetic long-chain ques-tion answering, long-context aggregation, and deep research-style information seeking. D OLORES outperforms all evaluated scaffolds across four benchmarks, three model sizes, and two model families, improving over the strongest evaluated scaffold baseline by 24.8% on average, including methods tailored to individual benchmark families. Trace and token analyses suggest that while baseline scaffolds fail by overloading individual LLM calls, D OLORES succeeds by distributing cog-nition across structured, lower-load reasoning threads, thereby reducing premature termination and hallucination. This advantage can even bridge the scaling gap, with an 8B version surpassing all evaluated 32B baselines from the same family in more than half the settings. These results point toward future agentic systems that treat scaffolding as adaptive reasoning, constructing the structure each task requires just-in-time. 
+
+## 1 Introduction 
+
+Humans intuitively solve complex problems through meta-reasoning, a cognitive process in which we model the task and environment, select appropriate problem-solving strategies, break problems                                            
+
+> ∗Equal contribution. Preprint.
+> arXiv:2605.11388v1 [cs.CL] 12 May 2026 city =llm ("The 'City by th eBay'?" )
+> courts =DOLORES (f"List all volleyball courts located in {city }." )
+> tiebreaks =dict ()
+> for court in courts :
+> scores =DOLORES (
+> f"For {court }in {city }list all its past tournament matches. "
+> )
+> tiebreaks[court] =DOLORES (
+> f"How many tie-breaks in the following volleyball scores: {scores }"
+> )
+> answer =max (tiebreaks ,key =tiebreaks .get)
+
+city  = “T he  ‘City by the Bay ’”
+
+courts  = “List all volleyball courts located in  {city }. ”
+
+scores  = “For  {court } in { city } list all its  ... ”
+
+answer  =
+
+for  court  in  courts :
+
+tiebreaks[court]  =
+
+argmax  tiebreaks 
+
+“Which volleyball court in  ‘City by the 
+
+Bay’  has ... ”
+
+The Language of Deep Reasoning 
+
+Associative 
+
+Reasoning 
+
+Formal Reasoning 
+
+Deep Reasoning 
+
+Formal decomposition 
+
+via  modeling f unction m 
+
+“... ”
+
+Which volleyball court in the  ‘City by the Bay ’ has hosted the most tournament matches that went to tie-break? 
+
+Example Task 
+
+(c) 
+
+(a)  (b)  Thought Process 
+
+“How many tie-breaks in  ... ”
+
+Okay, the ‘City by the Bay’ refers to San Francisco. 
+
+I will then  list all the volleyball courts in San Francisco. 
+
+For each court,  I’ll look  up its past tournament matches, 
+
+see how many went to tie-break , and pick the one 
+
+with the most. 
+
+1
+
+3 4
+
+5 6
+
+2
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+“... ”
+
+“... ”
+
+: ::                    
+
+> answer =DOLORES(
+> "Which volleyball court "
+> "in the 'City by the "
+> "Bay' has hosted the most "
+> "tournament matches that "
+> "went to tie-break?"
+> )
+
+DOLORES: Deep Layered Reasoning Scaffold 
+
+> LLM
+
+(d) 
+
+🤖  LLM 
+
+> 🤖
+> LLM
+> 🤖
+> LLM
+> 🤖
+
+:Figure 1: Deep Reasoning leverages human meta-reasoning traces to build “just-in-time” scaffolds. (a): A task is given to a human. ( b): The human intuitively meta-reasons about how to solve it. (c): These verbalized traces are then directly mapped into the language of Deep Reasoning. ( d): A Deep Reasoning agent like D OLORES (§4) uses them as in-context examples to guide its own meta-reasoning abilities. Example adapted from the DeepSearchQA benchmark [Gupta et al., 2026]. into manageable steps, plan how to solve them, and execute these plans while tracking intermediate reasoning and goals [Newell et al., 1959, Flavell, 1979]. Crucially, meta-reasoning allows us to integrate multiple modes of cognition, including formal reasoning, based on explicit rules and logical operations, and associative reasoning, which leverages intuition and patterns from prior experience [Bellini-Leite, 2022]. The interplay between these two is dynamic and task-dependent, enabling us to be effective problem-solvers across a wide range of domains, including but not limited to mathematics, information synthesis, programming and creative writing [Stanovich, 2011]. Attempting to mimic human reasoning, LLMs achieve impressive results across a variety of both creative (e.g., writing) and formal (e.g., programming and mathematics) domains. However, there is growing evidence that this is “shallow reasoning”, a surface-level imitation of verbalized human reasoning that does not reliably track underlying thought processes [Kargupta et al., 2025]. In particular, LLMs struggle to reason formally in a robust way, which is in line with work showing LLMs to be unfaithful to their own reasoning traces [Lanham et al., 2023, Yee et al., 2024, Lyu et al., 2023, Arcuschin et al., 2025] and to degrade in performance on long or cognitively demanding reasoning tasks [Jaech et al., 2024, Chen et al., 2025, Hassid et al., 2025]. To address these limitations, progress in LLM-based systems has increasingly relied on carefully de-signed agentic scaffolds [Lanham et al., 2023, Yee et al., 2024, Chen et al., 2025]. These scaffolds are programs that coordinate communication among LLMs, and between LLMs and external tools [Rosser and Foerster, 2026]. However, they typically predefine how a task should be decomposed, and how the reasoning should be carried out. For example, ReAct [Yao et al., 2022] breaks down the task in a sequence of associative reasoning steps with tool calls. CodeAct [Wang et al., 2024] replaces these tool calls with formal reasoning via code. Deep Research [Roucher et al., 2025b] prescribes a two-layer decomposition, where a manager agent delegates subproblems to specialized search agents. 2Finally, RLMs [Zhang et al., 2025] decompose long-input tasks by recursively chunking them inside a programmatic environment via recursive self-calls. The common pattern across these scaffolds is that they hard-code how to decompose reasoning. Essentially, they fix how to meta-reason about a task without actually seeing it, and, as a result, fail when other reasoning behaviors are required [Fu et al., 2025a]. In this work, we leverage insights from human meta-reasoning to build “just-in-time” meta-reasoning scaffolds. While humans are able to meta-reason intuitively, there is no formal way capture these processes and translate them for agentic systems. To this end, we ground our approach in the cognitive science literature (§2) and introduce the language of Deep Reasoning (§3), a formal language that combines associative and formal reasoning through structured meta-reasoning. Deep Reasoning provides a principled way to take human meta-reasoning traces, formalize them, and convert them into atomic decompositions usable by agentic systems in-context. It allows us to instill how humans decompose and reason about tasks into agents just-in-time (Figure 1). We instantiate this approach in an agent we call DOLORES (Deep Layered Reasoning Scaffold, §4), which uses in-context meta-reasoning examples to guide its reasoning and dynamically adapt its scaffold at test time. It outperforms all evaluated state-of-the-art scaffold methods, with an average improvement of 24.8% over the best-performing baseline across four reasoning tasks , three model sizes, and two model families. Notably, we find that D OLORES equipped with an 8B model outperforms all baselines that use a model from the next scaling tier (32B) of same family in more than half of the evaluated settings. By analyzing reasoning traces, we also show that all other scaffolds tend to hallucinate and terminate prematurely as they delegate too much to a single LLM context thread. In contrast, D OLORES avoids these issues by structuring reasoning in more fine-grained ways, decomposing it into atomic associative, formal, or meta-reasoning steps that can be handled reliably by a single LLM memory thread. Our contributions are twofold: 1 the language of Deep Reasoning, a formal language for capturing human meta-reasoning traces in a way that can be used by agentic systems, and 2 D OLORES , an agent that operationalizes our approach and demonstrates improved performance against state-of-the-art methods. Our code is available at https://github.com/DeanLight/dolores .
+
+## 2 Background 
+
+We build the Deep Reasoning language, a formal language for capturing human meta-reasoning, on concepts from prior work in cognitive science, which are discussed below. 
+
+2.1 Axes of Reasoning 
+
+Prior work characterizes reasoning along two orthogonal dimensions: how reasoning is carried out and what the reasoning is about . To make these distinctions concrete, we refer throughout to the running example introduced in Figure 1 about the volleyball court. Associative  Formal  
+
+> Object
+> (about the problem)
+> Meta
+> (about the reasoning)
+> “I will fi gure out what city they are talking about ”
+> “I will return the count with the most tie-breaks”
+> “‘City by the Bay’ is San Fransisco”
+> “The maximum
+> of (1,5,2,3,6 )
+> is 6 ”
+
+Figure 2: Informal and formal reason-ing describe how reasoning is carried out, while meta and object levels de-scribe what the reasoning is about .
+
+Associative vs. Formal (how). When solving a task, some steps rely on intuition and associations, while others fol-low explicit rules. Associative reasoning generally operates through intuitive proximity shaped by memory and context [Mednick, 1962, Sloman, 1996]. For example, interpreting “The City by the Bay” as San Francisco can be done asso-ciatively drawing on experience and abstract links between concepts. In contrast, formal reasoning proceeds via the sequential application of logical rules over structured, well-defined representations [Wason, 1968, Rips, 1983, Johnson-Laird and Byrne, 1991]. For example, counting the number of volleyball games that went to a tie-break and selecting the maximum follows a clear, rule-based procedure, and is therefore formal reasoning. 
+
+Object vs. Meta-level (about what). At the same time, some reasoning steps operate on the problem itself, while others organize how to solve it. Object-level reasoning operates on objects in the task. For example, interpreting the “City by the Bay” and counting the number of tie-breaks are 3object-level reasoning, since they act directly on the task. In contrast, meta-level reasoning operates over the reasoning process: selecting strategies, decomposing problems, and guiding inference by constructing and updating an internal model of the task, state, and goals [Newell et al., 1959, Flavell, 1979, Ackerman and Thompson, 2017]. Deciding to break task into steps (e.g., “first identify the city, then list volleyball courts, then count...”), without executing the actual steps, is meta-level reasoning. These two dimensions are orthogonal (Figure 2). For example, we can have associative meta-reasoning or formal object-level reasoning. 
+
+2.2 Human Reasoning 
+
+Humans tightly interleave meta- and object-level reasoning when solving tasks that go beyond their cognitive capacity (total processing resources available in working memory). When working through a problem, we search for structure, decompose it into manageable subproblems, solve them, and integrate the results according to that structure [Griffiths et al., 2019, Sweller et al., 2019]. This search for structure is a form of meta-reasoning, often referred to as “modeling” or “mental modeling”. Our strong reasoning and generalization abilities are often attributed to these meta-reasoning and modeling capabilities [Kargupta et al., 2025]. These flexible reasoning abilities are also deeply rooted in our use of natural language. Language plays a dual role in human reasoning: we sometimes use it formally (e.g., “How many apples are in the basket?”), while other times we use it associatively (e.g., “Is this apple ripe?”). Moreover, when solving complex problems we use natural language to interleave associative reasoning and formal reasoning, at both the object and meta levels [Broadbent, 1958, Treisman, 1964, Rosch, 1978]. It is this flexible, structure-dependent interleaving that enables us to generalize so effectively across tasks [Stanovich, 2011, Bellini-Leite, 2022]. 
+
+## 3 Deep Reasoning – A Formal Language for Meta-Reasoning 
+
+3.1 Motivation 
+
+LLMs, despite their large context windows, have a limited cognitive capacity [Zhang et al., 2024, Chen et al., 2024b, Fu et al., 2025b]. However, their cognitive capacity is substantially different from that of humans. For example, they are able to easily memorize and retrieve large collections of text and code while still struggling in basic reasoning tasks [Malek et al., 2025]. In order to instill strong reasoning and meta-reasoning capacities in agentic systems, we need to view reasoning processes in terms of the cognitive capacity and abilities of LLMs. We need to take our intuitive reasoning ability and precisely formalize it and separate it along three dimensions: 
+
+D1: Associative vs. Formal – delegating what we can to formal code. 
+
+D2: Object vs. Meta – decomposing object-level tasks using meta-reasoning until each associa-tive object-level task fits within the capacity of an LLMs. 
+
+D3: Atomic vs. Monolithic – decomposing the meta-reasoning, which is itself cognitively demanding, into composable atomic units that can be delegated to different context threads. 
+
+3.2 Formal Notation 
+
+In order to precisely formalize reasoning ability along the three dimensions ( D1 , D2 , D3 ) mentioned in §3.1, we now introduce the formal language of Deep Reasoning. 
+
+Symbols and Interpretations. We begin with a few basic definitions. A symbol is a word such as “hot” or “dog”, or a mark such as “ +” or “&”, that stands for some abstract concept. Given a set of symbols Σ, a sentence x over Σ is a sequence of symbols x ∈ Σ+.An interpretation function f is a function that maps sentences to concepts, i.e., f : Σ+ → C, where 
+
+C is the set of all concepts. Concepts can be represented in many different ways including sentences, images, and more. For simplicity, we limit our discussion to concepts represented by sentences. We denote by I the ideal true interpretation , which maps each sentence to its correct concept. In practice, we do not have access to I. For example: 
+
+I(“The City by the Bay ”) = I(“SF, CA ”) = I(“San Francisco ”) = “San Francisco ”
+
+4Symbol Description Example   
+
+> ITrue Interpreter I(
+
+## “x = ‘an’ ; ‘S{x} Fr{x}cisco’ ”) = 
+
+> I(
+
+## “The City by the Bay ”) = “San Francisco ”  
+
+> AAssociative Interpreter A(
+
+## “ The City by the Bay ”) = “San Francisco ”   
+
+> EFormal Interpreter E(
+
+## “ x = ‘an’ ; ‘S{x} Fr{x}cisco’ ”) = “San Francisco ”      
+
+> ME(x)Formal models of xw.r.t. E
+
+## “x = ‘an’ ; ‘S{x} Fr{x}cisco’ ” ∈ M E (“San Francisco ”)  
+
+> mFormal modeling function m(
+
+## “sum of 3 and 4 ”) = “add(3,4) ”  
+
+> IDDeep reasoning ID(
+
+## “The zip code of the City by the Bay ”) =  
+
+> E(
+
+## “y= A(“City By the Bay ”); ID(“zip code of {y} ”)”)
+
+Table 1: High-level summary of the language of Deep Reasoning. 
+
+Formal & Associative Interpreters (D1). In the language of Deep Reasoning, the distinc-tion between associative and formal reasoning is explicit. Let L ⊂ Σ+ be some formal lan-guage and E : L → Σ+ be a formal interpreter that can execute sentences in L. For example, 
+
+E (“x=1; x+2 ”) = “3”. We extend E with external functions that can be invoked during execution: 
+
+Eadd (“add(3,4) ”) = “7” Ellm (“llm(’City by the Bay’) ”) = “San Francisco ”
+
+On the other hand, we say that A is an associative interpreter if it uses associative reasoning to assign meaning to sentences. Examples of associative interpreters include LLMs and other neural networks. Unlike E, A does not require formal sentences but also does not guarantee correctness or internal consistency. For example, “San Francisco” can be modeled both associatively and formally as follows: 
+
+A(“The City by the Bay ”) = E (“x = ‘an’ ; ‘S{x} Fr{x}cisco’ ”) = “San Francisco ”
+
+Formal Models & Modeling Functions (D2). When humans meta-reason about a task, we create a step-by-step decomposition on how to solve it (Figure 1). Therefore, the language of Deep Reasoning is able to capture such meta-reasoning processes. To this end, we define the set of all formal models 2
+
+of x under E as all formal sentences that, when executed, map to the same underlying concept as x:
+
+ME (x) = y ∈ L E(y) = I(x)
+
+Given a formal model of x denoted as y ∈ M E (x), we call (x, y ) a formal decomposition of x into 
+
+y. To make this more concrete, in our running example, the converted human meta-reasoning trace (Figure 1.c) is a formal decomposition of the task “Which volleyball court in...”. When a task is referred to colloquially as a formal task , it means that it is trivial to translate the task-sentence into a formal model. For example, given x = “Which set of numbers in {{ 6, 1, 2}, {6, 7}} 
+
+has the most elements over 5?”, we can easily model it formally as: 
+
+y = “X = {{ 6, 1, 2}, {6, 7}} ; argmax 
+
+> S∈X
+
+|{ x ∈ S | x > 5}| ”
+
+We define a modeling function as m : Σ+ → L such that for every x ∈ Σ+, m(x) ∈ M E (x). In other words, a modeling function takes a sentence and formalizes it into an equivalent sentence that can be executed. Modeling functions can be extended with external functions: 
+
+madd (“the sum of 3 and 4 ”) = “add(3,4) ”
+
+Here, the formal model “add(3,4)” is interpretable by Eadd . We can consider more abstract functions, such as the associative function A. In such cases, the modeling function mA can formalize sentences using associative functions. For example, 
+
+mA(“Number of a’s in the City by the Bay ”) = “A(“The City by the Bay ”).count(‘a’) ”
+
+In this case, our modeling function mA decided to delegate the disambiguation of “The City by the Bay” to associative reasoning via A, after which the count function counts the number of a’s.   
+
+> 2We distinguish mental models from Machine Learning (ML) models, and call the former models throughout this paper.
+
+5Incremental Modeling (D3). Up until now all modeling examples assume an m capable enough to fully formalize a task in a single step. However, modeling in itself is a difficult cognitive task. Therefore we want to capture the idea of iteratively refining a sentence until it becomes fully formal. To do this, we allow the modeling function m to call itself within a formalization. This means it can produce intermediate formal sentences that still contain unresolved parts, which are then handled in subsequent modeling steps. To make this concrete, consider the example: 
+
+mm(“Number of tie-breaks in the following volleyball scoreboard: 3-1, ..., 2-3 ”) = 
+
+## “s = {‘3-1’, ..., ‘2-3’} ; re = m(“regex for volleyball tie-breaks ”); len(s.filter(re.match)) ”
+
+In this case, coming up with the regex for capturing “volleyball tie-breaks” might involve looking up the latest official volleyball rules from FIVB 3, building out several regex candidates and verifying them using a programming environment. This cannot be done reliably by a single associative function which is why mm delegated the task to a subsequent modeling step. 
+
+Summary With the language of Deep Reasoning we can now express delegation between formal and associative tasks ( D1 , §3.1) and even formalize dependencies between associative sub tasks using 
+
+A and EA. We can express meta-reasoning using mA to decompose object-level tasks until the load delegated to an associative call is bellow the cognitive load of a given LLM context thread ( D2 , §3.1). Lastly, we can decompose the meta-reasoning process itself, using mm, into nested layers of formal and associative meta-reasoning. This separates the high cognitive load of meta-reasoning between different LLM context threads ( D3 , §3.1). 
+
+## 4 DOLORES – A Deep Reasoning Agent 
+
+We can define specific deep reasoning architectures in terms of the high level meta-reasoning using Deep Reasoning, separating the architecture from specific implementation decisions. In this section we present a specific Deep Reasoning agent we call DOLORES (Deep Layered Reasoning Scaffold). 
+
+4.1 Architecture 
+
+We recursively define D OLORES (ID) and an atomic modeling function ma as follows: 
+
+ID(x) = EID, A
+
+ ma 
+
+> ID,A
+
+(x) (1) 
+
+ma
+
+> ID,A
+
+(x) = A(“decompose {x} into a small formal model over 
+
+ID, A using the following atomic decompositions . . . ”)
+
+In a nutshell the D OLORES ID takes as input a sentence x and recursively decomposes it and executes it through an atomic modeling function. Notably, the modeling function ma is equipped with both the associative function A and the Deep Reasoning agent ID itself. At each step, ID takes a sentence, decomposes it into an atomic formal model using ma
+
+> ID,A
+
+, and executes it via EID,A, recursively invoking itself on sub-calls as needed. In-context atomic decom-positions are fed into the system prompt of A, allowing fine-grained control of the decomposition patterns that the agent will see without additional programming. This leads to a nested cascade of formal, associative and meta-reasoning steps (see Figure 1) that can be controlled by the user. For brevity, in the following sections, we shorten EID, A to E and ma 
+
+> ID,A
+
+to m.
+
+4.2 Implementation 
+
+In this section, we describe the implementation details of the D OLORES agent ID, and explain how to build general-purpose agents using the language of Deep Reasoning. 
+
+Instantiation. So far, the modeling function m, associative function A, and formal interpreter E
+
+have been conceptual. To operationalize equation (4.1) in the D OLORES agent, we instantiate them as follows: 
+
+E is Python A is an LLM m is an LLM 
+
+> 3FIVB (Fédération Internationale de Volleyball) is the governing body responsible for all forms of Volleyball globally.
+
+6Importantly, as specified in (4.1) , the formal interpreter E (Python) has access to A (LLM) and the DOLORES (ID) itself as external functions. This allows the agent to recursively call itself inside the environment (Figure 1). Depending on the task, the Python environment can also include additional tools and variables. The modeling function m, implemented as an LLM, is responsible for decomposing tasks into a series of associative steps (calls to A), formal steps (code executed by E), and meta-reasoning steps (recursive calls to ID). To guide this behavior, we design prompts for the modeling LLM ( m)with atomic decompositions as in-context examples. These atomic decompositions are built by first formalizing human meta-reasoning traces to the language of Deep Reasoning and then converting them into in-context examples. 
+
+Human Meta-reasoning Traces. We start from verbalized human meta-reasoning traces for specific tasks. For example, in the volleyball court task “Which volleyball court in ...”, humans have an intuitive ability to meta-reason and decompose the task, as illustrated in Figure 1. These traces are directly mapped in the language of Deep Reasoning (Figure 1.b), where different parts of reasoning map to different interpretation functions. For instance, resolving “City by the Bay” to San Francisco is handled associatively via A. The step of “I will list all the volleyball courts in SF” is expressed as a recursive call to ID, and “pick the court with the most tie-breaks” is a simple formal operation ( argmax ). Basically, this formalized human meta-reasoning defines how the task should be decomposed by the modeling LLM ( m). 
+
+In-Context Examples. Given these formalized traces, we convert them directly into in-context examples. Associative calls A and Deep Reasoning calls ID are implemented as LLM calls and recursive sub-agent calls, respectively. Figure 1.c shows this concretely: the code corresponds to a single in-context example that specifies how to decompose the “Which volleyball court in ...” task based on the formalized human meta-reasoning trace (see §B for more details). This example is then provided to the modeling LLM ( m). More generally, additional in-context examples derived from human meta-reasoning on different tasks (e.g., deep web search, long-context reasoning, or multi-hop QA) can be added in the same way, allowing the modeling LLM ( m) to generalize decomposition strategies across tasks. 
+
+Agentic Loop. Finally, we implement the agent inside a Python Read-Eval-Print Loop (REPL), similar to a notebook environment. Each step consists of a short chain-of-thought from m, followed by a formal code block that is executed. The REPL allows the agent to store, inspect, and reuse variables across steps. Recursive calls to D OLORES (ID) run in separate REPL environments. 
+
+## 5 Experiments 
+
+5.1 Setup 
+
+To empirically evaluate the utility of Deep Reasoning in agentic reasoning tasks, we take four difficult reasoning benchmarks with verifiable answer that test different reasoning types. 
+
+Benchmarks. The benchmarks include: 1 SynthWorlds [Gu et al., 2026] tests multi-hop reason-ing over synthetic knowledge-graph–derived documents. This benchmark can isolate reasoning from memorization, requiring models to not rely solely on parametric knowledge and test if they ground on external knowledge reliably. 2 PhantomWiki Gong et al. [2025] tests multi-hop QA over a synthetic universe of configurable size. This benchmark tests how models track intermediate states across long reasoning chains. 3 DeepSearchQA [Gupta et al., 2026] is a verifiable deep research benchmark. It has complex, multi-step information-seeking tasks that test an agent’s ability to gather, filter and organize information. 4 OOlong-(real) Bertsch et al. [2025] which tests multi-step information aggregation over very long real-world documents (e.g., episode transcripts, news archives). This benchmark tests how agents deal with documents that go beyond a base model’s context window size. 
+
+Baselines. We compare our method against four open source baselines: 1 A ReAct [Yao et al., 2022] implementation from Roucher et al. [2025a]. 2 A CodeAct [Wang et al., 2024] implementation from Roucher et al. [2025a]. 3 A Deep Research agent from [Roucher et al., 2025b]. 4 The RLM agent from the paper Zhang et al. [2025]. 7Benchmark Method ReAct CodeAct Deep RLM DOLORES Research 
+
+[2022] [2024] [2025b] [2025] (ours) 
+
+> Qwen3 8B Thinking
+
+SynthWorlds [2026] 0.176 0.268 0.206 0.058 0.305 
+
+PhantomWiki [2025] 0.144 0.153 0.120 0.043 0.172 
+
+DeepSearchQA [2026] 0.124 0.149 0.142 0.139 0.161 
+
+Oolong-real [2025] NA † 0.045 NA † 0.065 0.076 
+
+> Qwen3 32B Thinking
+
+SynthWorlds [2026] 0.228 0.281 0.275 0.169 0.346 
+
+PhantomWiki [2025] 0.167 0.252 0.212 0.160 0.369 
+
+DeepSearchQA [2026] 0.177 0.213 0.230 0.190 0.241 
+
+Oolong-real [2025] NA † 0.060 NA † 0.077 0.132 
+
+> Llama-3.3 70B Instruct
+
+SynthWorlds [2026] 0.300 0.480 0.308 0.401 0.359 PhantomWiki [2025] 0.244 0.381 0.160 0.270 0.512 
+
+DeepSearchQA [2026] 0.155 0.184 0.127 0.175 0.187 
+
+Oolong-real [2025] NA † 0.079 NA † 0.064 0.151 
+
+Table 2: Scores (0–1, ↑ higher is better) across four reasoning benchmarks. NA † indicates context size limitations. D OLORES outperforms state-of-the-art methods across all benchmarks by an average of 24.8% over the best-performing baseline. 
+
+Models. We test the baselines and our proposed method on the benchmarks using 3 different models from 2 model families: Qwen3-8B Thinking, and Qwen3-32B Thinking [Yang et al., 2025], Llama-3.3 70B Instruct [Dubey et al., 2024]. See §C for more details. 
+
+5.2 Results and Analyses DOLORES outperforms baselines across different benchmarks. As shown in Table 2, D OLORES 
+
+outperforms all evaluated scaffolds in 11 /12 settings, with average improvements of 36.4% (Qwen3-32B), 12.8% (Qwen3-8B), and 25.4% (Llama-3.3-70B) over the strongest baseline on each task. An exception is CodeAct outperforming D OLORES on SynthWorlds with Llama-3.3-70B. Notably, DOLORES consistently punches above its model class, with the 8B model outperforming the best evaluated 32B baseline on SynthWorlds and Oolong-real, and the 32B model outperforming the best evaluated 70B baseline on PhantomWiki. 
+
+Reducing cognitive load mitigates premature termination and hallucination. To better under-stand the gains of D OLORES , we perform a multi-label topic-based failure analysis on Qwen3-32B traces from D OLORES and the evaluated baselines (see §E for details). The two dominant failure modes are premature termination (78%) and hallucination (45%). For premature termination, we observe ReAct and CodeAct attempting to resolve answers in one or two hops on SynthWorlds and PhantomWiki, often giving up when these high-cognitive-load reasoning steps fail. For hallucination, we observe RLMs delegating large counting tasks to sub-LLMs that count unreliably, while both RLMs and Deep Research fabricate mock tool outputs and entities in SynthWorlds and PhantomWiki. Manual inspection of traces shows that D OLORES avoids these pitfalls by decomposing the same tasks in more atomic ways, leading to correct solutions in cases where other scaffolds fail. We provide qualitative trace comparisons in §F. Analyzing both total and per-thread token counts reveals a clear pattern. As expected, D OLORES spawns many reasoning threads, resulting in 12.9 × more tokens on average. However, on a per-thread basis, D OLORES reduces reasoning tokens by an average of 71% and non-reasoning tokens by 76% . These results are consistent with our hypothesis that reducing cognitive load mitigates premature termination and hallucination. While these gains currently come at a high token cost, we hypothesize that 1 the high overlap of system prompts across many LLM threads, 2 the ability of D OLORES to bridge scaling tiers by using cheaper models, and 3 selecting models based on the cognitive load of associative tasks, could eventually lead to lower parameter-adjusted token costs. 8Deep Reasoning performance is enabled by in-context decomposition examples. A natural question is whether D OLORES ’ improvements come from the structured meta-reasoning in-context examples themselves, or simply from good engineering. A follow-up question is whether describing in NL of how to atomically decompose is sufficient for current LLMs to operationalize it effectively. We ablate this on Qwen3-32B by running two reduced variants. The first, no-examples , removes all decomposition examples from the system prompt. The second, with-principles , also removes the decomposition examples, but replaces them with NL instructions for decomposing tasks along the three dimensions listed in §3.1. The full ablation table is in Appendix Table 4. We see that removing the in-context examples causes large drops on every benchmark (70% on average). Interestingly, 
+
+with-principles performs even worse than no-examples on every benchmark (0.117 vs. 0.139 on DeepSearchQA; 0.080 vs. 0.113 on PhantomWiki; 0.036 vs. 0.041 on SynthWorlds; 0.033 vs. 0.036 on Oolong). These results suggest that current LLMs are not good at operationalizing structured meta-reasoning and require humans to meta-reason about task decompositions. LLMs appear to be reducing the task of structurally decomposing a task to pattern matching. We discuss Limitations and future work in §A. 
+
+## 6 Related work 
+
+Train Time Scaffold Generation. Concurrent work [Lee et al., 2026, Hao et al., 2026] build novel scaffolds automatically by using an outer training loop that uses LLMs to search over the space of scaffolds during training, outputting scaffolds that outperform manually curated scaffolds on the tasks for which they were trained. Train-time scaffold generation is a promising direction, but must contend with data collection and continual retraining costs as out-of-distribution tasks come up. D OLORES 
+
+tries to avoid this cost by in-context learning from a small number of atomic decompositions. 
+
+Test time Scaffolds Generation. Continual-learning scaffold generators adapt over time by per-forming additional inference-time LLM calls to reflect, summarize, and store experience between sessions, using this experience to improve subsequent scaffold generations per task [Liu et al., 2026, Xia et al., 2025]. The work of Liu et al. [2026] learns to decompose tasks into different multi agent interaction patterns which are then supervised and adapted by a watcher agent which interacts with an experience pool. [Xia et al., 2025] focus on coding tasks, starting with a mini-SWE-agent that only has bash tools, and continually expands the set of tools the agent has through experience, without modifying the agentic loop. Continual learning of decompositions is a promising direction complementary to our work. While both works learn from examples well, it is unclear how to inject human expertise into this process. D OLORES directly translates human reasoning using the Deep Reasoning language, which makes it easily controllable via prompting with a small set of in-context examples. Moreover, instead of dynamically varying tools and workflow patterns between tasks, DOLORES also varies the scaffold during task execution, adapting to changes in the intermediate state of the task progression. 
+
+## 7 Conclusions 
+
+Humans solve complex tasks by planning, executing, revising intermediate goals, resolving ambiguity and switching between associative and formal reasoning. This flexible just-in-time meta-reasoning is what current LLM scaffolds lack, leaving them brittle against novel tasks. This work operationalizes human meta-reasoning in general purpose agents through Deep Reasoning, a formal language for structured meta-reasoning. Through Deep Reasoning we construct D OLORES , an agentic scaffold that evolves just-in-time based on the specific task and intermediate reasoning steps. Using single-digit atomic in-context examples, based on human intuition, D OLORES significantly outperforms strong baseline scaffolds on a collection of hard reasoning tasks. Under the Deep Reasoning paradigm, LLMs should not be viewed as a collection of shallow experts, to be managed by scaffolding glue, but associative reasoning processes that flexibly interact with formal processes to create artificial minds that can meta-reason robustly. Even a basic implementation of Deep Reasoning can bridge the scaling gap (8B vs 32B). 98 Acknowledgements 
+
+This research was developed with funding from the Defense Advanced Research Projects Agency’s (DARPA) SciFy program (Agreement No. HR00112520300). This material is based upon work supported in part by the Defense Advanced Research Projects Agency and the Air Force Research Laboratory, contract number(s): FA8650-23-C-7316. The views expressed are those of the author and do not reflect the official policy or position of the Department of Defense or the U.S. Government. This research was also supported by the Coefficient Giving, Amazon Health, Meta AIM program. This research was also supported by NSF III 2507117 and NSF IIS 2314527. This work was also supported in part by the U.S. National Science Foundation (NSF) CAREER Award 2337877, Schmidt Sciences Award on AI & Advanced Computing, through the Science of Trustworthy AI program, and by the University of Washington Tech Policy Lab. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the authors and do not necessarily reflect those of NSF or Schmidt Sciences. 
+
+## References 
+
+Rakefet Ackerman and Valerie A Thompson. Meta-reasoning: Monitoring and control of thinking and reasoning. Trends in cognitive sciences , 21(8):607–617, 2017. Iván Arcuschin, Jett Janiak, Robert Krzyzanowski, Senthooran Rajamanoharan, Neel Nanda, and Arthur Conmy. Chain-of-thought reasoning in the wild is not always faithful. arXiv preprint arXiv:2503.08679 , 2025. Samuel C Bellini-Leite. Dual process theory: Embodied and predictive; symbolic and classical. 
+
+Frontiers in Psychology , 13:805386, 2022. Amanda Bertsch, Adithya Pratapa, Teruko Mitamura, Graham Neubig, and Matthew R Gorm-ley. Oolong: Evaluating long context reasoning and aggregation capabilities. arXiv preprint arXiv:2511.02817 , 2025. Donald E. Broadbent. Perception and Communication . Pergamon Press, London, 1958. Ted Byrt, Janet Bishop, and John B Carlin. Bias, prevalence and kappa. Journal of clinical epidemiology , 46(5):423–429, 1993. Jianlyu Chen, Shitao Xiao, Peitian Zhang, Kun Luo, Defu Lian, and Zheng Liu. M3-embedding: Multi-linguality, multi-functionality, multi-granularity text embeddings through self-knowledge distillation. In Findings of the association for computational linguistics: ACL 2024 , pages 2318– 2335, 2024a. Qiguang Chen, Libo Qin, Jiaqi Wang, Jingxuan Zhou, and Wanxiang Che. Unlocking the capabilities of thought: A reasoning boundary framework to quantify and optimize chain-of-thought. In Amir Globersons, Lester Mackey, Danielle Belgrave, Angela Fan, Ulrich Paquet, Jakub M. Tomczak, and Cheng Zhang, editors, Advances in Neural Information Processing Systems 38: Annual Conference on Neural Information Processing Systems 2024, NeurIPS 2024, Vancouver, BC, Canada, December 10 - 15, 2024 , 2024b. URL http://papers.nips.cc/paper_files/ paper/2024/hash/62ab1c2cb4b03e717005479efb211841-Abstract-Conference.html .Xingyu Chen, Jiahao Xu, Tian Liang, Zhiwei He, Jianhui Pang, Dian Yu, Linfeng Song, Qiuzhi Liu, Mengfei Zhou, Zhuosheng Zhang, et al. Do not think that much for 2+ 3=? on the overthinking of long reasoning models. In Forty-second International Conference on Machine Learning , 2025. Abhimanyu Dubey, Abhinav Jauhri, Abhinav Pandey, Abhishek Kadian, Ahmad Al-Dahle, Aiesha Letman, Akhil Mathur, Alan Schelten, Amy Yang, Angela Fan, et al. The llama 3 herd of models. 
+
+arXiv e-prints , pages arXiv–2407, 2024. John H Flavell. Metacognition and cognitive monitoring: A new area of cognitive–developmental inquiry. American psychologist , 34(10):906, 1979. 10 Dayuan Fu, Keqing He, Yejie Wang, Wentao Hong, Zhuoma GongQue, Weihao Zeng, Wei Wang, Jingang Wang, Xunliang Cai, and Weiran Xu. Agentrefine: Enhancing agent generalization through refinement tuning. In The Thirteenth International Conference on Learning Representations , 2025a. URL https://openreview.net/forum?id=FDimWzmcWn .Qihang Fu, Yongbin Qin, Ruizhang Huang, Yanping Chen, Yulin Zhou, and Lintao Long. Exclusion of thought: Mitigating cognitive load in large language models for enhanced reasoning in multiple-choice tasks. In Wanxiang Che, Joyce Nabende, Ekaterina Shutova, and Mohammad Taher Pilehvar, editors, Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), ACL 2025, Vienna, Austria, July 27 - August 1, 2025 , pages 21673–21686. Association for Computational Linguistics, 2025b. doi: 10.18653/V1/2025.ACL-LONG.1051. URL https://doi.org/10.18653/v1/2025.acl-long.1051 .Albert Gong, Kamil ˙e Stankeviˇ ci ¯ut ˙e, Chao Wan, Anmol Kabra, Raphael Thesmar, Johann Lee, Julius Klenke, Carla P Gomes, and Kilian Q Weinberger. Phantomwiki: On-demand datasets for reasoning and retrieval evaluation. In International Conference on Machine Learning , pages 19964–19995. PMLR, 2025. Thomas L Griffiths, Frederick Callaway, Michael B Chang, Erin Grant, Paul M Krueger, and Falk Lieder. Doing more with less: meta-reasoning and meta-learning in humans and machines. 
+
+Current Opinion in Behavioral Sciences , 29:24–30, 2019. ISSN 2352-1546. doi: https://doi.org/ 10.1016/j.cobeha.2019.01.005. URL https://www.sciencedirect.com/science/article/ pii/S2352154618302122 . Artificial Intelligence. Ken Gu, Advait Bhat, Mike A Merrill, Robert West, Xin Liu, Daniel McDuff, and Tim Althoff. Synthworlds: Controlled parallel worlds for disentangling reasoning and knowledge in language models. In The Fourteenth International Conference on Learning Representations , 2026. URL 
+
+https://openreview.net/forum?id=46AQ4qaWqQ .Nikita Gupta, Riju Chatterjee, Lukas Haas, Connie Tao, Andrew Wang, Chang Liu, Hidekazu Oiwa, Elena Gribovskaya, Jan Ackermann, John Blitzer, et al. Deepsearchqa: Bridging the comprehensiveness gap for deep research agents. arXiv preprint arXiv:2601.20975 , 2026. Zhezheng Hao, Hong Wang, Jian Luo, Jianqing Zhang, Yuyan Zhou, Qiang Lin, Can Wang, Hande Dong, and Jiawei Chen. Recreate: Reasoning and creating domain agents driven by experience. 
+
+CoRR , abs/2601.11100, 2026. doi: 10.48550/ARXIV.2601.11100. URL https://doi.org/10. 48550/arXiv.2601.11100 .Michael Hassid, Gabriel Synnaeve, Yossi Adi, and Roy Schwartz. Don’t overthink it. preferring shorter thinking chains for improved llm reasoning. arXiv preprint arXiv:2505.17813 , 2025. Aaron Jaech, Adam Kalai, Adam Lerer, Adam Richardson, Ahmed El-Kishky, Aiden Low, Alec Helyar, Aleksander Madry, Alex Beutel, Alex Carney, et al. Openai o1 system card. arXiv preprint arXiv:2412.16720 , 2024. Philip Nicholas Johnson-Laird and Ruth MJ Byrne. Deduction. Lawrence Erlbaum Associates, Inc, 1991. Priyanka Kargupta, Shuyue Stella Li, Haocheng Wang, Jinu Lee, Shan Chen, Orevaoghene Ahia, Dean Light, Thomas L Griffiths, Max Kleiman-Weiner, Jiawei Han, et al. Cognitive foundations for reasoning and their manifestation in llms. arXiv preprint arXiv:2511.16660 , 2025. Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph E. Gonzalez, Hao Zhang, and Ion Stoica. Efficient memory management for large language model serving with pagedattention. In Proceedings of the ACM SIGOPS 29th Symposium on Operating Systems Principles , 2023. Eugenie Lai, Gerardo Vitagliano, Ziyu Zhang, Om Chabra, SIVAPRASAD SUDHIR, Anna Zeng, Anton A. Zabreyko, Chenning Li, Ferdi Kossmann, Jialin Ding, Jun Chen, Markos Markakis, Matthew Russo, Weiyang Wang, Ziniu Wu, Mike Cafarella, Lei Cao, Samuel Madden, and Tim Kraska. KRAMABENCH: A benchmark for AI systems on data-to-insight pipelines over data lakes. In The Fourteenth International Conference on Learning Representations , 2026. URL 
+
+https://openreview.net/forum?id=fZfUdeCC5X .11 Tamera Lanham, Anna Chen, Ansh Radhakrishnan, Benoit Steiner, Carson Denison, Danny Hernan-dez, Dustin Li, Esin Durmus, Evan Hubinger, Jackson Kernion, et al. Measuring faithfulness in chain-of-thought reasoning. arXiv preprint arXiv:2307.13702 , 2023. Yoonho Lee, Roshen Nair, Qizheng Zhang, Kangwook Lee, Omar Khattab, and Chelsea Finn. Meta-harness: End-to-end optimization of model harnesses. CoRR , abs/2603.28052, 2026. doi: 10.48550/ARXIV.2603.28052. URL https://doi.org/10.48550/arXiv.2603.28052 .Guangyi Liu, Haojun Lin, Huan Zeng, Heng Wang, and Quanming Yao. Mas-on-the-fly: Dynamic adaptation of llm-based multi-agent systems at test time. CoRR , abs/2602.13671, 2026. doi: 10.48550/ARXIV.2602.13671. URL https://doi.org/10.48550/arXiv.2602.13671 .Qing Lyu, Shreya Havaldar, Adam Stein, Li Zhang, Delip Rao, Eric Wong, Marianna Apidianaki, and Chris Callison-Burch. Faithful chain-of-thought reasoning. In Proceedings of the 13th International Joint Conference on Natural Language Processing and the 3rd Conference of the Asia-Pacific Chapter of the Association for Computational Linguistics (Volume 1: Long Papers) ,pages 305–329, 2023. Alan Malek, Jiawei Ge, Nevena Lazic, Chi Jin, András György, and Csaba Szepesvári. Frontier llms still struggle with simple reasoning tasks. CoRR , abs/2507.07313, 2025. doi: 10.48550/ARXIV. 2507.07313. URL https://doi.org/10.48550/arXiv.2507.07313 .Ahmed Masry, Do Xuan Long, Jia Qing Tan, Shafiq R. Joty, and Enamul Hoque. Chartqa: A bench-mark for question answering about charts with visual and logical reasoning. In Smaranda Muresan, Preslav Nakov, and Aline Villavicencio, editors, Findings of the Association for Computational Linguistics: ACL 2022, Dublin, Ireland, May 22-27, 2022 , Findings of ACL, pages 2263–2279. Association for Computational Linguistics, 2022. doi: 10.18653/V1/2022.FINDINGS-ACL.177. URL https://doi.org/10.18653/v1/2022.findings-acl.177 .Ahmed Masry, Mohammed Saidul Islam, Mahir Ahmed, Aayush Bajaj, Firoz Kabir, Aaryaman Kartha, Md. Tahmid Rahman Laskar, Mizanur Rahman, Shadikur Rahman, Mehrad Shahmo-hammadi, Megh Thakkar, Md. Rizwan Parvez, Enamul Hoque, and Shafiq Joty. Chartqapro: A more diverse and challenging benchmark for chart question answering. In Wanxiang Che, Joyce Nabende, Ekaterina Shutova, and Mohammad Taher Pilehvar, editors, Findings of the As-sociation for Computational Linguistics, ACL 2025, Vienna, Austria, July 27 - August 1, 2025 ,Findings of ACL, pages 19123–19151. Association for Computational Linguistics, 2025. URL 
+
+https://aclanthology.org/2025.findings-acl.978/ .Sarnoff Mednick. The associative basis of the creative process. Psychological review , 69(3):220, 1962. Allen Newell, John C Shaw, and Herbert A Simon. Report on a general problem solving program. In 
+
+IFIP congress , volume 256, page 1959. Pittsburgh, PA, 1959. NVIDIA. NVIDIA AI-Q Blueprint for Intelligent Agents, 2026. URL https://build.nvidia. com/nvidia/aiq . Accessed: 2026-04-14. OpenAI. Introducing deep research, February 2025. URL https://openai.com/index/ introducing-deep-research/ . Accessed: 2026-05-06. Lance J Rips. Cognitive processes in propositional reasoning. Psychol. Rev. , 90(1):38–71, January 1983. Eleanor Rosch. Principles of categorization. In Eleanor Rosch and Barbara Bloom Lloyd, editors, 
+
+Cognition and Categorization , pages 27–48. Lawrence Elbaum Associates, 1978. J Rosser and Jakob Nicolaus Foerster. Agentbreeder: Mitigating the AI safety risks of multi-agent scaffolds via self-improvement. In The Thirty-ninth Annual Conference on Neural Information Processing Systems , 2026. URL https://openreview.net/forum?id=mlU9KqdZUS .Aymeric Roucher, Albert Villanova del Moral, Thomas Wolf, Leandro von Werra, and Erik Kau-nismäki. ‘smolagents‘: a smol library to build great agentic systems. https://github.com/ huggingface/smolagents , 2025a. 12 Aymeric Roucher, Albert Villanova del Moral, Merve, Thomas Wolf, and Clémentine Fourrier. Open-source deepresearch – freeing our search agents, February 2025b. URL https://huggingface. co/blog/open-deep-research . Accessed: 2026-04-13. Rulin Shao, Akari Asai, Shannon Zejiang Shen, Hamish Ivison, Varsha Kishore, Jingming Zhuo, Xinran Zhao, Molly Park, Samuel G Finlayson, David Sontag, et al. Dr tulu: Reinforcement learning with evolving rubrics for deep research. arXiv preprint arXiv:2511.19399 , 2025. Steven A Sloman. The empirical case for two systems of reasoning. Psychological bulletin , 119(1):3, 1996. Keith Stanovich. Rationality and the reflective mind . Oxford University Press, 2011. John Sweller, Jeroen J. G. van Merriënboer, and Fred Paas. Cognitive architecture and instruc-tional design: 20 years later. Educational Psychology Review , 31(2):261–292, January 2019. ISSN 1573-336X. doi: 10.1007/s10648-019-09465-5. URL http://dx.doi.org/10.1007/ s10648-019-09465-5 .Alex Tamkin, Miles McCain, Kunal Handa, Esin Durmus, Liane Lovitt, Ankur Rathi, Saffron Huang, Alfred Mountfield, Jerry Hong, Stuart Ritchie, et al. Clio: Privacy-preserving insights into real-world ai use. arXiv preprint arXiv:2412.13678 , 2024. Anne Treisman. Monitoring and storage of irrelevant messages in selective attention. Journal of Verbal Learning and Verbal Behavior , 3(6):449–459, 1964. Xingyao Wang, Yangyi Chen, Lifan Yuan, Yizhe Zhang, Yunzhu Li, Hao Peng, and Heng Ji. Executable code actions elicit better llm agents. In Forty-first International Conference on Machine Learning , 2024. Peter C Wason. Reasoning about a rule. Quarterly journal of experimental psychology , 20(3): 273–281, 1968. Chunqiu Steven Xia, Zhe Wang, Yan Yang, Yuxiang Wei, and Lingming Zhang. Live-swe-agent: Can software engineering agents self-evolve on the fly? CoRR , abs/2511.13646, 2025. doi: 10.48550/ARXIV.2511.13646. URL https://doi.org/10.48550/arXiv.2511.13646 .An Yang, Anfeng Li, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen Yu, Chang Gao, Chengen Huang, Chenxu Lv, et al. Qwen3 technical report. arXiv preprint arXiv:2505.09388 ,2025. Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik R Narasimhan, and Yuan Cao. React: Synergizing reasoning and acting in language models. In The eleventh international conference on learning representations , 2022. Evelyn Yee, Alice Li, Chenyu Tang, Yeon Ho Jung, Ramamohan Paturi, and Leon Bergen. Dissocia-tion of faithful and unfaithful reasoning in llms. arXiv preprint arXiv:2405.15092 , 2024. Alex L Zhang, Tim Kraska, and Omar Khattab. Recursive language models. arXiv preprint arXiv:2512.24601 , 2025. Chunhui Zhang, Yiren Jian, Zhongyu Ouyang, and Soroush Vosoughi. Working memory identi-fies reasoning limits in language models. In Yaser Al-Onaizan, Mohit Bansal, and Yun-Nung Chen, editors, Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing, EMNLP 2024, Miami, FL, USA, November 12-16, 2024 , pages 16896–16922. Associ-ation for Computational Linguistics, 2024. doi: 10.18653/V1/2024.EMNLP-MAIN.938. URL 
+
+https://doi.org/10.18653/v1/2024.emnlp-main.938 .Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao Zhuang, Zi Lin, Zhuohan Li, Dacheng Li, Eric Xing, et al. Judging llm-as-a-judge with mt-bench and chatbot arena. Advances in neural information processing systems , 36:46595–46623, 2023. 13 A Limitations, Future Work and Impact 
+
+Limitations and Future Work Creating good Deep Reasoning decompositions requires good understanding of the Deep Reasoning language, the abilities of modern LLMs and agentic loop struc-tures. This might present a barrier of entry for experts in other domains for writing decompositions for their use cases. Additionally, complex tasks in domains like scientific or medical reasoning might require a lot of atomic decompositions, which could overwhelm a single memory thread. Future work can include methods for 1 handling large collections of decompositions, 2 reducing token count and cost of Deep Reasoning agents, 3 sourcing decompositions automatically from natural language feedback and textbooks, 4 combining Deep Reasoning with continual learning from examples and 6 extend the Language of Deep Reasoning to capture subjective or ambiguous sentences. 
+
+Impact DOLORES has the potential to lower the barrier for domain experts to build reliable reasoning agents in fields such as science, medicine, and law by encoding expertise as a handful of in-context decompositions rather than as training data or predefined scaffolds. However, it still inherits the standard risks of LLM agents, as they are a component of the system. This can still include hallucination and confidently wrong intermediate steps, and its higher token cost concentrates capability in actors with large compute budgets. We mitigate these risks by evaluating only on public benchmarks, releasing all decomposition examples and traces, and recommending human-in-the-loop deployment for high-stakes use. 
+
+## B Decompositions as Prompts 
+
+In this we show the some of the decompositions generated from the running example in figures 1 and 3. Each few shot example shows a decomposition and comprises of a name-space (used to filter the set of in-context examples rendered to the system prompt of a D OLORES thread), a task and a series of "shallow reasoning" blocks, formal reasoning blocks and observation blocks. In order to keep the meta-reasoning repl blocks grounded on intermediate results, D OLORES inspects intermediate results as they execute to make sure that the model is executing as expected. 
+
+namespace: sequential reasoning      
+
+> Task: Which volleyball court in the ‘City by the Bay’ has hosted the most tournament matches that went to tie-break? The nickname ‘City by the Bay’ needs resolving first, then I’ll enumerate courts, look up each court’s match history and count tie-breaks in parallel, then pick the max. <repl> city = llm("What city is known as the 'City by the Bay '? Return just the city name.") print(city) </repl> <observation> San Francisco </observation> <repl> courts = dolores( f"List all volleyball courts located in {city}. Return a Python list of strings.", namespace="lookup" )print(courts) </repl> <observation> ['East Beach Volleyball Courts ','Crissy Field Beach ','Marina Green Courts ','South End Zone Courts '],→
+> </observation> Now I fetch each court’s match scores and count tie-breaks concurrently.
+
+14 <repl> tiebreak_counts = {} for court in courts: scores = dolores( f"List all past tournament match scores for {court} in {city}." f" Return a list of match result strings (e.g. '3-2 ', '3-0 ').", namespace="lookup" )dolores( "How many of these volleyball match scores went to a tie-break?", scores=scores, namespace="formal" )tiebreaks = dict(zip(courts, tiebreak_counts)) print(tiebreaks) </repl> 
+
+<observation> {'East Beach ': 14, 'Crissy Field Beach ': 8, 'Marina Green Courts ': 5, 'South End Zone Courts ': 11} ,→
+
+</observation> 
+
+<repl> FinalAnswer(max(tiebreaks, key=tiebreaks.get)) </repl> 
+
+namespace: lookup 
+
+Task: List all past tournament match scores for East Beach Volleyball Courts in San Francisco. Return a list of match result strings (e.g. ‘3-2’, ‘3-0’). I’ll paraphrase the task into a search query, retrieve results, then extract structured scores with llm. <repl> query = llm( "Rephrase as a concise web search query:\n" "Past tournament match results at East Beach Volleyball Courts San Francisco" )results = search(query) print(results[:400]) </repl> <observation> East Beach Volleyball Courts hosted the 2019 and 2022 CBVA Opens. 2022 Open final: Team A def. Team B 3-2 2022 Open semi: Team C def. Team D 3-0 2022 Open quarter: Team E def. Team F 3-1 2019 Open final: Team G def. Team H 3-2 ... </observation> Results look good. Now extract the scores into a clean list. <repl> scores = llm( "From the text below extract every match result as a Python list of strings" " in the format '3-0 ', '3-1 ', '3-2 ' (or '0-3 ', '1-3 ', '2-3 ' for losses)." " Return only the list.\n\n" + results )print(scores) </repl> <observation> ['3-2 ', '3-0 ', '3-1 ', '3-2 ', '3-1 ', '2-3 ', '3-0 ', '3-2 ']</observation> <repl> FinalAnswer(scores) </repl> 
+
+15 namespace: formal         
+
+> Task: How many of these volleyball match scores went to a tie-break? Variable scores: list of match result strings. I’ll inspect the format first, then count matches with a 3-2 or 2-3 result –- those are the only scorelines requiring a 5th tie-break set. <repl> print(scores[:5]) </repl> <observation> ['3-2 ','3-0 ','3-1 ','3-2 ','2-3 ']</observation> Format confirmed. A tie-break is any match where 5 sets were played. <repl> count = sum(1 for s in scores if s in ( '3-2 ','2-3 ')) print(count) </repl> <observation> 3</observation> <repl> FinalAnswer(3) </repl>
+
+## C Baselines and Benchmarks Details 
+
+C.1 Baselines ReAct [Yao et al., 2022] & CodeAct [Wang et al., 2024]. We use the ToolCallingAgent and 
+
+CodeAgent implementations from smolagents [Roucher et al., 2025a], respectively. These are production-oriented implementations of ReAct and CodeAct from smolagents [Roucher et al., 2025a], designed for real-world agentic systems rather than minimal reproductions of the original methods. In particular, they include surrounding engineering such as tool-call error handling, execution feedback, retry mechanisms, and corrective messages that help the LLM recover from malformed actions or invalid tool usage. 
+
+RLMs [Zhang et al., 2025]. We use the official rlms implementation version v0.1.1 (released 2026-02-18 on PyPI), which includes improvements released after the original paper submission. 
+
+Deep Research [OpenAI, 2025]. We compare against the open Deep Research implementation of Roucher et al. [2025b], which is also used as the Deep Research baseline in [Lai et al., 2026]. The system consists of a manager agent coordinating web-search sub-agents equipped with practical browser tools for web search, document navigation, long-context inspection, archived page retrieval, and replanning. The agent operates over a shared browser state and supports multi-step information gathering across long web documents and files. At the same time, compared to industrial Deep Research systems like NVIDIA’s AIQ [NVIDIA, 2026], this implementation remains relatively lightweight and transparent. In the literature, “Deep Research” systems are usually compared as full-stack implementations [Shao et al., 2025]. That means they are not just comparing reasoning quality—they are comparing everything around it: orchestration design, shared workspaces, context management, source verification, URL sanitization, retry logic, routing, and all the engineering that makes these systems robust [OpenAI, 2025, NVIDIA, 2026]. These scaffolds matter a lot. In practice, they drive a big part of the final performance. But if we take a closer look, the reasoning itself is often very similar across systems. Most follow the same pattern: a manager agent that spawns standalone search agents that go out, retrieve information, and come back. In this work, we propose a way to instill human meta-reasoning abilities in general purpose agents. Concretely, our contribution lies in the reasoning decompositions, not in the agentic scaffold surround-16 ing it. DoLoReS is a simple operationalization of Deep Reasoning. As a result, comparing directly against highly engineered Deep Research systems is misaligned, since it would largely measure the engineering behind those systems rather than the reasoning itself. Instead, we compare against [Roucher et al., 2025b]. This provides a clean baseline: the same general decomposition used by top Deep Research systems (a manager agent that spawns specialized search sub-agents) but without the heavy engineering and often opaque optimizations. In other words, this setup isolates the comparison to the quality and power of the decompositions. 
+
+C.2 Benchmark Oolong (real) [Bertsch et al., 2025]. Oolong-real is a long-context information aggregation benchmark constructed from real conversational transcripts of the Critical Role Dungeons and Dragons (DnD) series. The benchmark contains questions over long multi-episode transcripts involving counting, aggregation, indexing, and retrieval tasks across conversational contexts that can span up to millions of tokens. We evaluate on a randomly sampled subset of roughly 500 examples from the original 6,072–example benchmark. The benchmark contains three answer types: numeric, string, and lists of strings. Scoring follows exact match for string answers and set overlap for list answers. However, the original scoring 
+
+|ˆy − y|0.75 on numerics leads to undesirable behavior: for example, predicting 1 instead of 10 receives the same score as predicting 991 instead of 1000. It also heavily penalizes small absolute differences at large scales (e.g., 10000 vs. 9985 scores 1%). To address this, we replace the original numeric scorer with relaxed accuracy , where a numeric prediction is counted as correct if it lies within 5% of the gold answer which is standard choice in QA tasks [Masry et al., 2022, 2025]. Finally, we use gpt-5-nano to parse model outputs into the expected structured answer format before evaluation. 
+
+SynthWorlds (SM) [Gu et al., 2026]. SynthWorlds-SM evaluates multi-hop reasoning in a synthetic Wikidata environment where entity names are systematically replaced, preventing models from relying on memorized world knowledge. We evaluate on all 1,200 test examples from the synthetic-mapped (SM) split. We report per-token F1 as in the original paper [Gu et al., 2026]. The benchmark contains multiple reasoning structures (e.g., linear chains, diamonds, and compositional motifs) requiring multi-step aggregation across documents. We provide in-context examples covering all six reasoning paradigms used in the benchmark on all baselines. Finally, the retrieval tool for fetching entity-documents implemented using OpenAI’s text-embedding-3-small embeddings with cosine similarity search. Following the original setup [Gu et al., 2026], the retriever returns the top-5 documents from the 6k+ document corpus for each query. 
+
+PhantomWiki [Gong et al., 2025] PhantomWiki tests multi-hop QA over a synthetic universes of configurable size. Each universe contains entities, relationships, and supporting wiki-style documents, enabling controlled evaluation of multi-hop reasoning and retrieval. We evaluate on a PhantomWiki universe of size 500 generated with seed 1. Following the original work [Gong et al., 2025], we use the same 10 in-context examples provided for the ReAct baseline, adapting them separately for each method to match its expected patterns (e.g., CodeAct writes python <code>...</code> blocks instead of JSON actions). Finally, For we report F1 score computed from the number of exact-match answers shared between the predicted and gold answer sets, as defined in the original paper. 
+
+DeepSearchQA [Gupta et al., 2026]. DeepSearchQA evaluates agents on complex, multi-step information-seeking tasks that require discovering, aggregating, and verifying information from the open web. The benchmark emphasizes long-horizon search planning, retrieval strategy, and meta-reasoning about when sufficient information has been collected. We evaluate on the 316-question 
+
+single-answer subset from the full 900-question benchmark. We restrict evaluation to this split because the remaining set-based questions require nuanced partial-credit grading, making reliable automatic evaluation substantially harder. Instead, we use a binary correctness setup ( correct /incorrect ), which is significantly more stable for LLM-as-a-judge evaluation. We use gpt-5-nano as the judge model for answer verification. We report accuracy. 17 Benchmark Method ReAct CodeAct Deep RLM DOLORES                                                                                                                                                                                
+
+> Research
+> [2022] [2024] [2025b] [2025] (ours)
+> Qwen3 8B Thinking  SynthWorlds [2026] 0.176 ±0.011 0.268 ±0.012 0.206 ±0.011 0.058 ±0.006 0.305 ±0.013
+> PhantomWiki [2025] 0.144 ±0.014 0.153 ±0.015 0.120 ±0.014 0.043 ±0.008 0.172 ±0.016
+> DeepSearchQA [2026] 0.124 ±0.019 0.149 ±0.020 0.142 ±0.020 0.139 ±0.020 0.161 ±0.021
+> Oolong-real [2025] NA †0.045 ±0.014 NA †0.065 ±0.015 0.076 ±0.011
+> Qwen3 32B Thinking  SynthWorlds [2026] 0.228 ±0.012 0.281 ±0.013 0.275 ±0.012 0.169 ±0.010 0.346 ±0.013
+> PhantomWiki [2025] 0.167 ±0.015 0.252 ±0.017 0.212 ±0.017 0.160 ±0.015 0.369 ±0.020
+> DeepSearchQA [2026] 0.177 ±0.022 0.213 ±0.023 0.230 ±0.024 0.190 ±0.022 0.241 ±0.024
+> Oolong-real [2025] NA †0.060 ±0.015 NA †0.077 ±0.013 0.132 ±0.014
+> Llama-3.3 70B Instruct  SynthWorlds [2026] 0.300 ±0.013 0.480 ±0.014 0.308 ±0.013 0.401 ±0.014 0.359 ±0.014 PhantomWiki [2025] 0.244 ±0.017 0.381 ±0.020 0.160 ±0.015 0.270 ±0.018 0.512 ±0.021
+> DeepSearchQA [2026] 0.155 ±0.020 0.184 ±0.022 0.127 ±0.019 0.175 ±0.021 0.187 ±0.022
+> Oolong-real [2025] NA †0.079 ±0.012 NA †0.064 ±0.012 0.151 ±0.015
+
+Table 3: Scores (0–1, ↑ higher is better) across four reasoning benchmarks. NA † indicates context size limitations. 
+
+C.3 Computational Resources 
+
+Inference servers were deployed using vLLM v0.20.0 [Kwon et al., 2023] and managed via SLURM on nodes equipped with NVIDIA H200 GPUs. All experiments reported in this paper collectively required approximately 350 GPU hours. vLLM server configuration and job submission scripts are provided along with our code and configurations at https://github.com/DeanLight/dolores .
+
+## D Detailed Results 
+
+In Table 3 we showcase the same exact numbers from Table 2 with standard error of the mean (SEM) bars. 
+
+## E Failure analysis 
+
+We analyze failure modes on the 2,166 tasks where D OLORES answers correctly and at least one baseline does not, using Qwen3-32B traces across all four baselines and benchmarks. D OLORES 
+
+succeeds on these tasks largely because it decomposes each problem into recursive ID calls, so that each sub-call independently searches and retrieves the relevant information rather than abandoning the task when a single query fails. Additionally, by routing all quantitative and retrieval operations through E, each LLM call produces a small formal model rather than a complete answer, reducing the surface area for hallucinations. For each failing baseline trace we construct a normalized view that preserves the agent’s reasoning while compressing tool outputs and repeated content. Following the LLM-as-judge paradigm [Zheng et al., 2023], an LLM judge (Gemini-3-Flash 4) receives this trace along with the task question, gold answer, and the agent’s final answer, and produces a structured output of a narrative summary, an open-coded primary and optional secondary failure mode, and a verbatim evidence quote from the trace. To derive reportable statistics from these open-coded phrases, we first cluster all outputs using HDBSCAN over BGE-large [Chen et al., 2024a] embeddings to discover natural groupings, following the embedding clusters and naming pipeline of Tamkin et al. [2024]. This process results in a fixed multi-label taxonomy of seven categories: (1)premature termination, (2) hallucination/fabrication, (3) incomplete search traversal, (4) unreliable delegation/aggregation, (5) reasoning/logic error, (6) tool misuse/scaffold error, and (7) other. A second LLM pass (Gemini-3-Flash) classifies each example into this taxonomy, assigning all applicable labels. A single example can have multiple labels. For instance, an agent that hallucinates an answer and then terminates receives both premature termination and hallucination. 
+
+> 4
+
+https://deepmind.google/models/gemini/flash/ 
+
+18 To validate the automated classifications, three PhD annotators independently reviewed a stratified sample of 50 judge outputs covering all baselines and taxonomy categories. Each annotator saw the judge’s summary, evidence quote, and open-coded failure modes alongside the classifier’s labels, and marked each label as correct or incorrect with the option to add missed labels. Mean agreement with LLM-judge classifications was 0.92 amongst the 3 annotators, with pairwise Inter-Annotator Agreement (bias adjusted kappa [Byrt et al., 1993]) of 0.82, overall indicating strong agreement with the automated pipeline. 
+
+## F Qualitative Trace Analysis 
+
+We present three side-by-side trace comparisons from the dr_only cell (D OLORES correct, baseline incorrect, Qwen3-32B). These examples were selected to illustrate the most prevalent failure modes identified by our taxonomy, namely, premature termination, and hallucination/fabrication, which together account for the majority of baseline failures. 
+
+Example 1: CodeAct hallucinates on (SynthWorlds, 0068-qa-sm ).
+
+Task: 
+
+What is the opposite of the script in which “Flames of Destiny” is written? 
+
+Gold answer: Valtaroscript 
+
+CodeAct (score: 0, answer: “Alphabetic Script”):        
+
+> Thought: I need to determine the script format of “Flames of Destiny” to find its opposite. <code> docs = search(query="Flames of Destiny script") print(docs) </code> Observation: [’Flames of Destiny is a video game released in 2057. ... The game includes a wide set of languages and scripts for its in-game text ... Among the scripts used are Valtarian Glyphic Script (a writing system described as a script), ...’] Thought: The script used in “Flames of Destiny” is the Valtarian Glyphic Script. The opposite of a glyphic (logographic) script is typically an alphabetic script. Since the game supports multiple languages like Kynthor and Velthar (alphabetic), the opposite is an alphabetic script. <code> final_answer("Alphabetic Script") </code>
+
+CodeAct identifies “Valtarian Glyphic Script” correctly but never issues a second search. Instead, it hallucinates a real-world typological contrast (“glyphic → alphabetic”) from parametric knowledge. 
+
+DOLORES (score: 1, answer: “Valtaroscript”): 
+
+<repl> docs = search("Flames of Destiny") script = llm(f"What script is 'Flames of Destiny ' written in? " f"Return just the script name.\n\n" f"{ '' .join(docs)}") print(script) </repl> 
+
+<observation> Valtarian Glyphic Script </observation> 
+
+<repl> docs = search("Valtarian Glyphic Script") opposite_script = llm(f"What is the opposite of the Valtarian Glyphic " f"Script? Return just the script name.\n\n" f"{ '' .join(docs)}") print(opposite_script) </repl> 
+
+<observation> Valtaroscript </observation> 
+
+19 <repl> FinalAnswer("Valtaroscript") </repl> 
+
+Each hop is a separate search + extraction call ( P2 ). The second sub-LLM receives only the documents about Valtarian Glyphic Script and can read the in-universe “opposite” relation directly— no parametric guessing required. 
+
+Example 2: ReAct terminates prematurely on implicit relation (PhantomWiki-500, 2f4ee116 ). 
+
+Task: 
+
+Who is the friend of the daughter-in-law of the person whose date of birth is 0984-05-03? 
+
+Gold answer: Bobbie Luu 
+
+ReAct (score: 0, answer: empty):         
+
+> Tool call: search(attribute="0984-05-03") Observation: (1) Earle Coe Tool call: retrieve_article(entity="Earle Coe") Observation: # Earle Coe ## Family The mother of Earle Coe is Alycia Coe. The father of Earle Coe is Christoper Coe. The son of Earle Coe is Reggie Coe. The wife of Earle Coe is Christina Coe. ## Attributes The date of birth of Earle Coe is 0984-05-03. The occupation of Earle Coe is petroleum engineer. ... Action: {"name": "final_answer", "arguments": {"answer": ""}}
+
+ReAct finds Earle Coe and sees no explicit “daughter-in-law” field. It immediately gives up—never looking up the son’s wife. 
+
+DOLORES (score: 1, answer: “Bobbie Luu”): 
+
+<repl> search_result = search("0984-05-03") print(f"Search result for DOB: {search_result}") </repl> 
+
+<observation> Search result for DOB: (1) Earle Coe </observation> 
+
+<repl> article = retrieve_article("Earle Coe") print(f"Earle Coe 's article: {article}") </repl> 
+
+<observation> ... The son of Earle Coe is Reggie Coe. The wife of Earle Coe is Christina Coe. ... </observation> 
+
+<repl> 
+
+# No `` daughter-in-law '' field; check if son has a wife 
+
+reggie_article = retrieve_article("Reggie Coe") print(f"Reggie Coe 's article: {reggie_article}") </repl> 
+
+<observation> ... The wife of Reggie Coe is Lissa Coe. ... </observation> 
+
+<repl> lissa_article = retrieve_article("Lissa Coe") print(f"Lissa Coe 's article: {lissa_article}") </repl> 
+
+<observation> ... The friend of Lissa Coe is Bobbie Luu. ... </observation> 
+
+20 <repl> FinalAnswer(["Bobbie Luu"]) </repl> 
+
+DOLORES reasons incrementally ( P3 ): seeing no daughter-in-law field, it infers the relation must be resolved via son → wife and issues the next retrieval. Each hop is a separate <repl> turn ( P2 ), making continuation a consequence of the code’s control flow rather than an optional associative decision. 
+
+Example 3: RLM uses brittle heuristics for counting (Oolong-real, 18ac05eb )
+
+Task: 
+
+Across all episodes, what percentage of rolls were of value 4? Round to the nearest integer. 
+
+Gold answer: 2
+
+RLM (score: 0, answer: 8):     
+
+> “‘repl import csv from io import StringIO csv_data = StringIO(context) csv_reader = csv.DictReader(csv_data) count_4 = 0; total_rolls = 0 for row in csv_reader: try: roll_value = int(row.get(’roll_value’, 0)) total_rolls += 1 if roll_value == 4: count_4 += 1 except ValueError: continue “‘ # CSV parsing fails on unstructured dialogue; try regex “‘repl import re roll_pattern = re.compile(r’\b4\b’) count_4 = len(roll_pattern.findall(context)) total_pattern = re.compile(r’\b\d\b’) total_rolls = len(total_pattern.findall(context)) percentage = (count_4 / total_rolls * 100) print(f"Regex-based estimate: {round(percentage)}%") “‘ ... [4 more iterations with different regex heuristics] ... “‘repl FINAL_VAR(final_percentage) # outputs 8 “‘
+
+RLM receives the entire multi-episode transcript in a single context variable. It tries heuristics that are not reliably able to identify dice rolls in unstructured D&D dialogue. The final answer (8) is a spurious approximation from counting standalone digit “4” occurrences across all text. 
+
+DOLORES (score: 1, answer: 2): 
+
+<repl> episodes = DoLoReS( 
+
+"""Extract all episodes from the DnD game text in `document `.Each episode is delimited by '[START OF EPISODE] ' and 
+
+'[END OF EPISODE] '. Return a list of strings.""" ,document=document, namespace="splitting episodes") print(f"Found {len(episodes)} episodes.") </repl> 
+
+<observation> Found 8 episodes. </observation> 
+
+<repl> for ep in episodes: DoLoReS.add_task( 
+
+"""In the given DnD episode text, count the total number of dice rolls and how many resulted in a value of 4. Return a tuple (total_rolls, fours_count) as integers.""" ,episode=Var(ep, "DnD episode text"), 
+
+21 namespace="episode qa") results = DoLoReS.run_all() total_rolls = sum(r[0] for r in results) total_fours = sum(r[1] for r in results) percentage = round((total_fours / total_rolls) * 100) print(f"Total rolls: {total_rolls}, Total fours: {total_fours}, " f"Percentage: {percentage}%") </repl> 
+
+> <observation> Total rolls: 1188, Total fours: 26, Percentage: 2% </observation>
+> <repl> FinalAnswer("2") </repl>
+
+DOLORES splits the document into episodes via delimiter matching ( P1 ), dispatches 8 parallel sub-agents that each count within a single bounded episode ( P2 ), and aggregates with Python arithmetic (P1 ). Each sub-LLM handles a tractable chunk rather than the full 100k+ token transcript. 
+
+## G Ablation: In-context decomposition examples 
+
+Table 4 reports the full results of the in-context decomposition ablation discussed in main text. We compare the full D OLORES agent against two in context variants on Qwen3-32B: no-examples , which removes all decomposition examples from the system prompt, and with-principles , which replaces the examples with natural-language descriptions of the three design principles from §3.1. Across all four benchmarks, removing the in-context examples leads to substantial drops in both F1 and exact match, and replacing them with natural-language principles is uniformly worse than removing them altogether. 
+
+Benchmark Variant F1 EM SynthWorlds [2026] 
+
+no-examples 0.041 0.006 
+
+with-principles 0.036 0.007 DOLORES 0.345 0.325 
+
+PhantomWiki [2025] 
+
+no-examples 0.113 0.076 
+
+with-principles 0.080 0.052 DOLORES 0.373 0.279 
+
+DeepSearchQA [2026] 
+
+no-examples 0.139 0.139 
+
+with-principles 0.117 0.117 DOLORES 0.241 0.241 
+
+Oolong-real [2025] 
+
+no-examples 0.036 0.033 
+
+with-principles 0.033 0.031 DOLORES 0.137 0.107 
+
+Table 4: Ablation of D OLORES ’s in-context decomposition examples on Qwen3-32B. no-examples 
+
+removes the atomic decomposition examples from the system prompt; with-principles replaces them with natural-language statements of the design principles from §3.1. Both reduced variants degrade sharply against the full D OLORES agent on every benchmark, and with-principles is consistently worse than no-examples , suggesting that current LLMs operationalize structured meta-reasoning by analogy to concrete examples rather than by following stated rules. 22 query  = “Rephrase the following  as  a search query: 'Find  all  volleyball courts in  San Fransisco' ”
+
+result  = search( query )
+
+names  = “Extract the names  of the neighborhoods from the  following text: { result }”
+
+“List all volleyball courts located in San Fransisco. ”                                      
+
+> answer =DOLORES(
+> "List all volleyball courts "
+> "located in San Fransisco. "
+> namespace ="lookup"
+> )
+> query =llm ("Rephrase the following as asearch query: 'Find all volleyball courts in San Fransisco' ")
+> courts =search (query )
+> names =llm ("Extract the names of the neighborhoods from the following text: {result }")
+
+LLM 
+
+🤖 
+
+The Language of Deep Reasoning 
+
+DOLORES: Deep Layered Reasoning Scaffold Figure 3: Low-level overview of Deep Reasoning on Running example. The original task is decom-posed by m into sub-tasks, each resolved by a combination of associative reasoning ( A), formal execution ( E), and recursive deep reasoning ( ID). 23
