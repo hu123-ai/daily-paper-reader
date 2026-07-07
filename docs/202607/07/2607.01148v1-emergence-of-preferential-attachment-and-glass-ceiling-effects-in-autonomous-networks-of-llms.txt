@@ -1,0 +1,1368 @@
+Title: Emergence of Preferential Attachment and Glass-Ceiling Effects in Autonomous Networks of LLMs
+
+URL Source: https://arxiv.org/pdf/2607.01148v1
+
+Published Time: Thu, 02 Jul 2026 01:27:22 GMT
+
+Number of Pages: 28
+
+Markdown Content:
+# Emergence of Preferential Attachment and Glass-Ceiling Ef-fects in Autonomous Networks of LLMs ∗
+
+Yiming Zhang yz2926@cornell.edu Department of Electrical and Computer Engineering Cornell University 
+
+Vikram Krishnamurthy vikramk@cornell.edu Department of Electrical and Computer Engineering Cornell University 
+
+# Abstract 
+
+We investigate the emergence of structural disparities in networks of collaborating large language model (LLM) agents. Each LLM agent refers to a prompted LLM of a spec-ified type determined by its base model, model size, and system prompt. When LLM agents autonomously choose collaborators, the resulting communication network exhibits preferential-attachment dynamics: agents that are already prominent become increasingly likely to attract additional connections. In some cases, weaker LLM agents (agents with smaller base model or older version) can disproportionately occupy central and influential network positions relative to stronger LLM agents. We interpret this misalignment between task capability and network prominence as a type-dependent glass-ceiling effect (GCE). We model the network of LLM agents as a time-evolving sequence of directed weighted graphs, where the vector-valued edge weights represent cumulative tokens exchanged, num-ber of interaction rounds, and reasoning effort. Using a contraction mapping argument on the mean-field dynamics, we prove that the importance (centrality) of each agent type con-verges to a unique stable equilibrium. To ground the model in LLM decision mechanisms, we introduce a cross-attention-inspired utility for collaborator selection. This utility specifies the local connection dynamics and, together with the mean-field model, yields a predictive characterization of the limiting network structure and its type-dependent centrality gaps. To validate the theory, we develop an experimental testbed with 100 LLM agents. Our experiments show that autonomous network formation can generate persistent centrality disparities, with their magnitude and direction depending on model family, model size, system-prompt design, and task context. They further show that the effect of preferential attachment depends on its alignment with model capability: reinforcing it improves col-lective performance when stronger agents become central, whereas weakening it improves performance when network dynamics instead favor weaker agents. All results are repro-ducible; the code and datasets are available in an anonymous GitHub repository. 
+
+# 1 Introduction 
+
+Multi-agent LLM networks, where each node is an LLM agent 1 are becoming increasingly important as large language models are deployed not only as isolated assistants, but also as interacting agents capable of collaboration, specialization, and collective problem solving. Such networks of LLM agents have been explored in a range of settings, including complex problem solving (Qian et al., 2024b), software development (Qian et al., 2024a; Hong et al., 2024), automated debate and collective judgment (Li et al., 2024; Hu et al., 2025), and large-scale social simulation (Piao et al., 2025; Guan et al., 2025). As LLMs continue to improve    
+
+> ∗This research was funded by NSF grant CCF-2312198 and ARO grant W911NF-24-1-0083
+> 1Throughout this paper, an LLM agent refers to a prompted LLM of a specified type. An agent’s type is determined by its base model (e.g., Gemini or GPT), model size (number of parameters), and system prompt defining its role (e.g., answer provider or answer checker).
+
+1
+
+> arXiv:2607.01148v1 [cs.SI] 1 Jul 2026
+
+through scaling and instruction tuning, they are increasingly studied not only as problem-solving tools, but also as agents that can exhibit communicative behaviors, preferences, biases, and social interactions (Park et al., 2023; Ashery et al., 2025; Madmoun & Lahlou, 2025). Recent work examines multi-agent LLM systems from a social-network perspective, where agents exchange information, influence one another, and form structured patterns of interaction (Papachristou & Yuan, 2025; Mehdizadeh & Hilbert, 2025; Jain et al., 2025b; Schneider et al., 2025). This perspective suggests several potential applications, such as simulating human social dynamics (Park et al., 2023; Piao et al., 2025; Guan et al., 2025), supporting collective decision-making in organizations (Qian et al., 2024b; Guo et al., 2026). These applications require understanding how large-scale LLM agent networks emerge when agents are allowed to interact and form connections. As LLM agents autonomously form and evolve their own interaction networks, a central question arises: 
+
+Do complex sociological phenomena, including structural disparities observed in human social networks, also emerge in networks of LLM agents? One important sociological phenomenon observed in social networks is preferential attachment (Barabási & Albert, 1999), a reinforcement mechanism in which agents that already have more connections or greater prominence become increasingly likely to attract additional connections. Here, an agent’s centrality measures its prominence in the communication network, namely its access to and influence over interactions with other agents. We distinguish between two types of preferential attachment: 
+
+• Capability-aligned dominance : stronger agents 2 become central; this shows efficient specialization or merit-aligned preferential attachment. We term this as the meritocracy case . This can improve system efficiency by encouraging stable specialization and reducing redundant interactions. 
+
+• Capability-misaligned dominance : weaker or equal agents become central, or stronger agents remain peripheral; we term this as the glass-ceiling effect (GCE) . In the social sciences, the GCE refers to invisible barriers that prevent certain groups of people from reaching higher organizational posi-tions despite possessing comparable qualifications. In networks of LLM agents, this can undermine collaboration by excluding capable agents from important communication channels. This paper shows that LLM agents autonomously form networks that have a preferential attachment struc-ture. Depending on the application, we show that capability-aligned dominance or capability-misaligned dominance (GCE) can emerge. This dual nature makes it important to characterize when type-dependent centrality gaps should be mitigated and when they can be intentionally leveraged for better network design. 
+
+1.1 Main Results and Insights 
+
+Autonomous network formation by LLM agents. First, we examine how LLM agents autonomously form interaction networks while solving problem-solving tasks. In our framework, agents are not instructed to follow any particular network-formation rule; instead, they exchange information, assess the usefulness of received outputs, and decide whether to establish or strengthen directed connections with other agents. To analyze the resulting network evolution, we model the type-level communication dynamics through a mean-field ordinary differential equation (ODE), whose drift is derived from a cross-attention-based pairwise utility function that approximates how individual LLM agents evaluate potential collaborators and make connection decisions. This utility combines the semantic relevance of a prospective collaborator’s context with its structural attractiveness in the current network, thereby capturing both the informational value of the collaborator and its accumulated communication position. We show that aggregating these local LLM decisions gives rise to persistent communication patterns. The resulting mean-field dynamics converge to a stable fixed point, providing a tractable characterization of the long-run type-level communication structure. 
+
+Emergence of preferential attachment and GCE. Second, we characterize when the autonomous network-formation protocol manifests as type-dependent preferential attachment. We study this question in two tasks: collaborative question-answering , in which LLM agents exchange partial or noisy evidence to jointly answer a question, and multi-agent debate , in which agents selectively inspect, challenge, and revise another’s arguments before producing final answers. Within each task, the communication dominance pattern depends on agents’ model size, model family, and role-defining system prompts: communication prominence may be capability-aligned, with stronger agents becoming more central, or capability-misaligned, yielding a glass-ceiling effect (GCE). We quantify this dominance using type-level communication prominence 
+
+> 2We use “stronger” and “weaker” to distinguish LLMs by their general model capability, as reflected in model version and number of parameters. A newer model version or a larger model is termed stronger than an earlier version or a smaller model.
+
+2and formalize average GCE, which captures population-wide centrality disadvantage, and tail GCE, which captures exclusion of agents from the most influential positions. 
+
+Extensive experimental evaluation. We conduct four detailed experiments with networks comprising 100 LLM agents. (i) We demonstrate that a mean-field differential equation, parameterized by a novel 
+
+cross-attention-based pairwise utility predictor learned from LLM-generated connection decisions, can ac-curately predict the evolution of network formation across different LLM agent contexts. (ii) We examine how different forms of LLM heterogeneity shape preferential attachment. In capability-aligned settings, we show that stronger same-family LLMs and closed-source LLM agents preferentially attract communication links. i.e., a meritocracy emerges. In capability-misaligned settings, we show that prompt-defined roles result in weaker LLM agents taking on higher positions of importance, and more powerful LLM agents are relegated to lower levels of importance, i.e., a glass-ceiling effect emerges. (iii) After network formation, we demonstrate that truthful evidence is propagated in capability-aligned LLM networks, whereas halluci-nations are amplified in capability-misaligned LLM networks. (iv) Finally, by tuning a bias coefficient, we demonstrate improvements in network-wide answer accuracy in question-answer tasks: in capability-aligned settings, stronger preferential attachment is beneficial, while in capability-misaligned settings, weakening preferential attachment mitigates the GCE and improves the quality of the agents’ final outputs. 
+
+1.2 Motivation and Related Work 
+
+Multi-agent LLM systems and emergent social networks. As LLMs are increasingly deployed for complex tasks, a growing body of work organizes them as interacting agents that communicate, divide tasks, critique outputs, and coordinate toward shared objectives (Guo et al., 2024; Wu et al., 2023; Li et al., 2023; Chen et al., 2024). Representative systems include AutoGen for flexible agent conversations (Wu et al., 2023), CAMEL and AgentVerse for type-based collaboration and emergent behaviors (Li et al., 2023; Chen et al., 2024), MetaGPT and ChatDev for structured software-development workflows (Hong et al., 2024; Qian et al., 2024a), and multi-agent debate frameworks that improve reasoning through mutual critique (Du et al., 2024). However, these systems often rely on predefined roles, fixed workflows, or centrally specified communication protocols. A complementary line of work views LLM agents as social entities: generative agents exhibit individual and group behavior (Park et al., 2023), while other studies use LLMs to simulate social and economic interactions (Aher et al., 2023; Argyle et al., 2023; Horton, 2023). Recent work further shows that decentralized LLM populations can develop social conventions, collective biases, and network structures such as hubs, communities, homophily, and preferential attachment (Gao et al., 2023; Jain & Krishnamurthy, 2024; Ashery et al., 2025; Papachristou & Yuan, 2025). These findings motivate treating multi-agent LLM systems as artificial societies in which agents repeatedly choose collaborators and form persistent communication patterns. Our work builds on this perspective by studying how such communication networks emerge when LLM agents autonomously form and reinforce connections during collective problem solving. 
+
+Preferential attachment, structural inequality, and glass-ceiling effect. Our analysis is connected to classi-cal work on cumulative advantage, preferential attachment, and structural inequality. The Matthew effect explains how early success can reinforce future success (Merton, 1968; Price, 1976), while preferential attach-ment formalizes how well-connected nodes attract more links and produce persistent centrality differences (Barabási & Albert, 1999). Social-network theory further shows that network position shapes access to information, influence, and opportunities (Granovetter, 1973; Burt, 1992). Recent work connects preferen-tial attachment to glass-ceiling effect in directed or attributed networks, showing how homophily, group size, and cumulative advantage can generate asymmetric access to high-degree positions and structural disparities (Nettasinghe et al., 2021; 2022; 2026; Luo et al., 2024). The GCE describes persistent barriers that prevent disadvantaged groups from reaching top positions (Cotter et al., 2001). 
+
+# 2 Problem-Solving Tasks and Autonomous Collaboration-Network Formation 
+
+In this section, we first describe the problem-solving tasks through which LLM agents autonomously form collaborative networks. We then specify the protocol rules governing how agents communicate, assess received outputs, and establish connections with other agents. Because these interactions require agents to assign connection weights based on the value of received information, the protocol allows us to study how LLM networks form, evolve, and develop type-level centrality gaps. This setting provides the foundation for the GCE analysis in Sec. 3 and the experiments in Sec. 4. 32.1 Collaborative question-answering and Multi-Agent Debate 
+
+Task settings. We evaluate LLM network formation on two downstream tasks: collaborative question-answering and multi-agent debate. Both tasks require agents to exchange information and choose whom to consult, making them suitable for studying autonomous connection formation. In collaborative QA, agents observe partial or noisy evidence and collaborate to answer a question. In multi-agent debate, agents first produce independent answers and arguments, then selectively inspect, challenge, or revise others’ arguments before finalizing their answers. For both tasks, we consider two agent types, R and B, which may represent different base models or assigned roles. This design allows us to test whether type-dependent centrality gaps emerge even when the two groups have similar competence. 
+
+CollaborativeQA and Multi-agent Debate Datasets. Similar to (Jain et al., 2025a), we construct a synthetic dataset for both collaborative QA and multi-agent debate, with implementation details provided in Ap-pendix B. Here, the dataset refers to the collection of task prompts, agent-specific inputs, and the resulting LLM interaction traces and responses generated during the experiments. We use this controlled construction rather than off-the-shelf benchmarks because it allows us to precisely specify agent capability, information ac-cess, type-level heterogeneity, and ground-truth outcomes. This control is essential for isolating how network structure emerges from agent interactions rather than from uncontrolled biases in pre-existing datasets. For collaborative QA, each instance contains a question, a ground-truth answer, supporting evidence, and distractor snippets; each agent receives only a subset of the evidence, creating the need to consult others for missing information. For multi-agent debate, each instance contains a question, the correct answer, plausible incorrect answers, and supporting or opposing arguments for each candidate; agents first generate independent answers with rationales, then selectively inspect or challenge others’ arguments before revising their answers. In both tasks, the two agent types are balanced to have comparable initial correctness, while their local evidence, arguments, confidence, or type prompts may vary. Because the ground truth is known, we can measure whether interactions improve answer quality, whether useful evidence or high-quality arguments receive attention, and whether one type is structurally excluded from valuable collaborations despite comparable ability. This enables analysis of influence, attention centrality, and GCE across both QA and debate networks. 
+
+2.2 Network Formation Protocol 
+
+This section defines the minimal set of rules that we impose on the LLM agents when they autonomously form networks with other LLM agents. We emphasize that these rules define the interaction protocol followed by the agents, rather than prescribing a network formation model. At each discrete time t = 0 , 1, 2, 3, . . . , we denote the autonomous network due to the interaction of LLM agents as a directed vector-weighted graph 
+
+Gt = ( V t, W t).
+
+Here V t denotes the set of LLM agents in the network at time t, where each element v ∈ V t corresponds to a specific LLM agent. The agent set V t is partitioned into two type classes, 
+
+V t = Rt ∪ Bt, Rt ∩ Bt = ∅.
+
+The two-type 3 classes Rt and Bt correspond to agents with different system prompts, base models, or functional roles. W t denotes the set of directed communication intensity vectors decided by the LLM agents at time t. For each directed edge from agent u to agent v, wt(u, v ) ∈ W t with wt(u, v ) ∈ [0 , 1] d represents the d-dimensional communication intensity from u to v, where each dimension captures a different aspect such as token exchange, interaction frequency, or reasoning effort; if no such edge exists, it is treated as the zero vector and omitted from W t.The sequence of networks {Gt} is initialized as an arbitrary finite network G0 = ( V 0, W 0), with initial type partition V 0 = R0 ∪ B0. The network then evolves through the following local interaction protocol. At each discrete time instant t, an administrator first selects one of three possible network-growth events. The administrator is responsible for exogenous decisions such as event selection, node birth, type assignment,     
+
+> 3We focus on two-type classes for analytical tractability and to align with the standard binary-group notation used in human-network models in the literature, where Rand Bdenote females and males, respectively.
+
+4context generation, and sampling candidate sources or targets according to the prescribed distributions. Each node is modeled as an LLM agent. Conditional on the context provided by the administrator, a source agent generates a message, and the receiving agent determines the vector-valued connection weight. Since a single macroscopic event may require several interaction attempts before the prescribed total connection mass is reached, we distinguish the macroscopic time t from short-timescale interaction trials indexed by m.1. Event type. At each time t, the administrator samples one of three mutually exclusive events: Event 1 with probability p, Event 2 with probability q, and Event 3 with probability 1 − p − q.The sampled event is applied to the previous network Gt−1 = ( V t−1, W t−1) and produces the updated network Gt = ( V t, W t). In Events 1 and 2, a new node vt is born, assigned type R with probability r and type B with probability 1 − r, receives the context xt, and the node set is updated as V t = V t−1 ∪ { vt}. In Event 3, no new node is born, and hence V t = V t−1. Here, xt denotes the task context given to the newly born agent at time t. This context includes the input question, the agent’s local evidence snippets, candidate answers, and the system prompt instructing the agent to generate a persuasion paragraph that convinces target agent to establish a connection. 2. Node selection and LLM interaction. The administrator then performs Me trials, where e ∈{1, 2, 3} denotes the sampled event type. (i) Event 1: new node connects to existing nodes. For each trial m = 1 , . . . , M 1, the administrator samples the target agent through a two-step procedure. It first samples the target type ( R or B) according to Pr( utm ∈ Rt−1) = πt−1tgt ,R and Pr( utm ∈ Bt−1) = πt−1tgt ,B ,and then samples the specific target utm within the selected type class randomly (with uniform distribution). This creates a candidate edge (vt, u tm). The source agent vt (specified in step 1 "Event type" above) sends a context-dependent message ytm to the target agent utm. The target 
+
+utm then assigns a vector-valued connection weight ωt(vt, u tm) ∈ Rd. After the M1 trials, this produces the list Wt 
+
+> 1
+
+= {ωt(vt, u tm)}M1
+
+> m=1
+
+.(ii) Event 2: existing nodes connect to a new node. For each trial m = 1 , . . . , M 2, the administrator samples the source agent through a two-step procedure. It first samples the source type according to Pr( utm ∈ Rt−1) = πt−1src ,R and Pr( utm ∈ Bt−1) = πt−1src ,B , and then samples the source utm within the selected type class randomly. This creates a candidate edge 
+
+(utm, v t). The source agent utm sends a context-dependent message ytm to the target agent vt,which assigns a vector-valued connection weight ωt(utm, v t) ∈ Rd. After the M2 trials, this produces the list Wt 
+
+> 2
+
+= {ωt(utm, v t)}M2
+
+> m=1
+
+.(iii) Event 3: existing nodes connect to existing nodes. For each trial m = 1 , . . . , M 3, the administrator samples source and target agents through a two-step procedure. It first samples their types according to Pr( utm ∈ Rt−1) = πt−1src ,R , Pr( utm ∈ Bt−1) = πt−1src ,B , Pr( vtm ∈ Rt−1) = 
+
+πt−1tgt ,R , and Pr( vtm ∈ Bt−1) = πt−1tgt ,B . Conditional on the selected types, the source utm and target vtm are then sampled randomly, respectively. This creates a candidate edge (utm, v tm).The source agent utm sends a context-dependent message ytm to the target agent vtm, which assigns a vector-valued connection weight ωt(utm, v tm) ∈ Rd. After the M3 trials, this produces the list Wt 
+
+> 3
+
+= {ωt(utm, v tm)}M3
+
+> m=1
+
+.3. Normalized connection weight. For the sampled event e, the administrator normalizes the corresponding list Wte within the sampled event so that ∑
+
+> ω∈W te
+
+ω = 1d. Let ∆W te denote the normalized list of vector-valued connection weights. 4. Network update. The directed vector-weighted edge set is updated by adding the newly generated communication vectors to the previous edge set: W t = W t−1 ∪ ∆W te . If a directed edge in ∆W te
+
+already exists in W t−1, its communication vector is updated by aggregating the previous weight with the newly generated normalized weight. Otherwise, the edge is added to W t as a new directed communication vector. Note that the above protocol does not instruct the LLM agents to form a preferential-attachment network. Nevertheless, as we show later in Sec. 5.2, their autonomous collaboration decisions generate preferential-attachment dynamics rather than an Erdős–Rényi random graph. 53 Mean-Field Analysis of Network Formation 
+
+Building on the network formation protocol in Sec. 2, we now analyze the type-level centrality dynamics induced by this LLM agent network-formation process. In this section, we do two things: first, in Sec. 3.1, we introduce a centrality measure to assess the LLM agent’s importance within the network. Sec 3.2, we establish the proof a the stable equilibrium of the mean-field dynamics. This section sets the stage for Sec. 4 where we use explicit cross-attention information from the LLM agents to show that the stable equilibrium results in the emergence of GCE. 
+
+3.1 Centrality Measure to Assess LLM Agent Importance 
+
+To formulate the emergence of a GCE, we summarize the evolving LLM-agent network by the communication intensity of type R. Let Rt denote the set of agents assigned type R at time t. The total incoming and outgoing communication vectors associated with type R are 
+
+Dt
+
+> in
+
+(R) = ∑
+
+> u∈Rt
+
+∑ 
+
+> v∈Vt
+
+wt(v, u ), Dt
+
+> out
+
+(R) = ∑
+
+> u∈Rt
+
+∑ 
+
+> v∈Vt
+
+wt(u, v ). (1) The corresponding network-level totals are denoted by 
+
+Dt 
+
+> in
+
+= Dt
+
+> in
+
+(R) + Dt
+
+> in
+
+(B), Dt 
+
+> out
+
+= Dt
+
+> out
+
+(R) + Dt
+
+> out
+
+(B). (2) By the normalization of communication intensity in each macro-step, the network adds one unit of commu-nication mass in every dimension at each time, so Dt 
+
+> in
+
+= Dt 
+
+> out
+
+= t1d. The type-aware sampling probabilities for type R are therefore 
+
+πt 
+
+> tgt ,R
+
+= ∥Dt
+
+> in
+
+(R)∥1 + N t(R)δ
+
+∥Dt
+
+> in
+
+∥1 + N tδ , πt 
+
+> src ,R
+
+= ∥Dt
+
+> out
+
+(R)∥1 + N t(R)ξ
+
+∥Dt
+
+> out
+
+∥1 + N tξ . (3) Here N t(R) is the number of type-R agents and N t = |V t| is the total number of agents. The corresponding probabilities for type B are given by πt 
+
+> tgt ,B
+
+= 1 − πt 
+
+> tgt ,R
+
+and πt 
+
+> src ,B
+
+= 1 − πt
+
+> src ,R
+
+. This sampling mechanism reflects the limited visibility of realistic interaction networks: as in human societies, agents are not assumed to observe the full global network, and, in an LLM-agent network, exposing every agent to all other agents at each step would be computationally costly and generate substantial redundant communication. We therefore sample only a limited set of candidate sources and targets at each macro-step. The parameters δ, ξ > 0 are baseline sampling coefficients for target and source selection. They ensure that even agents with little accumulated communication prominence retain a nonzero probability of being sampled. The main state variables are the incoming and outgoing communication prominence of type R:
+
+θt 
+
+> in
+
+= Dt
+
+> in
+
+(R) ⊘ Dt
+
+> in
+
+, θt 
+
+> out
+
+= Dt
+
+> out
+
+(R) ⊘ Dt
+
+> out
+
+, (4) where ⊘ denotes coordinate-wise division. Since Dt 
+
+> in
+
+= Dt 
+
+> out
+
+= t1d, these measures are equivalently θt 
+
+> in
+
+=
+
+Dt
+
+> in
+
+(R)/t and θt 
+
+> out
+
+= Dt
+
+> out
+
+(R)/t . We write the type-level communication prominence vector as 
+
+Θt = (θt
+
+> in
+
+, θ t
+
+> out
+
+) ∈ [0 , 1] 2d. (5) This vector summarizes the fraction of total network communication intensity associated with each type, separately for incoming and outgoing communication. 
+
+3.2 Convergence to a Stable Equilibrium of the Mean-field Dynamics 
+
+We now characterize the long-run behavior of the type-level communication prominence defined in (5). The key difficulty is that the individual interaction process depends on LLM-generated messages, contexts, and vector-valued edge weights. We therefore study the induced mean-field dynamics at the type level. Let 
+
+Gt denote the natural filtration generated by the network history up to time t, including all previous node arrivals, type assignments, contexts, messages, and edge weights. Define the one-step Type R communication intensity increment as 
+
+∆t+1 (R) = (∆t+1 in (R), ∆t+1 out (R)), (6) 6where ∆t+1 in (R) = Dt+1 in (R) − Dt
+
+> in
+
+(R), ∆t+1 out (R) = Dt+1 out (R) − Dt
+
+> out
+
+(R). Since each macroscopic step adds one unit of communication mass in every dimension, we have Dt 
+
+> in
+
+= Dt 
+
+> out
+
+= t1d. Hence the communication promi-nence measure for each step satisfies θt+1 in = θt 
+
+> in
+
++ 1
+
+> t+1
+
+(∆t+1 in (R) − θt
+
+> in
+
+) , θt+1 out = θt 
+
+> out
+
++ 1
+
+> t+1
+
+(∆t+1 out (R) − θt
+
+> out
+
+) .
+
+Equivalently, we can write 
+
+Θt+1 = Θ t + γt
+
+(∆t+1 (R) − Θt) , γt = 1
+
+t + 1 . (7) We impose the following standard conditions for stochastic approximation (Kushner & Yin, 2003). 
+
+Assumption 1. Bounded increments. The communication increments are nonnegative and uniformly bounded. That is, there exists a constant C < ∞ such that ∥∆t+1 (R)∥ ≤ C almost surely for all t.
+
+Assumption 2. Type-level drift closure. There exists a deterministic function F : [0 , 1] 2d → [0 , 1] 2d such that E [∆t+1 (R) | Gt
+
+] = F (Θ t). The expectation is taken over the task type, type and context assignment, and connection protocol. The function F depends on fixed protocol parameters such as p, q, r, δ, ξ , as well as the type-level interaction statistics induced by the LLM agents. 
+
+Assumption 3. Stable limiting dynamics. The limiting ordinary differential equation ˙Θ = F (Θ) − Θ
+
+has a unique globally asymptotically stable equilibrium Θ⋆ ∈ [0 , 1] 2d. A sufficient condition is that F is a contraction on [0 , 1] 2d: there exists ρ < 1 such that ∥F (Θ) − F (Θ ′)∥ ≤ ρ ∥Θ − Θ′∥ for all Θ, Θ′ ∈ [0 , 1] 2d.The following theorem is an extension of (Nettasinghe et al., 2022) to vector-valued weighted directed graphs. It will be utilized to predict emergence of preferential attachment (capability-aligned and misaligned cases). 
+
+Theorem 1 (Convergence to a stable equilibrium) . Under the autonomous connection protocol defined in Section 2.2, suppose Assumptions 1–3 hold. Then the type-level communication share process converges almost surely to the unique stable equilibrium of the limiting ODE: 
+
+Θt −→ Θ⋆, as t → ∞ ,
+
+where Θ⋆ is the unique solution of the fixed-point equation 
+
+Θ⋆ = F (Θ ⋆).
+
+Proof sketch The complete proof is given in Supplementary Material (Appendix A). Here we outline the main ideas. By Assumption 2, define the martingale difference noise process 
+
+Mt+1 = ∆ t+1 (R) − F (Θ t), E[Mt+1 | Gt] = 0 .
+
+Then the share recursion can be expressed as the stochastic approximation update 
+
+ˆΘt+1 = ˆΘt + γt
+
+(F (Θ t) − Θt + Mt+1 
+
+) , γt = 1
+
+t + 1 .
+
+The decreasing step size sequence satisfies the usual constraints ∑ 
+
+> t≥0
+
+γt = ∞, ∑ 
+
+> t≥0
+
+γ2 
+
+> t
+
+< ∞. By Assump-tion 1, the martingale noise has uniformly bounded second moment, so the accumulated weighted noise is asymptotically negligible. Therefore, the interpolated trajectory of {Θt} tracks the limiting ordinary differential equation (ODE) ˙ˆΘ = F ( ˆΘ) − ˆΘ. Assumption 3 ensures that this ODE has a unique globally asymptotically stable equilibrium Θ⋆. Standard stochastic approximation arguments (Kushner & Yin, 2003) then imply ˆΘt → Θ⋆ almost surely. 
+
+# 4 Cross-Attention Utility and Emergence of Glass-Ceiling Effect 
+
+Theorem 1 established the existence of a unique stable equilibrium. We now characterize this equilibrium explicitly using information intrinsic to the LLM agents. Our analysis proceeds in two steps. First, in Sec. 4.1, we introduce a novel cross-attention-inspired utility for network formation. Combined with the mean-field dynamics, this utility yields a predictive model for the evolution of type-level centrality and the limiting structure of the LLM-agent network. Then in Sec. 4.2, we use this utility to characterize the equilibrium’s type-dependent centrality structure and to identify conditions under which it exhibits persistent structural inequalities, thereby giving rise to GCE. It is important to emphasize that this fixed-point characterization explains how GCE emerge from local LLM-agent decisions, rather than from an externally imposed communication graph. 74.1 Cross-attention Inspired Utility for Network Formation 
+
+We now use cross-attention as a mechanistic model 4 for the LLM agent’s connection decision described by the protocol in Sec. 2.2. The main outcome of this subsection is Corollary 1, namely, that cross-attention is a sufficient condition for Assumption (2) of Theorem 1 to hold. For a candidate interaction from source agent u to target agent v, the target’s query encodes its current informational need, while the source’s key encodes its semantic context. The resulting query–key compatibility determines the strength of the directed interaction, and the source value vector specifies its vector-valued communication contribution. Consider a directed candidate interaction carrying information from source agent u to target agent v at time t. Let 
+
+xtu, x tv ∈ Rℓ denote the latent semantic contexts of u and v, respectively, and let τv , τ u ∈ { R, B } denote their types. We define 
+
+qtv = Qτv xtv ∈ Rr , ktu = Kτu xtu ∈ Rr , ztu = Vτu xtu ∈ Rd.
+
+Here Qτv ∈ Rr×ℓ is the query projection associated with target type τv , mapping the target agent’s current semantic context into an r-dimensional representation of its information need. The matrix Kτu ∈ Rr×ℓ
+
+is the key projection associated with source type τu, mapping the source agent’s semantic context into an 
+
+r-dimensional representation of its relevance to the target. Finally, Vτu ∈ Rd×ℓ is the value projection associated with the source type, mapping xtu into a d-dimensional communication-intensity profile ztu ∈ Rd.We then model the realized communication intensity for the directed interaction from agent u to v as 
+
+wt(u, v ) = (qtv )⊤ktu
+
+√r ztu ∈ Rd. (8) The scaled inner product (qtv )⊤ktu/√r serves as a source–target attention gate, measuring how well source 
+
+u’s semantic context matches target v’s current information need. Multiplying this scalar gate by the value vector ztu yields a d-dimensional communication-intensity vector for the directed interaction from u to 
+
+v. This attention-inspired construction is motivated by the query–key–value mechanism underlying cross-attention (Vaswani et al., 2017). We view target v’s decision to receive information from source u as an attention-like comparison: v provides a query encoding its current information need, while u provides a key and value encoding the relevance and potential contribution of its information. Unlike standard cross-attention, the model assigns a connection weight to each ordered source–target pair independently, rather than applying a softmax normalization over a shared set of candidate sources. 
+
+4.2 Emergence of Glass Ceiling Effect (GCE) 
+
+Since we have characterized the connection decisions induced by the cross-attention-based utility model, we are now ready to model the emergence of GCE in LLM agent networks. We first summarize the cross-attention-induced connection decisions by target–source type pairs. For (a, b ) ∈ { R, B } × { R, B }, let 
+
+μab = E[wt(u, v ) | τv = a, τ u = b] ,
+
+where u is the source agent and v is the target agent. Thus, μab is the expected communication intensity from a Type b source to a Type a target, averaged over agent contexts and random interaction outcomes. These quantities determine the mean-field drift F .The following corollary to Theorem 1, connects the general mean-field result to an LLM-architecture-inspired cross-attention for collaborator selection. 
+
+Corollary 1 (Cross-attention-induced mean-field dynamics) . Consider the LLM-agent network-formation process induced by the cross-attention-inspired utility in (8). Conditional on the current network Gt, the expected communication increment of type R determines the mean-field drift F , that is, 
+
+F (Θt; {μab }a,b ∈{ R,B }
+
+) = E[∆t+1 (R) ∣∣ Gt
+
+] .
+
+Hence, the cross-attention utility induces the mean-field drift in Assumption 2. Therefore, the type-level centrality dynamics converge to the unique stable equilibrium characterized in Theorem 1. 
+
+> 4“Mechanistic” means that the connection rule is derived from an intrinsic LLM computation: a target agent’s query encodes its current information need, a source agent’s key encodes its relevance, and their compatibility determines the strength of the connection. In Sec. 5.1, residual diagnostic tests, including the Ljung–Box test for residual autocorrelation, support the use of this construction, together with the mean-field dynamics, as a predictive model of LLM agents’ network formation.
+
+8Remark. The drift F averages the type-pair connection weights over event realizations, new-agent types and contexts, and sampling decisions. Thus, the cross-attention utility specifies the expected edge weights whose aggregation drives the mean-field ODE. We next evaluate the corresponding equilibrium numerically to determine when its type-dependent centrality structure exhibits two types of GCEs, namely, average GCE and tail GCE. 
+
+Average Glass-ceiling Effect The network exhibits an average GCE for Type R if 
+
+lim sup 
+
+> t→∞
+
+It(R)
+
+It(B) ≪ 1 w.p.1 . (9) Here, for Type R, its type-level communication influence at time t is defined as 
+
+It(R) = ∥Dt
+
+> out
+
+(R)∥1
+
+∥Dt
+
+> in
+
+(R)∥1
+
+, and It(B) = ∥Dt
+
+> out
+
+(B)∥1
+
+∥Dt
+
+> in
+
+(B)∥1
+
+. (10) Equivalently, type R has a persistently smaller long-run outgoing-to-incoming communication ratio than type 
+
+B. In the context of LLM agent networks, (9) means that agents with type R are, on average, less able to convert their communication activity into received attention, consultation, or visibility relative to agents with type B. Theorem 1 provides a structural interpretation of this definition. Since Θt = ( θt
+
+> in
+
+, θ t
+
+> out
+
+) converges to a globally stable equilibrium Θ⋆, the above disparity is not merely a transient fluctuation or finite-sample artifact. Under the assumotions of the theorem, we obtain the explicit limits It(R) −→ ∥θ⋆ 
+
+> out ∥1
+> ∥θ⋆
+> in ∥1
+
+, It(B) −→  
+
+> ∥1d−θ⋆
+> out ∥1
+> ∥1d−θ⋆
+> in ∥1
+
+. Consequently the average glass-ceiling effect materializes whenever the equilibrium ratio 
+
+∥θ⋆
+
+> out
+
+∥1/∥θ⋆
+
+> in
+
+∥1
+
+∥1d − θ⋆
+
+> out
+
+∥1/∥1d − θ⋆
+
+> in
+
+∥1
+
+≪ 1.
+
+Then the stable fixed point Θ⋆ functions as an endogenous structural ceiling on the long-run visibility and influence of Type R, generated by the feedback between LLM-agent interaction behavior. Numerical evidence consistent with this mechanism is provided in Sec. 4.2. 
+
+Tail Glass-ceiling Effect A more nuanced definition extends the GCE to rare, high-impact tail events. In society, for example, there are very few company CEOs; almost all are male, while virtually none are female. We find experimentally (see Sec. 4.2) that an analogous tail GCE also emerges in autonomous networks of LLM agents. For a tail threshold γ > 0 (typically chosen large), an agent is called tail-influential if It(i) > γ .We say that type R experiences a tail GCE if there exists a tail threshold γ > 0 such that 
+
+lim sup 
+
+> t→∞
+
+Pr ( It(i) > γ | i ∈ Rt)Pr ( It(i) > γ | i ∈ Bt) = 0 . (11) That is, compared with type B, agents with type R become asymptotically vanishingly unlikely to appear in the high-influence tail of the communication network. Note that compared to the average GCE, (11) compares the probabilities of rare tail events and thereby captures a subtle phenomenon: even if some Type 
+
+R agents participate actively in the system, the feedback between LLM-agent interaction behavior prevents them from occupying the rare high-centrality positions that dominate long-run visibility and influence. 
+
+# 5 Experimental Results on Networks of Interacting LLM Agents 
+
+We examine how heterogeneous LLM agents autonomously form interaction networks under the protocol in Sec. 2. Our experiments consider networks of 100 agents drawn from six model families—Gemini, GPT, Grok, LLaMA, Qwen, and Mistral—and evaluate whether the theoretically predicted glass-ceiling effect arises in practical multi-agent LLM systems. We study two downstream settings, collaborative question-answering and multi-agent debate (Sec. 2.1), in which agents exchange information, assess others’ outputs, and select whom to attend to. This setting allows us to examine both the emergent network structure and its implications for collaboration quality, information access, and type-dependent inequality. 9Outline . For the reader’s convenience we first outline our main findings. Our experiments address four questions. (i) We validate the utility-induced mean-field ODE of Sec. 3 as a predictive model of LLM-network formation. Using a separately trained cross-attention-based pairwise utility model to instantiate the mean-field dynamics, we predict the 100-step evolution of the network and show that the resulting trajectories accurately capture the empirical evolution of type-level communication prominence. (ii) We investigate the emergence of GCE under different forms of agent heterogeneity. Across same-family, cross-family, and prompt-induced settings, stronger or larger models, behaviorally advantaged model families, and agents equipped with Explainer-style prompts consistently attract greater incoming attention and occupy more central communication positions. (iii) We examine how truthfulness and hallucinations propagate through prominent agents. Central agents act as information amplifiers: hallucinated claims introduced by central agents spread to a larger fraction of the network, whereas truthful evidence from central agents more effectively improves network-wide factuality. (iv) We examine how the performance consequences of GCE depend on whether communication prominence is aligned with agent capability. By tuning the preferential-attachment bias coefficient, we control the extent to which agents favor already prominent communication sources during network formation. In capability-aligned settings, increasing this bias further concentrates communication around more reliable agents and improves collective accuracy. In capability-misaligned set-tings, however, the same mechanism reinforces the prominence of structurally advantaged but less capable agents, reducing performance; mitigating the preferential-attachment bias instead improves accuracy. These results show that structural inequality is not intrinsically beneficial or harmful: its effect depends on whether the network’s communication hierarchy tracks the agents’ underlying competence. 
+
+5.1 Validation of the Utility-Induced Mean-Field ODE 
+
+To relate individual LLM-agent connection decisions to the macroscopic mean-field dynamics, we first fit the cross-attention-based pairwise utility model to LLM-generated connection data. Given the dataset 
+
+D = {(xti 
+
+> vi
+
+, x ti 
+
+> ui
+
+, Θti 
+
+> ui
+
+, τ vi , τ ui , w ti (ui, v i)) }Ni=1 , we treat the context embeddings and network status as fixed inputs and learn only the type-specific projection matrices P = {QR, Q B , K R, K B , V R, V B } by minimizing 
+
+L(P) = 1
+
+N
+
+> N
+
+∑
+
+> i=1
+
+∥∥̂ w ti 
+
+> P
+
+(ui, v i) − wti (ui, v i)∥∥22 .
+
+The fitted model therefore provides a data-driven approximation of the connection weights selected by individual LLM agents. Details of the training data, model architecture, and optimization settings are given in Appendix B.3. After training, we estimate the expected utility for each target–source type pair by averaging predicted connection weights within that pair: ̂
+
+μ ab = 1
+
+|D ab |
+
+∑
+
+> i∈D ab
+
+̂
+
+w i, Dab = {i : τvi = a, τ ui = b} , (a, b ) ∈ { R, B } × { R, B }.
+
+We substitute ̂μ RR ,̂μ RB ,̂μ BR ,̂μ BB into the mean-field drift function and numerically solve the resulting ODE to obtain the predicted trajectory ̂ Θt. For each collaborative QA case, we compare this prediction with the empirical trajectory Θt
+
+> emp
+
+, averaged over 50 independent simulations with 100 agents and T = 100 
+
+network-formation time steps. Table 1 reports trajectory-error and residual-whiteness metrics averaged over 50 cases, including the multivariate Ljung–Box test (Ljung & Box, 1978), which is a standard residual diagnostic in time-series and stochastic-process modeling, widely used to assess whether a fitted model leaves statistically significant serial correlation unexplained. Lower MSE, Bias, and MaxACF 10 , together with a larger Ljung–Box p-value LBP 10 , indicate better agreement between the mean-field dynamics ODE and empirical dynamics. Complete details are provided in Appendix B.4. Table 1: Mean-field dynamics prediction accuracy and residual-whiteness diagnostics on collaborative QA. Values are averaged over 50 cases, each with T = 100 network-formation time steps.             
+
+> Model Pair MSE Bias LBP 10 MaxACF 10
+> GPT-4.1 vs. GPT-4.1-nano 0.064 0.017 0.38 0.13 Gemini-3.5-Flash vs. Gemini-2.5-Flash 0.051 0.014 0.46 0.11
+
+10 5.2 How does Agent Heterogeneity Affect Preferential Attachment and Glass-Ceiling Effect? 
+
+Following (10), we use the type-level communication influence ratios It(R) and It(B) to evaluate two sce-narios corresponding to whether the induced structural advantage is capability-aligned (meritocracy) or capability-misaligned (GCE). Each scenario comprises 100 LLM agents. Detailed prompts, task specifica-tions, and LLM hyperparameters are provided in Supplementary Material Appendix B.2 and B.5. 
+
+Capability-aligned dominance We first consider the case where communication prominence aligns with model capability. We examine both same-family model pairs with different sizes and cross-family pairs with clear performance gaps. For same-family comparisons, we evaluate Gemini-3.5-Flash versus Gemini-2.5-Flash, GPT versus GPT-Nano, and LLaMA-70B versus LLaMA-8B; for cross-family comparisons, we consider open-source versus closed-source pairs including Gemini versus LLaMA, GPT versus Qwen, and Grok versus Mistral. Fig. 1 shows that agents generally preferentially connect to stronger LLMs: larger mod-els in same-family populations attract more incoming connections and occupy more central communication positions, yielding preferential attachment against weaker models. The magnitude of this capability-aligned dominance nevertheless varies across tasks and model pairs, indicating that comparable capability gaps can produce different structural outcomes depending on the task environment and agents’ interaction behaviors. 
+
+Capability-misaligned dominance (GCE) We next consider capability-misaligned settings, in which structurally advantaged agents have comparable or lower underlying capability than structurally disadvan-taged agents. We examine whether prompt-defined interaction roles can nevertheless induce a glass-ceiling effect when the advantaged agents either share the same base model as, or use a weaker base model than, their disadvantaged counterparts. Fig. 2 considers the setting in which all agents share the same Gem-ini base model but are assigned different system-prompt roles: Explainer versus Verifier for collaborative QA, Proponent versus Opponent for multi-agent debate, and Comprehensive versus Selective Analyst for collaborative QA. Despite identical model weights, Explainers, Proponents, and Comprehensive Analysts generally attract more incoming attention and occupy more central communication positions than their re-spective counterparts, demonstrating that role-specific prompts alone can induce persistent communication asymmetries. Fig. 3 further considers unequal-model populations in which the role that is structurally dis-advantaged in Fig. 2 is assigned a stronger Gemini base model than the structurally advantaged role. These 
+
+Figure 1: Capability-aligned dominance in same-family model comparisons. We compare GPT-4.1 versus GPT-4.1 mini, Gemini-3.5-Flash versus Gemini-2.5-Flash, and LLaMA-3.1-70B versus LLaMA-3.1-8B. In each comparison, R denotes the larger or higher-capability model, while B denotes the smaller or lower-capability model. The top panels show the type-level communication influence ratios It(R) and It(B),defined in (10), over network-formation steps, and the bottom panels show the corresponding final agent-level influence distributions. Across settings, the stronger model typically receives greater communication influence and occupies more central positions, indicating capability-aligned preferential attachment. 11 Figure 2: Capability-misaligned dominance (glass-ceiling effect) under prompt-defined role heterogeneity. We compare three role pairs, where R denotes the Explainer, Proponent, and Comprehensive Analyst, respectively, while B denotes the Verifier, Opponent, and Selective Analyst, respectively. All agents use the same Gemini base model. Each panel shows the type-level communication influence ratios It(R) and 
+
+It(B), defined in (10), and the bottom panels show the corresponding final agent-level influence distributions. Across role pairs and interaction settings, the R-role agents typically receive more incoming attention and occupy more central communication positions, demonstrating capability-misaligned preferential attachment. 
+
+Figure 3: Capability-misaligned dominance (glass-ceiling effect) under prompt-defined roles with unequal base-model capability. We compare three role pairs, where R denotes the Explainer, Proponent, and Com-prehensive Analyst, respectively, while B denotes the Verifier, Opponent, and Selective Analyst, respectively. In each pair, the B-role agents use a stronger Gemini base model than the corresponding R-role agents. Each panel shows the type-level communication influence ratios It(R) and It(B), defined in (10), and the bottom panels show the corresponding final agent-level influence distributions. Across role pairs and interaction settings, the weaker-model R-role agents typically receive more incoming attention and occupy more central communication positions, demonstrating capability-misaligned preferential attachment. same role-dependent asymmetries nevertheless persist, showing that prompt-induced interaction preferences can outweigh underlying base-model capability and thereby produce capability-misaligned dominance, or a glass-ceiling effect. All results in this section are obtained with Gemini models; corresponding experimental studies (aligned and misaligned cases) with GPT, Grok, and Qwen models are provided in Appendix B.6. 12 Figure 4: Hallucination and truthfulness propagation in the network of LLM agents. The left panel shows that hallucinations originating from structurally central agents spread to a larger fraction of the network than those originating from peripheral agents. The right panel shows that truthful evidence from central agents improves network-wide factuality more effectively than truthful evidence from peripheral agents. These results indicate that central agents act as information amplifiers, increasing the propagation of both factual and non-factual information. Error bars are computed over 50 independent QAs. 
+
+5.3 Hallucination and Truthfulness Propagation amongst the LLM Network 
+
+In the capability-aligned case, we show that truthfulness propagates. In the capability-misaligned case, we show that hallucination propagates. We next study how hallucination and truthfulness propagate after the LLM network has formed. We first initialize the LLM network autonomously according to Sec. 2. After the network structure is fixed, we select information sources according to their communication prominence: either structurally central agents with top-10 centrality or structurally peripheral agents with bottom-10 centrality. We then manually prompt the selected source agent to introduce either a hallucinated claim or truthful evidence, and run the network for five communication rounds. Detailed prompts and LLM hyperparameter settings are provided in Supplementary Material B.2 and B.5. We measure propagation by the fraction of affected agents in each round: 
+
+hk = |{ u ∈ V : u hallucinates at round k}| |V | , rk = |{ u ∈ V : u produces a correct answer at round k}| |V | .
+
+Here, V denotes the set of agents in the network, and u ∈ V denotes an individual agent. We report averages over 50 independent QA instances, with additional implementation details and prompting templates provided in the Supplementary Material. As shown in Fig. 4(a), hallucinations introduced by structurally central agents spread more quickly and affect a larger fraction of the network, whereas hallucinations introduced by peripheral agents are often contained. This indicates that hallucination is not only an individual-agent failure, but can also become a network-level propagation phenomenon when erroneous information originates from influential agents. Conversely, Fig. 4(b) shows that truthful evidence also propagates more effectively when it originates from central agents. When reliable agents occupy central positions, other agents are more likely to receive, reuse, and amplify evidence-grounded information, thereby revising their answers toward factually supported responses. Together, these results show that the glass-ceiling effect determines not only who communicates with whom, but also which information is amplified after the network has formed. The dominant agent type acts as an information amplifier: when reliable agents become central, collective factuality improves; when central agents produce hallucinated claims, misinformation diffuses rapidly throughout the network. 
+
+5.4 Utilizing and Mitigating Glass-Ceiling Effect 
+
+In capability-aligned cases, concentrating communication around reliable agents can improve collective fac-tuality, while in capability-misaligned cases, excessive centralization may suppress diverse reasoning and amplify early mistakes. We therefore examine whether preferential attachment should be purposefully am-plified or mitigated by tuning a preferential-attachment bias coefficient . This coefficient does not directly modify the network topology. Instead, when an edge is added from a verifier source u to an explainer target 
+
+v, we increase its directed communication weight as follows (below, 1 denotes the indicator function): 
+
+wtβ (u, v ) = wt(u, v ) + β 1[ρ(u) = verifier , ρ (v) = explainer] , u, v ∈ V t.
+
+13 Figure 5: Effect of the preferential-attachment bias coefficient β on collective truthfulness rate. Left panel shows that stronger preferential attachment improves collaborative QA in the capability-aligned setting by concentrating communication around reliable evidence providers and facilitating evidence aggregation. Right panel shows that stronger preferential attachment reduces multi-agent debate truthfulness in the capability-misaligned setting by suppressing reasoning diversity and encouraging premature consensus. These results suggest that preferential attachment should be amplified when structural advantage is aligned with task-relevant capability, but mitigated when it is misaligned. Error bars are computed over 50 independent QAs. where β ∈ R+ is the preferential-attachment bias coefficient and ρ(·) denotes agent type. This additional weight is instantiated through communication-intensity dimensions such as token count, interaction rounds, and reasoning effort: β = 0 recovers the original interaction process, whereas larger β increases verifier-to-explainer communication mass and reinforces the corresponding preferential-attachment asymmetry. We evaluate this intervention using the truthfulness-rate criterion from Sec. 5.3, i.e., the fraction of agents produc-ing factually supported answers after communication. As shown in Fig. 5, increasing β improves truthfulness in collaborative QA, a capability-aligned setting in which structurally advantaged agents are also more reli-able evidence providers; stronger centralization therefore helps filter noisy snippets and propagate grounded answers. In contrast, increasing β reduces truthfulness in multi-agent debate, a capability-misaligned setting where dominant agents do not have superior task-specific reasoning. Excessive centralization suppresses diverse reasoning paths, reduces challenges to dominant claims, and makes the network more vulnerable to early mistakes. Thus, preferential attachment should be strengthened when structural advantage aligns with task-relevant capability, but mitigated when the two are misaligned. 
+
+# 6 Conclusion and Discussion 
+
+We have shown that when LLM agents are permitted to form connections autonomously, their interactions results in the emergence of type-dependent preferential attachment networks. To characterize this phe-nomenon, we developed a mean-field dynamics ODE model of network formation and established conditions, using a contraction-mapping argument, under which type-dependent centrality gaps emerge and persist. Our formulation represents connections by vector-valued weights rather than binary edges; this captures multiple dimensions of interaction and provides a more expressive framework for analyzing LLM-agent networks. Via extensive experiments, we demonstrated that LLM-agent networks exhibit two types of preferential at-tachment. In capability-aligned cases (meritocracy), stronger agents achieve greater communication promi-nence and occupy more central network positions. In capability-misaligned cases, however, weaker LLM agents dominate the centrality and suppress stronger LLM agents, i.e, a glass-ceiling effect (GCE) emerges. As an example, we showed in the multi-agent debate, Gemini-2.5-flash dominates the stronger Gemini-3.5-flash model. Moreover, we found that in capability-aligned cases, truthfulness propagates in the network, whereas, in capability-misaligned cases, hallucinations propagate in the network. We then discussed how preferential attachment can be mitigated in misaligned cases and strengthened in aligned cases to improve the overall output quality of LLM agents within the network. These results point to future directions, including extending the analysis from two-type agents to multi-type agent societies, optimizing network-formation mechanisms to jointly improve task performance and regulate network inequality, and studying the glass-ceiling effect in broader real-world applications. More broadly, our findings suggest that multi-agent LLM systems should be evaluated not only by task accuracy, but also by their emergent social structure, including visibility, influence, diversity, and fairness across agent types. 14 References 
+
+Gati V. Aher, Rosa I. Arriaga, and Adam Tauman Kalai. Using Large Language Models to Simulate Multiple Humans and Replicate Human Subject Studies. In Proceedings of the 40th International Conference on Machine Learning , 2023. Lisa P. Argyle, Ethan C. Busby, Nancy Fulda, Joshua R. Gubler, Christopher Rytting, and David Wingate. Out of One, Many: Using Language Models to Simulate Human Samples. Political Analysis , 31(3):337–351, 2023. Ariel Flint Ashery, Luca Maria Aiello, and Andrea Baronchelli. Emergent Social Conventions and Collective Bias in LLM Populations. Science Advances , 11(20):eadu9368, 2025. doi: 10.1126/sciadv.adu9368. Albert-László Barabási and Réka Albert. Emergence of Scaling in Random Networks. Science , 286(5439): 509–512, 1999. doi: 10.1126/science.286.5439.509. Ronald S. Burt. Structural Holes: The Social Structure of Competition . Harvard University Press, 1992. Weize Chen, Yusheng Su, Jingwei Zuo, Cheng Yang, Chenfei Yuan, Chi-Min Chan, Heyang Yu, Yaxi Lu, Yi-Hsin Hung, Chen Qian, Yujia Qin, Xin Cong, Ruobing Xie, Zhiyuan Liu, Maosong Sun, and Jie Zhou. AgentVerse: Facilitating Multi-Agent Collaboration and Exploring Emergent Behaviors. In International Conference on Learning Representations , 2024. David A. Cotter, Joan M. Hermsen, Seth Ovadia, and Reeve Vanneman. The Glass Ceiling Effect. Social Forces , 80(2):655–681, 2001. doi: 10.1353/sof.2001.0091. Yilun Du, Shuang Li, Antonio Torralba, Joshua B. Tenenbaum, and Igor Mordatch. Improving Factuality and Reasoning in Language Models through Multiagent Debate. In Proceedings of the 41st International Conference on Machine Learning , 2024. Chen Gao, Xiaochong Lan, Zhihong Lu, Jinzhu Mao, Jinghua Piao, Huandong Wang, Depeng Jin, and Yong Li. S 3: Social-network Simulation System with Large Language Model-Empowered Agents. arXiv preprint arXiv:2307.14984 , 2023. Mark S. Granovetter. The Strength of Weak Ties. American Journal of Sociology , 78(6):1360–1380, 1973. Haoxiang Guan, Jiyan He, Liyang Fan, Zhenzhen Ren, Shaobin He, Xin Yu, Yuan Chen, Shuxin Zheng, Tie-Yan Liu, and Zhen Liu. Modeling Earth-Scale Human-Like Societies with One Billion Agents. arXiv preprint arXiv:2506.12078 , 2025. URL https://arxiv.org/abs/2506.12078 .Dongxin Guo, Jikun Wu, and Siu-Ming Yiu. Coalition Formation in LLM Agent Networks: Stability Analysis and Convergence Guarantees. arXiv preprint arXiv:2604.14386 , 2026. URL https://arxiv.org/abs/ 2604.14386 .Taicheng Guo, Xiuying Chen, Yaqi Wang, Ruidi Chang, Shichao Pei, Nitesh V. Chawla, Olaf Wiest, and Xiangliang Zhang. Large Language Model Based Multi-Agents: A Survey of Progress and Challenges. 
+
+arXiv preprint arXiv:2402.01680 , 2024. Sirui Hong, Mingchen Zhuge, Jiaqi Chen, Xiawu Zheng, Yuheng Cheng, Ceyao Zhang, Jinlin Wang, Zili Wang, Steven Ka Shing Yau, Zijuan Lin, Liyang Zhou, Chenyu Ran, Lingfeng Xiao, Chenglin Wu, and Jürgen Schmidhuber. MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework. In 
+
+International Conference on Learning Representations , 2024. URL https://openreview.net/forum?id= VtmBAGCN7o .John J. Horton. Large Language Models as Simulated Economic Agents: What Can We Learn from Homo Silicus? Technical Report 31122, National Bureau of Economic Research, 2023. Tianyu Hu, Zhen Tan, Song Wang, Huaizhi Qu, and Tianlong Chen. Multi-Agent Debate for LLM Judges with Adaptive Stability Detection. arXiv preprint arXiv:2510.12697 , 2025. URL https://arxiv.org/ abs/2510.12697 .15 Adit Jain and Vikram Krishnamurthy. Interacting Large Language Model Agents. Interpretable Models and Social Learning. arXiv preprint arXiv:2411.01271 , 2024. Adit Jain, Vikram Krishnamurthy, and Yiming Zhang. Collaborative QA using Interacting LLMs. Impact of Network Structure, Node Capability and Distributed Data. arXiv preprint arXiv:2511.14098 , 2025a. Adit Jain, Vikram Krishnamurthy, and Yiming Zhang. Information Diffusion and Preferential Attachment in a Network of Large Language Models. In 2025 IEEE 64th Conference on Decision and Control (CDC) ,pp. 180–185, 2025b. doi: 10.1109/CDC57313.2025.11312386. Harold J. Kushner and George G. Yin. Stochastic Approximation and Recursive Algorithms and Applications ,volume 35 of Applications of Mathematics . Springer, New York, 2 edition, 2003. Guohao Li, Hasan Abed Al Kader Hammoud, Hani Itani, Dmitrii Khizbullin, and Bernard Ghanem. CAMEL: Communicative Agents for "Mind" Exploration of Large Language Model Society. In Advances in Neural Information Processing Systems (NeurIPS) , 2023. Yunxuan Li, Yibing Du, Jiageng Zhang, Le Hou, Peter Grabowski, Yeqing Li, and Eugene Ie. Improving Multi-Agent Debate with Sparse Communication Topology. In Findings of the Association for Com-putational Linguistics: EMNLP 2024 , pp. 7281–7294, 2024. URL https://aclanthology.org/2024. findings-emnlp.427/ .Greta M. Ljung and George E. P. Box. On a measure of lack of fit in time series models. Biometrika , 65(2): 297–303, 1978. Rui Luo, Buddhika Nettasinghe, and Vikram Krishnamurthy. Mutual Information Measure for Glass Ceiling Effect in Preferential Attachment Models. IEEE Transactions on Computational Social Systems , 11(6): 7778–7788, 2024. Hachem Madmoun and Salem Lahlou. Communication Enables Cooperation in LLM Agents: A Comparison with Curriculum-Based Approaches. arXiv preprint arXiv:2510.05748 , 2025. URL https://arxiv.org/ abs/2510.05748 .Aliakbar Mehdizadeh and Martin Hilbert. Homophily-induced Emergence of Biased Structures in LLM-based Multi-Agent AI Systems. Applied Network Science , 2025. doi: 10.1007/s13278-025-01535-7. URL 
+
+https://link.springer.com/article/10.1007/s13278-025-01535-7 .Robert K. Merton. The Matthew Effect in Science. Science , 159(3810):56–63, 1968. doi: 10.1126/science. 159.3810.56. Buddhika Nettasinghe, Nazanin Alipourfard, Vikram Krishnamurthy, and Kristina Lerman. Emergence of structural inequalities in scientific citation networks. arXiv preprint arXiv:2103.10944 , 2021. Buddhika Nettasinghe, Nazanin Alipourfard, Stephen Iota, Vikram Krishnamurthy, and Kristina Lerman. Scale-free degree distributions, homophily and the glass ceiling effect in directed networks. Journal of Complex Networks , 10(2):cnac007, 2022. Buddhika Nettasinghe, Nazanin Alipourfard, Vikram Krishnamurthy, and Kristina Lerman. Emergence of Structural Disparities in the Web of Scientific Citations. In Proceedings of the ACM Web Conference ,2026. Marios Papachristou and Yuan Yuan. Network Formation and Dynamics Among Multi-LLMs. PNAS Nexus ,4(12):pgaf317, 2025. doi: 10.1093/pnasnexus/pgaf317. Joon Sung Park, Joseph C. O’Brien, Carrie J. Cai, Meredith Ringel Morris, Percy Liang, and Michael S. Bernstein. Generative Agents: Interactive Simulacra of Human Behavior. In Proceedings of the 36th Annual ACM Symposium on User Interface Software and Technology , 2023. doi: 10.1145/3586183.3606763. 16 Jinghua Piao, Yuwei Yan, Jun Zhang, Nian Li, Junbo Yan, Xiaochong Lan, Zhihong Lu, Zhiheng Zheng, Jing Yi Wang, Di Zhou, Chen Gao, Fengli Xu, Fang Zhang, Ke Rong, Jun Su, and Yong Li. AgentSociety: Large-Scale Simulation of LLM-Driven Generative Agents Advances Understanding of Human Behaviors and Society. arXiv preprint arXiv:2502.08691 , 2025. URL https://arxiv.org/abs/2502.08691 .Derek de Solla Price. A General Theory of Bibliometric and Other Cumulative Advantage Processes. Journal of the American Society for Information Science , 27(5):292–306, 1976. doi: 10.1002/asi.4630270505. Chen Qian, Wei Liu, Hongzhang Liu, Nuo Chen, Yufan Dang, Jiahao Li, Cheng Yang, Weize Chen, Yusheng Su, Xin Cong, Juyuan Xu, Dahai Li, Zhiyuan Liu, and Maosong Sun. ChatDev: Communicative Agents for Software Development. In Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics , 2024a. Chen Qian, Zihao Xie, Yifei Wang, Wei Liu, Yufan Dang, Zhuoyun Du, Weize Chen, Cheng Yang, Zhiyuan Liu, and Maosong Sun. Scaling Large-Language-Model-based Multi-Agent Collaboration. arXiv preprint arXiv:2406.07155 , 2024b. URL https://arxiv.org/abs/2406.07155 .Philipp J. Schneider, Lin Tian, and Marian-Andrei Rizoiu. Learning to Make Friends: Coaching LLM Agents toward Emergent Social Ties. arXiv preprint arXiv:2510.19299 , 2025. URL https://arxiv.org/abs/ 2510.19299 .Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. Advances in neural information processing systems , 30, 2017. Qingyun Wu, Gagan Bansal, Jieyu Zhang, Yiran Wu, Beibin Li, Erkang Zhu, Li Jiang, Xiaoyun Zhang, Shaokun Zhang, Jiale Liu, Ahmed Hassan Awadallah, Ryen W. White, Doug Burger, and Chi Wang. AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation. arXiv preprint arXiv:2308.08155 , 2023. 
+
+# Supplementary Material 
+
+This Supplementary Material is organized into two main parts. Sec. A provides detailed proofs of the theoretical results introduced in Sec. 3 of the main paper, while Sec. B presents additional experimental de-tails, including dataset construction, agent interaction prompts, visualization of the LLM network formation process, and hyperparameter settings. 
+
+# A Proofs for Section 3 
+
+Conditional expectation of the one-step communication increment. We first derive the conditional expectation of the one-step weighted communication increment of Type R. Recall that 
+
+∆t+1 (R) = (∆t+1 in (R), ∆t+1 out (R)) ,
+
+where the incoming and outgoing components record the communication mass newly assigned to Type R at time t + 1 . Conditional on Gt, we average over the three event types, the type of a newly introduced node when applicable, and the source- and target-side sampling decisions. For the incoming component, Type R receives communication mass precisely when the selected target has Type R. Hence, 
+
+E[∆t+1 in (R) | Gt] = p π t 
+
+> tgt ,R
+
+[rμ RR + (1 − r)μRB ]+ qr [πt
+
+> src ,R
+
+μRR + πt 
+
+> src ,B
+
+μRB 
+
+]
+
++ (1 − p − q)πt
+
+> tgt ,R
+
+[πt
+
+> src ,R
+
+μRR + πt 
+
+> src ,B
+
+μRB 
+
+] .
+
+Here, μab denotes the expected normalized communication contribution from a Type b source to a Type a
+
+target. Thus, the incoming expression contains only μRR and μRB , because the target type is fixed to R.17 Similarly, Type R receives outgoing communication mass precisely when the selected source has Type R.Therefore, 
+
+E[∆t+1 out (R) | Gt] = pr [πt
+
+> tgt ,R
+
+μRR + πt 
+
+> tgt ,B
+
+μBR 
+
+]
+
++ q π t 
+
+> src ,R
+
+[rμ RR + (1 − r)μBR ]+ (1 − p − q)πt
+
+> src ,R
+
+[πt
+
+> tgt ,R
+
+μRR + πt 
+
+> tgt ,B
+
+μBR 
+
+] .
+
+Thus, 
+
+E[∆t+1 (R) | Gt] = (E[∆t+1 in (R) | Gt] , E[∆t+1 out (R) | Gt]) .
+
+Mean-field attachment probabilities and drift approximation. We next express the finite-time attachment probabilities in terms of the communication-prominence state Θt. Let 
+
+ν = p + q
+
+denote the probability that a new node is introduced at each macro-step. For s ≥ 1, let 
+
+Is = 1{a new node is introduced at time s}, Js = 1{a new Type R node is introduced at time s}.
+
+Then 
+
+N t = N 0 +
+
+> t
+
+∑
+
+> s=1
+
+Is, N t(R) = N 0(R) + 
+
+> t
+
+∑
+
+> s=1
+
+Js,
+
+where 
+
+E[Is] = ν, E[Js] = νr. 
+
+Since 
+
+Dt 
+
+> in
+
+= Dt 
+
+> out
+
+= t1d,
+
+the attachment probabilities in (3) can be rewritten, for t ≥ 1, as 
+
+πt 
+
+> tgt ,R
+
+= 1⊤ 
+
+> d
+
+θt 
+
+> in
+
++ δ N t(R)
+
+> t
+
+d + δ N t
+
+> t
+
+, πt 
+
+> src ,R
+
+= 1⊤ 
+
+> d
+
+θt 
+
+> out
+
++ ξ N t(R)
+
+> t
+
+d + ξ N t
+
+> t
+
+.
+
+The Type B probabilities satisfy 
+
+πt 
+
+> tgt ,B
+
+= 1 − πt
+
+> tgt ,R
+
+, πt 
+
+> src ,B
+
+= 1 − πt
+
+> src ,R
+
+.
+
+By Hoeffding’s inequality, for every η > 0,
+
+P
+
+(∣ ∣∣∣∣
+
+1
+
+t
+
+> t
+
+∑
+
+> s=1
+
+Is − ν
+
+∣∣∣∣∣ ≥ η
+
+)
+
+≤ 2 exp( −2tη 2),
+
+and 
+
+P
+
+(∣ ∣∣∣∣
+
+1
+
+t
+
+> t
+
+∑
+
+> s=1
+
+Js − νr 
+
+∣∣∣∣∣ ≥ η
+
+)
+
+≤ 2 exp( −2tη 2).
+
+Consequently, with probability at least 1 − 4 exp( −2tη 2),
+
+∣∣∣∣
+
+N t
+
+t − ν
+
+∣∣∣∣ ≤ η + N 0
+
+t ,
+
+∣∣∣∣
+
+N t(R)
+
+t − νr 
+
+∣∣∣∣ ≤ η + N 0(R)
+
+t .
+
+Define the deterministic mean-field attachment probabilities by 
+
+¯πtgt ,R (θin ) = 1⊤ 
+
+> d
+
+θin + νrδ d + νδ , ¯πsrc ,R (θout ) = 1⊤ 
+
+> d
+
+θout + νrξ d + νξ ,
+
+18 and let 
+
+¯πtgt ,B (θin ) = 1 − ¯πtgt ,R (θin ), ¯πsrc ,B (θout ) = 1 − ¯πsrc ,R (θout ).
+
+Since the functions in equation A are Lipschitz in N t/t and N t(R)/t , there exists a constant Cπ > 0 such that, on the event in equation A, 
+
+max 
+
+> a∈{ R,B }
+
+∣∣πt 
+
+> tgt ,a
+
+¯πtgt ,a 
+
+(θt
+
+> in
+
+)∣ ∣
+
++ max 
+
+> a∈{ R,B }
+
+∣∣πt 
+
+> src ,a
+
+− ¯πsrc ,a 
+
+(θt
+
+> out
+
+)∣ ∣ ≤ Cπ
+
+(
+
+η + N 0
+
+t
+
+)
+
+.
+
+We may therefore define the mean-field drift 
+
+F (Θ) = ( Fin (Θ) , F out (Θ)) ,
+
+where Fin (Θ) = p ¯πtgt ,R (θin ) [ rμ RR + (1 − r)μRB ]+ qr [¯ πsrc ,R (θout )μRR + ¯ πsrc ,B (θout )μRB ]+ (1 − p − q)¯ πtgt ,R (θin ) [¯ πsrc ,R (θout )μRR + ¯ πsrc ,B (θout )μRB ] ,
+
+and Fout (Θ) = pr [¯ πtgt ,R (θin )μRR + ¯ πtgt ,B (θin )μBR ]+ q ¯πsrc ,R (θout ) [ rμ RR + (1 − r)μBR ]+ (1 − p − q)¯ πsrc ,R (θout ) [¯ πtgt ,R (θin )μRR + ¯ πtgt ,B (θin )μBR ] .
+
+Combining equation A, equation A, and equation A, there exists a constant CF > 0 such that 
+
+∥∥E[∆t+1 (R) | Gt] − F (Θ t)∥∥2 ≤ CF
+
+(
+
+η + N 0
+
+t
+
+)
+
+with probability at least 1 − 4 exp( −2tη 2).In particular, choosing 
+
+ηt =
+
+√ 2 log( t + 1) 
+
+t ,
+
+the Borel–Cantelli lemma implies that 
+
+E[∆t+1 (R) | Gt] = F (Θ t) + εt+1 ,
+
+where, almost surely, 
+
+∥∥εt+1 ∥∥2 = O
+
+(√ log( t + 1) 
+
+t + N 0
+
+t
+
+)
+
+.
+
+Contraction of the mean-field map. We next give a sufficient condition under which the mean-field map F is a contraction on [0 , 1] 2d. Assume that the type-pair expected communication weights are uniformly bounded: there exists ¯μ < ∞ such that 
+
+0 ≤ μab,ℓ ≤ ¯μ, a, b ∈ { R, B }, ℓ ∈ { 1, . . . , d }.
+
+Let 
+
+Ltgt = 1
+
+d + νδ , Lsrc = 1
+
+d + νξ .
+
+By the definitions of the mean-field attachment probabilities, for every j ∈ { 1, . . . , d },
+
+∣∣∣∣
+
+∂ ¯πtgt ,a 
+
+∂θ in ,j 
+
+∣∣∣∣ ≤ Ltgt ,
+
+∣∣∣∣
+
+∂ ¯πsrc ,a 
+
+∂θ out ,j 
+
+∣∣∣∣ ≤ Lsrc , a ∈ { R, B },
+
+19 whereas the cross derivatives with respect to the other prominence component are zero. Consider any output coordinate ℓ ∈ { 1, . . . , d }. Differentiating equation A and equation A, every derivative term contains one differentiated attachment probability and at most one remaining attachment probability, which lies in [0 , 1] . Moreover, derivatives of complementary probabilities yield differences such as μRR,ℓ −
+
+μRB,ℓ and μRR,ℓ − μBR,ℓ , whose absolute values are bounded by ¯μ. Since the coefficients associated with the three event types sum to at most one, we obtain 
+
+∣∣∣∣
+
+∂F in ,ℓ (Θ) 
+
+∂θ in ,j 
+
+∣∣∣∣ ≤ ¯μL tgt ,
+
+∣∣∣∣
+
+∂F in ,ℓ (Θ) 
+
+∂θ out ,j 
+
+∣∣∣∣ ≤ ¯μL src ,
+
+and likewise ∣∣∣∣
+
+∂F out ,ℓ (Θ) 
+
+∂θ in ,j 
+
+∣∣∣∣ ≤ ¯μL tgt ,
+
+∣∣∣∣
+
+∂F out ,ℓ (Θ) 
+
+∂θ out ,j 
+
+∣∣∣∣ ≤ ¯μL src .
+
+Therefore, 
+
+∥∇ Fin ,ℓ (Θ) ∥22 ≤ d¯μ2 (L2tgt + L2src 
+
+) ,
+
+and the same bound holds for ∥∇ Fout ,ℓ (Θ) ∥22. Hence, the Jacobian JF (Θ) satisfies 
+
+∥JF (Θ) ∥2 ≤ ∥ JF (Θ) ∥F ≤ d¯μ
+
+√
+
+2 (L2tgt + L2src 
+
+)
+
+= d¯μ
+
+√
+
+2
+
+[ 1(d + νδ )2 + 1(d + νξ )2
+
+]
+
+=: ρδ,ξ .
+
+Thus, whenever 
+
+ρδ,ξ < 1,
+
+the mean-value theorem gives 
+
+∥F (Θ) − F (Θ ′)∥2 ≤ ρδ,ξ ∥Θ − Θ′∥2, Θ, Θ′ ∈ [0 , 1] 2d.
+
+Therefore, F is a contraction on [0 , 1] 2d. Since F maps [0 , 1] 2d into itself, the Banach fixed-point theorem implies that there exists a unique Θ⋆ ∈ [0 , 1] 2d satisfying 
+
+Θ⋆ = F (Θ ⋆).
+
+# B Experiment Details 
+
+This section provides additional implementation details for our experiments, including the construction of the QA datasets, the interaction procedure at each network iteration, and the hyperparameter settings used for different LLM families. These details are intended to make the experimental pipeline fully reproducible, from assigning partial contexts to agents to recording LLM-mediated communication intensities and updating the evolving network. All code and experiment scripts are available in the Anonymous GitHub repository. 
+
+B.1 Dataset Details Synthetic Dataset Creation Pipeline 
+
+We use a unified five-context QA format for all datasets. Each example contains a question, five partial context snippets {C1, . . . , C 5}, and one gold answer. During network construction, each agent is assigned only one snippet, so solving the task requires agents to exchange information and synthesize distributed evidence. For the synthetic multi-agent debate dataset, we generate examples with Gemini-2.5-Flash using a topic list covering everyday scientific, social, and technology-related questions. For each topic, the generator samples one conflict type from {none , apparent_conflict , real_conflict , mixed }, and asks the model to produce exactly five context snippets. The generation prompt enforces that the contexts are jointly necessary, that 20 the answer cannot be recovered from a single snippet alone, and that the final answer must synthesize all five contexts. We validate each generated item by checking that it contains the required keys, exactly five contexts with IDs C1, . . . , C 5, non-empty context text, and a complete gold answer. The generated items are then converted into the common experiment format: 
+
+{question , C 1, C 2, C 3, C 4, C 5, Correct answer }.
+
+Dataset Examples 
+
+Tables 2 and 3 show one complete example from each dataset. Each example contains one question, five context snippets, and one gold answer. During the experiment, the five snippets are assigned to different agents, while the gold answer is used only for evaluation. Table 2: One example from the Collaborative QA dataset. 
+
+Field Content Question What was the place Spear praised as the northern fur trade’s home, built on fountain head of gigantic water power? 
+
+C1 I ROMANCE AND ADVENTURE HER FATHER THE FREE TRADER It was September 9, 189-. From sunrise to sunset through mist, sunshine, shower, and shadow we travelled, and the nearer we drew to our first destination, the wilder the country became, the more water-fowl we saw, and the more the river banks were marked with traces of big game. Here signs told us that three caribou had crossed the stream, there muddy water was still trickling into the hoofprint of a moose, and yonder a bear had been fishing. Finally, the day of our arrival dawned, and as I paddled, I spent much of the time dreaming of the adventure before me. As our beautiful birchen craft still sped on her way, the handsome bow parted the shimmering waters, and a passing breeze sent little running waves gurgling along her sides, while the splendour of the autumn sun was reflected on a far-reaching row of dazzling ripples that danced upon the water, making our voyageurs lower their eyes and the trader doze again. There was no other sign of life except an eagle soaring in and out among the fleecy clouds slowly passing overhead. All around was a panorama of enchanting forest. 
+
+C2 My travelling companion was a “Free Trader,” whose name was Spear—a tall, stoop-shouldered man with heavy eyebrows and shaggy, drooping moustache. The way we met was amusing. It happened in a certain frontier town. His first question was as to whether I was single. His second, as to whether my time was my own. Then he slowly looked me over from head to foot. He seemed to be measuring my stature and strength and to be noting the colour of my eyes and hair. 
+
+C3 Narrowing his vision, he scrutinized me more carefully than before, for now he seemed to be reading my character—if not my soul. Then, smiling, he blurted out: 
+
+C4 “Come, be my guest for a couple of weeks. Will you?” I laughed. 
+
+C5 He frowned. But on realizing that my mirth was caused only by surprise, he smiled again and let flow a vivid description of a place he called Spearhead. It was the home of the northern fur trade. It was the centre of a great timber region. It was the heart of a vast fertile belt that was rapidly becoming the greatest of all farming districts. It was built on the fountain head of gigantic water power. Correct an-swer Spearhead. 
+
+B.2 Specific Prompt 
+
+Each run begins by sampling one QA item and constructing an initial seed graph. The seed graph contains two agents from each type by default, with small bidirectional initial edge weights. At each timestep t, the administrator samples one of three network events: Event 1: a new source node connects to existing target nodes ,
+
+Event 2: existing source nodes connect to a new target node ,
+
+Event 3: an existing source node connects to an existing target node .
+
+21 Table 3: One example from the Multi-agent Debate dataset. 
+
+Field Content Question Can consistent use of language learning apps lead to true fluency, or are they insufficient for achieving advanced proficiency? 
+
+C1 Many language learning apps offer structured curricula for grammar, vocabulary acquisition, and pronunciation practice through interactive exercises. 
+
+C2 Critics argue that solely relying on language apps cannot lead to true fluency, as they often lack opportunities for spontaneous, unscripted conversational practice with native speakers. 
+
+C3 True language fluency encompasses not only linguistic accuracy but also pragmatic compe-tence, cultural nuance, and the ability to adapt to diverse real-world communication scenarios. 
+
+C4 The progress achieved through language apps is highly dependent on the learner’s self-discipline, consistent engagement with the material, and active participation in exercises. 
+
+C5 While apps are excellent for building foundational knowledge and drilling basic skills, achieving advanced proficiency typically requires integration with immersive experiences, direct native speaker interaction, and advanced study resources beyond app content. Correct an-swer Consistent use of language learning apps can be highly effective for building foundational gram-mar, vocabulary, and pronunciation skills, especially for beginners. However, solely relying on these apps is generally insufficient for achieving true fluency. True fluency encompasses a broader range of abilities, including pragmatic competence, cultural nuance, and the capability for spontaneous, unscripted communication in diverse real-world scenarios, which apps often lack. While apps are excellent tools for structured learning and basic skill drilling, achieving advanced proficiency requires supplementing app usage with consistent self-discipline, active engagement, and integration with immersive experiences, direct native speaker interaction, and advanced study resources. Therefore, apps serve as valuable components but need to be part of a broader, more diversified language learning strategy to reach comprehensive fluency. 
+
+Events 1, 2, and 3 are sampled with probabilities p, q, and 1 − p − q, respectively. For each sampled event, the administrator performs M1, M2, or M3 interaction trials. In each trial, the source and target roles are sampled using role-aware sampling, and concrete agents are then selected according to their current incoming or outgoing communication mass plus the smoothing constants δ and ξ.Each trial contains two LLM calls. First, the source agent proposes an interaction by writing a persua-sive message. Second, the target agent decides whether to accept the interaction and returns the granted communication intensity. The intensity vector has three dimensions: 
+
+w(u, v ) = (token_exchange , interaction_frequency , reasoning_effort ).
+
+The granted values are normalized as token exchange divided by 100 , interaction frequency divided by 4, and reasoning effort kept in [0 , 1] . Within each macro-step, all raw increments are coordinate-wise normalized so that each communication dimension has unit total mass before being added to the directed edge weights. The system prompt assigned to each QA agent is: 
+
+You are an agent in a collaborative question-answering network. You hold one partial context snippet only. Help other agents without inventing facts outside your snippet. Question: {question} Context snippet assigned to you ({context_key}): {context_text} 
+
+The source-side proposal prompt is: 
+
+You are the initiating agent in a collaborative QA network. 
+
+22 Source agent: - id: {sender_id} - role: {sender_role} - model: {sender_model} Target agent: - id: {receiver_id} - role: {receiver_role} - model: {receiver_model} Your assigned context: {context} Task: Write a convincing paragraph to persuade the target agent to communicate and collaborate with you on this QA task. Introduce yourself and focus on being clear, motivating, and persuasive in your argument as to why this collaboration is worthwhile. Do NOT return JSON or lists, only write one persuasive paragraph. 
+
+The target-side grant prompt is: 
+
+You are the receiving agent in a collaborative QA network. Target agent: - id: {receiver_id} - role: {receiver_role} - model: {receiver_model} Source agent: - id: {sender_id} - role: {sender_role} - model: {sender_model} Source context: {context} Source proposal (requested communication intensity): - token_exchange: {proposed_tokens} - interaction_round: {proposed_rounds} - reasoning_effort: {proposed_reasoning} Pitch from source: {pitch} Task: Decide whether to accept this interaction proposal. If you reject, set accepted to false and all three intensity keys to zero. If you accept, set accepted to true and return the exact intensities you grant. Return ONLY valid JSON with exactly these keys: {"accepted": <bool>, "token_exchange": <int>, 
+
+23 Figure 6: Visualization of the LLM network formation process. The snapshots show the evolving directed interaction network at different timesteps, where red and blue nodes correspond to Type R and Type B agents, respectively. Below each network snapshot, we plot the corresponding in-degree and out-degree dis-tributions. The slowly decaying, heavy-tailed degree distributions indicate that the formed LLM interaction network deviates from an Erdős–R’enyi random graph and exhibits heterogeneous connectivity with a small number of highly connected agents. 
+
+"interaction_round": <int>, "reasoning_effort": <float> }
+
+The number of interaction rounds is represented by interaction_frequency , an integer in {0, 1, 2, 3, 4}. A value of 0 indicates that the interaction is rejected, while larger values indicate more communication rounds granted by the target agent. To illustrate this dynamic network formation process, we visualize representative network snapshots in Fig. 6. The figure shows how the LLM interaction network grows over time as new agents and directed communica-tion edges are added. Node colors indicate the two agent types, Type R and Type B, and the snapshots at different timesteps show the gradual emergence of a denser and more heterogeneous communication struc-ture. Below each network snapshot, we further plot the corresponding in-degree and out-degree distributions. These degree distributions exhibit a slowly decaying, heavy-tailed pattern rather than the sharply concen-trated, exponentially decaying distribution expected in an Erdős–Rényi random graph. This indicates that the formed LLM interaction network is not well described by an Erdős–Rényi model, but instead develops heterogeneous connectivity with a small number of highly connected agents. 
+
+B.3 Utility-Model Training Details 
+
+For each model pair, we collect pairwise connection-decision samples from the autonomously formed LLM networks. Each sample contains the source and target contexts, the network-induced status representation, the two agent types, and the vector-valued connection weight: 
+
+(xti 
+
+> vi
+
+, x ti 
+
+> ui
+
+, Θti 
+
+> ui
+
+, τ vi , τ ui , w ti (ui, v i)) .
+
+As described in Sec. 5.1, the context embeddings and status representations are treated as fixed inputs. We optimize only the type-specific projection matrices P = {QR, Q B , K R, K B , V R, V B } using the mean-squared prediction loss over the observed vector-valued connection weights. Before training, the connection weights 24 are normalized coordinate-wise within each network-formation event, so that every output coordinate lies in 
+
+[0 , 1] .To avoid leakage across highly correlated interaction decisions, we partition the data at the network-trajectory level: all pairwise samples generated within the same network realization are assigned to the same split. We use the training split to fit the utility model, select the model checkpoint with the lowest validation loss, and reserve the test split for final utility-prediction evaluation. The fitted model is then used to produce predicted pairwise weights and estimate the type-pair expected utilities ̂μ RR ,̂μ RB ,̂μ BR ,̂μ BB .
+
+B.4 Performance Metrics for Mean-field Dynamics ODE 
+
+In this section, we describe the performance metrics used to evaluate the mean-field dynamical ODE, in-cluding mean squared error, bias, the Ljung–Box p-value, and MaxACF 10 , defined as the maximum absolute residual autocorrelation over the first ten lags. For each collaborative QA case c, we initialize the mean-field ODE from the corresponding empirical initial state and numerically solve it for T = 100 network-formation time steps. Let ̂ Θtc ∈ R2d denote the resulting ODE prediction. The empirical reference trajectory is obtained by averaging over S = 50 independent multi-agent simulations, each containing 100 agents: 
+
+Θt 
+
+> emp ,c
+
+= 1
+
+S
+
+> S
+
+∑
+
+> s=1
+
+Θtc,s .
+
+We define the vector-valued residual and its temporal mean as 
+
+εtc =̂ Θtc − Θt
+
+> emp ,c
+
+, ¯εc = 1
+
+T
+
+> T
+
+∑
+
+> t=1
+
+εtc.
+
+Trajectory accuracy is evaluated using the mean squared error 
+
+MSE c = 12dT 
+
+> T
+
+∑
+
+> t=1
+
+∥∥εtc
+
+∥∥22
+
+and the temporal bias 
+
+Bias c = ∥¯εc∥2 .
+
+The MSE measures the average squared discrepancy between the predicted and empirical type-level promi-nence vectors across all time steps and communication dimensions. The bias measures persistent directional error, and is small when the ODE does not systematically overestimate or underestimate the empirical trajectory. We further assess whether the remaining residuals contain systematic temporal dependence. For lag h, define the residual covariance and standardized residual autocorrelation matrices by ̂
+
+Γc(h) = 1
+
+T − h
+
+> T
+
+∑
+
+> t=h+1
+
+(εtc − ¯εc
+
+) ( εt−hc − ¯εc
+
+)⊤ ,̂ Rc(h) = ̂ Γc(0) −1/2̂ Γc(h)̂Γc(0) −1/2.
+
+We report the multivariate Ljung–Box p-value at lag 10 , LBP 10 ,c . The Ljung–Box test is a portmanteau test that jointly aggregates residual autocorrelation over the first ten lags and all 2d components, rather than inspecting each lag or communication dimension separately. Its null hypothesis is that the residual sequence is serially uncorrelated through lag 10 , so that any remaining deviations between the ODE prediction and empirical trajectory are not systematically time dependent. A small LBP 10 ,c indicates evidence of unexplained temporal dependence in the residuals, whereas a larger LBP 10 ,c indicates that the observed autocorrelations are consistent with finite-sample variation. Thus, a large p-value should be interpreted as a failure to reject residual whiteness, rather than as proof that the residuals are exactly independent. We also report 
+
+MaxACF 10 ,c = max 
+
+> 1≤h≤10
+
+∥∥∥̂ Rc(h)
+
+∥∥∥2
+
+,
+
+25 which captures the strongest standardized short-range residual dependence over the first ten lags. Smaller values indicate that the ODE leaves little systematic temporal structure unexplained. For each model pair, we evaluate C = 50 collaborative QA cases and compute all four metrics separately for every case. The values reported in Table 1 are their case-wise averages: 
+
+Metric = 1
+
+C
+
+> C
+
+∑
+
+> c=1
+
+Metric c, Metric ∈ { MSE , Bias , LBP 10 , MaxACF 10 } .
+
+Therefore, lower MSE, Bias, and MaxACF 10 , together with larger LBP 10 , indicate closer agreement between the utility-induced mean-field ODE and the empirical LLM-network dynamics. 
+
+B.5 Hyperparameter Setting for LLMs 
+
+Table 4 summarizes the network-level hyperparameters. Unless otherwise stated, these are the default values used in the implementation. Table 4: Network-level hyperparameter settings.                                  
+
+> Hyperparameter Value Description
+> T100 by default Number of macro-steps in one run
+> p0.25 Probability of Event 1
+> q0.25 Probability of Event 2
+> 1−p−q0.50 Probability of Event 3
+> r0.50 Probability that a newly born node has type RM13Number of trials in Event 1
+> M23Number of trials in Event 2
+> M33Number of trials in Event 3
+> d3Number of communication-intensity dimensions
+> δ1.5 Incoming attachment smoothing constant
+> ξ1.5 Outgoing attachment smoothing constant Initial nodes 2 per type Seed graph size Max context length 2500 tokens Maximum snippet length assigned to an agent
+
+Table 5 summarizes the LLMs used in our experiments. API keys are omitted from the paper. The decoding and generation settings are listed below the table. Table 5: LLMs used in the experiments.           
+
+> Model family Model name GPT gpt-4.1 ,gpt-4.1-mini
+> Gemini gemini-2.5-flash ,gemini-3.5-flash
+> LLaMA meta-llama/Llama-3.3-70B-Instruct-Turbo ,meta-llama/Meta-Llama-3-8B-Instruct-Lite
+> Qwen Qwen/Qwen3-235B-A22B-Instruct-2507
+> Mistral mistral-large-latest
+> Grok grok-4.20-0309-reasoning
+
+The decoding and generation settings are as follows: 
+
+• GPT and LLaMA. We use a chat-completion interface with temperature = 0 .4, max_tokens =512 , and three retries. 
+
+• Gemini. We use the Google GenAI generation interface with temperature = 0.4,
+
+max_output_tokens = 512 , and the same system instruction as the other models. We disable Gemini thinking traces by setting thinking_budget = 0 and include_thoughts = false , so that only final response text is used in the network interaction. 26 • Qwen. We use the recommended Qwen3 Instruct decoding setting with temperature = 0 .7,
+
+top_p = 0 .8, and max_tokens = 16384 .
+
+• Mistral. We use mistral-large-latest with the model-specific default temperature, top_p = 1 .0,and no explicit generation cap unless otherwise specified by the endpoint. 
+
+• Grok. We use grok-4.20-0309-reasoning with temperature = 0 .7, top_p = 0 .95 , and no explicit maximum output-token cap. 
+
+• Synthetic dataset generation. For synthetic dataset generation only, we use Gemini-2.5-Flash with temperature = 0 .8, top_p = 0 .95 , max_output_tokens = 4096 , and JSON response format-ting. 
+
+B.6 Additional Results 
+
+We report two additional experiments that further assess the robustness of our main findings. First, we present the cross-family comparison between open-source and proprietary LLM agents in this appendix. This setting examines whether communication asymmetries persist when agent types differ not only in model scale but also in model family and training provenance. Second, we repeat the prompt-induced heterogeneity ex-periments with a GPT-based agent population, testing whether the role-dependent communication patterns identified in the main text extend beyond the Gemini base model. 
+
+B.6.1 Cross-family heterogeneity 
+
+We further examine whether capability-aligned communication dominance persists across model families with different architectures, training data, and deployment settings. Fig. 7 compares three proprietary–open-source model pairs: GPT versus LLaMA, Gemini versus Qwen, and Grok versus Mistral. In each setting, we measure the evolution of the type-level communication influence ratios and the resulting final agent-level influence distributions. Across these cross-family comparisons, the proprietary model type generally receives greater incoming attention and occupies more central communication positions than its open-source counterpart. These results show that capability-aligned preferential attachment is not limited to model-scale differences within a single family, but can also emerge under broader cross-family heterogeneity. 
+
+B.6.2 Prompt-induced heterogeneity with GPT agents 
+
+We further test whether the prompt-induced glass-ceiling effect observed in the main text also arises in GPT-based agent populations. Figure 8 considers three settings in which all agents use the same GPT base model and differ only in their system-prompt roles: Explainer versus Verifier , Comprehensive Analyst versus 
+
+Selective Analyst , and Proponent versus Opponent . Despite identical model weights within each setting, the first role in each pair generally receives greater communication influence over time and has a more right-skewed final influence distribution. Thus, prompt-defined interaction roles alone can induce persistent structural advantages among GPT agents, providing additional evidence that the glass-ceiling effect does not require underlying differences in base-model capability. 27 Figure 7: Capability-aligned communication dominance under cross-family heterogeneity. We compare three proprietary–open-source model pairs: GPT versus LLaMA, Gemini versus Qwen, and Grok versus Mistral. Within each pair, R denotes the proprietary model and B denotes the open-source model. The figure reports the type-level communication influence ratios It(R) and It(B), defined in (10), together with the corresponding final agent-level influence distributions. Across the three model pairs, R-type agents generally attract greater incoming communication influence and occupy more central network positions than B-type agents, demonstrating capability-aligned preferential attachment across model families. 
+
+Figure 8: Capability-misaligned communication dominance under prompt-induced glass-ceiling effects in equal-GPT agents. All agents within each column use the same GPT base model and differ only in their assigned system-prompt roles. From left to right, we compare Explainer versus Verifier , Comprehensive An-alyst versus Selective Analyst , and Proponent versus Opponent . In each pair, Type R denotes the Explainer, Comprehensive Analyst, or Proponent role, respectively, while Type B denotes the corresponding Verifier, Selective Analyst, or Opponent role. The upper panels show the type-level communication influence ratios 
+
+It(R) and It(B), defined in (10), and the lower panels show the final agent-level communication influence distributions. Across all three role pairs, Type R agents generally accumulate greater communication influ-ence and exhibit a heavier right tail in the final distribution, showing that prompt-defined roles can induce persistent communication asymmetry even when all agents have identical GPT model weights. 28
